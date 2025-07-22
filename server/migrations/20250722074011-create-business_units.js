@@ -2,43 +2,37 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('bank_transactions', {
+    await queryInterface.createTable('business_units', {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.literal('gen_random_uuid()'),
-        primaryKey: true
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
       },
-      date: {
-        type: Sequelize.DATE,
-        allowNull: false
+      name: Sequelize.STRING(100),
+      code: {
+        type: Sequelize.STRING(20),
+        unique: true
       },
-      amount: {
-        type: Sequelize.DECIMAL(18, 2),
-        allowNull: false
-      },
-      direction: {
-        type: Sequelize.ENUM('in', 'out'),
-        allowNull: false
-      },
-      account_number: Sequelize.TEXT,
-      description: Sequelize.TEXT,
-      invoice_id: Sequelize.UUID,
-      partner_id: Sequelize.UUID,
-      category_id: {
+      parent_unit_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'transaction_categories',
+          model: 'business_units',
           key: 'id'
-        }
+        },
+        onDelete: 'SET NULL'
       },
-      createdAt: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
-      }
+      manager_id: Sequelize.INTEGER,
+      location_id: Sequelize.INTEGER,
+      is_active: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true
+      },
+      createdAt: Sequelize.DATE,
+      updatedAt: Sequelize.DATE
     });
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('bank_transactions');
+    await queryInterface.dropTable('business_units');
   }
 };
