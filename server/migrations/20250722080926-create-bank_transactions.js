@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('bank_transactions', {
+    await queryInterface.createTable('BankTransactions', {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,
@@ -40,7 +40,7 @@ module.exports = {
       category_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'transaction_categories',
+          model: 'TransactionCategories',
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -62,6 +62,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('bank_transactions');
+    await queryInterface.dropTable('BankTransactions');
   }
 };

@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('business_partners', {
+    await queryInterface.createTable('BusinessPartners', {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,
@@ -94,12 +94,12 @@ module.exports = {
 
     // Add CHECK constraint manually (Sequelize doesn't support CHECK well natively)
     await queryInterface.sequelize.query(`
-      ALTER TABLE business_partners
+      ALTER TABLE BusinessPartners
       ADD CONSTRAINT type_check CHECK (type IN ('customer', 'supplier', 'both'))
     `);
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('business_partners');
+    await queryInterface.dropTable('BusinessPartners');
   }
 };

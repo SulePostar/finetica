@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('contracts', {
+    await queryInterface.createTable('Contracts', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.literal('gen_random_uuid()'),
@@ -12,7 +12,7 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'business_partners',
+          model: 'BusinessPartners',
           key: 'id'
         },
         onDelete: 'CASCADE'
@@ -62,6 +62,6 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('contracts');
+    await queryInterface.dropTable('Contracts');
   }
 };
