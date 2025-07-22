@@ -1,8 +1,8 @@
 module.exports = (sequelize, DataTypes) => {
     const SalesInvoice = sequelize.define('SalesInvoice', {
         id: {
-            type: DataTypes.UUID,
-            defaultValue: sequelize.literal('gen_random_uuid()'),
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
             primaryKey: true
         },
         vat_period: DataTypes.STRING,
@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         invoice_number: DataTypes.STRING,
         bill_number: DataTypes.STRING,
         note: DataTypes.TEXT,
-        customer_id: DataTypes.UUID,
+        customer_id: DataTypes.INTEGER,
         invoice_date: DataTypes.DATE,
         due_date: DataTypes.DATE,
         delivery_period: DataTypes.STRING,

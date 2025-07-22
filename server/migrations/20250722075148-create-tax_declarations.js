@@ -4,13 +4,18 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('tax_declarations', {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.literal('gen_random_uuid()'),
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
         primaryKey: true
       },
-      period_start: Sequelize.DATE,
-      period_end: Sequelize.DATE,
-
+      period_start: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      },
+      period_end: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      },
       delivery_value: Sequelize.DECIMAL(18, 2),
       purchase_value: Sequelize.DECIMAL(18, 2),
       export_value: Sequelize.DECIMAL(18, 2),
@@ -29,8 +34,14 @@ module.exports = {
       final_cons_rs: Sequelize.DECIMAL(18, 2),
       final_cons_bd: Sequelize.DECIMAL(18, 2),
 
-      createdAt: Sequelize.DATE,
-      updatedAt: Sequelize.DATE
+      createdAt: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      },
     });
   },
 

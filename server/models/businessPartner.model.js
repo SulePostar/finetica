@@ -1,16 +1,16 @@
 module.exports = (sequelize, DataTypes) => {
     const BusinessPartner = sequelize.define('BusinessPartner', {
         id: {
-            type: DataTypes.UUID,
-            defaultValue: sequelize.literal('gen_random_uuid()'),
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
             primaryKey: true
         },
         type: {
             type: DataTypes.ENUM('customer', 'supplier', 'both'),
             allowNull: false
         },
-        name: DataTypes.TEXT,
-        short_name: DataTypes.TEXT,
+        name: DataTypes.STRING,
+        short_name: DataTypes.STRING,
         country_code: DataTypes.STRING(2),
         vat_number: DataTypes.STRING,
         tax_id: DataTypes.STRING,
@@ -19,13 +19,13 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             defaultValue: false
         },
-        address: DataTypes.TEXT,
-        city: DataTypes.TEXT,
-        postal_code: DataTypes.TEXT,
-        email: DataTypes.TEXT,
-        phone: DataTypes.TEXT,
+        address: DataTypes.STRING,
+        city: DataTypes.STRING,
+        postal_code: DataTypes.STRING,
+        email: DataTypes.STRING,
+        phone: DataTypes.STRING,
         iban: DataTypes.TEXT,
-        bank_name: DataTypes.TEXT,
+        bank_name: DataTypes.STRING,
         swift_code: DataTypes.STRING(20),
         default_currency: DataTypes.STRING(3),
         language_code: DataTypes.STRING(2),

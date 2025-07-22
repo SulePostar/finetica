@@ -4,16 +4,16 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('business_partners', {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.literal('gen_random_uuid()'),
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
         primaryKey: true
       },
       type: {
         type: Sequelize.ENUM('customer', 'supplier', 'both'),
         allowNull: false
       },
-      name: Sequelize.TEXT,
-      short_name: Sequelize.TEXT,
+      name: Sequelize.STRING,
+      short_name: Sequelize.STRING,
       country_code: Sequelize.STRING(2),
       vat_number: Sequelize.STRING,
       tax_id: Sequelize.STRING,
@@ -22,13 +22,13 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: false
       },
-      address: Sequelize.TEXT,
-      city: Sequelize.TEXT,
-      postal_code: Sequelize.TEXT,
-      email: Sequelize.TEXT,
-      phone: Sequelize.TEXT,
+      address: Sequelize.STRING,
+      city: Sequelize.STRING,
+      postal_code: Sequelize.STRING,
+      email: Sequelize.STRING,
+      phone: Sequelize.STRING,
       iban: Sequelize.TEXT,
-      bank_name: Sequelize.TEXT,
+      bank_name: Sequelize.STRING,
       swift_code: Sequelize.STRING(20),
       default_currency: Sequelize.STRING(3),
       language_code: Sequelize.STRING(2),

@@ -4,12 +4,13 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('bank_transactions', {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.literal('gen_random_uuid()'),
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
         primaryKey: true
       },
       date: {
         type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
         allowNull: false
       },
       amount: {
@@ -20,10 +21,10 @@ module.exports = {
         type: Sequelize.ENUM('in', 'out'),
         allowNull: false
       },
-      account_number: Sequelize.TEXT,
+      account_number: Sequelize.STRING,
       description: Sequelize.TEXT,
-      invoice_id: Sequelize.UUID,
-      partner_id: Sequelize.UUID,
+      invoice_id: Sequelize.INTEGER,
+      partner_id: Sequelize.INTEGER,
       category_id: {
         type: Sequelize.INTEGER,
         references: {

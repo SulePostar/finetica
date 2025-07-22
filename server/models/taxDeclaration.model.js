@@ -1,8 +1,8 @@
 module.exports = (sequelize, DataTypes) => {
     const TaxDeclaration = sequelize.define('TaxDeclaration', {
         id: {
-            type: DataTypes.UUID,
-            defaultValue: sequelize.literal('gen_random_uuid()'),
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
             primaryKey: true
         },
         period_start: DataTypes.DATE,

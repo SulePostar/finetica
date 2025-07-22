@@ -1,16 +1,19 @@
 module.exports = (sequelize, DataTypes) => {
     const BankTransaction = sequelize.define('BankTransaction', {
         id: {
-            type: DataTypes.UUID,
-            defaultValue: sequelize.literal('gen_random_uuid()'),
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
             primaryKey: true
         },
         date: { type: DataTypes.DATE, allowNull: false },
         amount: { type: DataTypes.DECIMAL(18, 2), allowNull: false },
         direction: { type: DataTypes.ENUM('in', 'out'), allowNull: false },
-        account_number: DataTypes.TEXT,
+        accountNumber: {
+            field: 'account_number',
+            type: DataTypes.STRING
+        },
         description: DataTypes.TEXT,
-        invoice_id: DataTypes.UUID
+        invoice_id: DataTypes.INTEGER,
     });
 
     BankTransaction.associate = models => {

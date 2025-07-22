@@ -1,11 +1,11 @@
 module.exports = (sequelize, DataTypes) => {
     const Contract = sequelize.define('Contract', {
         id: {
-            type: DataTypes.UUID,
-            defaultValue: sequelize.literal('gen_random_uuid()'),
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
             primaryKey: true
         },
-        partner_id: DataTypes.UUID,
+        partner_id: DataTypes.INTEGER,
         contract_number: DataTypes.STRING(50),
         contract_type: DataTypes.STRING(50),
         description: DataTypes.TEXT,

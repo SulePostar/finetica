@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
     const PurchaseInvoiceItem = sequelize.define('PurchaseInvoiceItem', {
         id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-        invoice_id: DataTypes.UUID,
+        invoice_id: DataTypes.INTEGER,
         order_number: DataTypes.INTEGER,
         description: DataTypes.TEXT,
         net_subtotal: DataTypes.DECIMAL(18, 2),
