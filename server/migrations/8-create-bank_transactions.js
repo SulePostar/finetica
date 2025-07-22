@@ -29,13 +29,29 @@ module.exports = {
       description: {
         type: Sequelize.TEXT,
       },
-      invoice_id: {
+      purchase_invoice_id: {
         type: Sequelize.UUID,
         allowNull: true,
+        references: {
+          model: 'PurchaseInvoices',
+          key: 'id',
+        },
+      },
+      sales_invoice_id: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: {
+          model: 'SalesInvoices',
+          key: 'id',
+        },
       },
       partner_id: {
         type: Sequelize.UUID,
         allowNull: true,
+        references: {
+          model: 'BusinessPartners',
+          key: 'id',
+        },
       },
       category_id: {
         type: Sequelize.INTEGER,
@@ -56,7 +72,7 @@ module.exports = {
 
     // Manually add CHECK constraint for direction
     await queryInterface.sequelize.query(`
-      ALTER TABLE bank_transactions
+      ALTER TABLE "BankTransactions"
       ADD CONSTRAINT direction_check CHECK (direction IN ('in', 'out'))
     `);
   },

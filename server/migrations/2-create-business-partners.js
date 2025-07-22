@@ -94,7 +94,7 @@ module.exports = {
 
     // Add CHECK constraint manually (Sequelize doesn't support CHECK well natively)
     await queryInterface.sequelize.query(`
-      ALTER TABLE BusinessPartners
+      ALTER TABLE "BusinessPartners"
       ADD CONSTRAINT type_check CHECK (type IN ('customer', 'supplier', 'both'))
     `);
   },
