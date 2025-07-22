@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "react-router-dom": "^7.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
