@@ -6,9 +6,9 @@ module.exports = {
     await queryInterface.createTable('bank_transactions', {
       id: {
         allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.literal('gen_random_uuid()'),
+        type: Sequelize.INTEGER
       },
       date: {
         type: Sequelize.DATEONLY,
@@ -32,7 +32,7 @@ module.exports = {
         type: Sequelize.TEXT,
       },
       purchase_invoice_id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: 'purchase_invoices',
@@ -41,7 +41,7 @@ module.exports = {
         comment: 'Reference to purchase invoice if applicable',
       },
       sales_invoice_id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: 'sales_invoices',
@@ -51,7 +51,7 @@ module.exports = {
       },
       
       partner_id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: 'business_partners',
@@ -68,8 +68,13 @@ module.exports = {
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('NOW()'),
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
+      updated_at: {
+        allowNull: true,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      }
     });
 
     await queryInterface.addConstraint('bank_transactions', {

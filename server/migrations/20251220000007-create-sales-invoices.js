@@ -6,9 +6,9 @@ module.exports = {
     await queryInterface.createTable('sales_invoices', {
       id: {
         allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.literal('gen_random_uuid()')
+        type: Sequelize.INTEGER
       },
       period_pdv: {
         type: Sequelize.STRING(7),
@@ -34,7 +34,7 @@ module.exports = {
         comment: 'Description/Notes'
       },
       customer_id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: 'business_partners',
@@ -115,7 +115,7 @@ module.exports = {
         comment: 'Business unit that issued the invoice'
       },
       contract_id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         references: {
           model: 'contracts',
           key: 'id'
@@ -148,12 +148,12 @@ module.exports = {
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('NOW()')
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
       updated_at: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('NOW()')
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
     });
 
