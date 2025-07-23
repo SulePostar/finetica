@@ -7,3 +7,13 @@ export const login = async (req, res) => {
     accessToken,
   });
 };
+
+export const register = async (req, res) => {
+  const registerData = req.body;
+
+  const success = await authService.registerUser(registerData);
+
+  res.status(200).json({
+    message: `Successfully registered user with email ${registerData.email}`
+  });
+}

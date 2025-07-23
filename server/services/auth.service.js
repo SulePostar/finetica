@@ -30,3 +30,16 @@ export const loginUser = async (loginDto) => {
 
   return accessToken;
 };
+
+export const registerUser = async (registerData) => {
+  const { email, role } = registerData;
+
+  try {
+
+  } catch(error) {
+    return res.status(500).json({
+      message: ``
+    })
+  }
+
+}
