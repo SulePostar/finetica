@@ -34,7 +34,7 @@ const loginUser = async (loginDto) => {
 };
 
 const registerUser = async (registerData) => {
-  const { email, roleId } = registerData;
+  const { email, password } = registerData;
 
   try {
     if (typeof email !== 'string' || !email.includes('@')) {
@@ -61,14 +61,16 @@ const registerUser = async (registerData) => {
       roleId: roleId,
       name: name,
       email: email,
-      passHash: null,
+      passHash: password,
       profileImage: null,
       isEnabled: false,
       //ne treba staviti default vrijednosti za created i updated at.
     });
 
-    
 
+    return res.status(200).json({
+      message: "User registered successfully!"
+    })
   } catch(error) {
     return res.status(500).json({
       message: ``

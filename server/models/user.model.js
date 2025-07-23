@@ -29,6 +29,8 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       isEnabled: { type: DataTypes.BOOLEAN, defaultValue: true },
+      resetToken: { type: DataTypes.STRING },
+      resetTokenExpiry: { type: DataTypes.DATE },
     },
     {
       sequelize,
