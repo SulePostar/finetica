@@ -29,14 +29,6 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       isEnabled: { type: DataTypes.BOOLEAN, defaultValue: true },
-      roleId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Roles',
-          key: 'id',
-        },
-      },
     },
     {
       sequelize,
