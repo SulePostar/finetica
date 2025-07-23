@@ -29,7 +29,18 @@ const register = async (req, res, next) => {
   }
 };
 
+const logout = (req, res) => {
+  res.clearCookie('accessToken', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'Strict',
+    path: '/',
+  });
+  res.status(200).json({ message: 'Logout successful' });
+};
+
 module.exports = {
   login,
   register,
+  logout,
 };
