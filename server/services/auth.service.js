@@ -1,33 +1,30 @@
-const User = require('../models/user.model');
+const { User } = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
-const JWT_ACCESS_TOKEN_DURATION_HOURS = '1h';
+const { HttpException } = require('../exceptions/HttpException');
 
 const loginUser = async (loginDto) => {
   const { email, password } = loginDto;
 
-  const user = await User.findOne({ where: { email } });
+  const user = await User.findOne({ where: { email }, include: 'role' });
 
   if (!user) {
-    return null;
+    throw new HttpException(401, 'Bad credentials');
   }
 
-  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+  const isPasswordCorrect = await bcrypt.compare(password, user.passHash);
 
   if (!isPasswordCorrect) {
-    return null;
+    throw new HttpException(401, 'Bad credentials');
   }
-
-  const secretKey = process.env.JWT_SECRET_KEY;
 
   const accessToken = jwt.sign(
     {
       email: user.email,
-      id: user.id,
+      role: user.role.name,
     },
-    secretKey,
-    { expiresIn: JWT_ACCESS_TOKEN_DURATION_HOURS }
+    process.env.JWT_ACCESS_TOKEN_SECRET,
+    { expiresIn: process.env.JWT_ACCESS_TOKEN_DURATION_HOURS }
   );
 
   return accessToken;
