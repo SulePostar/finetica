@@ -1,6 +1,6 @@
 const express = require('express');
 const { connectToDatabase } = require('./config/db');
-import authRoutes from './routes/auth.route.js';
+const authRoutes = require('./routes/auth.route');
 require('dotenv').config();
 
 const app = express();
