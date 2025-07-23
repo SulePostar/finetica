@@ -1,6 +1,7 @@
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { HttpException } = require('../exceptions/HttpException');
 
 const loginUser = async (loginDto) => {
   const { email, password } = loginDto;
@@ -8,13 +9,13 @@ const loginUser = async (loginDto) => {
   const user = await User.findOne({ where: { email }, include: 'role' });
 
   if (!user) {
-    return null;
+    throw new HttpException(401, 'Bad credentials');
   }
 
   const isPasswordCorrect = await bcrypt.compare(password, user.passHash);
 
   if (!isPasswordCorrect) {
-    return null;
+    throw new HttpException(401, 'Bad credentials');
   }
 
   const accessToken = jwt.sign(
