@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { HttpException } = require('../exceptions/HttpException');
 
-const SALT_ROUNDS = 10;
+const JWT_ACCESS_TOKEN_DURATION_H = '1h';
 
 const loginUser = async (loginDto) => {
   const { email, password } = loginDto;
@@ -26,54 +26,26 @@ const loginUser = async (loginDto) => {
       role: user.role.name,
     },
     process.env.JWT_ACCESS_TOKEN_SECRET,
-    { expiresIn: process.env.JWT_ACCESS_TOKEN_DURATION_HOURS }
+    { expiresIn: JWT_ACCESS_TOKEN_DURATION_H }
   );
 
   return accessToken;
 };
 
 const registerUser = async (registerData) => {
-  const { email, password } = registerData;
+  const { name, email, password } = registerData;
+  const existingUser = await User.findOne({ where: { email } });
 
-  try {
-    if (typeof email !== 'string' || !email.includes('@')) {
-      return res.status(400).json({ error: 'Invalid email format' });
-    }
-
-    const expectedDomain = 'symphony.is';
-
-    const [localPart, domain] = email.split('@');
-
-    if (domain !== expectedDomain) {
-      return res.status(400).json({ error: `Email must be from @${expectedDomain}` });
-    }
-
-    const parts = localPart.split('.');
-
-    if (parts.length !== 2) {
-      return res.status(400).json({ error: 'Email local part must be in format name.surname' });
-    }
-
-    const [name, surname] = parts;
-
-    const user = await User.create({
-      roleId: roleId,
-      name: name,
-      email: email,
-      passHash: password,
-      profileImage: null,
-      isEnabled: false,
-      //ne treba staviti default vrijednosti za created i updated at.
-    });
-
-    return res.status(200).json({
-      message: 'User registered successfully!',
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: ``,
-    });
+  if (existingUser) {
+    throw new HttpException(400, 'User with this email already exists');
   }
+  const defaultRole = await Role.findOne({ where: { name: 'guest' } });
+  return await User.create({
+    name,
+    email,
+    passHash: password,
+    roleId: defaultRole.id,
+  });
 };
 module.exports = {
   loginUser,
