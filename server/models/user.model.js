@@ -1,5 +1,6 @@
 'use strict';
 const { Model } = require('sequelize');
+const bcrypt = require('bcrypt');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
@@ -7,6 +8,18 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'roleId',
         as: 'role',
       });
+    }
+    toJSON() {
+      const values = this.get();
+
+      delete values.passHash;
+      delete values.resetToken;
+      delete values.resetTokenExpiry;
+      delete values.isEnabled;
+      delete values.createdAt;
+      delete values.updatedAt;
+
+      return values;
     }
   }
   User.init(
@@ -36,6 +49,14 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: 'User',
       underscored: true,
+      hooks: {
+        beforeCreate: async (user) => {
+          if (user.passHash) {
+            const saltRounds = 10;
+            user.passHash = await bcrypt.hash(user.passHash, saltRounds);
+          }
+        },
+      },
     }
   );
   return User;
