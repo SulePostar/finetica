@@ -10,14 +10,14 @@ const login = async (req, res, next) => {
   }
 };
 
-const register = async (req, res, next) => {
-  try {
-    const registerData = req.body;
-    const newUser = await registerUser(registerData);
-    res.status(201).json(newUser);
-  } catch (err) {
-    next(err);
-  }
+const register = async (req, res) => {
+  const registerData = req.body;
+
+  const success = await authService.registerUser(registerData);
+
+  res.status(200).json({
+    message: `Successfully registered user with email ${registerData.email} on role ${registerData.roleId} `,
+  });
 };
 
 module.exports = {

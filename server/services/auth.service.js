@@ -32,15 +32,48 @@ const loginUser = async (loginDto) => {
   return accessToken;
 };
 
-const registerUser = async (registerDto) => {
-  const { name, email, password } = registerDto;
-  const user = await User.findOne({ where: { email } });
-  const defaultRole = await Role.findOne({ where: { name: 'user' } });
-  console.log(defaultRole);
-  if (user) {
-    throw new HttpException(400, 'User with this email already exists');
+const registerUser = async (registerData) => {
+  const { email, password } = registerData;
+
+  try {
+    if (typeof email !== 'string' || !email.includes('@')) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+
+    const expectedDomain = 'symphony.is';
+
+    const [localPart, domain] = email.split('@');
+
+    if (domain !== expectedDomain) {
+      return res.status(400).json({ error: `Email must be from @${expectedDomain}` });
+    }
+
+    const parts = localPart.split('.');
+
+    if (parts.length !== 2) {
+      return res.status(400).json({ error: 'Email local part must be in format name.surname' });
+    }
+
+    const [name, surname] = parts;
+
+    const user = await User.create({
+      roleId: roleId,
+      name: name,
+      email: email,
+      passHash: password,
+      profileImage: null,
+      isEnabled: false,
+      //ne treba staviti default vrijednosti za created i updated at.
+    });
+
+    return res.status(200).json({
+      message: 'User registered successfully!',
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: ``,
+    });
   }
-  return await User.create({ name, email, passHash: password, roleId: defaultRole.id });
 };
 module.exports = {
   loginUser,
