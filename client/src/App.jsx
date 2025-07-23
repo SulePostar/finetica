@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import AppRoutes from './routes/routes';
 import { Button, Alert } from 'react-bootstrap';
 import './App.css';
+
 function App() {
   return (
     <div className="App">
@@ -38,10 +39,5 @@ function App() {
     </div>
   );
 }
+
 export default App;
-
-
-
-
-
-
