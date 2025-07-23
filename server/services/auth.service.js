@@ -1,13 +1,13 @@
-import User from '../models/user.model';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+const User = require('../models/user.model');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const JWT_ACCESS_TOKEN_DURATION_HOURS = '1h';
 
-export const loginUser = async (loginDto) => {
+const loginUser = async (loginDto) => {
   const { email, password } = loginDto;
 
-  const user = User.findOne({ email });
+  const user = await User.findOne({ where: { email } });
 
   if (!user) {
     return null;
@@ -20,13 +20,19 @@ export const loginUser = async (loginDto) => {
   }
 
   const secretKey = process.env.JWT_SECRET_KEY;
+
   const accessToken = jwt.sign(
     {
       email: user.email,
+      id: user.id,
     },
     secretKey,
     { expiresIn: JWT_ACCESS_TOKEN_DURATION_HOURS }
   );
 
   return accessToken;
+};
+
+module.exports = {
+  loginUser,
 };
