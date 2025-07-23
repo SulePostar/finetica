@@ -1,7 +1,9 @@
-const { User } = require('../models');
+const { User, Role } = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { HttpException } = require('../exceptions/HttpException');
+
+const SALT_ROUNDS = 10;
 
 const loginUser = async (loginDto) => {
   const { email, password } = loginDto;
@@ -30,6 +32,17 @@ const loginUser = async (loginDto) => {
   return accessToken;
 };
 
+const registerUser = async (registerDto) => {
+  const { name, email, password } = registerDto;
+  const user = await User.findOne({ where: { email } });
+  const defaultRole = await Role.findOne({ where: { name: 'user' } });
+  console.log(defaultRole);
+  if (user) {
+    throw new HttpException(400, 'User with this email already exists');
+  }
+  return await User.create({ name, email, passHash: password, roleId: defaultRole.id });
+};
 module.exports = {
   loginUser,
+  registerUser,
 };
