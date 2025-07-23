@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      roleId: {
+      role_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
@@ -28,23 +28,23 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
-      passHash: {
+      pass_hash: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      profileImage: {
+      profile_image: {
         type: Sequelize.STRING,
       },
-      isEnabled: {
+      is_enabled: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: true,
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
