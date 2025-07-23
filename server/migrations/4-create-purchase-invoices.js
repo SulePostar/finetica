@@ -3,9 +3,9 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('PurchaseInvoices', {
       id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         primaryKey: true,
-        defaultValue: Sequelize.UUIDV4
+        autoIncrement: true
       },
       vatPeriod: {
         type: Sequelize.STRING

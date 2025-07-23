@@ -4,9 +4,9 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('BusinessPartners', {
       id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         primaryKey: true,
-        defaultValue: Sequelize.literal('gen_random_uuid()'),
+        autoIncrement: true,
         allowNull: false,
       },
       type: {
@@ -17,21 +17,21 @@ module.exports = {
         },
       },
       name: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING,
         allowNull: false,
       },
       short_name: {
         type: Sequelize.TEXT,
       },
       country_code: {
-        type: Sequelize.CHAR(2),
+        type: Sequelize.CHAR(4),
         allowNull: false,
       },
       vat_number: {
         type: Sequelize.STRING(50),
       },
       tax_id: {
-        type: Sequelize.STRING(50),
+        type: Sequelize.STRING(50)
       },
       registration_number: {
         type: Sequelize.STRING(50),
@@ -65,10 +65,10 @@ module.exports = {
         type: Sequelize.STRING(20),
       },
       default_currency: {
-        type: Sequelize.CHAR(3),
+        type: Sequelize.CHAR(4),
       },
       language_code: {
-        type: Sequelize.CHAR(2),
+        type: Sequelize.CHAR(4),
       },
       payment_terms: {
         type: Sequelize.TEXT,

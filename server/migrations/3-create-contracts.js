@@ -4,12 +4,12 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Contracts', {
       id: {
-        type: Sequelize.UUID,
-        defaultValue: Sequelize.literal('gen_random_uuid()'),
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
         primaryKey: true
       },
       partner_id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: 'BusinessPartners',

@@ -4,10 +4,9 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('BankTransactions', {
       id: {
-        type: Sequelize.UUID,
-        primaryKey: true,
-        defaultValue: Sequelize.literal('gen_random_uuid()'),
-        allowNull: false,
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
       },
       date: {
         type: Sequelize.DATEONLY,
@@ -30,7 +29,7 @@ module.exports = {
         type: Sequelize.TEXT,
       },
       purchase_invoice_id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: 'PurchaseInvoices',
@@ -38,7 +37,7 @@ module.exports = {
         },
       },
       sales_invoice_id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: 'SalesInvoices',
@@ -46,7 +45,7 @@ module.exports = {
         },
       },
       partner_id: {
-        type: Sequelize.UUID,
+        type: Sequelize.INTEGER,
         allowNull: true,
         references: {
           model: 'BusinessPartners',
