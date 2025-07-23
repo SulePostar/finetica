@@ -3,9 +3,6 @@ import { Link } from 'react-router-dom';
 import AppRoutes from './routes/routes';
 import { Button, Alert } from 'react-bootstrap';
 import './App.css';
-import { CSpinner, useColorModes } from '@coreui/react'
-import './scss/style.scss'
-
 function App() {
   return (
     <div className="App">
@@ -24,9 +21,7 @@ function App() {
           </div>
         </div>
       </nav>
-
       <AppRoutes />
-
       <div className="container mt-5">
         <Alert variant="info">
           <strong>Testing Navigation:</strong>
@@ -43,5 +38,10 @@ function App() {
     </div>
   );
 }
-
 export default App;
+
+
+
+
+
+
