@@ -2,7 +2,12 @@
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    static associate(models) {}
+    static associate(models) {
+      this.belongsTo(models.Role, {
+        foreignKey: 'roleId',
+        as: 'role',
+      });
+    }
   }
   User.init(
     {
@@ -24,6 +29,14 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       isEnabled: { type: DataTypes.BOOLEAN, defaultValue: true },
+      roleId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Roles',
+          key: 'id',
+        },
+      },
     },
     {
       sequelize,
