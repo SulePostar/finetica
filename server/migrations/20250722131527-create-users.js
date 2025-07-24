@@ -34,21 +34,11 @@ module.exports = {
         allowNull: true,
         defaultValue: null,
         references: {
-          model: 'roles',
+          model: 'user_roles',
           key: 'id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'RESTRICT',
-      },
-      approval_status: {
-        type: Sequelize.ENUM('pending', 'accepted', 'rejected'),
-        allowNull: false,
-        defaultValue: 'pending',
-      },
-      is_active: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
       },
       is_email_verified: {
         type: Sequelize.BOOLEAN,
@@ -85,7 +75,6 @@ module.exports = {
 
     await queryInterface.addIndex('users', ['email']);
     await queryInterface.addIndex('users', ['role_id']);
-    await queryInterface.addIndex('users', ['approval_status']);
     await queryInterface.addIndex('users', ['verification_token']);
     await queryInterface.addIndex('users', ['password_reset_token']);
   },

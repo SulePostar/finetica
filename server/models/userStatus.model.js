@@ -2,39 +2,32 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class Role extends Model {
+  class UserStatus extends Model {
     static associate(models) {
-      Role.hasMany(models.User, {
-        foreignKey: 'role_id',
+      UserStatus.hasMany(models.User, {
+        foreignKey: 'status_id',
         as: 'users',
       });
     }
   }
 
-  Role.init(
+  UserStatus.init(
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      name: {
-        type: DataTypes.ENUM('guest', 'user', 'admin'),
+      status: {
+        type: DataTypes.STRING,
         allowNull: false,
         unique: true,
-        validate: {
-          isIn: [['guest', 'user', 'admin']],
-        },
-      },
-      description: {
-        type: DataTypes.TEXT,
-        allowNull: true,
       },
     },
     {
       sequelize,
-      modelName: 'Role',
-      tableName: 'user_roles',
+      modelName: 'UserStatus',
+      tableName: 'user_statuses',
       underscored: true,
       timestamps: true,
       createdAt: 'created_at',
@@ -42,5 +35,5 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  return Role;
+  return UserStatus;
 };
