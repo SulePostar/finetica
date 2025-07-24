@@ -78,18 +78,58 @@ class AuthService {
         password: credentials.password,
       });
 
-      // Store token and user data
-      if (response.data.success && response.data.token) {
-        this.setAuthData(response.data.token, response.data.user);
+      if (response.data.success) {
+        // Store token and user data
+        if (response.data.data && response.data.data.token) {
+          this.setAuthData(response.data.data.token, response.data.data.user);
+        }
+
+        return {
+          success: true,
+          message: response.data.message,
+          user: response.data.data.user,
+          token: response.data.data.token,
+        };
+      } else {
+        return {
+          success: false,
+          message: response.data.message || 'Login failed',
+          errors: response.data.errors,
+        };
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+
+      // Handle different HTTP status codes
+      if (error.response?.status === 401) {
+        return {
+          success: false,
+          message: error.response.data.message || 'Invalid credentials',
+        };
       }
 
-      return response.data;
-    } catch (error) {
-      throw this.handleError(error);
-    }
-  }
+      if (error.response?.status === 400) {
+        return {
+          success: false,
+          message: error.response.data.message || 'Invalid login data',
+          errors: error.response.data.errors,
+        };
+      }
 
-  // Logout user
+      if (error.response?.data) {
+        return {
+          success: false,
+          message: error.response.data.message || 'Login failed',
+          errors: error.response.data.errors,
+        };
+      }
+
+      return {
+        success: false,
+        message: 'Network error. Please try again.',
+      };
+    }
+  } // Logout user
   async logout() {
     try {
       await api.post('/auth/logout');

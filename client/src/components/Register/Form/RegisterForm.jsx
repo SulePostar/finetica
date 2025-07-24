@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { CForm, CInputGroup, CInputGroupText, CFormInput, CButton, CAlert } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilUser, cilEnvelopeClosed, cilLockLocked, cilContact } from '@coreui/icons';
@@ -208,6 +209,15 @@ const RegisterForm = () => {
           <CButton type="submit" className="register-form-button" disabled={loading}>
             {loading ? 'Creating Account...' : 'Create Account'}
           </CButton>
+
+          <div className="register-form-login-link">
+            <p>
+              Already have an account?{' '}
+              <Link to="/login" className="register-form-link">
+                Sign in here
+              </Link>
+            </p>
+          </div>
         </CForm>
       </div>
     </div>
