@@ -1,16 +1,12 @@
 const { Sequelize } = require('sequelize');
 const config = require('./config.js')['development'];
 
-const sequelize = new Sequelize(
-  config.database,
-  config.username,
-  config.password,
-  {
-    host: config.host,
-    dialect: config.dialect,
-    logging: config.logging,
-  }
-);
+const sequelize = new Sequelize(config.database, config.username, config.password, {
+  host: config.host,
+  dialect: config.dialect,
+  logging: config.logging,
+  port: process.env.DB_PORT || 5432, // Default to 5432 if not specified in .env
+});
 
 const connectToDatabase = async () => {
   try {
