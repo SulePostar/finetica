@@ -70,30 +70,39 @@ export const registerFormCSS = `
   
   .register-form-card {
     width: 100%;
-    max-width: 400px;
+    max-width: 600px;
     background-color: #2d3748;
     border: none;
-    border-radius: 12px;
+    border-radius: 16px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    padding: 40px;
+    padding: 50px;
+    transition: all 0.3s ease;
   }
   
   .register-form-header {
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 32px;
   }
   
   .register-form-title {
     color: #fff;
-    font-size: 28px;
+    font-size: 36px;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
   }
   
   .register-form-subtitle {
     color: #a0aec0;
     opacity: 0.75;
-    font-size: 16px;
+    font-size: 18px;
+  }
+  
+  .register-form .mb-3 {
+    margin-bottom: 24px !important;
+  }
+  
+  .register-form .mb-4 {
+    margin-bottom: 32px !important;
   }
   
   .register-form input::placeholder {
@@ -114,6 +123,11 @@ export const registerFormCSS = `
     color: #a0aec0 !important;
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
+    padding: 16px !important;
+    width: 60px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
   
   .register-form .form-control {
@@ -122,16 +136,125 @@ export const registerFormCSS = `
     color: #fff !important;
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
+    padding: 16px 20px !important;
+    font-size: 16px !important;
+    height: auto !important;
   }
   
   .register-form-button {
     background-color: #48bb78 !important;
     border: none !important;
-    border-radius: 8px !important;
-    padding: 12px 0 !important;
-    font-weight: 500 !important;
-    font-size: 16px !important;
+    border-radius: 12px !important;
+    padding: 16px 0 !important;
+    font-weight: 600 !important;
+    font-size: 18px !important;
     width: 100% !important;
+    margin-top: 16px !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  .register-form-button:hover:not(:disabled) {
+    background-color: #38a169 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 8px 25px rgba(72, 187, 120, 0.3) !important;
+  }
+  
+  .register-form-button:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .register-form-container {
+      padding: 16px;
+    }
+    
+    .register-form-card {
+      max-width: 100%;
+      padding: 32px 24px;
+      border-radius: 12px;
+    }
+    
+    .register-form-title {
+      font-size: 28px;
+    }
+    
+    .register-form-subtitle {
+      font-size: 16px;
+    }
+    
+    .register-form .input-group-text {
+      padding: 14px !important;
+      width: 50px !important;
+    }
+    
+    .register-form .form-control {
+      padding: 14px 16px !important;
+      font-size: 16px !important;
+    }
+    
+    .register-form-button {
+      padding: 14px 0 !important;
+      font-size: 16px !important;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .register-form-container {
+      padding: 12px;
+    }
+    
+    .register-form-card {
+      padding: 24px 20px;
+      border-radius: 8px;
+    }
+    
+    .register-form-title {
+      font-size: 24px;
+    }
+    
+    .register-form-subtitle {
+      font-size: 14px;
+    }
+    
+    .register-form .mb-3 {
+      margin-bottom: 20px !important;
+    }
+    
+    .register-form .mb-4 {
+      margin-bottom: 24px !important;
+    }
+    
+    .register-form .input-group-text {
+      padding: 12px !important;
+      width: 45px !important;
+    }
+    
+    .register-form .form-control {
+      padding: 12px 14px !important;
+      font-size: 14px !important;
+    }
+    
+    .register-form-button {
+      padding: 12px 0 !important;
+      font-size: 14px !important;
+    }
+  }
+  
+  @media (min-width: 1200px) {
+    .register-form-card {
+      max-width: 650px;
+      padding: 60px;
+    }
+    
+    .register-form-title {
+      font-size: 42px;
+    }
+    
+    .register-form-subtitle {
+      font-size: 20px;
+    }
   }
 `;
 
