@@ -14,12 +14,17 @@ const _nav = [
   {
     component: CNavItem,
     name: 'KIF',
-    to: '/',
+    to: '/kif',
   },
   {
     component: CNavItem,
     name: 'KUF',
-    to: '/',
+    to: '/kuf',
+  },
+  {
+    component: CNavItem,
+    name: 'VAT',
+    to: '/vat',
   },
 ];
 
