@@ -1,7 +1,5 @@
-import AppContent from './AppContent';
-import AppHeader from './AppHeader';
-import AppSidebar from './AppSidebar';
+import AppHeader from './AppHeader.jsx';
+import AppSidebar from './AppSidebar.jsx';
+import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
 
-import AppHeaderDropdown from './header/AppHeaderDropdown';
-
-export { AppContent, AppHeader, AppHeaderDropdown, AppSidebar };
+export { AppHeader, AppHeaderDropdown, AppSidebar };
