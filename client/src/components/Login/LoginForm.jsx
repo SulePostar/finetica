@@ -139,7 +139,7 @@ const LoginForm = () => {
 
                                 <div className="text-end mb-4">
                                     <Link
-                                        to="/forgot-password"
+                                        to="/error500"
                                         className="text-decoration-none"
                                         style={loginFormStyles.forgotLink}
                                     >
