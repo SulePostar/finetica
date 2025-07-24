@@ -11,5 +11,5 @@ app.use(express.json());
 connectToDatabase();
 
 app.listen(PORT, () => {
-  console.log(`:large_green_circle: Server is running at port: ${PORT}`);
+  console.log(`Server is running at port: ${PORT}`);
 });
