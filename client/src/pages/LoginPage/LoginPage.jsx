@@ -1,6 +1,3 @@
-// src/pages/LoginPage.jsx
-
-import React from 'react'
 import LoginForm from './../../components/Login/LoginForm'
 import logo from './../../assets/images/Symphony_transparent_1.png'
 
@@ -22,9 +19,9 @@ const LoginPage = () => {
                     src={logo}
                     alt="Symphony Logo"
                     style={{
-                        width: '300px',
-                        maxWidth: '400%',
-                        marginBottom: '4rem',
+                        width: '500px',
+                        maxWidth: '500%',
+                        marginBottom: '6rem',
                     }}
                 />
 
