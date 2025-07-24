@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const authorizeRole = require('../middleware/authMiddleware');
+const authorizeAdmin = require('../middleware/authMiddleware');
 
-router.get('/admin', authorizeRole, (req, res) => {
-    res.json({ message: `Dobrodošao, admin ${req.user.id}!` });
+router.get('/admin', authorizeAdmin, (req, res) => {
+    res.json({ message: `Welcome, admin` });
 });
 
 module.exports = router;
