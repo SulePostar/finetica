@@ -1,56 +1,32 @@
 {
-  "name": "@coreui/coreui-free-react-admin-template",
-  "version": "5.4.0",
-  "description": "CoreUI Free React Admin Template",
-  "homepage": ".",
-  "bugs": {
-    "url": "https://github.com/coreui/coreui-free-react-admin-template/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:coreui/coreui-free-react-admin-template.git"
-  },
-  "license": "MIT",
-  "author": "The CoreUI Team (https://github.com/orgs/coreui/people)",
+  "name": "client",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
+    "dev": "vite",
     "build": "vite build",
-    "lint": "eslint",
-    "serve": "vite preview",
-    "start": "vite"
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@coreui/chartjs": "^4.1.0",
-    "@coreui/coreui": "^5.3.1",
-    "@coreui/icons": "^3.0.1",
-    "@coreui/icons-react": "^2.3.0",
-    "@coreui/react": "^5.5.0",
-    "@coreui/react-chartjs": "^3.0.0",
-    "@coreui/utils": "^2.0.2",
-    "@popperjs/core": "^2.11.8",
-    "axios": "^1.11.0",
-    "chart.js": "^4.4.7",
-    "classnames": "^2.5.1",
-    "core-js": "^3.40.0",
-    "prop-types": "^15.8.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "@reduxjs/toolkit": "^2.8.2",
+    "bootstrap": "^5.3.7",
+    "react": "^19.1.0",
+    "react-bootstrap": "^2.10.10",
+    "react-dom": "^19.1.0",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^7.1.5",
-    "redux": "5.0.1",
-    "simplebar-react": "^3.3.0"
+    "react-router-dom": "^7.7.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
-    "autoprefixer": "^10.4.20",
-    "eslint": "^9.20.1",
-    "eslint-config-prettier": "^10.0.1",
-    "eslint-plugin-prettier": "^5.2.3",
-    "eslint-plugin-react": "^7.37.4",
-    "eslint-plugin-react-hooks": "^5.1.0",
-    "globals": "^15.15.0",
-    "postcss": "^8.5.2",
-    "prettier": "3.5.1",
-    "sass": "^1.85.0",
-    "vite": "^6.1.0"
+    "@eslint/js": "^9.30.1",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.6.0",
+    "eslint": "^9.30.1",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "vite": "^7.0.4"
   }
 }
