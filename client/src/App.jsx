@@ -1,44 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { Button, Alert } from 'react-bootstrap';
+import React, { Suspense, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 
-function App() {
-  const [count, setCount] = useState(0)
+import { CSpinner, CContainer, useColorModes } from '@coreui/react';
+
+import './scss/style.scss';
+import './scss/examples.scss';
+
+const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'));
+
+const App = () => {
+  const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme');
+  const storedTheme = useSelector((state) => state.theme);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.href.split('?')[1]);
+    const theme = urlParams.get('theme')?.match(/^[A-Za-z0-9\s]+/)?.[0];
+    if (theme) {
+      setColorMode(theme);
+    }
+
+    if (!isColorModeSet()) {
+      setColorMode(storedTheme);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-      <div className="container mt-5">
-      <h1 className="text-primary">Bootstrap works! 🎉</h1>
-      <button className="btn btn-success">Click me</button>
-    </div>
-    <div className="container mt-5">
-      <Alert variant="info">React-Bootstrap works! 🚀</Alert>
-      <Button variant="primary">Click me</Button>
-    </div>
-    </>
-  )
-}
+    <HashRouter>
+      <Suspense
+        fallback={
+          <CContainer className="pt-3 text-center" fluid>
+            <CSpinner color="primary" variant="grow" />
+          </CContainer>
+        }
+      >
+        <Routes>
+          <Route path="*" name="Home" element={<DefaultLayout />} />
+        </Routes>
+      </Suspense>
+    </HashRouter>
+  );
+};
 
-export default App
+export default App;
