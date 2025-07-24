@@ -1,7 +1,6 @@
 const authService = require('../services/auth.service');
 
 class AuthController {
- 
   async login(req, res) {
     try {
       const result = await authService.login(req.body);
@@ -20,7 +19,6 @@ class AuthController {
     }
   }
 
- 
   async register(req, res) {
     try {
       const result = await authService.register(req.body);
@@ -39,7 +37,6 @@ class AuthController {
     }
   }
 
- 
   async getProfile(req, res) {
     try {
       const result = await authService.getProfile(req.user.id);
@@ -58,7 +55,6 @@ class AuthController {
     }
   }
 
- 
   async refreshToken(req, res) {
     try {
       const result = await authService.refreshToken(req.user.id);
@@ -77,10 +73,8 @@ class AuthController {
     }
   }
 
- 
   async logout(req, res) {
     try {
-     
       return res.status(200).json({
         success: true,
         message: 'Logout successful. Please remove the token from client storage.',
@@ -94,7 +88,6 @@ class AuthController {
     }
   }
 
- 
   async getPendingUsers(req, res) {
     try {
       const result = await authService.getPendingUsers();
@@ -114,7 +107,7 @@ class AuthController {
   }
 
  
-  async approveUser(req, res) {
+  async _handleUserAction(req, res, action, actionName) {
     try {
       const { userId } = req.params;
 
@@ -125,7 +118,7 @@ class AuthController {
         });
       }
 
-      const result = await authService.approveUser(userId);
+      const result = await action(userId);
 
       if (result.success) {
         return res.status(200).json(result);
@@ -133,40 +126,32 @@ class AuthController {
         return res.status(400).json(result);
       }
     } catch (error) {
-      console.error('Approve user controller error:', error);
+      console.error(`${actionName} controller error:`, error);
       return res.status(500).json({
         success: false,
-        message: 'Server error while approving user',
+        message: `Server error while ${actionName.toLowerCase()}`,
       });
     }
   }
 
  
+  async approveUser(req, res) {
+    return this._handleUserAction(
+      req,
+      res,
+      authService.approveUser.bind(authService),
+      'Approve user'
+    );
+  }
+
+ 
   async rejectUser(req, res) {
-    try {
-      const { userId } = req.params;
-
-      if (!userId) {
-        return res.status(400).json({
-          success: false,
-          message: 'User ID is required',
-        });
-      }
-
-      const result = await authService.rejectUser(userId);
-
-      if (result.success) {
-        return res.status(200).json(result);
-      } else {
-        return res.status(400).json(result);
-      }
-    } catch (error) {
-      console.error('Reject user controller error:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Server error while rejecting user',
-      });
-    }
+    return this._handleUserAction(
+      req,
+      res,
+      authService.rejectUser.bind(authService),
+      'Reject user'
+    );
   }
 }
 
