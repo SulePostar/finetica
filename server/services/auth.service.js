@@ -4,8 +4,15 @@ const LoginUserDTO = require('../dto/auth/requests/LoginUserDTO');
 const RegisterUserDTO = require('../dto/auth/requests/RegisterUserDTO');
 
 class AuthService {
-  generateToken(userId) {
-    return jwt.sign({ userId }, process.env.JWT_SECRET, {
+  generateToken(userId, roleId = null, roleName = null) {
+    const payload = { userId };
+
+    if (roleId && roleName) {
+      payload.roleId = roleId;
+      payload.roleName = roleName;
+    }
+
+    return jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN || '24h',
     });
   }
@@ -50,7 +57,7 @@ class AuthService {
 
       if (user.approval_status !== 'accepted') {
         const statusMessages = {
-          pending: 'Account is pending admin approval',
+          pending: 'Account is pending admin approval and cannot login',
           rejected: 'Account has been rejected by admin',
         };
 
@@ -71,7 +78,7 @@ class AuthService {
 
       await user.update({ last_login_at: new Date() });
 
-      const token = this.generateToken(user.id);
+      const token = this.generateToken(user.id, user.role?.id, user.role?.name);
 
       const userResponse = user.toJSON();
       delete userResponse.password_hash;
@@ -140,7 +147,20 @@ class AuthService {
         ],
       });
 
-      const token = this.generateToken(user.id);
+      // Don't provide JWT token for pending users
+      if (userWithRole.approval_status === 'pending') {
+        return {
+          success: true,
+          message: 'Registration successful. Your account is pending admin approval.',
+          data: {
+            user: userWithRole,
+            // No token provided for pending users
+          },
+        };
+      }
+
+      // Only provide token if user is already accepted (shouldn't happen with current flow, but keeping for safety)
+      const token = this.generateToken(user.id, userWithRole.role?.id, userWithRole.role?.name);
 
       return {
         success: true,
@@ -201,7 +221,15 @@ class AuthService {
 
   async refreshToken(userId) {
     try {
-      const user = await User.findByPk(userId);
+      const user = await User.findByPk(userId, {
+        include: [
+          {
+            model: Role,
+            as: 'role',
+            attributes: ['id', 'name', 'description'],
+          },
+        ],
+      });
 
       if (!user || !user.is_active) {
         return {
@@ -210,7 +238,15 @@ class AuthService {
         };
       }
 
-      const token = this.generateToken(userId);
+      // Check approval status for refresh token as well
+      if (user.approval_status !== 'accepted') {
+        return {
+          success: false,
+          message: 'Account is not approved',
+        };
+      }
+
+      const token = this.generateToken(userId, user.role?.id, user.role?.name);
 
       return {
         success: true,
@@ -225,7 +261,6 @@ class AuthService {
     }
   }
 
- 
   async getPendingUsers() {
     try {
       const pendingUsers = await User.findAll({

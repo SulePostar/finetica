@@ -81,7 +81,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       role_id: {
         type: DataTypes.INTEGER,
-        allowNull: true, // Changed to allow null
+        allowNull: true, 
         defaultValue: null,
         references: {
           model: 'roles',
