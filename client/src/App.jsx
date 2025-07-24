@@ -1,13 +1,12 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { HashRouter } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { HashRouter, Route, Routes } from 'react-router-dom';
-
-import { CSpinner, CContainer, useColorModes } from '@coreui/react';
+import { useColorModes } from '@coreui/react';
 
 import './scss/style.scss';
 import './scss/examples.scss';
 
-const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'));
+import AppRoutes from './routes/AppRoutes';
 
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme');
@@ -27,17 +26,7 @@ const App = () => {
 
   return (
     <HashRouter>
-      <Suspense
-        fallback={
-          <CContainer className="pt-3 text-center" fluid>
-            <CSpinner color="primary" variant="grow" />
-          </CContainer>
-        }
-      >
-        <Routes>
-          <Route path="*" name="Home" element={<DefaultLayout />} />
-        </Routes>
-      </Suspense>
+      <AppRoutes />
     </HashRouter>
   );
 };
