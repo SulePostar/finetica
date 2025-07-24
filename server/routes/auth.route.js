@@ -3,6 +3,7 @@ const { login, register, logout } = require('../controllers/auth.controller');
 const { validationMiddleware } = require('../middleware/validation.middleware');
 const { loginSchema, registerSchema } = require('../schemas/auth.schemas');
 const { authenticationMiddleware } = require('../middleware/authentication.middleware');
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 

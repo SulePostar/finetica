@@ -7,7 +7,6 @@ const cors = require('cors');
 
 require('dotenv').config();
 
-// const authRoutes = require('./routes/authRoutes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -20,7 +19,6 @@ app.use(cors(corsOptions));
 
 app.use(cookieParser());
 app.use(express.json());
-// app.use('/api/auth', authRoutes); // api/auth/verify-token
 
 app.use('/api/auth', authRoutes);
 
