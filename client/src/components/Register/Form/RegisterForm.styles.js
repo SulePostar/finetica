@@ -1,49 +1,26 @@
+// Color Palette Documentation
+// Primary Purple Theme: #5b3cc4 (buttons, links, focus)
+// Primary Purple Hover: #553c9a (button hover)
+// Background Gradient: linear-gradient(to right, #dbd9e3ff, #a294ebff)
+// Card Background: #ffffff
+// Text Colors: #2d3748 (primary), #718096 (secondary), #a0aec0 (placeholder)
+// Input Background: #f7fafc
+// Borders: #e2e8f0 (light), #d1d5db (medium)
+// Alert Colors: Error(#fed7d7, #9b2c2c), Success(#c6f6d5, #276749)
+
+import { colors } from '../../../styles/colors';
+
+// Inline styles object for RegisterForm component
 export const registerFormStyles = {
-  container: {
-    minHeight: '100vh',
-    backgroundColor: '#1a202c',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '20px',
-  },
-  card: {
-    width: '100%',
-    maxWidth: '400px',
-    backgroundColor: '#2d3748',
-    border: 'none',
-    borderRadius: '12px',
-    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-    padding: '40px',
-  },
-  title: {
-    fontSize: '28px',
-    fontWeight: '600',
-    color: '#fff',
-    marginBottom: '8px',
-  },
-  subtitle: {
-    fontSize: '16px',
-    color: '#a0aec0',
-    opacity: 0.75,
-  },
   inputGroupText: {
-    backgroundColor: '#4a5568',
-    border: 'none',
-    color: '#a0aec0',
-    borderRight: '1px solid #cbd5e0',
+    backgroundColor: colors.lightGray,
+    border: `1px solid ${colors.borderLight}`,
+    borderRight: `2px solid ${colors.borderMedium}`,
+    color: colors.primary,
   },
   icon: {
     width: '16px',
     height: '16px',
-  },
-  button: {
-    backgroundColor: '#48bb78',
-    border: 'none',
-    borderRadius: '8px',
-    padding: '12px 0',
-    fontWeight: '500',
-    fontSize: '16px',
   },
 };
 
@@ -59,7 +36,7 @@ export const registerFormCSS = `
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(to right, #dbd9e3ff, #a294ebff);
+    background: ${colors.registerGradient};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -71,7 +48,7 @@ export const registerFormCSS = `
   .register-form-card {
     width: 100%;
     max-width: 600px;
-    background-color: #ffffff;
+    background-color: ${colors.white};
     border: none;
     border-radius: 24px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
@@ -85,14 +62,14 @@ export const registerFormCSS = `
   }
   
   .register-form-title {
-    color: #2d3748;
+    color: ${colors.textPrimary};
     font-size: 36px;
     font-weight: 600;
     margin-bottom: 12px;
   }
   
   .register-form-subtitle {
-    color: #718096;
+    color: ${colors.textSecondary};
     opacity: 0.8;
     font-size: 18px;
   }
@@ -106,21 +83,21 @@ export const registerFormCSS = `
   }
   
   .register-form input::placeholder {
-    color: #a0aec0 !important;
+    color: ${colors.textPlaceholder} !important;
     opacity: 1;
   }
   
   .register-form input:focus {
-    box-shadow: 0 0 0 0.2rem rgba(91, 60, 196, 0.25) !important;
-    background-color: #f7fafc !important;
-    border-color: #5b3cc4 !important;
+    box-shadow: 0 0 0 0.2rem ${colors.focus} !important;
+    background-color: ${colors.lightGray} !important;
+    border-color: ${colors.primary} !important;
   }
   
   .register-form .input-group-text {
-    background-color: #f7fafc !important;
-    border: 1px solid #e2e8f0 !important;
-    border-right: 2px solid #d1d5db !important;
-    color: #5b3cc4 !important;
+    background-color: ${colors.lightGray} !important;
+    border: 1px solid ${colors.borderLight} !important;
+    border-right: 2px solid ${colors.borderMedium} !important;
+    color: ${colors.primary} !important;
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     padding: 16px !important;
@@ -131,10 +108,10 @@ export const registerFormCSS = `
   }
   
   .register-form .form-control {
-    background-color: #f7fafc !important;
-    border: 1px solid #e2e8f0 !important;
+    background-color: ${colors.lightGray} !important;
+    border: 1px solid ${colors.borderLight} !important;
     border-left: none !important;
-    color: #2d3748 !important;
+    color: ${colors.textPrimary} !important;
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
     padding: 16px 20px !important;
@@ -148,7 +125,7 @@ export const registerFormCSS = `
   }
   
   .register-form-button {
-    background-color: #5b3cc4 !important;
+    background-color: ${colors.primary} !important;
     border: none !important;
     border-radius: 12px !important;
     padding: 16px 0 !important;
@@ -157,13 +134,13 @@ export const registerFormCSS = `
     width: 100% !important;
     margin-top: 16px !important;
     transition: all 0.2s ease !important;
-    color: white !important;
+    color: ${colors.white} !important;
   }
   
   .register-form-button:hover:not(:disabled) {
-    background-color: #553c9a !important;
+    background-color: ${colors.primaryHover} !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 8px 25px rgba(91, 60, 196, 0.3) !important;
+    box-shadow: 0 8px 25px ${colors.buttonHoverShadow} !important;
   }
   
   .register-form-button:disabled {
@@ -175,24 +152,24 @@ export const registerFormCSS = `
     text-align: center !important;
     margin-top: 24px !important;
     padding-top: 20px !important;
-    border-top: 1px solid #e2e8f0 !important;
+    border-top: 1px solid ${colors.borderLight} !important;
   }
   
   .register-form-login-link p {
-    color: #718096 !important;
+    color: ${colors.textSecondary} !important;
     font-size: 16px !important;
     margin: 0 !important;
   }
   
   .register-form-link {
-    color: #5b3cc4 !important;
+    color: ${colors.primary} !important;
     text-decoration: none !important;
     font-weight: 600 !important;
     transition: all 0.2s ease !important;
   }
   
   .register-form-link:hover {
-    color: #553c9a !important;
+    color: ${colors.primaryHover} !important;
     text-decoration: underline !important;
   }
   
@@ -203,13 +180,13 @@ export const registerFormCSS = `
   }
   
   .register-form .alert-danger {
-    background-color: #fed7d7 !important;
-    color: #9b2c2c !important;
+    background-color: ${colors.error.background} !important;
+    color: ${colors.error.text} !important;
   }
   
   .register-form .alert-success {
-    background-color: #c6f6d5 !important;
-    color: #276749 !important;
+    background-color: ${colors.success.background} !important;
+    color: ${colors.success.text} !important;
   }
   
   /* Responsive Design */
