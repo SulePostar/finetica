@@ -1,40 +1,34 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import AppRoutes from './routes/routes';
-import { Button, Alert } from 'react-bootstrap';
-import './App.css';
+import React, { useEffect } from 'react';
+import { HashRouter } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useColorModes } from '@coreui/react';
 
-function App() {
-  const location = useLocation();
+import './scss/style.scss';
+import './scss/examples.scss';
 
-  // Hide navbar on login and register pages
-  const hideNavbar = location.pathname === '/login' || location.pathname === '/register';
+import AppRoutes from './routes/AppRoutes';
+
+const App = () => {
+  const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme');
+  const storedTheme = useSelector((state) => state.theme);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.href.split('?')[1]);
+    const theme = urlParams.get('theme')?.match(/^[A-Za-z0-9\s]+/)?.[0];
+    if (theme) {
+      setColorMode(theme);
+    }
+
+    if (!isColorModeSet()) {
+      setColorMode(storedTheme);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="App">
-      {!hideNavbar && (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light mb-4">
-          <div className="container">
-            <Link className="navbar-brand" to="/">
-              Finetica
-            </Link>
-            <div className="navbar-nav">
-              <Link className="nav-link" to="/">
-                Home
-              </Link>
-              <Link className="nav-link" to="/register">
-                Register
-              </Link>
-              <Link className="nav-link" to="/login">
-                Login
-              </Link>
-            </div>
-          </div>
-        </nav>
-      )}
+    <HashRouter>
       <AppRoutes />
-    </div>
+    </HashRouter>
   );
-}
+};
 
 export default App;
