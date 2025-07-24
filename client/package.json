@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
+    "axios": "^1.11.0",
     "bootstrap": "^5.3.7",
+    "jwt-decode": "^4.0.0",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.1.0",
