@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET || 'secret123';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Function to authorize admin users
 module.exports = function authorizeAdmin(req, res, next) {
