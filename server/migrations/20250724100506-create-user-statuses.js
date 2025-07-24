@@ -2,21 +2,17 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('user_roles', {
+    await queryInterface.createTable('user_statuses', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      name: {
-        type: Sequelize.ENUM('guest', 'user', 'admin'),
+      status: {
+        type: Sequelize.STRING,
         allowNull: false,
         unique: true,
-      },
-      description: {
-        type: Sequelize.TEXT,
-        allowNull: true,
       },
       created_at: {
         allowNull: false,
@@ -29,9 +25,11 @@ module.exports = {
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
     });
+
+    await queryInterface.addIndex('user_statuses', ['status']);
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('user_roles');
+    await queryInterface.dropTable('user_statuses');
   },
 };

@@ -33,21 +33,34 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     isPending() {
-      return this.approval_status === 'pending';
+      const status = this.UserStatus || this.user_status;
+      return status && status.status === 'pending';
     }
 
-    isAccepted() {
-      return this.approval_status === 'accepted';
+    isApproved() {
+      const status = this.UserStatus || this.user_status;
+      return status && status.status === 'approved';
     }
 
     isRejected() {
-      return this.approval_status === 'rejected';
+      const status = this.UserStatus || this.user_status;
+      return status && status.status === 'rejected';
+    }
+
+    isDeleted() {
+      const status = this.UserStatus || this.user_status;
+      return status && status.status === 'deleted';
     }
 
     static associate(models) {
       User.belongsTo(models.Role, {
         foreignKey: 'role_id',
         as: 'role',
+      });
+
+      User.belongsTo(models.UserStatus, {
+        foreignKey: 'status_id',
+        as: 'user_status',
       });
     }
   }
@@ -84,19 +97,18 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true, 
         defaultValue: null,
         references: {
-          model: 'roles',
+          model: 'user_roles',
           key: 'id',
         },
       },
-      approval_status: {
-        type: DataTypes.ENUM('pending', 'accepted', 'rejected'),
+      status_id: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: 'pending',
-      },
-      is_active: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
+        defaultValue: 1, // Default to 'pending' status
+        references: {
+          model: 'user_statuses',
+          key: 'id',
+        },
       },
       is_email_verified: {
         type: DataTypes.BOOLEAN,
@@ -148,6 +160,11 @@ module.exports = (sequelize, DataTypes) => {
             as: 'role',
             attributes: ['id', 'name', 'description'],
           },
+          {
+            model: sequelize.models.UserStatus,
+            as: 'user_status',
+            attributes: ['id', 'status'],
+          },
         ],
       },
       scopes: {
@@ -159,7 +176,13 @@ module.exports = (sequelize, DataTypes) => {
           include: [],
         },
         active: {
-          where: { is_active: true },
+          include: [
+            {
+              model: sequelize.models.UserStatus,
+              as: 'user_status',
+              where: { status: 'approved' },
+            },
+          ],
         },
         verified: {
           where: { is_email_verified: true },
