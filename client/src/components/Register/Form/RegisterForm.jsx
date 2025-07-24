@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { CForm, CInputGroup, CInputGroupText, CFormInput, CButton, CAlert } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilUser, cilEnvelopeClosed, cilLockLocked, cilContact } from '@coreui/icons';
@@ -7,6 +7,7 @@ import { injectRegisterFormStyles, registerFormStyles } from './RegisterForm.sty
 import { authService } from '../../../services';
 
 const RegisterForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -74,7 +75,7 @@ const RegisterForm = () => {
       });
 
       if (result.success) {
-        setSuccess('Registration successful! You are now logged in.');
+        setSuccess('Registration successful! Redirecting to login page...');
         // Reset form
         setFormData({
           firstName: '',
@@ -84,9 +85,9 @@ const RegisterForm = () => {
           confirmPassword: '',
         });
 
-        // Redirect to dashboard or home page after a delay
+        // Redirect to login page after a delay to show success message
         setTimeout(() => {
-          window.location.href = '/';
+          navigate('/login');
         }, 2000);
       } else {
         // Handle validation errors or other backend errors

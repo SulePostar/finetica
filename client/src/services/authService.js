@@ -18,15 +18,11 @@ class AuthService {
       console.log('Registration response:', response.data);
 
       if (response.data.success) {
-        // Store token and user data
-        localStorage.setItem('authToken', response.data.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.data.user));
-
+        // Registration successful - don't auto-login, let user login manually
         return {
           success: true,
           message: response.data.message,
           user: response.data.data.user,
-          token: response.data.data.token,
         };
       } else {
         return {
