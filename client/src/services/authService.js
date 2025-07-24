@@ -1,4 +1,6 @@
 import api from './api';
+import { store } from '../store/store';
+import { login as loginAction, logout as logoutAction } from '../store/userSlice';
 
 class AuthService {
   // Register a new user
@@ -76,9 +78,11 @@ class AuthService {
 
       if (response.data.success) {
         // Store token and user data
-        if (response.data.data && response.data.data.token) {
-          this.setAuthData(response.data.data.token, response.data.data.user);
-        }
+        // Store token separately (not persisted by Redux)
+        localStorage.setItem('authToken', response.data.data.token);
+        
+        // Use Redux action to store user (this will be persisted automatically)
+        store.dispatch(loginAction(response.data.data.user));
 
         return {
           success: true,
@@ -127,16 +131,18 @@ class AuthService {
     }
   } // Logout user
   async logout() {
-    try {
-      await api.post('/auth/logout');
-    } catch (error) {
-      // Continue with logout even if API call fails
-      console.error('Logout API error:', error);
-    } finally {
-      // Clear local storage
-      this.clearAuthData();
-    }
+  try {
+    await api.post('/auth/logout');
+  } catch (error) {
+    // Continue with logout even if API call fails
+    console.error('Logout API error:', error);
+  } finally {
+    // Use Redux action to clear user (this will update persistence automatically)
+    store.dispatch(logoutAction());
+    // Clear token separately
+    localStorage.removeItem('authToken');
   }
+}
 
   // Get current user profile
   async getProfile() {
@@ -228,7 +234,7 @@ class AuthService {
   // Check if user is authenticated
   isAuthenticated() {
     const token = localStorage.getItem('authToken');
-    const user = localStorage.getItem('user');
+    const user = store.getState().user.user; // Get from Redux instead
     return !!(token && user);
   }
 
@@ -239,20 +245,19 @@ class AuthService {
 
   // Get stored user data
   getUser() {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    return store.getState().user.user;
   }
 
   // Set auth data in localStorage
   setAuthData(token, user) {
     localStorage.setItem('authToken', token);
-    localStorage.setItem('user', JSON.stringify(user));
+    store.dispatch(loginAction(user));
   }
 
   // Clear auth data from localStorage
   clearAuthData() {
     localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
+    store.dispatch(logoutAction()); 
   }
 
   // Handle API errors
