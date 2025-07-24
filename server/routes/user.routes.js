@@ -9,12 +9,8 @@ const {
   deleteUserByAdmin,
   getUserByEmail,
 } = require("../controllers/user.controller.js");
-const { authMiddleware } = require("../middleware/auth.middleware.js");
-const { authorizeRoles } = require("../middleware/role.middleware.js");
 
 const router = express.Router();
-
-router.use(authMiddleware);
 
 router.get("/me", getMyProfile);
 

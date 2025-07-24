@@ -1,4 +1,4 @@
-const { User, Role } = require('../models');
+const { User, Role, UserStatus } = require('../models');
 
 const getAllUsers = async () => {
   return await User.findAll({
@@ -7,6 +7,11 @@ const getAllUsers = async () => {
         model: Role,
         as: 'role',
         attributes: ['id', 'name', 'description'],
+      },
+      {
+        model: UserStatus,
+        as: 'user_status',
+        attributes: ['id', 'status'],
       },
     ],
   });
@@ -19,6 +24,11 @@ const getUserById = async (id) => {
         model: Role,
         as: 'role',
         attributes: ['id', 'name', 'description'],
+      },
+      {
+        model: UserStatus,
+        as: 'user_status',
+        attributes: ['id', 'status'],
       },
     ],
   });
@@ -61,18 +71,33 @@ const updateUser = async (id, dto, isAdmin = false) => {
       }
       user.role_id = dto.role_id;
     }
-    if (dto.is_active !== undefined) user.is_active = dto.is_active;
+    // Updated to use status_id instead of is_active
+    if (dto.status_id !== undefined) {
+      // Validate status exists if status_id is provided
+      if (dto.status_id !== null) {
+        const status = await UserStatus.findByPk(dto.status_id);
+        if (!status) {
+          throw new Error('Invalid status selected');
+        }
+      }
+      user.status_id = dto.status_id;
+    }
   }
 
   await user.save();
   
-  // Return user with role information
+  // Return user with role and status information
   return await User.findByPk(user.id, {
     include: [
       {
         model: Role,
         as: 'role',
         attributes: ['id', 'name', 'description'],
+      },
+      {
+        model: UserStatus,
+        as: 'user_status',
+        attributes: ['id', 'status'],
       },
     ],
   });
@@ -97,6 +122,11 @@ const getUserByEmail = async (email) => {
         as: 'role',
         attributes: ['id', 'name', 'description'],
       },
+      {
+        model: UserStatus,
+        as: 'user_status',
+        attributes: ['id', 'status'],
+      },
     ],
   });
   
@@ -105,7 +135,6 @@ const getUserByEmail = async (email) => {
   }
   return user;
 };
-
 
 module.exports = {
   getAllUsers,

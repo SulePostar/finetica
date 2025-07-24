@@ -7,12 +7,12 @@ class UserUpdateRequestDTO {
   }
   
 class AdminUpdateUserDTO {
-    constructor({ first_name, last_name, email, role_id, is_active }) {
+    constructor({ first_name, last_name, email, role_id, status_id }) {
       this.first_name = first_name;
       this.last_name = last_name;
       this.email = email;
       this.role_id = role_id;
-      this.is_active = is_active;
+      this.status_id = status_id;
     }
   }
 
