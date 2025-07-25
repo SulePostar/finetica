@@ -9,17 +9,11 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      role_id: {
-        type: Sequelize.INTEGER,
+      first_name: {
+        type: Sequelize.STRING,
         allowNull: false,
-        references: {
-          model: 'roles',
-          key: 'id',
-        },
-        onDelete: 'RESTRICT',
-        onUpdate: 'CASCADE',
       },
-      name: {
+      last_name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -28,18 +22,58 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
-      pass_hash: {
+      password_hash: {
         type: Sequelize.STRING,
         allowNull: false,
       },
       profile_image: {
         type: Sequelize.STRING,
       },
+      role_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'user_roles',
+          key: 'id',
+        },
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+      },
+      status_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'user_statuses',
+          key: 'id',
+        },
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+      },
+       verification_token:{
+        type: Sequelize.STRING,
+      allowNull: true,
+      },
+      password_reset_token:{
+        type: Sequelize.STRING,
+      allowNull: true,
+      },
+      reset_expires_at:{
+        type: Sequelize.DATE,
+      allowNull: true,
+      },
+       is_email_verified: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
       is_enabled: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: true,
       },
+      last_login_at:{
+        type: Sequelize.DATE,
+      allowNull: true,
+      }, 
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

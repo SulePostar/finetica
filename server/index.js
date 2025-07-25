@@ -1,28 +1,17 @@
 const express = require('express');
-const { connectToDatabase } = require('./config/db');
-const authRoutes = require('./routes/auth.route');
-const { errorMiddleware } = require('./middleware/error.middleware');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-
 require('dotenv').config();
+const cors = require('cors');
+const { connectToDatabase } = require('./config/db');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-const corsOptions = {
-  origin: 'http://localhost:3000',
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
-
-app.use(cookieParser());
+app.use(cors());
 app.use(express.json());
 
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 
-app.use(errorMiddleware);
+const PORT = process.env.PORT 
 
 connectToDatabase();
 
