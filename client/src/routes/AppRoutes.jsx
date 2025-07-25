@@ -2,21 +2,25 @@ import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { CSpinner, CContainer } from '@coreui/react';
 
-
 const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
+const Register = React.lazy(() => import('../pages/Register/Register'));
+const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
 
 export default function AppRoutes() {
-    return (
-        <Suspense
-            fallback={
-                <CContainer className="pt-3 text-center" fluid>
-                    <CSpinner color="primary" variant="grow" />
-                </CContainer>
-            }
-        >
-            <Routes>
-                <Route path="*" name="Home" element={<DefaultLayout />} />
-            </Routes>
-        </Suspense>
-    );
+  return (
+    <Suspense
+      fallback={
+        <CContainer className="pt-3 text-center" fluid>
+          <CSpinner color="primary" variant="grow" />
+        </CContainer>
+      }
+    >
+      <Routes>
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<DefaultLayout />} />
+        <Route path="*" element={<DefaultLayout />} />
+      </Routes>
+    </Suspense>
+  );
 }

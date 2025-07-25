@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { HashRouter } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useColorModes } from '@coreui/react';
 
@@ -24,11 +23,7 @@ const App = () => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return (
-    <HashRouter>
-      <AppRoutes />
-    </HashRouter>
-  );
+  return <AppRoutes />;
 };
 
 export default App;
