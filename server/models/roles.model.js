@@ -25,11 +25,7 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           isIn: [['guest', 'user', 'admin']],
         },
-      },
-      description: {
-        type: DataTypes.TEXT,
-        allowNull: true,
-      },
+      }
     },
     {
       sequelize,

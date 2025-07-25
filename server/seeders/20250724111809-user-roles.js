@@ -23,21 +23,18 @@ module.exports = {
         {
           id: 1,
           name: 'guest',
-          description: 'Guest user with limited access',
           created_at: new Date(),
           updated_at: new Date(),
         },
         {
           id: 2,
           name: 'user',
-          description: 'Regular user with standard access',
           created_at: new Date(),
           updated_at: new Date(),
         },
         {
           id: 3,
           name: 'admin',
-          description: 'Administrator with full access',
           created_at: new Date(),
           updated_at: new Date(),
         },

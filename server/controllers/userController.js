@@ -1,4 +1,4 @@
-const userService = require("../services/user.service.js");
+const userService = require("../services/userService.js");
 const { UserResponseDTO } = require("../dto/user/responses/UserResponseDTO.js");
 const {
   UserUpdateRequestDTO,

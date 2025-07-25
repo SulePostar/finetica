@@ -158,7 +158,7 @@ module.exports = (sequelize, DataTypes) => {
           {
             model: sequelize.models.Role,
             as: 'role',
-            attributes: ['id', 'name', 'description'],
+            attributes: ['id', 'name'],
           },
           {
             model: sequelize.models.UserStatus,

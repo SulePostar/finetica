@@ -2,21 +2,26 @@ const jwt = require('jsonwebtoken');
 const { User, Role, UserStatus } = require('../models');
 const LoginUserDTO = require('../dto/auth/requests/LoginUserDTO');
 const RegisterUserDTO = require('../dto/auth/requests/RegisterUserDTO');
+
 class AuthService {
   generateToken(userId, roleId = null, roleName = null) {
     const payload = { userId };
+
     if (roleId && roleName) {
       payload.roleId = roleId;
       payload.roleName = roleName;
     }
+
     return jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN || '24h',
+      expiresIn: process.env.JWT_EXPIRES_IN
     });
   }
+
   async login(loginData) {
     try {
       const loginDTO = new LoginUserDTO(loginData);
       const validation = loginDTO.validate();
+
       if (!validation.isValid) {
         return {
           success: false,
@@ -24,69 +29,66 @@ class AuthService {
           errors: validation.errors,
         };
       }
+
       const user = await User.scope('withPassword').findOne({
         where: { email: loginDTO.email.toLowerCase() },
         include: [
           {
             model: Role,
             as: 'role',
-            attributes: ['id', 'name', 'description'],
+            attributes: ['id', 'name'],
           },
-          {
-            model: UserStatus,
-            as: 'user_status',
-            attributes: ['id', 'status'],
-          },
+          {model:UserStatus,
+            as:'user_status',
+            attributes:['id']
+          }
         ],
       });
+
+      console.log(user, 'user')
+
       if (!user) {
         return {
           success: false,
           message: 'Invalid credentials',
         };
       }
-      // Check user status - only approved users can login
-      if (!user.user_status) {
+
+      if (user.status_id===4) {
         return {
           success: false,
-          message: 'User status not found',
+          message: 'Account is deactivated',
         };
       }
-      if (user.user_status.status === 'pending') {
+
+      if (user.status_id !== 2) {
+        const statusMessages = {
+          pending: 'Account is pending admin approval and cannot login',
+          rejected: 'Account has been rejected by admin',
+        };
+
         return {
           success: false,
-          message: 'Account is pending admin approval and cannot login',
+          message: statusMessages[user.status] || 'Account approval status invalid',
         };
       }
-      if (user.user_status.status === 'rejected') {
-        return {
-          success: false,
-          message: 'Account has been rejected by admin',
-        };
-      }
-      if (user.user_status.status === 'deleted') {
-        return {
-          success: false,
-          message: 'Account has been deleted',
-        };
-      }
-      if (user.user_status.status !== 'approved') {
-        return {
-          success: false,
-          message: 'Account approval status invalid',
-        };
-      }
+
       const isPasswordValid = await user.checkPassword(loginDTO.password);
+
       if (!isPasswordValid) {
         return {
           success: false,
           message: 'Invalid credentials',
         };
       }
+
       await user.update({ last_login_at: new Date() });
+
       const token = this.generateToken(user.id, user.role?.id, user.role?.name);
+
       const userResponse = user.toJSON();
       delete userResponse.password_hash;
+
       return {
         success: true,
         message: 'Login successful',
@@ -103,10 +105,12 @@ class AuthService {
       };
     }
   }
+
   async register(registerData) {
     try {
       const registerDTO = new RegisterUserDTO(registerData);
       const validation = registerDTO.validate();
+
       if (!validation.isValid) {
         return {
           success: false,
@@ -114,15 +118,18 @@ class AuthService {
           errors: validation.errors,
         };
       }
+
       const existingUser = await User.findOne({
         where: { email: registerDTO.email.toLowerCase() },
       });
+
       if (existingUser) {
         return {
           success: false,
           message: 'User with this email already exists',
         };
       }
+
       if (registerDTO.role_id !== null) {
         const role = await Role.findByPk(registerDTO.role_id);
         if (!role) {
@@ -132,61 +139,60 @@ class AuthService {
           };
         }
       }
+
       const userData = registerDTO.toModelData();
       const user = await User.create(userData);
-      const userWithRelations = await User.findByPk(user.id, {
+
+      const userWithRole = await User.findByPk(user.id, {
         include: [
           {
             model: Role,
             as: 'role',
-            attributes: ['id', 'name', 'description'],
-          },
-          {
-            model: UserStatus,
-            as: 'user_status',
-            attributes: ['id', 'status'],
+            attributes: ['id', 'name'],
           },
         ],
       });
+
       // Don't provide JWT token for pending users
-      if (userWithRelations.user_status.status === 'pending') {
+      if (userWithRole.approval_status === 'pending') {
         return {
           success: true,
           message: 'Registration successful. Your account is pending admin approval.',
           data: {
-            user: userWithRelations,
+            user: userWithRole,
             // No token provided for pending users
           },
         };
       }
-      // Only provide token if user is already approved (shouldn't happen with current flow, but keeping for safety)
-      const token = this.generateToken(
-        user.id,
-        userWithRelations.role?.id,
-        userWithRelations.role?.name
-      );
+
+      // Only provide token if user is already accepted (shouldn't happen with current flow, but keeping for safety)
+      const token = this.generateToken(user.id, userWithRole.role?.id, userWithRole.role?.name);
+
       return {
         success: true,
         message: 'Registration successful',
         data: {
-          user: userWithRelations,
+          user: userWithRole,
           token,
         },
       };
     } catch (error) {
       console.error('Registration error:', error);
+
       if (error.name === 'SequelizeUniqueConstraintError') {
         return {
           success: false,
           message: 'User with this email already exists',
         };
       }
+
       return {
         success: false,
         message: 'An error occurred during registration',
       };
     }
   }
+
   async getProfile(userId) {
     try {
       const user = await User.findByPk(userId, {
@@ -194,21 +200,18 @@ class AuthService {
           {
             model: Role,
             as: 'role',
-            attributes: ['id', 'name', 'description'],
-          },
-          {
-            model: UserStatus,
-            as: 'user_status',
-            attributes: ['id', 'status'],
+            attributes: ['id', 'name'],
           },
         ],
       });
+
       if (!user) {
         return {
           success: false,
           message: 'User not found',
         };
       }
+
       return {
         success: true,
         data: { user },
@@ -221,6 +224,7 @@ class AuthService {
       };
     }
   }
+
   async refreshToken(userId) {
     try {
       const user = await User.findByPk(userId, {
@@ -228,29 +232,28 @@ class AuthService {
           {
             model: Role,
             as: 'role',
-            attributes: ['id', 'name', 'description'],
-          },
-          {
-            model: UserStatus,
-            as: 'user_status',
-            attributes: ['id', 'status'],
+            attributes: ['id', 'name'],
           },
         ],
       });
-      if (!user) {
+
+      if (!user || !user.is_active) {
         return {
           success: false,
           message: 'Invalid user',
         };
       }
-      // Check user status for refresh token as well
-      if (!user.user_status || user.user_status.status !== 'approved') {
+
+      // Check approval status for refresh token as well
+      if (user.approval_status !== 'accepted') {
         return {
           success: false,
           message: 'Account is not approved',
         };
       }
+
       const token = this.generateToken(userId, user.role?.id, user.role?.name);
+
       return {
         success: true,
         data: { token },
@@ -263,31 +266,21 @@ class AuthService {
       };
     }
   }
+
   async getPendingUsers() {
     try {
-      const pendingStatus = await UserStatus.findOne({ where: { status: 'pending' } });
-      if (!pendingStatus) {
-        return {
-          success: false,
-          message: 'Pending status not found',
-        };
-      }
       const pendingUsers = await User.findAll({
-        where: { status_id: pendingStatus.id },
+        where: { approval_status: 'pending' },
         include: [
           {
             model: Role,
             as: 'role',
-            attributes: ['id', 'name', 'description'],
-          },
-          {
-            model: UserStatus,
-            as: 'user_status',
-            attributes: ['id', 'status'],
+            attributes: ['id', 'name'],
           },
         ],
         order: [['created_at', 'ASC']],
       });
+
       return {
         success: true,
         data: { users: pendingUsers },
@@ -300,37 +293,27 @@ class AuthService {
       };
     }
   }
+
   async approveUser(userId) {
     try {
-      const user = await User.findByPk(userId, {
-        include: [
-          {
-            model: UserStatus,
-            as: 'user_status',
-            attributes: ['id', 'status'],
-          },
-        ],
-      });
+      const user = await User.findByPk(userId);
+
       if (!user) {
         return {
           success: false,
           message: 'User not found',
         };
       }
-      if (user.user_status.status === 'approved') {
+
+      if (user.approval_status === 'accepted') {
         return {
           success: false,
           message: 'User is already approved',
         };
       }
-      const approvedStatus = await UserStatus.findOne({ where: { status: 'approved' } });
-      if (!approvedStatus) {
-        return {
-          success: false,
-          message: 'Approved status not found',
-        };
-      }
-      await user.update({ status_id: approvedStatus.id });
+
+      await user.update({ approval_status: 'accepted' });
+
       return {
         success: true,
         message: 'User approved successfully',
@@ -344,37 +327,27 @@ class AuthService {
       };
     }
   }
+
   async rejectUser(userId) {
     try {
-      const user = await User.findByPk(userId, {
-        include: [
-          {
-            model: UserStatus,
-            as: 'user_status',
-            attributes: ['id', 'status'],
-          },
-        ],
-      });
+      const user = await User.findByPk(userId);
+
       if (!user) {
         return {
           success: false,
           message: 'User not found',
         };
       }
-      if (user.user_status.status === 'rejected') {
+
+      if (user.approval_status === 'rejected') {
         return {
           success: false,
           message: 'User is already rejected',
         };
       }
-      const rejectedStatus = await UserStatus.findOne({ where: { status: 'rejected' } });
-      if (!rejectedStatus) {
-        return {
-          success: false,
-          message: 'Rejected status not found',
-        };
-      }
-      await user.update({ status_id: rejectedStatus.id });
+
+      await user.update({ approval_status: 'rejected' });
+
       return {
         success: true,
         message: 'User rejected successfully',
@@ -389,4 +362,5 @@ class AuthService {
     }
   }
 }
+
 module.exports = new AuthService();

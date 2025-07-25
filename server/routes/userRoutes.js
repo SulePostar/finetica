@@ -8,7 +8,7 @@ const {
   deleteMyAccount,
   deleteUserByAdmin,
   getUserByEmail,
-} = require("../controllers/user.controller.js");
+} = require("../controllers/userController.js");
 
 const router = express.Router();
 
