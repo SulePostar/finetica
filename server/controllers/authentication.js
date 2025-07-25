@@ -1,31 +1,23 @@
 const authService = require('../services/authentication');
 
 class AuthController {
-  async login(req, res) {
+  async login(req, res, next) {
     try {
       const result = await authService.login(req.body);
 
-      res.json({ success: true, data: result });
+      res.json(result);
     } catch (error) {
       next(error);
     }
   }
 
-  async register(req, res) {
+  async register(req, res, next) {
     try {
       const result = await authService.register(req.body);
 
-      if (result.success) {
-        return res.status(201).json(result);
-      } else {
-        return res.status(400).json(result);
-      }
+      res.json(result);
     } catch (error) {
-      console.error('Register controller error:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Server error during registration',
-      });
+      next(error);
     }
   }
 
