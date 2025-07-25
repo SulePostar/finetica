@@ -1,11 +1,9 @@
 import { z } from 'zod';
-
 const emailSchema = z.email({
   required_error: 'Email is required',
   invalid_type_error: 'Email is required',
   message: 'Please provide a valid email address',
 });
-
 export const userUpdateSchema = z.object({
   first_name: z
     .string()
@@ -19,7 +17,6 @@ export const userUpdateSchema = z.object({
     .transform((val) => val.trim()),
   email: emailSchema,
 });
-
 export const adminUserUpdateSchema = z.object({
   first_name: z
     .string()
@@ -33,9 +30,7 @@ export const adminUserUpdateSchema = z.object({
     .transform((val) => val.trim()),
   email: emailSchema,
   role_id: z.number().positive('Please select a valid role').optional(),
-  is_active: z.boolean().optional(),
 });
-
 export const userResponseSchema = z.object({
   id: z.number(),
   email: z.email({ message: 'Invalid email format' }),
@@ -49,12 +44,16 @@ export const userResponseSchema = z.object({
       description: z.string().nullable(),
     })
     .nullable(),
-  is_active: z.boolean(),
+  user_status: z
+    .object({
+      id: z.number(),
+      status: z.string(),
+    })
+    .nullable(),
   is_email_verified: z.boolean(),
   created_at: z.string(),
   updated_at: z.string(),
 });
-
 export const userProfileSchema = z.object({
   first_name: z
     .string()

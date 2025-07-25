@@ -1,5 +1,4 @@
 import axios from 'axios';
-
 // Create axios instance with base configuration
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
@@ -8,7 +7,6 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
-
 // Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
@@ -22,7 +20,6 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-
 // Response interceptor to handle errors globally
 api.interceptors.response.use(
   (response) => {
@@ -38,14 +35,16 @@ api.interceptors.response.use(
         window.location.href = '/login';
       }
     }
-
     // Handle network errors
     if (!error.response) {
       console.error('Network error:', error.message);
     }
-
     return Promise.reject(error);
   }
 );
-
 export default api;
+
+
+
+
+
