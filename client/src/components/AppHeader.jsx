@@ -68,7 +68,7 @@ const AppHeader = () => {
               )}
             </CDropdownToggle>
 
-            <CDropdownMenu className={colorMode === 'dark' ? 'dropdown-menu-dark' : ''}>
+            <CDropdownMenu className={isDarkMode ? 'dropdown-menu-dark' : ''}>
               <CDropdownItem
                 active={colorMode === 'light'}
                 className="d-flex align-items-center"
