@@ -2,32 +2,17 @@ const jwt = require('jsonwebtoken');
 const { User, Role, UserStatus } = require('../models');
 const LoginUserDTO = require('../dto/auth/requests/LoginUserDTO');
 const RegisterUserDTO = require('../dto/auth/requests/RegisterUserDTO');
+const AppError = require('../utils/errorHandler');
+const { use } = require('bcrypt/promises');
 
 class AuthService {
-  generateToken(userId, roleId = null, roleName = null) {
-    const payload = { userId };
-
-    if (roleId && roleName) {
-      payload.roleId = roleId;
-      payload.roleName = roleName;
-    }
-
-    return jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN
-    });
-  }
-
   async login(loginData) {
     try {
       const loginDTO = new LoginUserDTO(loginData);
       const validation = loginDTO.validate();
 
       if (!validation.isValid) {
-        return {
-          success: false,
-          message: 'Validation failed',
-          errors: validation.errors,
-        };
+        throw new AppError('Validation failed', 400);
       }
 
       const user = await User.scope('withPassword').findOne({
@@ -38,38 +23,33 @@ class AuthService {
             as: 'role',
             attributes: ['id', 'name'],
           },
-          {model:UserStatus,
-            as:'user_status',
-            attributes:['id']
-          }
+          {
+            model: UserStatus,
+            as: 'userStatus',
+            attributes: ['id', 'status'],
+          },
         ],
       });
 
-      console.log(user, 'user')
-
       if (!user) {
-        return {
-          success: false,
-          message: 'Invalid credentials',
-        };
+        throw new AppError('Invalid credentials', 401);
       }
 
-      if (user.status_id===4) {
-        return {
-          success: false,
-          message: 'Account is deactivated',
-        };
+      if (user.status_id === 4) {
+        throw new AppError('Account deactivated', 404);
       }
 
-      if (user.status_id !== 2) {
+      const userStatusName = user.userStatus?.status;
+
+      if (userStatusName !== 'approved') {
         const statusMessages = {
           pending: 'Account is pending admin approval and cannot login',
           rejected: 'Account has been rejected by admin',
         };
-
+        console.log(statusMessages[userStatusName], 'user');
         return {
           success: false,
-          message: statusMessages[user.status] || 'Account approval status invalid',
+          message: statusMessages[userStatusName],
         };
       }
 
@@ -86,14 +66,21 @@ class AuthService {
 
       const token = this.generateToken(user.id, user.role?.id, user.role?.name);
 
-      const userResponse = user.toJSON();
-      delete userResponse.password_hash;
-
       return {
         success: true,
         message: 'Login successful',
         data: {
-          user: userResponse,
+          user: {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            roleId: user.roleId,
+            roleName: user.role,
+            statusId: user.statusId,
+            isEmailVerified: user.isEmailVerified,
+            lastLoginAt: user.lastLoginAt,
+          },
           token,
         },
       };
@@ -104,6 +91,19 @@ class AuthService {
         message: 'An error occurred during login',
       };
     }
+  }
+
+  generateToken(userId, roleId = null, roleName = null) {
+    const payload = { userId };
+
+    if (roleId && roleName) {
+      payload.roleId = roleId;
+      payload.roleName = roleName;
+    }
+
+    return jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    });
   }
 
   async register(registerData) {

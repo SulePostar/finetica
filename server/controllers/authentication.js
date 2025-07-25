@@ -1,21 +1,13 @@
-const authService = require('../services/authService');
+const authService = require('../services/authentication');
 
 class AuthController {
   async login(req, res) {
     try {
       const result = await authService.login(req.body);
 
-      if (result.success) {
-        return res.status(200).json(result);
-      } else {
-        return res.status(400).json(result);
-      }
+      res.json({ success: true, data: result });
     } catch (error) {
-      console.error('Login controller error:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Server error during login',
-      });
+      next(error);
     }
   }
 
@@ -106,7 +98,6 @@ class AuthController {
     }
   }
 
- 
   async _handleUserAction(req, res, action, actionName) {
     try {
       const { userId } = req.params;
@@ -134,7 +125,6 @@ class AuthController {
     }
   }
 
- 
   async approveUser(req, res) {
     return this._handleUserAction(
       req,
@@ -144,7 +134,6 @@ class AuthController {
     );
   }
 
- 
   async rejectUser(req, res) {
     return this._handleUserAction(
       req,
