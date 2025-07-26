@@ -1,28 +1,92 @@
-module.exports = (sequelize, DataTypes) => {
-    const TaxDeclaration = sequelize.define('TaxDeclaration', {
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
-        },
-        period_start: DataTypes.DATE,
-        period_end: DataTypes.DATE,
-        delivery_value: DataTypes.DECIMAL(18, 2),
-        purchase_value: DataTypes.DECIMAL(18, 2),
-        export_value: DataTypes.DECIMAL(18, 2),
-        import_value: DataTypes.DECIMAL(18, 2),
-        exempted_delivery_value: DataTypes.DECIMAL(18, 2),
-        purchase_from_farmers: DataTypes.DECIMAL(18, 2),
-        output_vat_total: DataTypes.DECIMAL(18, 2),
-        input_vat_total: DataTypes.DECIMAL(18, 2),
-        vat_on_import: DataTypes.DECIMAL(18, 2),
-        lump_sum_vat: DataTypes.DECIMAL(18, 2),
-        vat_payable: DataTypes.DECIMAL(18, 2),
-        vat_refund_requested: DataTypes.DECIMAL(18, 2),
-        final_cons_fbiH: DataTypes.DECIMAL(18, 2),
-        final_cons_rs: DataTypes.DECIMAL(18, 2),
-        final_cons_bd: DataTypes.DECIMAL(18, 2)
-    });
+const { Model, DataTypes } = require('sequelize');
 
-    return TaxDeclaration;
+module.exports = (sequelize) => {
+  class TaxDeclaration extends Model {
+    static associate() {}
+  }
+
+  TaxDeclaration.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      periodStart: {
+        type: DataTypes.DATE,
+        field: 'period_start',
+      },
+      periodEnd: {
+        type: DataTypes.DATE,
+        field: 'period_end',
+      },
+      deliveryValue: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'delivery_value',
+      },
+      purchaseValue: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'purchase_value',
+      },
+      exportValue: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'export_value',
+      },
+      importValue: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'import_value',
+      },
+      exemptedDeliveryValue: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'exempted_delivery_value',
+      },
+      purchaseFromFarmers: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'purchase_from_farmers',
+      },
+      outputVatTotal: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'output_vat_total',
+      },
+      inputVatTotal: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'input_vat_total',
+      },
+      vatOnImport: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'vat_on_import',
+      },
+      lumpSumVat: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'lump_sum_vat',
+      },
+      vatPayable: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'vat_payable',
+      },
+      vatRefundRequested: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'vat_refund_requested',
+      },
+      finalConsFbiH: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'final_cons_fbiH',
+      },
+      finalConsRs: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'final_cons_rs',
+      },
+      finalConsBd: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'final_cons_bd',
+      },
+    },
+    {
+      sequelize,
+      modelName: 'TaxDeclaration',
+      tableName: 'tax_declarations',
+    }
+  );
+
+  return TaxDeclaration;
 };

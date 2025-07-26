@@ -1,25 +1,58 @@
+const { Model, DataTypes } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    const BankTransaction = sequelize.define('BankTransaction', {
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
-        },
-        date: { type: DataTypes.DATE, allowNull: false },
-        amount: { type: DataTypes.DECIMAL(18, 2), allowNull: false },
-        direction: { type: DataTypes.ENUM('in', 'out'), allowNull: false },
-        accountNumber: {
-            field: 'account_number',
-            type: DataTypes.STRING
-        },
-        description: DataTypes.TEXT,
-        invoice_id: DataTypes.INTEGER,
-    });
+  class BankTransaction extends Model {
+    static associate({ BusinessPartner, TransactionCategory }) {
+      BankTransaction.belongsTo(BusinessPartner, { foreignKey: 'partnerId' });
+      BankTransaction.belongsTo(TransactionCategory, { foreignKey: 'categoryId' });
+    }
+  }
 
-    BankTransaction.associate = models => {
-        BankTransaction.belongsTo(models.BusinessPartner, { foreignKey: 'partner_id' });
-        BankTransaction.belongsTo(models.TransactionCategory, { foreignKey: 'category_id' });
-    };
-
-    return BankTransaction;
+  BankTransaction.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      date: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      amount: {
+        type: DataTypes.DECIMAL(18, 2),
+        allowNull: false,
+      },
+      direction: {
+        type: DataTypes.ENUM('in', 'out'),
+        allowNull: false,
+      },
+      accountNumber: {
+        field: 'account_number',
+        type: DataTypes.STRING,
+      },
+      description: {
+        type: DataTypes.TEXT,
+      },
+      invoiceId: {
+        field: 'invoice_id',
+        type: DataTypes.INTEGER,
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        field: 'created_at',
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        field: 'updated_at',
+      },
+    },
+    {
+      sequelize,
+      modelName: 'BankTransaction',
+      tableName: 'bank_transactions',
+    }
+  );
+  return BankTransaction;
 };

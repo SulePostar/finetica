@@ -1,29 +1,78 @@
-module.exports = (sequelize, DataTypes) => {
-    const Contract = sequelize.define('Contract', {
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
-        },
-        partner_id: DataTypes.INTEGER,
-        contract_number: DataTypes.STRING(50),
-        contract_type: DataTypes.STRING(50),
-        description: DataTypes.TEXT,
-        start_date: DataTypes.DATE,
-        end_date: DataTypes.DATE,
-        is_active: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: true
-        },
-        payment_terms: DataTypes.TEXT,
-        currency: DataTypes.STRING(3),
-        amount: DataTypes.DECIMAL(18, 2),
-        signed_at: DataTypes.DATE
-    });
+const { Model, DataTypes } = require('sequelize');
 
-    Contract.associate = models => {
-        Contract.belongsTo(models.BusinessPartner, { foreignKey: 'partner_id' });
-    };
+module.exports = (sequelize) => {
+  class Contract extends Model {
+    static associate({ BusinessPartner }) {
+      this.belongsTo(BusinessPartner, { foreignKey: 'partnerId' });
+    }
+  }
 
-    return Contract;
+  Contract.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      partnerId: {
+        type: DataTypes.INTEGER,
+        field: 'partner_id',
+      },
+      contractNumber: {
+        type: DataTypes.STRING(50),
+        field: 'contract_number',
+      },
+      contractType: {
+        type: DataTypes.STRING(50),
+        field: 'contract_type',
+      },
+      description: {
+        type: DataTypes.TEXT,
+      },
+      startDate: {
+        type: DataTypes.DATE,
+        field: 'start_date',
+      },
+      endDate: {
+        type: DataTypes.DATE,
+        field: 'end_date',
+      },
+      isActive: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+        field: 'is_active',
+      },
+      paymentTerms: {
+        type: DataTypes.TEXT,
+        field: 'payment_terms',
+      },
+      currency: {
+        type: DataTypes.STRING(3),
+      },
+      amount: {
+        type: DataTypes.DECIMAL(18, 2),
+      },
+      signedAt: {
+        type: DataTypes.DATE,
+        field: 'signed_at',
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        field: 'created_at',
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        field: 'updated_at',
+      },
+    },
+    {
+      sequelize,
+      modelName: 'Contract',
+      tableName: 'contracts',
+    }
+  );
+
+  return Contract;
 };

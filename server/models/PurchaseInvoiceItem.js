@@ -1,18 +1,63 @@
-module.exports = (sequelize, DataTypes) => {
-    const PurchaseInvoiceItem = sequelize.define('PurchaseInvoiceItem', {
-        id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-        invoice_id: DataTypes.INTEGER,
-        order_number: DataTypes.INTEGER,
-        description: DataTypes.TEXT,
-        net_subtotal: DataTypes.DECIMAL(18, 2),
-        lump_sum: DataTypes.DECIMAL(18, 2),
-        vat_amount: DataTypes.DECIMAL(18, 2),
-        gross_subtotal: DataTypes.DECIMAL(18, 2)
-    });
+const { Model, DataTypes } = require('sequelize');
 
-    PurchaseInvoiceItem.associate = models => {
-        PurchaseInvoiceItem.belongsTo(models.PurchaseInvoice, { foreignKey: 'invoice_id' });
-    };
+module.exports = (sequelize) => {
+  class PurchaseInvoiceItem extends Model {
+    static associate({ PurchaseInvoice }) {
+      this.belongsTo(PurchaseInvoice, { foreignKey: 'invoiceId' });
+    }
+  }
 
-    return PurchaseInvoiceItem;
+  PurchaseInvoiceItem.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      invoiceId: {
+        type: DataTypes.INTEGER,
+        field: 'invoice_id',
+      },
+      orderNumber: {
+        type: DataTypes.INTEGER,
+        field: 'order_number',
+      },
+      description: {
+        type: DataTypes.TEXT,
+      },
+      netSubtotal: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'net_subtotal',
+      },
+      lumpSum: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'lump_sum',
+      },
+      vatAmount: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'vat_amount',
+      },
+      grossSubtotal: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'gross_subtotal',
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        field: 'created_at',
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        field: 'updated_at',
+      },
+    },
+    {
+      sequelize,
+      modelName: 'PurchaseInvoiceItem',
+      tableName: 'purchase_invoice_items',
+    }
+  );
+
+  return PurchaseInvoiceItem;
 };
