@@ -1,18 +1,19 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import axios from 'axios';
-import { loginSuccess, logout, setLoading } from '../features/auth/authSlice';
+import { loginSuccess, logout, setLoading } from './../redux/auth/authSlice';
 
 export default function AuthWrapper({ children }) {
-    const dispatch = useDispatch(); //koristimo za pokretanje Redux akcija npr loginSuccess, logout, setLoading koje smo importali u authSlice.js
+    const dispatch = useDispatch();
+    const { loading } = useSelector((state) => state.auth);
 
     useEffect(() => {
         const checkAuth = async () => {
-            dispatch(setLoading(true)); //postavljamo loading na true dok provjeravamo da li je korisnik prijavljen
-            const token = localStorage.getItem('token'); //pokušavamo dohvatiti token iz localStorage
+            dispatch(setLoading(true));
+            const token = localStorage.getItem('authToken');
             if (!token) {
-                dispatch(logout()); // ako token ne postoji, korisnik nije prijavljen
-                dispatch(setLoading(false)); // postavljamo loading na false jer je provjera završena
+                dispatch(logout());
+                dispatch(setLoading(false));
                 return;
             }
 
@@ -23,7 +24,7 @@ export default function AuthWrapper({ children }) {
                     }
                 });
 
-                dispatch(loginSuccess({ token })); // ako je token valjan, dekodiramo ga i postavljamo korisnika kao prijavljenog
+                dispatch(loginSuccess({ token }));
             } catch (err) {
                 dispatch(logout());
             } finally {
@@ -33,6 +34,10 @@ export default function AuthWrapper({ children }) {
 
         checkAuth();
     }, [dispatch]);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return children;
 }

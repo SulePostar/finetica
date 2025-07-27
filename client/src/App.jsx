@@ -6,6 +6,7 @@ import './scss/style.scss';
 import './scss/examples.scss';
 
 import AppRoutes from './routes/AppRoutes';
+import AuthWrapper from './protectedRoutes/AuthWrapper';
 
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme');
@@ -23,7 +24,11 @@ const App = () => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return <AppRoutes />;
+  return (
+    <AuthWrapper>
+      <AppRoutes />
+    </AuthWrapper>
+  );
 };
 
 export default App;

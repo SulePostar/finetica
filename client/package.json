@@ -21,6 +21,7 @@
     "bootstrap": "^5.3.7",
     "core-js": "^3.44.0",
     "framer-motion": "^12.23.7",
+    "jwt-decode": "^4.0.0",
     "react": "^19.1.0",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.1.0",

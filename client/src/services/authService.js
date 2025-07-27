@@ -1,6 +1,6 @@
 import api from './api';
 import { store } from '../store/store';
-import { login as loginAction, logout as logoutAction } from '../store/userSlice';
+import { loginSuccess, logout as logoutAction, setLoading } from '../redux/auth/authSlice';
 class AuthService {
   async register(userData) {
     try {
@@ -67,9 +67,9 @@ class AuthService {
       });
       if (response.data.success) {
         localStorage.setItem('authToken', response.data.data.token);
-        if (store && response.data.data.user) {
+        if (store && response.data.data.token) {
           try {
-            store.dispatch(loginAction(response.data.data.user));
+            store.dispatch(loginSuccess({ token: response.data.data.token }));
           } catch (dispatchError) {
             console.error('Error dispatching login action:', dispatchError);
             console.warn('Redux dispatch failed, continuing with token-only auth');
@@ -211,24 +211,24 @@ class AuthService {
   }
   isAuthenticated() {
     const token = localStorage.getItem('authToken');
-    let user = null;
+    let isAuth = false;
     try {
-      if (store && store.getState() && store.getState().user) {
-        user = store.getState().user.user;
+      if (store && store.getState() && store.getState().auth) {
+        isAuth = store.getState().auth.isAuthenticated;
       }
     } catch (error) {
       console.warn('Error accessing Redux store state:', error);
       return !!token;
     }
-    return !!(token && user);
+    return isAuth || !!token;
   }
   getToken() {
     return localStorage.getItem('authToken');
   }
   getUser() {
     try {
-      if (store && store.getState() && store.getState().user) {
-        return store.getState().user.user;
+      if (store && store.getState() && store.getState().auth) {
+        return store.getState().auth.user;
       }
     } catch (error) {
       console.warn('Error accessing user from Redux store:', error);
@@ -237,9 +237,9 @@ class AuthService {
   }
   setAuthData(token, user) {
     localStorage.setItem('authToken', token);
-    if (store && user) {
+    if (store && token) {
       try {
-        store.dispatch(loginAction(user));
+        store.dispatch(loginSuccess({ token }));
       } catch (error) {
         console.error('Error dispatching login action in setAuthData:', error);
       }

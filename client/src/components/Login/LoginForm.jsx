@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import {
     CButton,
     CCard,
@@ -17,12 +18,14 @@ import { motion } from 'framer-motion';
 import logo from '../../assets/images/Symphony_transparent_1.png';
 import { authService } from '../../services';
 import { loginFormStyles } from './LoginForm.styles';
+import { loginSuccess } from '../../redux/auth/authSlice';
 
 const LoginForm = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -52,7 +55,13 @@ const LoginForm = () => {
         try {
             const result = await authService.login(formData);
             if (result.success) {
-                navigate('/');
+                // Eksplicitno dispatch-uj login akciju
+                dispatch(loginSuccess({ token: result.token }));
+
+                // Kratko čekanje da se Redux store ažurira
+                setTimeout(() => {
+                    navigate('/', { replace: true });
+                }, 100);
             } else {
                 setError(result.message || 'Login failed');
             }
