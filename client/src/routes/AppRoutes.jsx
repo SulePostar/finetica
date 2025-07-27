@@ -7,6 +7,7 @@ const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
 const AdminDashboard = React.lazy(() => import('../pages/AdminDashboard/AdminDashboard'));
+const KIF = React.lazy(() => import('../pages/KIF/KIF'));
 
 export default function AppRoutes() {
   return (
@@ -34,6 +35,14 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/kif'
+          element={
+            <ProtectedRoute>
+              <KIF />
             </ProtectedRoute>
           }
         />
