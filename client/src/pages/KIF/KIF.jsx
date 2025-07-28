@@ -1,7 +1,7 @@
 import { AppHeader, AppSidebar } from '../../components/index';
 import { CContainer } from '@coreui/react';
 
-const KIF = () => {
+const Kif = () => {
     return (
         <>
             <AppSidebar />
@@ -12,4 +12,4 @@ const KIF = () => {
     )
 }
 
-export default KIF;
+export default Kif;
