@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useColorModes } from '@coreui/react';
-import { BrowserRouter } from 'react-router-dom';
 
 import './scss/examples.scss';
 import './scss/style.scss';

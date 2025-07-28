@@ -1,6 +1,6 @@
 import { loginSuccess, logout as logoutAction } from '../redux/auth/authSlice';
+import { setUserProfile } from '../redux/user/userSlice';
 import { store } from '../store';
-import api from './api';
 class AuthService {
   async register(userData) {
     try {
@@ -70,7 +70,7 @@ class AuthService {
         if (store && response.data.data.token) {
           try {
             store.dispatch(loginSuccess({ token: response.data.data.token }));
-            //store.dispatch(za usera)
+            store.dispatch(setUserProfile(response.data.data.user));
           } catch (dispatchError) {
             console.error('Error dispatching login action:', dispatchError);
             console.warn('Redux dispatch failed, continuing with token-only auth');
