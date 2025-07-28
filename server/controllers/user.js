@@ -1,9 +1,9 @@
-const userService = require("../services/userService.js");
-const { UserResponseDTO } = require("../dto/user/responses/UserResponseDTO.js");
+const userService = require('../services/users');
+const { UserResponseDTO } = require('../dto/user/responses/UserResponseDTO.js');
 const {
   UserUpdateRequestDTO,
   AdminUpdateUserDTO,
-} = require("../dto/user/requests/UserRequestDTO.js");
+} = require('../dto/user/requests/UserRequestDTO.js');
 
 const getAllUsers = async (req, res) => {
   try {
@@ -55,7 +55,7 @@ const updateUserByAdmin = async (req, res) => {
 const deleteMyAccount = async (req, res) => {
   try {
     const deleted = await userService.deleteUser(req.user.id);
-    res.clearCookie("token");
+    res.clearCookie('token');
     res.status(200).json(deleted);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -88,5 +88,5 @@ module.exports = {
   updateUserByAdmin,
   deleteMyAccount,
   deleteUserByAdmin,
-  getUserByEmail
+  getUserByEmail,
 };

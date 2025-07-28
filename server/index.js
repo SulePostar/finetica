@@ -2,16 +2,19 @@ const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
 const { connectToDatabase } = require('./config/db');
+const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/auth', require('./routes/authentication'));
+app.use('/api/users', require('./routes/users'));
 
-const PORT = process.env.PORT 
+app.use(errorHandler);
+
+const PORT = process.env.PORT;
 
 connectToDatabase();
 
