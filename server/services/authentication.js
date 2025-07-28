@@ -97,6 +97,7 @@ class AuthService {
             roleId: user.roleId,
             roleName: user.role?.name || null,
             statusId: user.statusId,
+            statusName: user.userStatus?.status || null,
             isEmailVerified: user.isEmailVerified,
             lastLoginAt: user.lastLoginAt,
           },
