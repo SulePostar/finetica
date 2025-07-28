@@ -1,10 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   cilMenu,
   cilSun,
   cilMoon,
-  cilContrast
+  cilContrast,
+  cilCloudUpload
 } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import {
@@ -16,8 +17,11 @@ import {
   CHeader,
   CHeaderNav,
   CHeaderToggler,
+  CButton,
+  CAlert,
   useColorModes,
 } from '@coreui/react';
+import { uploadFile } from '../lib/uploadFile';
 
 import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
 
@@ -25,6 +29,9 @@ const AppHeader = () => {
   const headerRef = useRef();
   const dispatch = useDispatch();
   const sidebarShow = useSelector((state) => state.sidebarShow);
+  const [uploading, setUploading] = useState(false);
+  const [uploadResult, setUploadResult] = useState('');
+  const [uploadError, setUploadError] = useState('');
 
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme');
 
@@ -44,6 +51,25 @@ const AppHeader = () => {
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
   const isDarkMode = colorMode === 'dark' || (colorMode === 'auto' && prefersDark)
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    setUploadResult('');
+    setUploadError('');
+
+    try {
+      const filePath = await uploadFile(file);
+      setUploadResult(`File uploaded successfully! Path: ${filePath}`);
+    } catch (error) {
+      console.error('Upload error:', error);
+      setUploadError(`Upload failed: ${error.message}`);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <CHeader position="sticky" className="mb-4 p-0" ref={headerRef}>
       <CContainer fluid className="border-bottom px-4">
@@ -57,6 +83,41 @@ const AppHeader = () => {
         <CHeaderNav className="d-none d-md-flex" />
 
         <CHeaderNav>
+          {/* File Upload Button */}
+          <div className="d-flex align-items-center me-3">
+            <input
+              type="file"
+              id="file-upload"
+              onChange={handleFileUpload}
+              disabled={uploading}
+              accept="*/*"
+              style={{ display: 'none' }}
+            />
+            <CButton
+              color="primary"
+              variant="outline"
+              size="sm"
+              onClick={() => document.getElementById('file-upload').click()}
+              disabled={uploading}
+              className="d-flex align-items-center"
+            >
+              <CIcon icon={cilCloudUpload} className="me-1" />
+              {uploading ? 'Uploading...' : 'Upload File'}
+            </CButton>
+          </div>
+
+          {uploadResult && (
+            <CAlert color="success" className="me-3 mb-0" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}>
+              {uploadResult}
+            </CAlert>
+          )}
+
+          {uploadError && (
+            <CAlert color="danger" className="me-3 mb-0" style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}>
+              {uploadError}
+            </CAlert>
+          )}
+
           <CDropdown variant="nav-item" placement="bottom-end">
             <CDropdownToggle caret={false} className="bg-transparent border-0">
               {colorMode === 'dark' ? (

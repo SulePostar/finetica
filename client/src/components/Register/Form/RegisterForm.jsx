@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CForm, CInputGroup, CInputGroupText, CFormInput, CButton, CAlert } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
-import { cilUser, cilEnvelopeClosed, cilLockLocked, cilContact, cilCloudUpload } from '@coreui/icons';
+import { cilUser, cilEnvelopeClosed, cilLockLocked, cilContact } from '@coreui/icons';
 import { injectRegisterFormStyles, registerFormStyles } from './RegisterForm.styles';
 import { authService } from '../../../services';
-import { uploadFile } from '../../../lib/uploadFile';
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -20,8 +19,6 @@ const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [uploading, setUploading] = useState(false);
-  const [uploadResult, setUploadResult] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -88,12 +85,10 @@ const RegisterForm = () => {
           confirmPassword: '',
         });
 
-
         setTimeout(() => {
           navigate('/login');
         }, 2000);
       } else {
-
         if (result.errors && result.errors.length > 0) {
           setError(result.errors.join(', '));
         } else {
@@ -105,25 +100,6 @@ const RegisterForm = () => {
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploading(true);
-    setUploadResult('');
-    setError('');
-
-    try {
-      const filePath = await uploadFile(file);
-      setUploadResult(`File uploaded successfully! Path: ${filePath}`);
-    } catch (error) {
-      console.error('Upload error:', error);
-      setError(`Upload failed: ${error.message}`);
-    } finally {
-      setUploading(false);
     }
   };
 
@@ -228,30 +204,6 @@ const RegisterForm = () => {
               required
             />
           </CInputGroup>
-
-
-          <CInputGroup className="mb-4">
-            <CInputGroupText style={registerFormStyles.inputGroupText}>
-              <CIcon icon={cilCloudUpload} style={registerFormStyles.icon} />
-            </CInputGroupText>
-            <CFormInput
-              type="file"
-              onChange={handleFileUpload}
-              disabled={uploading || loading}
-              accept="*/*"
-            />
-          </CInputGroup>
-
-          {uploading && (
-            <small className="text-muted d-block mb-2">Uploading file...</small>
-          )}
-
-          {uploadResult && (
-            <CAlert color="success" className="mb-3" style={{ fontSize: '0.875rem' }}>
-              {uploadResult}
-            </CAlert>
-          )}
-
 
           <CButton type="submit" className="register-form-button" disabled={loading}>
             {loading ? 'Creating Account...' : 'Create Account'}
