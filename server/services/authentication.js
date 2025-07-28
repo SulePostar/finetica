@@ -71,70 +71,55 @@ class AuthService {
 
     const token = this.#generateToken(user.id, user.role?.id, user.role?.name);
 
-      return {
-        success: true,
-        message: 'Login successful',
-        data: {
-          user: {
-            id: user.id,
-            fullName: user.firstName + ' ' + user.lastName,
-            email: user.email,
-            roleId: user.roleId,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            roleName: user.role?.name || '',
-            statusId: user.statusId,
-            statusName: user.userStatus?.status || '',
-            isEmailVerified: user.isEmailVerified,
-            lastLoginAt: user.lastLoginAt,
-            createdAt: user.createdAt,
-            updatedAt: user.updatedAt
-          },
-          token,
+    return {
+      success: true,
+      message: 'Login successful',
+      data: {
+        user: {
+          id: user.id,
+          fullName: user.firstName + ' ' + user.lastName,
+          email: user.email,
+          roleId: user.roleId,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          roleName: user.role?.name || '',
+          statusId: user.statusId,
+          statusName: user.userStatus?.status || '',
+          isEmailVerified: user.isEmailVerified,
+          lastLoginAt: user.lastLoginAt,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
         },
-      };
-    } catch (error) {
-      console.error('Login error:', error);
-      return {
-        success: false,
-        message: error.message || 'An error occurred during login',
-      };
-    }
+        token,
+      },
+    };
   }
 
   async getProfile(userId) {
-    try {
-      const user = await User.findByPk(userId, {
-        include: [
-          {
-            model: Role,
-            as: 'role',
-            attributes: ['id', 'name'],
-          },
-        ],
-      });
+    const user = await User.findByPk(userId, {
+      include: [
+        {
+          model: Role,
+          as: 'role',
+          attributes: ['id', 'name'],
+        },
+      ],
+    });
 
-      if (!user) {
-        return {
-          success: false,
-          message: 'User not found',
-        };
-      }
-
-      return {
-        success: true,
-        data: { user },
-      };
-    } catch (error) {
-      console.error('Get profile error:', error);
+    if (!user) {
       return {
         success: false,
-        message: 'An error occurred while fetching profile',
+        message: 'User not found',
       };
     }
+
+    return {
+      success: true,
+      data: { user },
+    };
   }
 
-  generateToken(userId, roleId = null, roleName = null) {
+  #generateToken(userId, roleId = null, roleName = null) {
     const payload = { userId };
 
     if (roleId && roleName) {
