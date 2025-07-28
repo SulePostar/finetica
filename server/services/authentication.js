@@ -91,14 +91,18 @@ class AuthService {
         data: {
           user: {
             id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
+            fullName: user.firstName + ' ' + user.lastName,
             email: user.email,
             roleId: user.roleId,
-            roleName: user.role?.name || null,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            roleName: user.role?.name || '',
             statusId: user.statusId,
+            statusName: user.userStatus?.status || '',
             isEmailVerified: user.isEmailVerified,
             lastLoginAt: user.lastLoginAt,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
           },
           token,
         },

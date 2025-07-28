@@ -2,8 +2,8 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-import userReducer from './store/userSlice';
-import authReducer from './redux/auth/authSlice'; // prilagodi putanju ako treba
+import userReducer from './redux/user/userSlice';
+import authReducer from './redux/auth/authSlice'; 
 
 
 // Root reducer: auth, user (persistirani) + ui (nije persistiran)
