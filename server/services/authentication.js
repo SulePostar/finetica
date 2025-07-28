@@ -1,34 +1,24 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { User, Role, UserStatus } = require('../models');
-const LoginUserDTO = require('../dto/auth/requests/LoginUserDTO');
-const RegisterUserDTO = require('../dto/auth/requests/RegisterUserDTO');
+
 const AppError = require('../utils/errorHandler');
 
 class AuthService {
   async register(registerData) {
-    const registerDTO = new RegisterUserDTO(registerData);
-    const validation = registerDTO.validate();
-
-    if (!validation.isValid) {
-      throw new AppError('Validation failed', 400, validation.errors);
-    }
-
     const existingUser = await User.findOne({
-      where: { email: registerDTO.email.toLowerCase() },
+      where: { email: registerData.email },
     });
 
     if (existingUser) {
       throw new AppError('User with this email already exists', 409);
     }
 
-    const userData = registerDTO.toModelData();
+    registerData.passwordHash = await bcrypt.hash(registerData.password, 10);
 
-    userData.passwordHash = await bcrypt.hash(userData.password, 10);
+    registerData.statusId = 1;
 
-    userData.statusId = 1;
-
-    const user = await User.create(userData);
+    const user = await User.create(registerData);
 
     const userWithRole = await User.findByPk(user.id, {
       include: [
@@ -54,12 +44,8 @@ class AuthService {
 
   async login(loginData) {
     try {
-      const loginDTO = new LoginUserDTO(loginData);
-      const validation = loginDTO.validate();
-      if (!validation.isValid) throw new AppError('Validation failed', 400);
-
       const user = await User.scope('withPassword').findOne({
-        where: { email: loginDTO.email.toLowerCase() },
+        where: { email: loginData.email },
         include: [
           { model: Role, as: 'role', attributes: ['id', 'name'] },
           { model: UserStatus, as: 'userStatus', attributes: ['id', 'status'] },
@@ -78,7 +64,7 @@ class AuthService {
         throw new AppError(statusMessages[user.statusId] || 'Invalid account status', 403);
       }
 
-      const isPasswordValid = await user.checkPassword(loginDTO.password);
+      const isPasswordValid = await user.checkPassword(loginData.password);
       if (!isPasswordValid) throw new AppError('Invalid credentials', 401);
 
       await user.update({ lastLoginAt: new Date() });
