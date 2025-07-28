@@ -1,5 +1,5 @@
-import { store } from '../store/store';
-import { login as loginAction, logout as logoutAction } from '../store/userSlice';
+import { loginSuccess, logout as logoutAction } from '../redux/auth/authSlice';
+import { store } from '../store';
 import api from './api';
 class AuthService {
   async register(userData) {
@@ -66,10 +66,11 @@ class AuthService {
         password: credentials.password,
       });
       if (response.data.success) {
-        localStorage.setItem('authToken', response.data.data.token);
-        if (store && response.data.data.user) {
+        localStorage.setItem('jwt_token', response.data.data.token);
+        if (store && response.data.data.token) {
           try {
-            store.dispatch(loginAction(response.data.data.user));
+            store.dispatch(loginSuccess({ token: response.data.data.token }));
+            //store.dispatch(za usera)
           } catch (dispatchError) {
             console.error('Error dispatching login action:', dispatchError);
             console.warn('Redux dispatch failed, continuing with token-only auth');
@@ -129,7 +130,7 @@ class AuthService {
     } catch (error) {
       console.error('Logout API error:', error);
     } finally {
-      localStorage.removeItem('authToken');
+      localStorage.removeItem('jwt_token');
       if (store) {
         try {
           store.dispatch(logoutAction());
@@ -210,25 +211,25 @@ class AuthService {
     }
   }
   isAuthenticated() {
-    const token = localStorage.getItem('authToken');
-    let user = null;
+    const token = localStorage.getItem('jwt_token');
+    let isAuthenticated = false;
     try {
-      if (store && store.getState() && store.getState().user) {
-        user = store.getState().user.user;
+      if (store && store.getState() && store.getState().auth) {
+        isAuthenticated = store.getState().auth.isAuthenticated;
       }
     } catch (error) {
       console.warn('Error accessing Redux store state:', error);
       return !!token;
     }
-    return !!(token && user);
+    return isAuthenticated || !!token;
   }
   getToken() {
-    return localStorage.getItem('authToken');
+    return localStorage.getItem('jwt_token');
   }
   getUser() {
     try {
-      if (store && store.getState() && store.getState().user) {
-        return store.getState().user.user;
+      if (store && store.getState() && store.getState().auth) {
+        return store.getState().auth.user;
       }
     } catch (error) {
       console.warn('Error accessing user from Redux store:', error);
@@ -236,17 +237,17 @@ class AuthService {
     return null;
   }
   setAuthData(token, user) {
-    localStorage.setItem('authToken', token);
-    if (store && user) {
+    localStorage.setItem('jwt_token', token);
+    if (store && token) {
       try {
-        store.dispatch(loginAction(user));
+        store.dispatch(loginSuccess({ token }));
       } catch (error) {
         console.error('Error dispatching login action in setAuthData:', error);
       }
     }
   }
   clearAuthData() {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('jwt_token');
     if (store) {
       try {
         store.dispatch(logoutAction());

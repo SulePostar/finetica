@@ -41,7 +41,7 @@ AuthWrapper komponenta:
         /*useEffect(() => {
         const checkAuth = async () => {
         dispatch(setLoading(true));
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('jwt_token');
         if (!token) return dispatch(logout());
 
         try {

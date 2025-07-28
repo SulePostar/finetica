@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useColorModes } from '@coreui/react';
+import { BrowserRouter } from 'react-router-dom';
 
-import './scss/style.scss';
 import './scss/examples.scss';
+import './scss/style.scss';
 
 import AppRoutes from './routes/AppRoutes';
+import AuthWrapper from './protectedRoutes/AuthWrapper';
 
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme');
@@ -23,7 +25,11 @@ const App = () => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return <AppRoutes />;
+  return (
+    <AuthWrapper>
+      <AppRoutes />
+    </AuthWrapper>
+  );
 };
 
 export default App;
