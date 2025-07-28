@@ -60,13 +60,21 @@ const AppHeader = () => {
     setUploadError('');
 
     try {
-      const filePath = await uploadFile(file);
-      setUploadResult(`File uploaded successfully! Path: ${filePath}`);
+      const result = await uploadFile(file, 'files', 'Uploaded via header');
+
+      if (result.success) {
+        setUploadResult(`File uploaded successfully! URL: ${result.fileUrl}`);
+        console.log('Upload result:', result);
+      } else {
+        setUploadError('Upload failed: Unknown error');
+      }
     } catch (error) {
       console.error('Upload error:', error);
       setUploadError(`Upload failed: ${error.message}`);
     } finally {
       setUploading(false);
+      // Clear the file input
+      e.target.value = '';
     }
   };
 
