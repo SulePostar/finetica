@@ -1,7 +1,6 @@
 import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { CSpinner, CContainer } from '@coreui/react';
-import ProfilePage from '../pages/Profile/ProfilePage';
 
 const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const Register = React.lazy(() => import('../pages/Register/Register'));

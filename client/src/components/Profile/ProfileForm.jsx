@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  CForm, CInputGroup, CInputGroupText, CFormInput, CButton, CAlert,
+  CForm, CInputGroup, CInputGroupText, CFormInput, CButton, CAlert, CAvatar,
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import {
@@ -12,7 +12,10 @@ const ProfileForm = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
+    fullName: '',
     email: '',
+    role: '',
+    status: '',
     password: '',
     confirmPassword: '',
   });
@@ -34,6 +37,30 @@ const ProfileForm = () => {
   return (
     <div className="profile-form-card" style={{ maxWidth: '600px', margin: 'auto', padding: '40px' }}>
       <h2 style={{ textAlign: 'center', color: '#2d3748', marginBottom: '32px' }}>Your Profile</h2>
+
+      {/* Avatar Section */}
+      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <CAvatar 
+          src="https://i.pravatar.cc/150?u=filip" 
+          size="xl" 
+          style={{ marginBottom: '16px' }}
+        />
+        <div>
+          <CButton 
+            color="outline-primary" 
+            size="sm"
+            style={{ marginRight: '8px' }}
+          >
+            Change Photo
+          </CButton>
+          <CButton 
+            color="outline-secondary" 
+            size="sm"
+          >
+            Remove
+          </CButton>
+        </div>
+      </div>
 
       {error && <CAlert color="danger">{error}</CAlert>}
       {success && <CAlert color="success">{success}</CAlert>}
@@ -65,6 +92,18 @@ const ProfileForm = () => {
 
         <CInputGroup className="mb-3">
           <CInputGroupText style={profileFormStyles.inputGroupText}>
+            <CIcon icon={cilContact} style={profileFormStyles.icon} />
+          </CInputGroupText>
+          <CFormInput
+            placeholder="Full Name"
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleChange}
+          />
+        </CInputGroup>
+
+        <CInputGroup className="mb-3">
+          <CInputGroupText style={profileFormStyles.inputGroupText}>
             <CIcon icon={cilEnvelopeClosed} style={profileFormStyles.icon} />
           </CInputGroupText>
           <CFormInput
@@ -78,29 +117,30 @@ const ProfileForm = () => {
 
         <CInputGroup className="mb-3">
           <CInputGroupText style={profileFormStyles.inputGroupText}>
-            <CIcon icon={cilLockLocked} style={profileFormStyles.icon} />
+            <CIcon icon={cilEnvelopeClosed} style={profileFormStyles.icon} />
           </CInputGroupText>
           <CFormInput
-            type="password"
-            placeholder="New Password"
-            name="password"
-            value={formData.password}
+            placeholder="Role"
+            type="role"
+            name="role"
+            value={formData.role}
             onChange={handleChange}
           />
         </CInputGroup>
 
-        <CInputGroup className="mb-4">
+        <CInputGroup className="mb-3">
           <CInputGroupText style={profileFormStyles.inputGroupText}>
-            <CIcon icon={cilLockLocked} style={profileFormStyles.icon} />
+            <CIcon icon={cilEnvelopeClosed} style={profileFormStyles.icon} />
           </CInputGroupText>
           <CFormInput
-            type="password"
-            placeholder="Confirm New Password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
+            placeholder="Status"
+            type="status"
+            name="status"
+            value={formData.status}
             onChange={handleChange}
           />
         </CInputGroup>
+
 
         <CButton type="submit" style={profileFormStyles.button}>
           Update Profile
