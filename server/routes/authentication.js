@@ -29,4 +29,15 @@ router.put('/admin/approve-user/:userId', authorizeAdmin, approveUser);
 
 router.put('/admin/reject-user/:userId', authorizeAdmin, rejectUser);
 
+router.get('/verify-token', (req, res) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader?.split(' ')[1];
+    if (!token) return res.sendStatus(401);
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+        res.json({ valid: true, user });
+    });
+});
+
 module.exports = router;
