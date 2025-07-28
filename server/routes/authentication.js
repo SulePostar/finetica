@@ -1,32 +1,19 @@
 const express = require('express');
-const {
-  login,
-  register,
-  getProfile,
-  refreshToken,
-  logout,
-  getPendingUsers,
-  approveUser,
-  rejectUser,
-} = require('../controllers/authentication');
+const { login, register, refreshToken, logout } = require('../controllers/authentication');
 const authorizeAdmin = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-router.post('/login', login);
+const validate = require('../middleware/validation');
+const registerUserSchema = require('../schemas/registerUser');
+const loginUserSchema = require('../schemas/loginUser');
 
-router.post('/register', register);
+router.post('/login', validate(loginUserSchema), login);
 
-router.get('/profile', authorizeAdmin, getProfile);
+router.post('/register', validate(registerUserSchema), register);
 
-router.post('/refresh', authorizeAdmin, refreshToken);
+router.post('/refresh', refreshToken);
 
-router.post('/logout', authorizeAdmin, logout);
-
-router.get('/admin/pending-users', authorizeAdmin, getPendingUsers);
-
-router.put('/admin/approve-user/:userId', authorizeAdmin, approveUser);
-
-router.put('/admin/reject-user/:userId', authorizeAdmin, rejectUser);
+router.post('/logout', logout);
 
 module.exports = router;

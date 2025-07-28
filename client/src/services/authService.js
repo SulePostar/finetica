@@ -1,15 +1,15 @@
-import api from './api';
-import { store } from '../store';
-import { loginSuccess, logout as logoutAction, setLoading } from '../redux/auth/authSlice';
+import { loginSuccess, logout as logoutAction } from '../redux/auth/authSlice';
 import { setUserProfile } from '../redux/user/userSlice';
+import { store } from '../store';
+import api from './api';
 class AuthService {
   async register(userData) {
     try {
       const requestData = {
         email: userData.email,
         password: userData.password,
-        first_name: userData.firstName,
-        last_name: userData.lastName,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
       };
       console.log('Sending registration data:', requestData);
       const response = await api.post('/auth/register', requestData);
