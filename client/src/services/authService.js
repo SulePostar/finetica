@@ -72,6 +72,7 @@ class AuthService {
           try {
             store.dispatch(loginSuccess({ token: response.data.data.token }));
             store.dispatch(setUserProfile(response.data.data.user));
+            // console.log('Login successful, user data:', response.data.data.user);
           } catch (dispatchError) {
             console.error('Error dispatching login action:', dispatchError);
             console.warn('Redux dispatch failed, continuing with token-only auth');
