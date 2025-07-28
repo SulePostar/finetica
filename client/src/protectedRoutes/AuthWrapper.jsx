@@ -10,7 +10,7 @@ export default function AuthWrapper({ children }) {
     useEffect(() => {
         const checkAuth = async () => {
             dispatch(setLoading(true));
-            const token = localStorage.getItem('authToken');
+            const token = localStorage.getItem('jwt_token');
             if (!token) {
                 dispatch(logout());
                 dispatch(setLoading(false));

@@ -1,5 +1,5 @@
 import api from './api';
-import { store } from '../store/store';
+import { store } from '../store';
 import { loginSuccess, logout as logoutAction, setLoading } from '../redux/auth/authSlice';
 class AuthService {
   async register(userData) {
@@ -66,10 +66,11 @@ class AuthService {
         password: credentials.password,
       });
       if (response.data.success) {
-        localStorage.setItem('authToken', response.data.data.token);
+        localStorage.setItem('jwt_token', response.data.data.token);
         if (store && response.data.data.token) {
           try {
             store.dispatch(loginSuccess({ token: response.data.data.token }));
+            //store.dispatch(za usera)
           } catch (dispatchError) {
             console.error('Error dispatching login action:', dispatchError);
             console.warn('Redux dispatch failed, continuing with token-only auth');
@@ -129,7 +130,7 @@ class AuthService {
     } catch (error) {
       console.error('Logout API error:', error);
     } finally {
-      localStorage.removeItem('authToken');
+      localStorage.removeItem('jwt_token');
       if (store) {
         try {
           store.dispatch(logoutAction());
@@ -210,20 +211,20 @@ class AuthService {
     }
   }
   isAuthenticated() {
-    const token = localStorage.getItem('authToken');
-    let isAuth = false;
+    const token = localStorage.getItem('jwt_token');
+    let isAuthenticated = false;
     try {
       if (store && store.getState() && store.getState().auth) {
-        isAuth = store.getState().auth.isAuthenticated;
+        isAuthenticated = store.getState().auth.isAuthenticated;
       }
     } catch (error) {
       console.warn('Error accessing Redux store state:', error);
       return !!token;
     }
-    return isAuth || !!token;
+    return isAuthenticated || !!token;
   }
   getToken() {
-    return localStorage.getItem('authToken');
+    return localStorage.getItem('jwt_token');
   }
   getUser() {
     try {
@@ -236,7 +237,7 @@ class AuthService {
     return null;
   }
   setAuthData(token, user) {
-    localStorage.setItem('authToken', token);
+    localStorage.setItem('jwt_token', token);
     if (store && token) {
       try {
         store.dispatch(loginSuccess({ token }));
@@ -246,7 +247,7 @@ class AuthService {
     }
   }
   clearAuthData() {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('jwt_token');
     if (store) {
       try {
         store.dispatch(logoutAction());

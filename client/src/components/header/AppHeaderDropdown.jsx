@@ -8,23 +8,23 @@ import {
   CDropdownToggle,
 } from '@coreui/react';
 
-const AppHeaderDropdown = () => {
+const AppHeaderDropdown = ({ isDarkMode }) => {
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle
         placement="bottom-end"
-        className="py-0 pe-0"
         caret={false}
+        className="bg-transparent border-0"
       >
-        <CIcon icon={cilUser} size="lg" />
+        <CIcon icon={cilUser} size="lg" className={isDarkMode ? 'text-white' : 'text-dark'} />
       </CDropdownToggle>
 
-      <CDropdownMenu className="pt-0" placement="bottom-end">
-        <CDropdownHeader className="bg-body-secondary fw-semibold mb-2">
-          Account
-        </CDropdownHeader>
-
-        <CDropdownItem component="a" href="#">
+      <CDropdownMenu
+        placement="bottom-end"
+        className={`pt-0 ${isDarkMode ? 'dropdown-menu-dark' : ''}`}
+      >
+        <CDropdownHeader className="bg-body-secondary fw-semibold my-1">Settings</CDropdownHeader>
+        <CDropdownItem href="#">
           <CIcon icon={cilUser} className="me-2" />
           Profile
         </CDropdownItem>

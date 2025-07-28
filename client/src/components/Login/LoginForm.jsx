@@ -55,13 +55,9 @@ const LoginForm = () => {
         try {
             const result = await authService.login(formData);
             if (result.success) {
-                // Eksplicitno dispatch-uj login akciju
                 dispatch(loginSuccess({ token: result.token }));
-
-                // Kratko čekanje da se Redux store ažurira
-                setTimeout(() => {
-                    navigate('/', { replace: true });
-                }, 100);
+                await Promise.resolve(); // Wait one tick for store to update
+                navigate('/', { replace: true });
             } else {
                 setError(result.message || 'Login failed');
             }
