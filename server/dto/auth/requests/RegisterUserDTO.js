@@ -48,10 +48,11 @@ class RegisterUserDTO {
   toModelData() {
     return {
       email: this.email.toLowerCase().trim(),
-      password_hash: this.password, 
-      first_name: this.first_name.trim(),
-      last_name: this.last_name.trim(),
-      role_id: this.role_id,
+      password: this.password,
+      passwordHash: null,
+      firstName: this.first_name.trim(),
+      lastName: this.last_name.trim(),
+      roleId: this.role_id,
     };
   }
 }
