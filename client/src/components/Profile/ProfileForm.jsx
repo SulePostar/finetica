@@ -9,6 +9,9 @@ import {
 import { profileFormStyles } from './ProfileForm.styles';
 
 const ProfileForm = () => {
+  const [isEditable, setIsEditable] = useState(false);
+  
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -22,6 +25,7 @@ const ProfileForm = () => {
 
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  
 
   const handleChange = ({ target: { name, value } }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -30,9 +34,14 @@ const ProfileForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add your validation + API update logic here
     setSuccess('Profile updated successfully!');
+  
+    // Clear the success message after 5 seconds
+    setTimeout(() => {
+      setSuccess('');
+    }, 5000);
   };
+  
 
   return (
     <div className="profile-form-card" style={{ maxWidth: '600px', margin: 'auto', padding: '40px' }}>
@@ -65,6 +74,9 @@ const ProfileForm = () => {
       {error && <CAlert color="danger">{error}</CAlert>}
       {success && <CAlert color="success">{success}</CAlert>}
 
+
+
+
       <CForm onSubmit={handleSubmit}>
         <CInputGroup className="mb-3">
           <CInputGroupText style={profileFormStyles.inputGroupText}>
@@ -75,6 +87,7 @@ const ProfileForm = () => {
             name="firstName"
             value={formData.firstName}
             onChange={handleChange}
+            disabled={!isEditable}
           />
         </CInputGroup>
 
@@ -87,6 +100,7 @@ const ProfileForm = () => {
             name="lastName"
             value={formData.lastName}
             onChange={handleChange}
+            disabled={!isEditable}
           />
         </CInputGroup>
 
@@ -99,6 +113,7 @@ const ProfileForm = () => {
             name="fullName"
             value={formData.fullName}
             onChange={handleChange}
+            disabled={!isEditable}
           />
         </CInputGroup>
 
@@ -112,6 +127,7 @@ const ProfileForm = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
+            disabled={!isEditable}
           />
         </CInputGroup>
 
@@ -125,6 +141,7 @@ const ProfileForm = () => {
             name="role"
             value={formData.role}
             onChange={handleChange}
+            disabled={!isEditable}
           />
         </CInputGroup>
 
@@ -138,13 +155,51 @@ const ProfileForm = () => {
             name="status"
             value={formData.status}
             onChange={handleChange}
+            disabled={!isEditable}
           />
         </CInputGroup>
 
+        <CInputGroup className="mb-3">
+          <CInputGroupText style={profileFormStyles.inputGroupText}>
+            <CIcon icon={cilEnvelopeClosed} style={profileFormStyles.icon} />
+          </CInputGroupText>
+          <CFormInput
+            placeholder="Email Verified"
+            type="emailVerified"
+            name="emailVerified"
+            value={formData.emailVerified}
+            onChange={handleChange}
+            disabled={!isEditable}
+          />
+        </CInputGroup>
+
+        <CInputGroup className="mb-3">
+          <CInputGroupText style={profileFormStyles.inputGroupText}>
+            <CIcon icon={cilEnvelopeClosed} style={profileFormStyles.icon} />
+          </CInputGroupText>
+          <CFormInput
+            placeholder="Last Login"
+            type="lastLogin"
+            name="lastLogin"
+            value={formData.lastLogin}
+            onChange={handleChange}
+            disabled          />
+        </CInputGroup>
+
+        <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+        <CButton
+          type="button"
+          style={profileFormStyles.button}
+          onClick={() => setIsEditable((prev) => !prev)}
+        >
+          {isEditable ? 'Cancel' : 'Edit Profile'}
+        </CButton>
 
         <CButton type="submit" style={profileFormStyles.button}>
-          Update Profile
+          Submit Changes
         </CButton>
+      </div>
+
       </CForm>
     </div>
   );
