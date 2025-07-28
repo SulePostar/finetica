@@ -4,5 +4,8 @@
   "[javascript]": {
     "editor.formatOnSave": true
   },
-  "prettier.configPath": ".prettierrc"
+  "prettier.configPath": ".prettierrc",
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  }
 }
