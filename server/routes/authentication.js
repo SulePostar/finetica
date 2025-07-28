@@ -13,9 +13,13 @@ const authorizeAdmin = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-router.post('/login', login);
+const validate = require('../middleware/validation');
+const registerUserSchema = require('../schemas/registerUser');
+const loginUserSchema = require('../schemas/loginUser');
 
-router.post('/register', register);
+router.post('/login', validate(loginUserSchema), login);
+
+router.post('/register', validate(registerUserSchema), register);
 
 router.get('/profile', authorizeAdmin, getProfile);
 
