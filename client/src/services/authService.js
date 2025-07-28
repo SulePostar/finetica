@@ -1,6 +1,7 @@
 import { loginSuccess, logout as logoutAction } from '../redux/auth/authSlice';
 import { setUserProfile } from '../redux/user/userSlice';
 import { store } from '../store';
+import api from './api';
 class AuthService {
   async register(userData) {
     try {
