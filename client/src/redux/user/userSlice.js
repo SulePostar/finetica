@@ -1,13 +1,13 @@
-// client/src/redux/user/userSlice.js
+
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   profile: {
     id: null,
     email: '',
-    name: '',
-    first_name : '',
-    last_name: '',
+    fullName: '',
+    firstName : '',
+    lastName: '',
     roleId: null,
     roleName: '',
     statusId: null,
@@ -28,9 +28,9 @@ const userSlice = createSlice({
       const {
         id,
         email,
-        name,
-        first_name,
-        last_name,
+        fullName,
+        firstName,
+        lastName,
         roleId,
         roleName,
         statusId,
@@ -43,9 +43,9 @@ const userSlice = createSlice({
       state.profile = {
         id,
         email,
-        name,
-        first_name,
-        last_name,
+        fullName,
+        firstName,
+        lastName,
         roleId,
         roleName,
         statusId,

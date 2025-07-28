@@ -91,7 +91,7 @@ class AuthService {
         data: {
           user: {
             id: user.id,
-            full_name: user.firstName + ' ' + user.lastName,
+            fullName: user.firstName + ' ' + user.lastName,
             email: user.email,
             roleId: user.roleId,
             firstName: user.firstName,
