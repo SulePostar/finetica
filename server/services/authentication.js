@@ -91,8 +91,7 @@ class AuthService {
         data: {
           user: {
             id: user.id,
-            firstName: user.firstName,
-            lastName: user.lastName,
+            name: user.firstName + ' ' + user.lastName,
             email: user.email,
             roleId: user.roleId,
             roleName: user.role?.name || null,
@@ -100,6 +99,8 @@ class AuthService {
             statusName: user.userStatus?.status || null,
             isEmailVerified: user.isEmailVerified,
             lastLoginAt: user.lastLoginAt,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
           },
           token,
         },

@@ -5,8 +5,7 @@ const initialState = {
   profile: {
     id: null,
     email: '',
-    firstName: '',
-    lastName: '',
+    name: '',
     roleId: null,
     roleName: '',
     statusId: null,
@@ -27,8 +26,7 @@ const userSlice = createSlice({
       const {
         id,
         email,
-        firstName,
-        lastName,
+        name,
         roleId,
         roleName,
         statusId,
@@ -41,8 +39,7 @@ const userSlice = createSlice({
       state.profile = {
         id,
         email,
-        firstName,
-        lastName,
+        name,
         roleId,
         roleName,
         statusId,
