@@ -1,99 +1,105 @@
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const { User, Role, UserStatus } = require('../models');
 const LoginUserDTO = require('../dto/auth/requests/LoginUserDTO');
 const RegisterUserDTO = require('../dto/auth/requests/RegisterUserDTO');
+const AppError = require('../utils/errorHandler');
 
 class AuthService {
-  generateToken(userId, roleId = null, roleName = null) {
-    const payload = { userId };
+  async register(registerData) {
+    const registerDTO = new RegisterUserDTO(registerData);
+    const validation = registerDTO.validate();
 
-    if (roleId && roleName) {
-      payload.roleId = roleId;
-      payload.roleName = roleName;
+    if (!validation.isValid) {
+      throw new AppError('Validation failed', 400, validation.errors);
     }
 
-    return jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN
+    const existingUser = await User.findOne({
+      where: { email: registerDTO.email.toLowerCase() },
     });
+
+    if (existingUser) {
+      throw new AppError('User with this email already exists', 409);
+    }
+
+    const userData = registerDTO.toModelData();
+
+    userData.passwordHash = await bcrypt.hash(userData.password, 10);
+
+    userData.statusId = 1;
+
+    const user = await User.create(userData);
+
+    const userWithRole = await User.findByPk(user.id, {
+      include: [
+        {
+          model: Role,
+          as: 'role',
+          attributes: ['id', 'name'],
+        },
+        {
+          model: UserStatus,
+          as: 'userStatus',
+          attributes: ['id', 'status'],
+        },
+      ],
+    });
+
+    return {
+      success: true,
+      message: 'Registration successful. Your account is pending admin approval.',
+      data: { user: userWithRole },
+    };
   }
 
   async login(loginData) {
     try {
       const loginDTO = new LoginUserDTO(loginData);
       const validation = loginDTO.validate();
-
-      if (!validation.isValid) {
-        return {
-          success: false,
-          message: 'Validation failed',
-          errors: validation.errors,
-        };
-      }
+      if (!validation.isValid) throw new AppError('Validation failed', 400);
 
       const user = await User.scope('withPassword').findOne({
         where: { email: loginDTO.email.toLowerCase() },
         include: [
-          {
-            model: Role,
-            as: 'role',
-            attributes: ['id', 'name'],
-          },
-          {model:UserStatus,
-            as:'user_status',
-            attributes:['id']
-          }
+          { model: Role, as: 'role', attributes: ['id', 'name'] },
+          { model: UserStatus, as: 'userStatus', attributes: ['id', 'status'] },
         ],
       });
 
-      console.log(user, 'user')
+      if (!user) throw new AppError('Invalid credentials', 401);
 
-      if (!user) {
-        return {
-          success: false,
-          message: 'Invalid credentials',
-        };
-      }
+      if (user.statusId === 4) throw new AppError('Account deactivated', 403);
 
-      if (user.status_id===4) {
-        return {
-          success: false,
-          message: 'Account is deactivated',
-        };
-      }
-
-      if (user.status_id !== 2) {
+      if (user.statusId !== 2) {
         const statusMessages = {
-          pending: 'Account is pending admin approval and cannot login',
-          rejected: 'Account has been rejected by admin',
+          1: 'Account is pending admin approval and cannot login',
+          3: 'Account has been rejected by admin',
         };
-
-        return {
-          success: false,
-          message: statusMessages[user.status] || 'Account approval status invalid',
-        };
+        throw new AppError(statusMessages[user.statusId] || 'Invalid account status', 403);
       }
 
       const isPasswordValid = await user.checkPassword(loginDTO.password);
+      if (!isPasswordValid) throw new AppError('Invalid credentials', 401);
 
-      if (!isPasswordValid) {
-        return {
-          success: false,
-          message: 'Invalid credentials',
-        };
-      }
-
-      await user.update({ last_login_at: new Date() });
+      await user.update({ lastLoginAt: new Date() });
 
       const token = this.generateToken(user.id, user.role?.id, user.role?.name);
-
-      const userResponse = user.toJSON();
-      delete userResponse.password_hash;
 
       return {
         success: true,
         message: 'Login successful',
         data: {
-          user: userResponse,
+          user: {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            roleId: user.roleId,
+            roleName: user.role?.name || null,
+            statusId: user.statusId,
+            isEmailVerified: user.isEmailVerified,
+            lastLoginAt: user.lastLoginAt,
+          },
           token,
         },
       };
@@ -101,94 +107,7 @@ class AuthService {
       console.error('Login error:', error);
       return {
         success: false,
-        message: 'An error occurred during login',
-      };
-    }
-  }
-
-  async register(registerData) {
-    try {
-      const registerDTO = new RegisterUserDTO(registerData);
-      const validation = registerDTO.validate();
-
-      if (!validation.isValid) {
-        return {
-          success: false,
-          message: 'Validation failed',
-          errors: validation.errors,
-        };
-      }
-
-      const existingUser = await User.findOne({
-        where: { email: registerDTO.email.toLowerCase() },
-      });
-
-      if (existingUser) {
-        return {
-          success: false,
-          message: 'User with this email already exists',
-        };
-      }
-
-      if (registerDTO.role_id !== null) {
-        const role = await Role.findByPk(registerDTO.role_id);
-        if (!role) {
-          return {
-            success: false,
-            message: 'Invalid role selected',
-          };
-        }
-      }
-
-      const userData = registerDTO.toModelData();
-      const user = await User.create(userData);
-
-      const userWithRole = await User.findByPk(user.id, {
-        include: [
-          {
-            model: Role,
-            as: 'role',
-            attributes: ['id', 'name'],
-          },
-        ],
-      });
-
-      // Don't provide JWT token for pending users
-      if (userWithRole.approval_status === 'pending') {
-        return {
-          success: true,
-          message: 'Registration successful. Your account is pending admin approval.',
-          data: {
-            user: userWithRole,
-            // No token provided for pending users
-          },
-        };
-      }
-
-      // Only provide token if user is already accepted (shouldn't happen with current flow, but keeping for safety)
-      const token = this.generateToken(user.id, userWithRole.role?.id, userWithRole.role?.name);
-
-      return {
-        success: true,
-        message: 'Registration successful',
-        data: {
-          user: userWithRole,
-          token,
-        },
-      };
-    } catch (error) {
-      console.error('Registration error:', error);
-
-      if (error.name === 'SequelizeUniqueConstraintError') {
-        return {
-          success: false,
-          message: 'User with this email already exists',
-        };
-      }
-
-      return {
-        success: false,
-        message: 'An error occurred during registration',
+        message: error.message || 'An error occurred during login',
       };
     }
   }
@@ -223,6 +142,19 @@ class AuthService {
         message: 'An error occurred while fetching profile',
       };
     }
+  }
+
+  generateToken(userId, roleId = null, roleName = null) {
+    const payload = { userId };
+
+    if (roleId && roleName) {
+      payload.roleId = roleId;
+      payload.roleName = roleName;
+    }
+
+    return jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    });
   }
 
   async refreshToken(userId) {
