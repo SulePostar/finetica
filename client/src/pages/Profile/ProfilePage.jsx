@@ -1,12 +1,21 @@
 import React from 'react';
+import AppHeader from '../../components/AppHeader';
 import AppSidebar from '../../components/AppSidebar';
 import ProfileForm from '../../components/Profile/ProfileForm';
 
 const Profile = () => {
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <div>
+      <AppHeader />
       <AppSidebar />
-      <main style={{ flex: 1, padding: '20px', backgroundColor: '#f5f6fa' }}>
+      <main
+        style={{
+          display: 'flex',
+          width: '100%',
+          padding: '20px',
+          paddingLeft: '255px',
+        }}
+      >
         <ProfileForm />
       </main>
     </div>

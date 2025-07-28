@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import {
   CForm,
@@ -8,15 +8,34 @@ import {
   CButton,
   CAlert,
   CAvatar,
+  CFormLabel,
 } from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilUser, cilContact, cilEnvelopeClosed, cilLockLocked } from '@coreui/icons';
 import { profileFormStyles } from './ProfileForm.styles';
 
 const ProfileForm = () => {
-  const [isEditable, setIsEditable] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(
+    document.documentElement.getAttribute('data-coreui-theme') === 'dark'
+  );
 
+  useEffect(() => {
+    const handler = () => {
+      const mode = document.documentElement.getAttribute('data-coreui-theme');
+      setIsDarkMode(mode === 'dark');
+    };
+    window.document.documentElement.addEventListener('ColorSchemeChange', handler);
+    return () =>
+      document.documentElement.removeEventListener('ColorSchemeChange', handler);
+  }, []);
+
+  const styles = useMemo(() => profileFormStyles(isDarkMode), [isDarkMode]);
+
+  const [isEditable, setIsEditable] = useState(false);
   const profile = useSelector((state) => state.user.profile);
+
+  const [formData, setFormData] = useState(profile);
+  useEffect(() => {
+    setFormData(profile);
+  }, [profile]);
 
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
@@ -29,150 +48,138 @@ const ProfileForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setSuccess('Profile updated successfully!');
-
-    // Clear the success message after 5 seconds
-    setTimeout(() => {
-      setSuccess('');
-    }, 5000);
+    setIsEditable(false);
+    setTimeout(() => setSuccess(''), 5000);
   };
-  console.log('ProfileForm rendered with profile:', profile);
+
+  const centeringContainerStyle = {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+
   return (
-    <div
-      className="profile-form-card"
-      style={{ maxWidth: '600px', margin: 'auto', padding: '40px' }}
-    >
-      <h2 style={{ textAlign: 'center', color: '#2d3748', marginBottom: '32px' }}>Your Profile</h2>
+    <div style={centeringContainerStyle}>
+      <div style={styles.formContainerCard}>
+        <h2 style={styles.title}>User Profile</h2>
 
-      {/* Avatar Section */}
-      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-        <CAvatar
-          src="https://i.pravatar.cc/150?u=filip"
-          size="xl"
-          style={{ marginBottom: '16px' }}
-        />
-        <div>
-          <CButton color="outline-primary" size="sm" style={{ marginRight: '8px' }}>
-            Change Photo
-          </CButton>
-          <CButton color="outline-secondary" size="sm">
-            Remove
-          </CButton>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <CAvatar
+            src="https://i.pravatar.cc/150?u=filip"
+            size="xl"
+            style={{ marginBottom: '16px', width: '10rem', height: '10rem' }}
+          />
+          <div>
+            <CButton color="outline-primary" size="sm" style={{ marginRight: '8px' }}>
+              Change Photo
+            </CButton>
+            <CButton color="outline-secondary" size="sm">
+              Remove
+            </CButton>
+          </div>
         </div>
+
+        {error && <CAlert color="danger">{error}</CAlert>}
+        {success && <CAlert color="success">{success}</CAlert>}
+
+        <CForm onSubmit={handleSubmit}>
+          <CInputGroup className="mb-3">
+            <CInputGroupText style={styles.inputGroupText}>
+              <CFormLabel style={styles.labelInInputGroupText}>First name</CFormLabel>
+            </CInputGroupText>
+            <CFormInput
+              style={styles.formInput}
+              placeholder="First Name"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              disabled={!isEditable}
+            />
+          </CInputGroup>
+
+          <CInputGroup className="mb-3">
+            <CInputGroupText style={styles.inputGroupText}>
+              <CFormLabel style={styles.labelInInputGroupText}>Last name</CFormLabel>
+            </CInputGroupText>
+            <CFormInput
+              style={styles.formInput}
+              placeholder="Last Name"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              disabled={!isEditable}
+            />
+          </CInputGroup>
+
+          <CInputGroup className="mb-3">
+            <CInputGroupText style={styles.inputGroupText}>
+              <CFormLabel style={styles.labelInInputGroupText}>Email</CFormLabel>
+            </CInputGroupText>
+            <CFormInput
+              style={styles.formInput}
+              placeholder="Email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              disabled={!isEditable}
+            />
+          </CInputGroup>
+
+          <CInputGroup className="mb-3">
+            <CInputGroupText style={styles.inputGroupText}>
+              <CFormLabel style={styles.labelInInputGroupText}>Role</CFormLabel>
+            </CInputGroupText>
+            <CFormInput
+              style={styles.formInput}
+              value={
+                formData.roleName?.charAt(0).toUpperCase() + formData.roleName?.slice(1)
+              }
+              disabled
+            />
+          </CInputGroup>
+
+          <CInputGroup className="mb-3">
+            <CInputGroupText style={styles.inputGroupText}>
+              <CFormLabel style={styles.labelInInputGroupText}>Status</CFormLabel>
+            </CInputGroupText>
+            <CFormInput
+              style={styles.formInput}
+              value={
+                formData.statusName?.charAt(0).toUpperCase() + formData.statusName?.slice(1)
+              }
+              disabled
+            />
+          </CInputGroup>
+
+          <CInputGroup className="mb-3">
+            <CInputGroupText style={styles.inputGroupText}>
+              <CFormLabel style={styles.labelInInputGroupText}>Last login</CFormLabel>
+            </CInputGroupText>
+            <CFormInput
+              style={styles.formInput}
+              value={formData.lastLoginAt}
+              disabled
+            />
+          </CInputGroup>
+
+          <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+            <CButton
+              type="button"
+              style={styles.button}
+              onClick={() => setIsEditable((prev) => !prev)}
+            >
+              {isEditable ? 'Cancel' : 'Edit Profile'}
+            </CButton>
+            {isEditable && (
+              <CButton type="submit" style={styles.button}>
+                Submit Changes
+              </CButton>
+            )}
+          </div>
+        </CForm>
       </div>
-
-      {error && <CAlert color="danger">{error}</CAlert>}
-      {success && <CAlert color="success">{success}</CAlert>}
-
-      <CForm onSubmit={handleSubmit}>
-        <CInputGroup className="mb-3">
-          <CInputGroupText style={profileFormStyles.inputGroupText}>
-            <CIcon icon={cilUser} style={profileFormStyles.icon} />
-          </CInputGroupText>
-          <CFormInput
-            placeholder="First Name"
-            name="firstName"
-            value={profile.firstName}
-            onChange={handleChange}
-            disabled={!isEditable}
-          />
-        </CInputGroup>
-
-        <CInputGroup className="mb-3">
-          <CInputGroupText style={profileFormStyles.inputGroupText}>
-            <CIcon icon={cilContact} style={profileFormStyles.icon} />
-          </CInputGroupText>
-          <CFormInput
-            placeholder="Last Name"
-            name="lastName"
-            value={profile.lastName}
-            onChange={handleChange}
-            disabled={!isEditable}
-          />
-        </CInputGroup>
-
-        <CInputGroup className="mb-3">
-          <CInputGroupText style={profileFormStyles.inputGroupText}>
-            <CIcon icon={cilContact} style={profileFormStyles.icon} />
-          </CInputGroupText>
-          <CFormInput
-            placeholder="Full Name"
-            name="fullName"
-            value={profile.fullName}
-            onChange={handleChange}
-            disabled={!isEditable}
-          />
-        </CInputGroup>
-
-        <CInputGroup className="mb-3">
-          <CInputGroupText style={profileFormStyles.inputGroupText}>
-            <CIcon icon={cilEnvelopeClosed} style={profileFormStyles.icon} />
-          </CInputGroupText>
-          <CFormInput
-            placeholder="Email"
-            type="email"
-            name="email"
-            value={profile.email}
-            onChange={handleChange}
-            disabled={!isEditable}
-          />
-        </CInputGroup>
-
-        <CInputGroup className="mb-3">
-          <CInputGroupText style={profileFormStyles.inputGroupText}>
-            <CIcon icon={cilEnvelopeClosed} style={profileFormStyles.icon} />
-          </CInputGroupText>
-          <CFormInput
-            placeholder="Role"
-            type="role"
-            name="role"
-            value={profile.roleName.charAt(0).toUpperCase() + profile.roleName.slice(1)}
-            onChange={handleChange}
-            disabled={!isEditable}
-          />
-        </CInputGroup>
-
-        <CInputGroup className="mb-3">
-          <CInputGroupText style={profileFormStyles.inputGroupText}>
-            <CIcon icon={cilEnvelopeClosed} style={profileFormStyles.icon} />
-          </CInputGroupText>
-          <CFormInput
-            placeholder="Status"
-            type="status"
-            name="status"
-            value={profile.statusName.charAt(0).toUpperCase() + profile.statusName.slice(1)}
-            onChange={handleChange}
-            disabled={!isEditable}
-          />
-        </CInputGroup>
-
-        <CInputGroup className="mb-3">
-          <CInputGroupText style={profileFormStyles.inputGroupText}>
-            <CIcon icon={cilEnvelopeClosed} style={profileFormStyles.icon} />
-          </CInputGroupText>
-          <CFormInput
-            placeholder="Last Login"
-            type="lastLogin"
-            name="lastLogin"
-            value={profile.lastLoginAt}
-            onChange={handleChange}
-            disabled
-          />
-        </CInputGroup>
-
-        <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-          <CButton
-            type="button"
-            style={profileFormStyles.button}
-            onClick={() => setIsEditable((prev) => !prev)}
-          >
-            {isEditable ? 'Cancel' : 'Edit Profile'}
-          </CButton>
-
-          <CButton type="submit" style={profileFormStyles.button}>
-            Submit Changes
-          </CButton>
-        </div>
-      </CForm>
     </div>
   );
 };
