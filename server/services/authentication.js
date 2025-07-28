@@ -38,7 +38,17 @@ class AuthService {
     return {
       success: true,
       message: 'Registration successful. Your account is pending admin approval.',
-      data: { user: userWithRole },
+      data: {
+        user: {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          roleId: user.roleId,
+          roleName: user.role?.name || null,
+          statusId: user.statusId,
+        },
+      },
     };
   }
 
