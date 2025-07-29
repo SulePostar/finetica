@@ -1,14 +1,15 @@
-import api from './api';
+import { loginSuccess, logout as logoutAction } from '../redux/auth/authSlice';
+import { setUserProfile } from '../redux/user/userSlice';
 import { store } from '../store';
-import { loginSuccess, logout as logoutAction, setLoading } from '../redux/auth/authSlice';
+import api from './api';
 class AuthService {
   async register(userData) {
     try {
       const requestData = {
         email: userData.email,
         password: userData.password,
-        first_name: userData.firstName,
-        last_name: userData.lastName,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
       };
       console.log('Sending registration data:', requestData);
       const response = await api.post('/auth/register', requestData);
@@ -70,7 +71,7 @@ class AuthService {
         if (store && response.data.data.token) {
           try {
             store.dispatch(loginSuccess({ token: response.data.data.token }));
-            //store.dispatch(za usera)
+            store.dispatch(setUserProfile(response.data.data.user));
           } catch (dispatchError) {
             console.error('Error dispatching login action:', dispatchError);
             console.warn('Redux dispatch failed, continuing with token-only auth');
