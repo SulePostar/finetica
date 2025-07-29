@@ -159,7 +159,7 @@ const ProfileForm = () => {
             </CInputGroupText>
             <CFormInput
               style={styles.formInputDisabled}
-              value={formData.lastLoginAt}
+              value={formatDateTime(formData.lastLoginAt)}
               disabled
             />
           </CInputGroup>
