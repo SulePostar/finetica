@@ -10,7 +10,7 @@ class UploadedFilesController {
     try {
       const fileData = {
         ...req.body,
-        uploaded_by: req.user?.userId, // Get userId from JWT payload
+        uploaded_by: req.user?.id, // Get userId from JWT payload
       };
 
       const file = await uploadedFilesService.createFileRecord(fileData);
