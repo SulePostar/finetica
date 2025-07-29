@@ -6,9 +6,7 @@ class UploadedFilesService {
    * Create a new file record in the database
    * @param {Object} fileData - File data object
    * @param {string} fileData.file_name - File name in storage
-   * @param {string} fileData.original_name - Original file name
    * @param {string} fileData.file_url - Full URL to the file
-   * @param {string} fileData.file_path - Path in storage
    * @param {number} fileData.file_size - File size in bytes
    * @param {string} fileData.mime_type - MIME type of the file
    * @param {string} fileData.bucket_name - Storage bucket name
