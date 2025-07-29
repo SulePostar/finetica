@@ -65,7 +65,7 @@ export const profileFormStyles = (isDarkMode) => {
     },
 
     inputGroupText: {
-      backgroundColor: colors.lightGray,
+      backgroundColor: isDarkMode ? '#b7b8bbff' : '#ecececff',
       border: `1px solid ${colors.borderLight}`,
       borderRight: `2px solid ${colors.borderMedium}`,
       color: colors.primary,
@@ -74,6 +74,14 @@ export const profileFormStyles = (isDarkMode) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
+    },
+
+    formInput: {
+      backgroundColor: isDarkMode ? '#e0e0e0' : colors.lightGray,
+    },
+
+    formInputDisabled: {
+      backgroundColor: isDarkMode ? '#b7b8bbff' : '#ecececff',
     },
 
     labelInInputGroupText: {

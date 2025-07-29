@@ -89,7 +89,7 @@ const ProfileForm = () => {
               <CFormLabel style={styles.labelInInputGroupText}>First name</CFormLabel>
             </CInputGroupText>
             <CFormInput
-              style={styles.formInput}
+              style={isEditable ? styles.formInput : styles.formInputDisabled}
               placeholder="First Name"
               name="firstName"
               value={formData.firstName}
@@ -103,7 +103,7 @@ const ProfileForm = () => {
               <CFormLabel style={styles.labelInInputGroupText}>Last name</CFormLabel>
             </CInputGroupText>
             <CFormInput
-              style={styles.formInput}
+              style={isEditable ? styles.formInput : styles.formInputDisabled}
               placeholder="Last Name"
               name="lastName"
               value={formData.lastName}
@@ -117,7 +117,7 @@ const ProfileForm = () => {
               <CFormLabel style={styles.labelInInputGroupText}>Email</CFormLabel>
             </CInputGroupText>
             <CFormInput
-              style={styles.formInput}
+              style={isEditable ? styles.formInput : styles.formInputDisabled}
               placeholder="Email"
               type="email"
               name="email"
@@ -132,8 +132,10 @@ const ProfileForm = () => {
               <CFormLabel style={styles.labelInInputGroupText}>Role</CFormLabel>
             </CInputGroupText>
             <CFormInput
-              style={styles.formInput}
-              value={formData.roleName?.charAt(0).toUpperCase() + formData.roleName?.slice(1)}
+              style={styles.formInputDisabled}
+              value={
+                formData.roleName?.charAt(0).toUpperCase() + formData.roleName?.slice(1)
+              }
               disabled
             />
           </CInputGroup>
@@ -143,8 +145,10 @@ const ProfileForm = () => {
               <CFormLabel style={styles.labelInInputGroupText}>Status</CFormLabel>
             </CInputGroupText>
             <CFormInput
-              style={styles.formInput}
-              value={formData.statusName?.charAt(0).toUpperCase() + formData.statusName?.slice(1)}
+              style={styles.formInputDisabled}
+              value={
+                formData.statusName?.charAt(0).toUpperCase() + formData.statusName?.slice(1)
+              }
               disabled
             />
           </CInputGroup>
@@ -154,8 +158,8 @@ const ProfileForm = () => {
               <CFormLabel style={styles.labelInInputGroupText}>Last login</CFormLabel>
             </CInputGroupText>
             <CFormInput
-              style={styles.formInput}
-              value={formatDateTime(formData.lastLoginAt)}
+              style={styles.formInputDisabled}
+              value={formData.lastLoginAt}
               disabled
             />
           </CInputGroup>
