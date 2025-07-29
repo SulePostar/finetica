@@ -3,10 +3,19 @@ import {
     CModalHeader,
     CModalBody,
     CModalFooter,
-    CButton
+    CButton,
 } from '@coreui/react';
 
-const LogoutModal = ({ visible, onCancel, onConfirm }) => {
+const ConfirmationModal = ({
+    visible,
+    onCancel,
+    onConfirm,
+    title,
+    body,
+    cancelText = 'Cancel',
+    confirmText = 'Confirm',
+    confirmColor = 'primary',
+}) => {
     return (
         <CModal
             visible={visible}
@@ -14,18 +23,18 @@ const LogoutModal = ({ visible, onCancel, onConfirm }) => {
             alignment="center"
             className="modal-blur-overlay"
         >
-            <CModalHeader closeButton>Confirm Logout</CModalHeader>
-            <CModalBody>Are you sure you want to log out?</CModalBody>
+            <CModalHeader closeButton>{title}</CModalHeader>
+            <CModalBody>{body}</CModalBody>
             <CModalFooter>
                 <CButton color="secondary" onClick={onCancel}>
-                    Cancel
+                    {cancelText}
                 </CButton>
-                <CButton color="danger" onClick={onConfirm}>
-                    Logout
+                <CButton color={confirmColor} onClick={onConfirm}>
+                    {confirmText}
                 </CButton>
             </CModalFooter>
         </CModal>
     );
 };
 
-export default LogoutModal;
+export default ConfirmationModal;

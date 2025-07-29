@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../redux/auth/authSlice';
 import { cilExitToApp } from '@coreui/icons';
-import LogoutModal from './../LogoutModal';
+import LogoutModal from './../Logout/LogoutModal';
 import { useState } from 'react';
 
 const AppHeaderDropdown = ({ isDarkMode }) => {
