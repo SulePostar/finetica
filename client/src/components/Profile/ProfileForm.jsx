@@ -12,6 +12,7 @@ import {
 } from '@coreui/react';
 import { profileFormStyles } from './ProfileForm.styles';
 import { formatDateTime } from '../../helpers/dateHelper.js';
+import { capitalizeFirst } from '../../helpers/capitalizeFirstHelper.js';
 
 const ProfileForm = () => {
   const [isDarkMode, setIsDarkMode] = useState(
@@ -55,10 +56,7 @@ const ProfileForm = () => {
   return (
     <div className="container py-4">
       <div className="row justify-content-center">
-        <div
-          className="col-12 col-md-10 col-lg-8 col-xl-6"
-          style={styles.formContainerCard}
-        >
+        <div className="col-12 col-md-10 col-lg-8 col-xl-6" style={styles.formContainerCard}>
           <h2 className="text-center mb-4" style={styles.title}>
             User Profile
           </h2>
@@ -91,9 +89,7 @@ const ProfileForm = () => {
             ].map(({ label, name, type = 'text' }) => (
               <CInputGroup className="mb-3" key={name}>
                 <CInputGroupText style={styles.inputGroupText}>
-                  <CFormLabel style={styles.labelInInputGroupText}>
-                    {label}
-                  </CFormLabel>
+                  <CFormLabel style={styles.labelInInputGroupText}>{label}</CFormLabel>
                 </CInputGroupText>
                 <CFormInput
                   type={type}
@@ -113,9 +109,7 @@ const ProfileForm = () => {
               </CInputGroupText>
               <CFormInput
                 style={styles.formInputDisabled}
-                value={
-                  formData.roleName?.charAt(0).toUpperCase() + formData.roleName?.slice(1)
-                }
+                value={capitalizeFirst(formData.roleName)}
                 disabled
               />
             </CInputGroup>
@@ -126,10 +120,7 @@ const ProfileForm = () => {
               </CInputGroupText>
               <CFormInput
                 style={styles.formInputDisabled}
-                value={
-                  formData.statusName?.charAt(0).toUpperCase() +
-                  formData.statusName?.slice(1)
-                }
+                value={capitalizeFirst(formData.statusName)}
                 disabled
               />
             </CInputGroup>
