@@ -1,11 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  cilMenu,
-  cilSun,
-  cilMoon,
-  cilContrast
-} from '@coreui/icons';
+import { cilMenu, cilSun, cilMoon, cilContrast } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import {
   CContainer,
@@ -31,18 +26,15 @@ const AppHeader = () => {
   useEffect(() => {
     const handleScroll = () => {
       if (headerRef.current) {
-        headerRef.current.classList.toggle(
-          'shadow-sm',
-          document.documentElement.scrollTop > 0
-        );
+        headerRef.current.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
       }
     };
     document.addEventListener('scroll', handleScroll);
     return () => document.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-  const isDarkMode = colorMode === 'dark' || (colorMode === 'auto' && prefersDark)
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode = colorMode === 'dark' || (colorMode === 'auto' && prefersDark);
 
   return (
     <CHeader position="sticky" className="mb-4 p-0" ref={headerRef}>
@@ -62,7 +54,11 @@ const AppHeader = () => {
               {colorMode === 'dark' ? (
                 <CIcon icon={cilMoon} size="lg" className="text-white" />
               ) : colorMode === 'auto' ? (
-                <CIcon icon={cilContrast} size="lg" className={isDarkMode ? 'text-white' : 'text-dark'} />
+                <CIcon
+                  icon={cilContrast}
+                  size="lg"
+                  className={isDarkMode ? 'text-white' : 'text-dark'}
+                />
               ) : (
                 <CIcon icon={cilSun} size="lg" className="text-dark" />
               )}
@@ -99,13 +95,11 @@ const AppHeader = () => {
             </CDropdownMenu>
           </CDropdown>
 
-
           <AppHeaderDropdown isDarkMode={isDarkMode} />
         </CHeaderNav>
       </CContainer>
     </CHeader>
-  )
-
+  );
 };
 
 export default AppHeader;

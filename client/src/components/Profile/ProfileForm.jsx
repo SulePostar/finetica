@@ -11,6 +11,7 @@ import {
   CFormLabel,
 } from '@coreui/react';
 import { profileFormStyles } from './ProfileForm.styles';
+import { formatDateTime } from '../../services/dateFormatter';
 
 const ProfileForm = () => {
   const [isDarkMode, setIsDarkMode] = useState(
@@ -23,8 +24,7 @@ const ProfileForm = () => {
       setIsDarkMode(mode === 'dark');
     };
     window.document.documentElement.addEventListener('ColorSchemeChange', handler);
-    return () =>
-      document.documentElement.removeEventListener('ColorSchemeChange', handler);
+    return () => document.documentElement.removeEventListener('ColorSchemeChange', handler);
   }, []);
 
   const styles = useMemo(() => profileFormStyles(isDarkMode), [isDarkMode]);
@@ -133,9 +133,7 @@ const ProfileForm = () => {
             </CInputGroupText>
             <CFormInput
               style={styles.formInput}
-              value={
-                formData.roleName?.charAt(0).toUpperCase() + formData.roleName?.slice(1)
-              }
+              value={formData.roleName?.charAt(0).toUpperCase() + formData.roleName?.slice(1)}
               disabled
             />
           </CInputGroup>
@@ -146,9 +144,7 @@ const ProfileForm = () => {
             </CInputGroupText>
             <CFormInput
               style={styles.formInput}
-              value={
-                formData.statusName?.charAt(0).toUpperCase() + formData.statusName?.slice(1)
-              }
+              value={formData.statusName?.charAt(0).toUpperCase() + formData.statusName?.slice(1)}
               disabled
             />
           </CInputGroup>
@@ -159,7 +155,7 @@ const ProfileForm = () => {
             </CInputGroupText>
             <CFormInput
               style={styles.formInput}
-              value={formData.lastLoginAt}
+              value={formatDateTime(formData.lastLoginAt)}
               disabled
             />
           </CInputGroup>
