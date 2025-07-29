@@ -18,12 +18,6 @@ export default function AuthWrapper({ children }) {
             }
 
             try {
-                const res = await axios.get('/api/auth/verify-token', {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-
                 dispatch(loginSuccess({ token }));
             } catch (err) {
                 dispatch(logout());
