@@ -1,4 +1,4 @@
-import { cilUser } from '@coreui/icons';
+import { cilUser, cilExitToApp } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import {
   CDropdown,
@@ -10,9 +10,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../redux/auth/authSlice';
-import { cilExitToApp } from '@coreui/icons';
-import LogoutModal from './../Logout/LogoutModal';
 import { useState } from 'react';
+import ConfirmationModal from './../Modals/ConfirmationModal';
 
 const AppHeaderDropdown = ({ isDarkMode }) => {
   const [showModal, setShowModal] = useState(false);
@@ -23,6 +22,7 @@ const AppHeaderDropdown = ({ isDarkMode }) => {
     dispatch(logout());
     navigate('/login');
   };
+
   return (
     <>
       <CDropdown variant="nav-item">
@@ -50,10 +50,15 @@ const AppHeaderDropdown = ({ isDarkMode }) => {
         </CDropdownMenu>
       </CDropdown>
 
-      <LogoutModal
+      <ConfirmationModal
         visible={showModal}
         onCancel={() => setShowModal(false)}
         onConfirm={handleLogout}
+        title="Confirm Logout"
+        body="Are you sure you want to log out?"
+        cancelText="Cancel"
+        confirmText="Logout"
+        confirmColor="danger"
       />
     </>
   );
