@@ -1,6 +1,7 @@
 const express = require('express');
 const { login, register, refreshToken, logout } = require('../controllers/authentication');
 const authorizeAdmin = require('../middleware/authMiddleware');
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
