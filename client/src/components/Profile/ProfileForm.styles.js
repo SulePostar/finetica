@@ -1,9 +1,8 @@
-// src/components/ProfileForm/ProfileForm.styles.js
 import { colors } from '../../styles/colors';
 
 export const profileFormStyles = (isDarkMode) => ({
   formContainerCard: {
-    position: 'relative', // ← allow absolute children
+    position: 'relative',
     width: '100%',
     maxWidth: '600px',
     margin: '-30px',
@@ -13,16 +12,11 @@ export const profileFormStyles = (isDarkMode) => ({
     boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
   },
 
-  /* header wrapper (you can add bg or padding here if you like) */
-  header: {
-    // currently just flex container via className
-  },
-
   title: {
     color: isDarkMode ? '#FFFFFF' : colors.textPrimary,
     fontSize: '36px',
     fontWeight: 600,
-    margin: 0, // remove mb-4 since header has spacing
+    margin: 0,
   },
 
   editToggle: {
@@ -58,7 +52,6 @@ export const profileFormStyles = (isDarkMode) => ({
     marginBottom: '0px',
   },
 
-  /* Bottom action bar: absolutely pinned inside the card */
   bottomActions: {
     position: 'absolute',
     bottom: '16px',

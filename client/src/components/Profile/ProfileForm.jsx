@@ -57,10 +57,7 @@ const ProfileForm = () => {
     <div className="container py-4">
       <div className="row justify-content-center">
         <div className="col-12 col-md-10 col-lg-8 col-xl-6" style={styles.formContainerCard}>
-          <div
-            className="d-flex justify-content-center align-items-center mb-4"
-            style={styles.header}
-          >
+          <div className="d-flex justify-content-center align-items-center mb-4">
             <h2 style={styles.title}>User Profile</h2>
           </div>
           <div className="text-center mb-4">
