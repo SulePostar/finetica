@@ -7,7 +7,7 @@ import { supabase } from './supabase';
  * @param {string} description - Optional file description
  * @returns {Promise<Object>} File upload result with database record
  */
-export async function uploadFile(file, bucketName = 'files', description = '') {
+export async function uploadFile(file, bucketName, description = '') {
   try {
     // Generate unique file name to avoid conflicts
     const timestamp = Date.now();
