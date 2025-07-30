@@ -34,7 +34,7 @@ const userSlice = createSlice({
         roleId,
         roleName,
         statusId,
-        status,
+        statusName,
         lastLoginAt,
         createdAt,
         updatedAt
@@ -49,7 +49,7 @@ const userSlice = createSlice({
         roleId,
         roleName,
         statusId,
-        status,
+        statusName,
         lastLoginAt,
         createdAt,
         updatedAt

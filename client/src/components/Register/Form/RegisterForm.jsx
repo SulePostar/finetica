@@ -107,9 +107,6 @@ const RegisterForm = () => {
 
   useEffect(() => {
     const cleanup = injectRegisterFormStyles();
-
-    console.log('RegisterForm rendered at:', new Date().toISOString());
-
     return cleanup;
   }, []);
 
