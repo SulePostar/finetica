@@ -15,8 +15,8 @@ export const useBucketName = () => {
     '/vat': 'transactions', // Alternative VAT page route
   };
 
-  // Return the bucket name based on current route, default to 'files'
-  return routeToBucketMap[location.pathname] || 'files';
+  // Return the bucket name based on current route
+  return routeToBucketMap[location.pathname];
 };
 
 /**
@@ -32,5 +32,5 @@ export const getBucketNameFromPath = (pathname) => {
     '/vat': 'transactions',
   };
 
-  return routeToBucketMap[pathname] || 'files';
+  return routeToBucketMap[pathname];
 };

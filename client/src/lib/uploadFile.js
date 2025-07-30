@@ -3,7 +3,7 @@ import { supabase } from './supabase';
 /**
  * Upload file to Supabase storage and save record to database
  * @param {File} file - The file to upload
- * @param {string} bucketName - Storage bucket name (default: 'files')
+ * @param {string} bucketName - Storage bucket name
  * @param {string} description - Optional file description
  * @returns {Promise<Object>} File upload result with database record
  */

@@ -39,7 +39,6 @@ module.exports = (sequelize) => {
       bucket_name: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: 'files',
       },
       uploaded_by: {
         type: DataTypes.INTEGER,
