@@ -1,16 +1,17 @@
 import { AppHeader, AppSidebar } from '../components/index';
-import { CContainer } from '@coreui/react';
-import KifTable from '../components/Tables/KIFTable';
+import ExampleTable from '../components/Tables/ExampleTable';
 
 const DefaultLayout = () => {
   return (
-    <>
+    <div className="d-flex flex-row min-vh-100 bg-light dark:bg-dark">
       <AppSidebar />
-      <CContainer className="wrapper d-flex flex-column min-vh-100" fluid>
+      <div className="wrapper d-flex flex-column flex-grow-1">
         <AppHeader />
-        <KifTable />
-      </CContainer>
-    </>
+        <main className="p-3 flex-grow-1">
+          <ExampleTable />
+        </main>
+      </div>
+    </div>
   );
 };
 

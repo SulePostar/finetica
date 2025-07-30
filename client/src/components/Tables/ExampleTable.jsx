@@ -1,34 +1,33 @@
-import React from "react";
-import GenericTable from "../../components/Tables/GenericTable";
+import React from 'react';
+import Table from './DataTable';
 
 const columns = [
   {
-    name: "ID",
-    selector: row => row.id,
+    name: 'ID',
+    selector: (row) => row.id,
     sortable: true,
   },
   {
-    name: "Naziv",
-    selector: row => row.name,
+    name: 'Naziv',
+    selector: (row) => row.name,
     sortable: true,
   },
   {
-    name: "Količina",
-    selector: row => row.amount,
+    name: 'Količina',
+    selector: (row) => row.amount,
     sortable: true,
   },
   {
-    name: "Cijena",
-    selector: row => row.price,
+    name: 'Cijena',
+    selector: (row) => row.price,
     sortable: true,
   },
   {
-    name: "Datum",
-    selector: row => row.date,
+    name: 'Datum',
+    selector: (row) => row.date,
     sortable: true,
   },
 ];
-
 
 const fetchData = async ({ page, perPage, sortField, sortOrder }) => {
   const total = 25;
@@ -39,7 +38,7 @@ const fetchData = async ({ page, perPage, sortField, sortOrder }) => {
       name: `Artikal ${id}`,
       amount: Math.floor(Math.random() * 100),
       price: `${(Math.random() * 100).toFixed(2)} KM`,
-      date: `2025-07-${(id % 30 + 1).toString().padStart(2, "0")}`,
+      date: `2025-07-${((id % 30) + 1).toString().padStart(2, '0')}`,
     };
   });
 
@@ -47,8 +46,8 @@ const fetchData = async ({ page, perPage, sortField, sortOrder }) => {
     fullData.sort((a, b) => {
       const valueA = a[sortField];
       const valueB = b[sortField];
-      if (valueA < valueB) return sortOrder === "asc" ? -1 : 1;
-      if (valueA > valueB) return sortOrder === "asc" ? 1 : -1;
+      if (valueA < valueB) return sortOrder === 'asc' ? -1 : 1;
+      if (valueA > valueB) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
   }
@@ -59,15 +58,8 @@ const fetchData = async ({ page, perPage, sortField, sortOrder }) => {
   return { data: paged, total };
 };
 
-
 const KifTable = () => {
-  return (
-    <GenericTable
-      title="KIF Tabela"
-      columns={columns}
-      fetchData={fetchData}
-    />
-  );
+  return <Table title="KIF Tabela" columns={columns} fetchData={fetchData} />;
 };
 
 export default KifTable;

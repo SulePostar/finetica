@@ -1,5 +1,5 @@
-import React from "react";
-import KifTable from "../../components/Tables/KIFTable";
+import React from 'react';
+import KifTable from '../../components/Tables/ExampleTable';
 
 const KifTablePage = () => {
   return (

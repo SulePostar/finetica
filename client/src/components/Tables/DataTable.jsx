@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
-import DataTable from "react-data-table-component";
-import customStyles from "./TableStyles";
+import React, { useEffect, useMemo, useState } from 'react';
+import DataTable from 'react-data-table-component';
+import makeCustomStyles from './DataTable.styles';
 
-
-const GenericTable = ({ title, columns, fetchData }) => {
+const Table = ({ title, columns, fetchData }) => {
   const [data, setData] = useState([]);
   const [totalRows, setTotalRows] = useState(0);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
   const [sortField, setSortField] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortOrder, setSortOrder] = useState('asc');
+
+  const customStyles = useMemo(() => makeCustomStyles(), []);
 
   const loadData = async () => {
     setLoading(true);
@@ -19,7 +20,7 @@ const GenericTable = ({ title, columns, fetchData }) => {
       setData(result.data);
       setTotalRows(result.total);
     } catch (error) {
-      console.error("Greška pri učitavanju podataka:", error);
+      console.error('Greška pri učitavanju podataka:', error);
     }
     setLoading(false);
   };
@@ -28,28 +29,34 @@ const GenericTable = ({ title, columns, fetchData }) => {
     loadData();
   }, [page, perPage, sortField, sortOrder]);
 
+  const cardStyle = useMemo(
+    () => ({
+      margin: '20px 200px ',
+      maxWidth: '100%',
+      background: 'var(--cui-card-bg, var(--cui-body-bg))',
+      color: 'var(--cui-body-color)',
+      padding: '24px',
+      borderRadius: '12px',
+      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.08)',
+      border: '1px solid var(--cui-border-color)',
+    }),
+    []
+  );
+
+  const titleStyle = useMemo(
+    () => ({
+      marginBottom: '20px',
+      fontSize: '28px',
+      fontWeight: 700,
+      color: 'var(--cui-primary)',
+      fontFamily: "'Segoe UI', sans-serif",
+    }),
+    []
+  );
+
   return (
-    <div
-      style={{
-        margin: "40px auto",
-        maxWidth: "95%",
-        backgroundColor: "#fff",
-        padding: "24px",
-        borderRadius: "12px",
-        boxShadow: "0 10px 30px rgba(91, 60, 196, 0.1)",
-      }}
-    >
-      <h2
-        style={{
-          marginBottom: "20px",
-          fontSize: "28px",
-          fontWeight: "700",
-          color: "#5B3CC4",
-          fontFamily: "'Segoe UI', sans-serif",
-        }}
-      >
-        {title}
-      </h2>
+    <div style={cardStyle}>
+      <h2 style={titleStyle}>{title}</h2>
 
       <DataTable
         columns={columns}
@@ -62,13 +69,12 @@ const GenericTable = ({ title, columns, fetchData }) => {
           setPerPage(newPerPage);
           setPage(1);
         }}
-        onChangePage={(page) => setPage(page)}
+        onChangePage={(p) => setPage(p)}
         onSort={(column, direction) => {
           setSortField(column.sortField || column.selector);
           setSortOrder(direction);
         }}
         sortServer
-        striped
         highlightOnHover
         responsive
         customStyles={customStyles}
@@ -77,4 +83,4 @@ const GenericTable = ({ title, columns, fetchData }) => {
   );
 };
 
-export default GenericTable;
+export default Table;
