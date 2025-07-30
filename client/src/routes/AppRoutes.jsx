@@ -9,6 +9,7 @@ const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
 const AdminDashboard = React.lazy(() => import('../pages/AdminDashboard/AdminDashboard'));
 const Kif = React.lazy(() => import('../pages/Kif/Kif'));
 const VAT = React.lazy(() => import('../pages/VAT/VAT'));
+const Kuf = React.lazy(() => import('../pages/KUF/KUF'));
 const GuestWrapper = React.lazy(() => import('../protectedRoutes/GuestWrapper'));
 
 export default function AppRoutes() {
@@ -67,6 +68,14 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <VAT />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/kuf'
+          element={
+            <ProtectedRoute>
+              <Kuf />
             </ProtectedRoute>
           }
         />
