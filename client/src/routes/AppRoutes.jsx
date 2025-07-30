@@ -9,6 +9,8 @@ const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
 const AdminDashboard = React.lazy(() => import('../pages/AdminDashboard/AdminDashboard'));
 const Kif = React.lazy(() => import('../pages/Kif/Kif'));
 const GuestWrapper = React.lazy(() => import('../protectedRoutes/GuestWrapper'));
+const KifTablePage = React.lazy(() => import('../pages/KIF/KIFTablePage'));
+
 
 export default function AppRoutes() {
   return (
@@ -59,6 +61,14 @@ export default function AppRoutes() {
             <ProtectedRoute>
               <Kif />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/kif-table"
+          element={
+
+              <KifTablePage />
+
           }
         />
         {/* Fallback for unknown routes */}
