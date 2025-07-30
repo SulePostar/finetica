@@ -13,6 +13,7 @@ import {
 import { profileFormStyles } from './ProfileForm.styles';
 import { formatDateTime } from '../../helpers/dateHelper.js';
 import { capitalizeFirst } from '../../helpers/capitalizeFirstHelper.js';
+import ConfirmationModal from '../Modals/ConfirmationModal';
 
 const ProfileForm = () => {
   const [isDarkMode, setIsDarkMode] = useState(
@@ -21,8 +22,7 @@ const ProfileForm = () => {
 
   useEffect(() => {
     const handler = () => {
-      const mode = document.documentElement.getAttribute('data-coreui-theme');
-      setIsDarkMode(mode === 'dark');
+      setIsDarkMode(document.documentElement.getAttribute('data-coreui-theme') === 'dark');
     };
     window.document.documentElement.addEventListener('ColorSchemeChange', handler);
     return () => document.documentElement.removeEventListener('ColorSchemeChange', handler);
@@ -40,6 +40,7 @@ const ProfileForm = () => {
 
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleChange = ({ target: { name, value } }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -48,25 +49,26 @@ const ProfileForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSuccess('Profile updated successfully!');
     setIsEditable(false);
-    setTimeout(() => setSuccess(''), 5000);
+    setShowSuccessModal(true);
   };
 
   return (
     <div className="container py-4">
       <div className="row justify-content-center">
         <div className="col-12 col-md-10 col-lg-8 col-xl-6" style={styles.formContainerCard}>
-          <h2 className="text-center mb-4" style={styles.title}>
-            User Profile
-          </h2>
-
+          <div
+            className="d-flex justify-content-center align-items-center mb-4"
+            style={styles.header}
+          >
+            <h2 style={styles.title}>User Profile</h2>
+          </div>
           <div className="text-center mb-4">
             <CAvatar
               src="https://i.pravatar.cc/150?u=filip"
-              size="xl"
+              size="l"
               className="mb-3"
-              style={{ width: '8rem', height: '8rem' }}
+              style={{ width: '6rem', height: '6rem' }}
             />
             <div className="d-flex justify-content-center gap-2 flex-wrap">
               <CButton color="outline-primary" size="sm">
@@ -77,11 +79,20 @@ const ProfileForm = () => {
               </CButton>
             </div>
           </div>
-
           {error && <CAlert color="danger">{error}</CAlert>}
           {success && <CAlert color="success">{success}</CAlert>}
-
           <CForm onSubmit={handleSubmit}>
+            <div className="d-flex justify-content-end mb-3">
+              <CButton
+                type="button"
+                size="sm"
+                onClick={() => setIsEditable((prev) => !prev)}
+                style={styles.editToggle}
+              >
+                {isEditable ? 'Cancel' : 'Edit Profile'}
+              </CButton>
+            </div>
+
             {[
               { label: 'First name', name: 'firstName' },
               { label: 'Last name', name: 'lastName' },
@@ -136,24 +147,25 @@ const ProfileForm = () => {
               />
             </CInputGroup>
 
-            <div className="d-flex flex-column flex-md-row gap-3 mt-4">
-              <CButton
-                type="button"
-                style={styles.button}
-                className="w-100 w-md-auto"
-                onClick={() => setIsEditable((prev) => !prev)}
-              >
-                {isEditable ? 'Cancel' : 'Edit Profile'}
-              </CButton>
-              {isEditable && (
-                <CButton type="submit" style={styles.button} className="w-100 w-md-auto">
+            {isEditable && (
+              <div className="d-flex justify-content-center mt-4">
+                <CButton type="submit" style={styles.button}>
                   Submit Changes
                 </CButton>
-              )}
-            </div>
+              </div>
+            )}
           </CForm>
         </div>
       </div>
+      <ConfirmationModal
+        visible={showSuccessModal}
+        onCancel={() => setShowSuccessModal(false)}
+        onConfirm={() => setShowSuccessModal(false)}
+        title="Profile Updated"
+        body="Your changes have been saved successfully."
+        confirmText="OK"
+        confirmColor="success"
+      />
     </div>
   );
 };
