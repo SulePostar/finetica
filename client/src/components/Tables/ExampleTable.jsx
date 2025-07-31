@@ -1,5 +1,5 @@
 import React from 'react';
-import Table from './DataTable';
+import DataTable from './DataTable';
 
 const columns = [
   {
@@ -59,7 +59,7 @@ const fetchData = async ({ page, perPage, sortField, sortOrder }) => {
 };
 
 const KifTable = () => {
-  return <Table title="KIF Tabela" columns={columns} fetchData={fetchData} />;
+  return <DataTable title="KIF Tabela" columns={columns} fetchData={fetchData} />;
 };
 
 export default KifTable;

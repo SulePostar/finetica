@@ -1,6 +1,6 @@
+import { CContainer, CSpinner } from '@coreui/react';
 import React, { Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { CSpinner, CContainer } from '@coreui/react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from '../protectedRoutes/ProtectedRouter';
 
 const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
@@ -10,7 +10,6 @@ const AdminDashboard = React.lazy(() => import('../pages/AdminDashboard/AdminDas
 const Kif = React.lazy(() => import('../pages/Kif/Kif'));
 const GuestWrapper = React.lazy(() => import('../protectedRoutes/GuestWrapper'));
 const KifTablePage = React.lazy(() => import('../pages/KIF/KIFTablePage'));
-
 
 export default function AppRoutes() {
   return (
@@ -56,21 +55,14 @@ export default function AppRoutes() {
           }
         />
         <Route
-          path='/kif'
+          path="/kif"
           element={
             <ProtectedRoute>
               <Kif />
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/kif-table"
-          element={
 
-              <KifTablePage />
-
-          }
-        />
         {/* Fallback for unknown routes */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
