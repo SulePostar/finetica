@@ -13,7 +13,6 @@ import {
 } from '@coreui/react';
 
 import { AppSidebarNav } from './AppSidebarNav';
-
 import navigation from '../_nav';
 
 const AppSidebar = () => {
@@ -35,10 +34,6 @@ const AppSidebar = () => {
       onVisibleChange={(visible) => dispatch({ type: 'set', sidebarShow: visible })}
     >
       <CSidebarHeader className="border-bottom">
-        <CSidebarBrand to="/">
-          {/* You can add your logo or brand here */}
-        </CSidebarBrand>
-
         <CCloseButton
           className="d-lg-none"
           dark={isDarkMode}
