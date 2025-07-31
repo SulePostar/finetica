@@ -1,22 +1,11 @@
-import React, { useState } from 'react';
-import { AppHeader, AppSidebar, FileUploadModal } from '../../components/index';
-import { CContainer, CButton, CRow, CCol } from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilCloudUpload } from '@coreui/icons';
+import React from 'react';
+import { AppHeader, AppSidebar, UploadButton } from '../../components/index';
+import { CContainer, CRow, CCol } from '@coreui/react';
 import { useBucketName } from '../../lib/bucketUtils';
-import './VAT.styles.css';
+import './Vat.styles.css';
 
-const VAT = () => {
-    const [showUploadModal, setShowUploadModal] = useState(false);
+const Vat = () => {
     const bucketName = useBucketName();
-
-    const handleUploadClick = () => {
-        setShowUploadModal(true);
-    };
-
-    const handleCloseModal = () => {
-        setShowUploadModal(false);
-    };
 
     return (
         <>
@@ -31,30 +20,17 @@ const VAT = () => {
                         <CRow className="mb-2">
                             <CCol>
                                 <div className="d-flex justify-content-end align-items-center">
-                                    <CButton
-                                        color="primary"
-                                        onClick={handleUploadClick}
-                                        className="d-flex align-items-center"
-                                        style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
-                                    >
-                                        <CIcon icon={cilCloudUpload} className="me-1" style={{ width: '12px', height: '12px' }} />
-                                        Upload File
-                                    </CButton>
+                                    <UploadButton
+                                        bucketName={bucketName}
+                                    />
                                 </div>
                             </CCol>
                         </CRow>
                     </CContainer>
                 </div>
             </CContainer>
-
-            {/* File Upload Modal */}
-            <FileUploadModal
-                visible={showUploadModal}
-                onClose={handleCloseModal}
-                bucketName={bucketName}
-            />
         </>
     );
 };
 
-export default VAT; 
+export default Vat; 

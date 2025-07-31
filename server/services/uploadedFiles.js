@@ -3,6 +3,19 @@ const { Op } = require('sequelize');
 
 class UploadedFilesService {
   /**
+   * Prepare file data from request body and user info
+   * @param {Object} requestBody - Request body containing file data
+   * @param {number} userId - ID of the user uploading the file
+   * @returns {Object} Prepared file data
+   */
+  prepareFileData(requestBody, userId) {
+    return {
+      ...requestBody,
+      uploaded_by: userId,
+    };
+  }
+
+  /**
    * Create a new file record in the database
    * @param {Object} fileData - File data object
    * @param {string} fileData.file_name - File name in storage
@@ -43,6 +56,34 @@ class UploadedFilesService {
     } catch (error) {
       throw new Error(`Failed to get file: ${error.message}`);
     }
+  }
+
+  /**
+   * Parse and validate query parameters for file listing
+   * @param {Object} query - Raw query parameters from request
+   * @returns {Object} Parsed and validated options
+   */
+  parseFileQuery(query) {
+    return {
+      page: parseInt(query.page) || 1,
+      limit: parseInt(query.limit) || 10,
+      uploaded_by: query.uploaded_by,
+      bucket_name: query.bucket_name,
+      is_active: query.is_active !== undefined ? query.is_active === 'true' : true,
+      search: query.search,
+    };
+  }
+
+  /**
+   * Parse options for user files query
+   * @param {Object} query - Raw query parameters from request
+   * @returns {Object} Parsed options
+   */
+  parseUserFilesQuery(query) {
+    return {
+      is_active: query.is_active !== undefined ? query.is_active === 'true' : true,
+      limit: parseInt(query.limit) || 50,
+    };
   }
 
   /**
@@ -108,6 +149,23 @@ class UploadedFilesService {
   }
 
   /**
+   * Sanitize update data by removing protected fields
+   * @param {Object} updateData - Raw update data
+   * @returns {Object} Sanitized update data
+   */
+  sanitizeUpdateData(updateData) {
+    const sanitized = { ...updateData };
+
+    // Remove fields that shouldn't be updated directly
+    delete sanitized.id;
+    delete sanitized.uploaded_by;
+    delete sanitized.created_at;
+    delete sanitized.updated_at;
+
+    return sanitized;
+  }
+
+  /**
    * Update file record
    * @param {number} fileId - File ID
    * @param {Object} updateData - Data to update
@@ -120,7 +178,10 @@ class UploadedFilesService {
         throw new Error('File not found');
       }
 
-      await file.update(updateData);
+      // Sanitize the update data
+      const sanitizedData = this.sanitizeUpdateData(updateData);
+
+      await file.update(sanitizedData);
       return file;
     } catch (error) {
       throw new Error(`Failed to update file: ${error.message}`);

@@ -8,11 +8,7 @@ class UploadedFilesController {
    */
   async createFile(req, res) {
     try {
-      const fileData = {
-        ...req.body,
-        uploaded_by: req.user?.id, // Get userId from JWT payload
-      };
-
+      const fileData = uploadedFilesService.prepareFileData(req.body, req.user?.id);
       const file = await uploadedFilesService.createFileRecord(fileData);
 
       res.status(201).json({
@@ -56,15 +52,7 @@ class UploadedFilesController {
    */
   async getFiles(req, res) {
     try {
-      const options = {
-        page: parseInt(req.query.page) || 1,
-        limit: parseInt(req.query.limit) || 10,
-        uploaded_by: req.query.uploaded_by,
-        bucket_name: req.query.bucket_name,
-        is_active: req.query.is_active !== undefined ? req.query.is_active === 'true' : true,
-        search: req.query.search,
-      };
-
+      const options = uploadedFilesService.parseFileQuery(req.query);
       const result = await uploadedFilesService.getFiles(options);
 
       res.json({
@@ -82,7 +70,7 @@ class UploadedFilesController {
    */
   async getMyFiles(req, res) {
     try {
-      const userId = req.user?.userId; // Fix: use userId from JWT payload
+      const userId = req.user?.userId;
       if (!userId) {
         return res.status(401).json({
           success: false,
@@ -90,11 +78,7 @@ class UploadedFilesController {
         });
       }
 
-      const options = {
-        is_active: req.query.is_active !== undefined ? req.query.is_active === 'true' : true,
-        limit: parseInt(req.query.limit) || 50,
-      };
-
+      const options = uploadedFilesService.parseUserFilesQuery(req.query);
       const files = await uploadedFilesService.getFilesByUser(userId, options);
 
       res.json({
@@ -113,15 +97,7 @@ class UploadedFilesController {
   async updateFile(req, res) {
     try {
       const { id } = req.params;
-      const updateData = req.body;
-
-      // Remove fields that shouldn't be updated directly
-      delete updateData.id;
-      delete updateData.uploaded_by;
-      delete updateData.created_at;
-      delete updateData.updated_at;
-
-      const file = await uploadedFilesService.updateFile(id, updateData);
+      const file = await uploadedFilesService.updateFile(id, req.body);
 
       res.json({
         success: true,

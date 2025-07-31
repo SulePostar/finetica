@@ -7,9 +7,9 @@ const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
 const AdminDashboard = React.lazy(() => import('../pages/AdminDashboard/AdminDashboard'));
-const Kif = React.lazy(() => import('../pages/Kif/Kif'));
-const VAT = React.lazy(() => import('../pages/VAT/VAT'));
-const Kuf = React.lazy(() => import('../pages/KUF/KUF'));
+const Kif = React.lazy(() => import('../pages/kif/Kif'));
+const VAT = React.lazy(() => import('../pages/vat/Vat'));
+const Kuf = React.lazy(() => import('../pages/kuf/Kuf'));
 const GuestWrapper = React.lazy(() => import('../protectedRoutes/GuestWrapper'));
 
 export default function AppRoutes() {
