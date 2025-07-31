@@ -11,11 +11,14 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } // Set `secure: true` only if using HTTPS
+  cookie: {
+    secure: false, // Set `secure: true` only if using HTTPS
+    maxAge: 24 * 60 * 60 * 1000 // 1 day in milliseconds (24 hours * 60 minutes * 60 seconds * 1000 ms)
+  }
 }));
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001'], // Support both ports
+  origin: ['http://localhost:3000', 'http://localhost:3001'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -30,13 +33,8 @@ app.use('/api', require('./routes/googleDrive/drive'));
 
 app.use(errorHandler);
 
-const PORT = process.env.PORT;
-if (!PORT) {
-  console.error('❌ PORT is not defined in .env file');
-  process.exit(1);
-}
 connectToDatabase();
 
-app.listen(PORT, () => {
-  console.log(`🟢 Server is running at port: ${PORT}`);
+app.listen(process.env.PORT, () => {
+  console.log(`🟢 Server is running at port: ${process.env.PORT}`);
 });

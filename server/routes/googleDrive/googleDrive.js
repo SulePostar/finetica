@@ -20,11 +20,14 @@ router.get('/auth/google/callback', async (req, res) => {
     try {
         const { tokens } = await oauth2Client.getToken(code);
 
-        // Save tokens in session
+        // Save tokens in session with timestamp
         req.session.tokens = tokens;
+        req.session.createdAt = Date.now(); // Track when session was created
 
-        // res.send('✅ Authentication successful! Now you can access /drive/files or /upload');
-        res.redirect('http://localhost:3000/drive'); // Updated to Vite default port
+        oauth2Client.setCredentials(tokens);
+
+        console.log('✅ Google authentication successful - session will last 24 hours');
+        res.redirect('http://localhost:3000/'); // Fixed: Client runs on port 3000
 
     } catch (error) {
         console.error('Error authenticating:', error);
@@ -32,12 +35,34 @@ router.get('/auth/google/callback', async (req, res) => {
     }
 });
 
-// Add a route to check authentication status
+// Add a route to check authentication status with session expiry
 router.get('/auth/google/status', (req, res) => {
-    if (req.session.tokens) {
-        res.json({ authenticated: true, message: 'User is authenticated with Google' });
+    const tokens = req.session.tokens;
+    const sessionCreated = req.session.createdAt;
+    const now = Date.now();
+
+    // Check if session exists and is within 24 hours (1 day)
+    const isValid = tokens && sessionCreated && (now - sessionCreated < 24 * 60 * 60 * 1000);
+
+    if (isValid) {
+        oauth2Client.setCredentials(tokens);
+        res.json({
+            authenticated: true,
+            message: 'User is authenticated with Google',
+            sessionValid: true,
+            expiresAt: new Date(sessionCreated + 24 * 60 * 60 * 1000).toISOString()
+        });
     } else {
-        res.json({ authenticated: false, message: 'User is not authenticated' });
+        // Clear invalid session
+        if (req.session.tokens) {
+            delete req.session.tokens;
+            delete req.session.createdAt;
+        }
+        res.json({
+            authenticated: false,
+            message: 'User is not authenticated or session expired',
+            sessionValid: false
+        });
     }
 });
 

@@ -1,22 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { AppHeader, AppSidebar, FileUploadModal } from '../../components/index';
 import { CContainer, CButton, CRow, CCol } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilCloudUpload } from '@coreui/icons';
 import { useBucketName } from '../../lib/bucketUtils';
 import './KIF.styles.css';
-import GoogleAuthButton from '../../components/GoogleAuthButton';
 
 const Kif = () => {
-    useEffect(() => {
-        fetch('http://localhost:4000/auth/google/status', {
-            credentials: 'include',
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log('Auth status:', data);
-            });
-    }, []);
     const [showUploadModal, setShowUploadModal] = useState(false);
     const bucketName = useBucketName();
 
@@ -33,11 +23,8 @@ const Kif = () => {
             <AppSidebar />
             <CContainer className="wrapper d-flex flex-column min-vh-100" fluid>
                 <AppHeader />
-
-                {/* Main content area */}
                 <div className="body flex-grow-1 px-3">
                     <CContainer className="h-100" fluid>
-                        {/* Page header with upload button */}
                         <CRow className="mb-2">
                             <CCol>
                                 <div className="d-flex justify-content-end align-items-center">
@@ -50,26 +37,6 @@ const Kif = () => {
                                         <CIcon icon={cilCloudUpload} className="me-1" style={{ width: '12px', height: '12px' }} />
                                         Upload File
                                     </CButton>
-                                    <GoogleAuthButton />
-                                    <CButton
-                                        color="success"
-                                        onClick={async () => {
-                                            try {
-                                                const response = await fetch('http://localhost:4000/api/drive/files/download-new', {
-                                                    credentials: 'include',
-                                                });
-
-                                                const data = await response.json();
-                                                alert(data.message || 'Downloaded');
-                                            } catch (err) {
-                                                alert('Failed to fetch files');
-                                            }
-                                        }}
-                                        className="me-2"
-                                        style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
-                                    >
-                                        📥 Preuzmi nove fajlove
-                                    </CButton>
                                 </div>
                             </CCol>
                         </CRow>
@@ -77,7 +44,6 @@ const Kif = () => {
                 </div>
             </CContainer>
 
-            {/* File Upload Modal */}
             <FileUploadModal
                 visible={showUploadModal}
                 onClose={handleCloseModal}
