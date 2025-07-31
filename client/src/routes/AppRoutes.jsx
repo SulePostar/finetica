@@ -1,15 +1,15 @@
+import { CContainer, CSpinner } from '@coreui/react';
 import React, { Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { CSpinner, CContainer } from '@coreui/react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from '../protectedRoutes/ProtectedRouter';
 
 const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
 const AdminDashboard = React.lazy(() => import('../pages/AdminDashboard/AdminDashboard'));
-const Kif = React.lazy(() => import('../pages/kif/Kif'));
-const VAT = React.lazy(() => import('../pages/vat/VAT'));
-const Kuf = React.lazy(() => import('../pages/kuf/KUF'));
+const Kif = React.lazy(() => import('../pages/Kif/Kif'));
+const Vat = React.lazy(() => import('../pages/vat/Vat'));
+const Kuf = React.lazy(() => import('../pages/kuf/Kuf'));
 const GuestWrapper = React.lazy(() => import('../protectedRoutes/GuestWrapper'));
 
 export default function AppRoutes() {
@@ -56,7 +56,7 @@ export default function AppRoutes() {
           }
         />
         <Route
-          path='/kif'
+          path="/kif"
           element={
             <ProtectedRoute>
               <Kif />
@@ -67,7 +67,7 @@ export default function AppRoutes() {
           path='/vat'
           element={
             <ProtectedRoute>
-              <VAT />
+              <Vat />
             </ProtectedRoute>
           }
         />
@@ -79,6 +79,7 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
+
         {/* Fallback for unknown routes */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

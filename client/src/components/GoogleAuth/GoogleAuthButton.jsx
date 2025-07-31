@@ -1,4 +1,5 @@
-import googleDriveService from '../services/googleDriveService';
+import googleDriveService from '../../services/googleDriveService';
+import { badgeStyle, buttonStyle } from './GoogleAuth.style';
 
 const GoogleAuthButton = ({ driveStatus }) => {
     const handleLogin = () => {
@@ -25,28 +26,6 @@ const GoogleAuthButton = ({ driveStatus }) => {
             🔐 Prijavi se s Google Drive
         </button>
     );
-};
-
-// Stil helperi
-const badgeStyle = (bgColor) => ({
-    backgroundColor: bgColor,
-    color: 'white',
-    padding: '6px 12px',
-    fontSize: '0.75rem',
-    borderRadius: '4px',
-    marginRight: '8px',
-    display: 'inline-block',
-});
-
-const buttonStyle = {
-    backgroundColor: '#4285F4',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    padding: '6px 12px',
-    fontSize: '0.75rem',
-    marginRight: '8px',
-    cursor: 'pointer',
 };
 
 export default GoogleAuthButton;

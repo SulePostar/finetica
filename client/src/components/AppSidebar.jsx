@@ -17,7 +17,7 @@ import { AppSidebarNav } from './AppSidebarNav';
 import navigation from '../_nav';
 import { logout } from './../redux/auth/authSlice';
 import ConfirmationModal from './Modals/ConfirmationModal';
-import GoogleAuthButton from './GoogleAuthButton';
+import GoogleAuthButton from './GoogleAuth/GoogleAuthButton';
 import googleDriveService from '../services/googleDriveService';
 
 const AppSidebar = () => {
@@ -57,7 +57,7 @@ const AppSidebar = () => {
     checkDriveConnection();
 
     // Set up interval for checking connection
-    const connectionInterval = setInterval(checkDriveConnection, 30000); // Check every 30 seconds
+    const connectionInterval = setInterval(checkDriveConnection, 5000); // Check every 5 seconds for testing
 
     return () => {
       clearInterval(connectionInterval);
@@ -73,24 +73,23 @@ const AppSidebar = () => {
     const downloadInterval = setInterval(() => {
       if (googleDriveService.isConnected(driveStatus)) {
         fetchAndDownloadFiles();
-      } else {
-        console.log('Drive not connected, skipping download');
       }
     }, 10000); // Download every 10 seconds for testing (was 60000)
 
     return () => {
-      console.log('Cleaning up download interval');
       clearInterval(downloadInterval);
     };
   }, [driveStatus]); // Depends on driveStatus
 
-  const renderDriveStatus = () => {
-    const statusDisplay = googleDriveService.getStatusDisplay(driveStatus);
+  // Check connection when user returns from auth (window focus)
+  useEffect(() => {
+    const handleWindowFocus = () => {
+      checkDriveConnection();
+    };
 
-    if (statusDisplay === 'loading') return <CSpinner size="sm" color="light" />;
-    if (statusDisplay === 'connected') return <CBadge color="success" className="px-2">🟢 Drive</CBadge>;
-    return <CBadge color="danger" className="px-2">🔴 Drive</CBadge>;
-  };
+    window.addEventListener('focus', handleWindowFocus);
+    return () => window.removeEventListener('focus', handleWindowFocus);
+  }, []);
 
   return (
     <>
@@ -104,7 +103,6 @@ const AppSidebar = () => {
       >
         <CSidebarHeader className="border-bottom d-flex justify-content-between align-items-center px-3">
           <CSidebarBrand to="/" />
-          <div className="text-white">{renderDriveStatus()}</div>
           <CCloseButton
             className="d-lg-none"
             dark

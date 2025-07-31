@@ -1,22 +1,22 @@
 import { useLocation } from 'react-router-dom';
 
 /**
+ * Global mapping of routes to bucket names
+ */
+const ROUTE_TO_BUCKET_MAP = {
+  '/kif': 'kif',
+  '/kuf': 'kuf',
+  '/transactions': 'transactions', // VAT page
+  '/vat': 'transactions', // Alternative VAT page route
+};
+
+/**
  * Hook to get the appropriate bucket name based on the current route
  * @returns {string} The bucket name for the current page
  */
 export const useBucketName = () => {
   const location = useLocation();
-
-  // Map routes to bucket names
-  const routeToBucketMap = {
-    '/kif': 'kif',
-    '/kuf': 'kuf',
-    '/transactions': 'transactions', // VAT page
-    '/vat': 'transactions', // Alternative VAT page route
-  };
-
-  // Return the bucket name based on current route
-  return routeToBucketMap[location.pathname];
+  return ROUTE_TO_BUCKET_MAP[location.pathname];
 };
 
 /**
@@ -25,12 +25,5 @@ export const useBucketName = () => {
  * @returns {string} The bucket name for the given path
  */
 export const getBucketNameFromPath = (pathname) => {
-  const routeToBucketMap = {
-    '/kif': 'kif',
-    '/kuf': 'kuf',
-    '/transactions': 'transactions',
-    '/vat': 'transactions',
-  };
-
-  return routeToBucketMap[pathname];
+  return ROUTE_TO_BUCKET_MAP[pathname];
 };
