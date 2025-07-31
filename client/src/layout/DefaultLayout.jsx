@@ -1,5 +1,5 @@
 import { AppHeader, AppSidebar } from '../components/index';
-import ExampleTable from '../components/Tables/ExampleTable';
+import KIFExampleTable from '../components/Tables/KIFExampleTable';
 
 const DefaultLayout = () => {
   return (
@@ -8,7 +8,7 @@ const DefaultLayout = () => {
       <div className="wrapper d-flex flex-column flex-grow-1">
         <AppHeader />
         <main className="p-3 flex-grow-1">
-          <ExampleTable />
+          <KIFExampleTable />
         </main>
       </div>
     </div>

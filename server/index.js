@@ -3,6 +3,7 @@ require('dotenv').config();
 const cors = require('cors');
 const { connectToDatabase } = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
+const kifRouter = require('./services/kif');
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/authentication'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/files', require('./routes/uploadedFiles'));
+app.use('/api', kifRouter);
 
 app.use(errorHandler);
 
