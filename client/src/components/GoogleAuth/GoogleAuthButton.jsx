@@ -1,5 +1,6 @@
 import googleDriveService from '../../services/googleDriveService';
 import { badgeStyle, buttonStyle } from './GoogleAuth.style';
+import { FiRefreshCw } from 'react-icons/fi';
 
 const GoogleAuthButton = ({ driveStatus }) => {
     const handleLogin = () => {
@@ -11,7 +12,27 @@ const GoogleAuthButton = ({ driveStatus }) => {
 
     if (statusDisplay === 'connected') {
         return (
-            <div style={badgeStyle('#28a745')}>🟢 Drive Connected</div>
+            <button
+                onClick={handleLogin}
+                title="Ponovo se prijavi"
+                style={{
+                    ...badgeStyle('#28a745'),
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    border: 'none',
+                    background: 'transparent',
+                    cursor: 'pointer',
+                    padding: 0,
+                }}
+            >
+                🟢 Drive Connected
+                <FiRefreshCw
+                    onClick={handleLogin}
+                    title="Ponovo se prijavi"
+                    style={{ cursor: 'pointer', fontSize: '12px' }}
+                />
+            </button>
         );
     }
 

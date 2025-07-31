@@ -15,7 +15,7 @@ export const badgeStyle = (bgColor) => ({
 
 export const buttonStyle = {
     backgroundColor: colors.registerGradient,
-    color: 'white',
+    color: colors.primary,
     border: 'none',
     borderRadius: '4px',
     padding: '6px 28px',
