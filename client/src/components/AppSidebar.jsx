@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useColorModes } from '@coreui/react';
 
 import CIcon from '@coreui/icons-react';
 import {
@@ -20,10 +21,14 @@ const AppSidebar = () => {
   const unfoldable = useSelector((state) => state.sidebarUnfoldable);
   const sidebarShow = useSelector((state) => state.sidebarShow);
 
+  const { colorMode } = useColorModes('coreui-free-react-admin-template-theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode = colorMode === 'dark' || (colorMode === 'auto' && prefersDark);
+
   return (
     <CSidebar
       className="border-end"
-      colorScheme="dark"
+      colorScheme={isDarkMode ? 'dark' : 'light'}
       position="fixed"
       unfoldable={unfoldable}
       visible={sidebarShow}
@@ -31,11 +36,12 @@ const AppSidebar = () => {
     >
       <CSidebarHeader className="border-bottom">
         <CSidebarBrand to="/">
+          {/* You can add your logo or brand here */}
         </CSidebarBrand>
 
         <CCloseButton
           className="d-lg-none"
-          dark
+          dark={isDarkMode}
           onClick={() => dispatch({ type: 'set', sidebarShow: false })}
         />
       </CSidebarHeader>
