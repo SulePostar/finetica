@@ -31,7 +31,7 @@ module.exports = {
       },
       role_id: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: true, // Allowed null here because some users may not have a role assigned initially
         references: {
           model: 'user_roles',
           key: 'id',
@@ -42,6 +42,7 @@ module.exports = {
       status_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        defaultValue: 1,
         references: {
           model: 'user_statuses',
           key: 'id',
