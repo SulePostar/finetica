@@ -1,4 +1,5 @@
 const { Model, DataTypes } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class BankTransaction extends Model {
     static associate({ BusinessPartner, TransactionCategory }) {
@@ -17,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       date: {
         type: DataTypes.DATE,
         allowNull: false,
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
       amount: {
         type: DataTypes.DECIMAL(18, 2),
@@ -35,17 +37,27 @@ module.exports = (sequelize, DataTypes) => {
       },
       invoiceId: {
         field: 'invoice_id',
+        type: DataTypes.STRING, // It's a string because we assume we will get it in such format
+      },
+      partnerId: {
+        field: 'partner_id',
+        type: DataTypes.INTEGER,
+      },
+      categoryId: {
+        field: 'category_id',
         type: DataTypes.INTEGER,
       },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
         field: 'created_at',
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updatedAt: {
         type: DataTypes.DATE,
-        allowNull: true,
+        allowNull: false,
         field: 'updated_at',
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
     },
     {

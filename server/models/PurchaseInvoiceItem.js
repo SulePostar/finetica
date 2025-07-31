@@ -16,6 +16,7 @@ module.exports = (sequelize) => {
       },
       invoiceId: {
         type: DataTypes.INTEGER,
+        allowNull: false, // Added this to force the value of invoiceId to be set
         field: 'invoice_id',
       },
       orderNumber: {
@@ -45,11 +46,13 @@ module.exports = (sequelize) => {
         type: DataTypes.DATE,
         allowNull: false,
         field: 'created_at',
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updatedAt: {
         type: DataTypes.DATE,
-        allowNull: true,
+        allowNull: false,
         field: 'updated_at',
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
     },
     {

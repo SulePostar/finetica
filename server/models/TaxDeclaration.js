@@ -14,10 +14,12 @@ module.exports = (sequelize) => {
       },
       periodStart: {
         type: DataTypes.DATE,
+        allowNull: false, // Should not be null or default to current timestamp
         field: 'period_start',
       },
       periodEnd: {
         type: DataTypes.DATE,
+        allowNull: false, // Should not be null or default to current timestamp
         field: 'period_end',
       },
       deliveryValue: {
@@ -68,9 +70,9 @@ module.exports = (sequelize) => {
         type: DataTypes.DECIMAL(18, 2),
         field: 'vat_refund_requested',
       },
-      finalConsFbiH: {
+      finalConsFbih: {
         type: DataTypes.DECIMAL(18, 2),
-        field: 'final_cons_fbiH',
+        field: 'final_cons_fbih',
       },
       finalConsRs: {
         type: DataTypes.DECIMAL(18, 2),
@@ -79,6 +81,18 @@ module.exports = (sequelize) => {
       finalConsBd: {
         type: DataTypes.DECIMAL(18, 2),
         field: 'final_cons_bd',
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        field: 'created_at',
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        field: 'updated_at',
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
     },
     {

@@ -6,39 +6,41 @@ module.exports = {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
-        autoIncrement: true
+        autoIncrement: true,
       },
       name: Sequelize.STRING(100),
       code: {
         type: Sequelize.STRING(20),
-        unique: true
+        unique: true,
       },
       parent_unit_id: {
         type: Sequelize.INTEGER,
         references: {
           model: 'business_units',
-          key: 'id'
+          key: 'id',
         },
-        onDelete: 'SET NULL'
+        onDelete: 'SET NULL',
       },
       manager_id: Sequelize.INTEGER,
       location_id: Sequelize.INTEGER,
       is_active: {
         type: Sequelize.BOOLEAN,
-        defaultValue: true
+        defaultValue: true,
       },
-      createdAt: {
+      created_at: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
-      updatedAt: {
+      updated_at: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
     });
   },
 
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('business_units');
-  }
+  },
 };

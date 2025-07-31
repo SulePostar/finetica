@@ -49,19 +49,19 @@ module.exports = {
         onDelete: 'RESTRICT',
         onUpdate: 'CASCADE',
       },
-       verification_token:{
+      verification_token: {
         type: Sequelize.STRING,
-      allowNull: true,
+        allowNull: true,
       },
-      password_reset_token:{
+      password_reset_token: {
         type: Sequelize.STRING,
-      allowNull: true,
+        allowNull: true,
       },
-      reset_expires_at:{
+      reset_expires_at: {
         type: Sequelize.DATE,
-      allowNull: true,
+        allowNull: true,
       },
-       is_email_verified: {
+      is_email_verified: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
       },
@@ -70,17 +70,19 @@ module.exports = {
         allowNull: false,
         defaultValue: true,
       },
-      last_login_at:{
+      last_login_at: {
         type: Sequelize.DATE,
-      allowNull: true,
-      }, 
+        allowNull: true,
+      },
       created_at: {
-        allowNull: false,
         type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updated_at: {
-        allowNull: false,
         type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
     });
     await queryInterface.addIndex('users', ['email']);

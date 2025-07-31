@@ -6,15 +6,15 @@ module.exports = {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
-        primaryKey: true
+        primaryKey: true,
       },
       period_start: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        allowNull: false, // Should not be null or default to current timestamp
       },
       period_end: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        allowNull: false, // Should not be null or default to current timestamp
       },
       delivery_value: Sequelize.DECIMAL(18, 2),
       purchase_value: Sequelize.DECIMAL(18, 2),
@@ -30,22 +30,24 @@ module.exports = {
       vat_payable: Sequelize.DECIMAL(18, 2),
       vat_refund_requested: Sequelize.DECIMAL(18, 2),
 
-      final_cons_fbiH: Sequelize.DECIMAL(18, 2),
+      final_cons_fbih: Sequelize.DECIMAL(18, 2),
       final_cons_rs: Sequelize.DECIMAL(18, 2),
       final_cons_bd: Sequelize.DECIMAL(18, 2),
 
-      createdAt: {
+      created_at: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
-      updatedAt: {
+      updated_at: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
     });
   },
 
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('tax_declarations');
-  }
+  },
 };
