@@ -24,7 +24,7 @@ router.get('/drive/files/download-new', async (req, res) => {
         });
 
         const files = response.data.files;
-        const downloadPath = path.join(__dirname, '../../downloads');
+        const downloadPath = path.join(__dirname, '../../googleDriveDownloads');
         mkdirp.sync(downloadPath); // Create folder if not exists
 
         let downloadedCount = 0;
