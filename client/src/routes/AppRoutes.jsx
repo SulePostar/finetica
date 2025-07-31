@@ -1,6 +1,6 @@
+import { CContainer, CSpinner } from '@coreui/react';
 import React, { Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { CSpinner, CContainer } from '@coreui/react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from '../protectedRoutes/ProtectedRouter';
 
 const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
@@ -56,7 +56,7 @@ export default function AppRoutes() {
           }
         />
         <Route
-          path='/kif'
+          path="/kif"
           element={
             <ProtectedRoute>
               <Kif />
@@ -79,6 +79,7 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
+
         {/* Fallback for unknown routes */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
