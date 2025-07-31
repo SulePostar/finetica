@@ -39,13 +39,13 @@ const GoogleAuthButton = ({ driveStatus }) => {
 
     if (statusDisplay === 'loading') {
         return (
-            <div style={badgeStyle('#6c757d')}>⏳ Provjera...</div>
+            <div style={badgeStyle('#6c757d')}>⏳ Checking...</div>
         );
     }
 
     return (
         <button onClick={handleLogin} style={buttonStyle}>
-            🔐 Prijavi se s Google Drive
+            🔐 Log in with Google
         </button>
     );
 };

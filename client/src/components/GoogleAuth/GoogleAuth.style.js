@@ -7,6 +7,7 @@ export const badgeStyle = (bgColor) => ({
     fontSize: '0.85rem',
     borderRadius: '4px',
     marginRight: '1px',
+    marginBottom: '10px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -15,11 +16,11 @@ export const badgeStyle = (bgColor) => ({
 
 export const buttonStyle = {
     backgroundColor: colors.registerGradient,
-    color: colors.primary,
+    color: '#fffff',
     border: 'none',
     borderRadius: '4px',
     padding: '6px 28px',
-    fontSize: '0.75rem',
+    fontSize: '0.85rem',
     marginRight: '1px',
     display: 'flex',
     alignItems: 'center',
