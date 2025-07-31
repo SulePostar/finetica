@@ -76,7 +76,7 @@ const RegisterForm = () => {
 
       if (result.success) {
         setSuccess('Registration successful! Redirecting to login page...');
-        // Reset form
+
         setFormData({
           firstName: '',
           lastName: '',
@@ -85,12 +85,10 @@ const RegisterForm = () => {
           confirmPassword: '',
         });
 
-        // Redirect to login page after a delay to show success message
         setTimeout(() => {
           navigate('/login');
         }, 2000);
       } else {
-        // Handle validation errors or other backend errors
         if (result.errors && result.errors.length > 0) {
           setError(result.errors.join(', '));
         } else {

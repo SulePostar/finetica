@@ -7,9 +7,10 @@ const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
 const AdminDashboard = React.lazy(() => import('../pages/AdminDashboard/AdminDashboard'));
-const Kif = React.lazy(() => import('../pages/Kif/Kif'));
+const Kif = React.lazy(() => import('../pages/kif/Kif'));
+const Vat = React.lazy(() => import('../pages/vat/Vat'));
+const Kuf = React.lazy(() => import('../pages/kuf/Kuf'));
 const GuestWrapper = React.lazy(() => import('../protectedRoutes/GuestWrapper'));
-const KifTablePage = React.lazy(() => import('../pages/KIF/KIFTablePage'));
 
 export default function AppRoutes() {
   return (
@@ -59,6 +60,22 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <Kif />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/vat'
+          element={
+            <ProtectedRoute>
+              <Vat />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/kuf'
+          element={
+            <ProtectedRoute>
+              <Kuf />
             </ProtectedRoute>
           }
         />
