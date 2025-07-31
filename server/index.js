@@ -11,6 +11,7 @@ app.use(express.json());
 
 app.use('/api/auth', require('./routes/authentication'));
 app.use('/api/users', require('./routes/users'));
+app.use('/api/files', require('./routes/uploadedFiles'));
 
 app.use(errorHandler);
 
