@@ -37,13 +37,12 @@ Create or update the `.env` file in the `/server` directory:
 ```bash
 # Database Configuration
 DB_HOST=localhost
-DB_PORT=5432
+PORT=4000
 DB_NAME=finetica
 DB_USER=postgres
 DB_PASSWORD=your_password
 
 # Server Configuration
-PORT=4000
 SESSION_SECRET=your-secure-session-secret-key
 
 # JWT Configuration
@@ -63,7 +62,6 @@ Create or update the `.env` file in the `/client` directory:
 
 ```bash
 VITE_API_BASE_URL=http://localhost:4000/api
-VITE_DRIVE_API_BASE_URL=http://localhost:4000
 ```
 
 ## File Structure
@@ -220,7 +218,7 @@ class GoogleDriveService {
 ### Server Logs
 ```
 ✅ Google authentication successful - session will last 24 hours
-📁 Found 5 files in "finetica" folder
+📁 Found n files in "finetica" folder
 📥 New file found: document.pdf
 ✅ Downloaded: document.pdf
 ⏭️ File is up to date: spreadsheet.xlsx
@@ -313,7 +311,7 @@ Downloads new or updated files from "finetica" folder.
 **Response**:
 ```json
 {
-  "message": "✅ Obradno 5 fajlova iz \"finetica\" foldera. Preuzeto: 2, Preskočeno: 3",
+  "message": "✅ Obradjeno 5 fajlova iz \"finetica\" foldera. Preuzeto: 2, Preskočeno: 3",
   "summary": {
     "totalChecked": 5,
     "newFiles": 2,
@@ -338,10 +336,3 @@ Downloads new or updated files from "finetica" folder.
 }
 ```
 
-## Version History
-
-- **v1.0** - Initial implementation with basic auth and file download
-- **v1.1** - Added smart sync with modification time comparison
-- **v1.2** - Added support for Google Apps files export
-- **v1.3** - Implemented automatic background sync
-- **v1.4** - Added folder restriction to "finetica" only

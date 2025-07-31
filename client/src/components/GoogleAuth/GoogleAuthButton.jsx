@@ -4,7 +4,8 @@ import { FiRefreshCw } from 'react-icons/fi';
 
 const GoogleAuthButton = ({ driveStatus }) => {
     const handleLogin = () => {
-        const authUrl = `${import.meta.env.VITE_DRIVE_API_BASE_URL}/auth/google`;
+        const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
+        const authUrl = `${baseUrl}/auth/google`;
         window.location.href = authUrl;
     };
 

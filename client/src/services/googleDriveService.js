@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create a dedicated axios instance for Google Drive API calls
 const driveApi = axios.create({
-    baseURL: import.meta.env.VITE_DRIVE_API_BASE_URL,
+    baseURL: import.meta.env.VITE_API_BASE_URL.replace('/api', ''),
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
