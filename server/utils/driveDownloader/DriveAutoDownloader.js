@@ -19,6 +19,8 @@ class DriveAutoDownloader {
     loadTokens() {
         try {
             const tokenPath = path.join(__dirname, 'stored-tokens.json');
+            // pokušava da učita token iz fajla
+            // ako postoji i nije istekao, postavlja ih u oauth2Client
             if (fs.existsSync(tokenPath)) {
                 const tokenData = JSON.parse(fs.readFileSync(tokenPath, 'utf8'));
                 if (tokenData.tokens && tokenData.expiresAt > Date.now()) {
@@ -37,10 +39,10 @@ class DriveAutoDownloader {
     // Save tokens to file
     saveTokens(tokens) {
         try {
-            const tokenPath = path.join(__dirname, 'stored-tokens.json');
+            const tokenPath = path.join(__dirname, 'stored-tokens.json'); // spasavamo token lokalno radi lakseg citanja 
             const tokenData = {
                 tokens: tokens,
-                expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000), // 7 days
+                expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000), // 7 dana vrijedi token kada se korisnik jednom prijavi
                 savedAt: new Date().toISOString()
             };
             fs.writeFileSync(tokenPath, JSON.stringify(tokenData, null, 2));
@@ -69,7 +71,7 @@ class DriveAutoDownloader {
     }
 
     // Get file type description
-    getFileTypeDescription(mimeType) {
+    getFileTypeDescription(mimeType) { // funkcija koja vraca opis tipa fajla na osnovu njegovog mimeType-a (jasnije definisani opis fajla)
         const typeMap = {
             'application/pdf': 'PDF Document',
             'application/msword': 'Word Document',
