@@ -17,7 +17,7 @@
     "@coreui/react-chartjs": "^3.0.0",
     "@coreui/utils": "^2.0.2",
     "@reduxjs/toolkit": "^2.8.2",
-    "@supabase/supabase-js": "^2.52.1",
+    "@supabase/supabase-js": "^2.53.0",
     "axios": "^1.11.0",
     "bootstrap": "^5.3.7",
     "core-js": "^3.44.0",
