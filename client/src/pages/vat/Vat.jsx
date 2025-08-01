@@ -1,10 +1,19 @@
-import React from 'react';
 import { AppHeader, AppSidebar, UploadButton } from '../../components/index';
 import { CContainer, CRow, CCol } from '@coreui/react';
 import { useBucketName } from '../../lib/bucketUtils';
 import './Vat.styles.css';
+import DynamicTable from '../../components/Tables/DynamicTable';
 
 const Vat = () => {
+
+    const columns = [
+        { name: 'ID', selector: row => row.id, sortable: true },
+        { name: 'Name', selector: row => row.name, sortable: true },
+        { name: 'Quantity', selector: row => row.amount, sortable: true },
+        { name: 'Price', selector: row => row.price, sortable: true },
+        { name: 'Date', selector: row => row.date, sortable: true },
+    ];
+
     const bucketName = useBucketName();
 
     return (
@@ -24,6 +33,13 @@ const Vat = () => {
                                         bucketName={bucketName}
                                     />
                                 </div>
+                            </CCol>
+                        </CRow>
+
+                        <CRow>
+                            <CCol>
+                                <DynamicTable title="VAT Table" columns={columns} apiEndpoint="http://localhost:10000/api/kif-data" />
+
                             </CCol>
                         </CRow>
                     </CContainer>

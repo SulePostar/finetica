@@ -1,6 +1,5 @@
 import { Container, Row, Col } from 'react-bootstrap';
 import { AppHeader, AppSidebar } from '../components/index';
-import KIFExampleTable from '../components/Tables/KIFExampleTable';
 
 const DefaultLayout = () => {
   return (
@@ -12,7 +11,6 @@ const DefaultLayout = () => {
         <Col className="d-flex flex-column p-0">
           <AppHeader />
           <Container as="main" className="p-3 flex-grow-1">
-            <KIFExampleTable />
           </Container>
         </Col>
       </Row>
