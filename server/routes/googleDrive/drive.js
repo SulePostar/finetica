@@ -1,24 +1,24 @@
 const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const mkdirp = require('mkdirp');
-const { createDriveClient, oauth2Client } = require('./../../config/gooogleDrive');
+const fs = require('fs'); // biblioteka za rad sa fajlovima i putanjama  
+const path = require('path'); // biblioteka za rad sa fajlovima i putanjama  
+const mkdirp = require('mkdirp'); // omogućava kreiranje direktorija, uključujući i sve naddirektorije ako ne postoje
+const { createDriveClient, oauth2Client } = require('./../../config/driveConfig');
 
 const router = express.Router();
 
 // Function to find the "finetica" folder ID
 async function findFineticaFolderId(drive) {
     try {
-        const response = await drive.files.list({
-            q: "name='finetica' and mimeType='application/vnd.google-apps.folder' and trashed=false",
-            fields: 'files(id, name)',
-            pageSize: 1
+        const response = await drive.files.list({ // drive.files.list vraća listu fajlova u Google Drive-u (MORA SE KORISTITI await)
+            q: "name='finetica' and mimeType='application/vnd.google-apps.folder' and trashed=false", // q -> query string, trazi folder sa imenom 'finetica' koji nije obrisan, i koristeci 'mimeType' ogranicava pretragu na foldere
+            fields: 'files(id, name)', // definisemo polja koja nam trebaju, samo id i ime fajla
+            pageSize: 1 // ako ima vise foldera sa istim imenom, uzet ce samo prvi 
         });
 
         if (response.data.files.length > 0) {
             const folderId = response.data.files[0].id;
             console.log(`✅ Found "finetica" folder ID: ${folderId}`);
-            return folderId;
+            return folderId; // ako se pronadje fajl, ispise se u konzoli njegov id, obrisati conosle.log po potrebi 
         } else {
             console.log('⚠️ "finetica" folder not found in Google Drive');
             return null;
