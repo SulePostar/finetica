@@ -1,12 +1,13 @@
+import { useColorModes } from '@coreui/react';
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useColorModes } from '@coreui/react';
+import { ToastContainer } from 'react-toastify';
 
 import './scss/examples.scss';
 import './scss/style.scss';
 
-import AppRoutes from './routes/AppRoutes';
 import AuthWrapper from './protectedRoutes/AuthWrapper';
+import AppRoutes from './routes/AppRoutes';
 
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme');
@@ -27,6 +28,7 @@ const App = () => {
   return (
     <AuthWrapper>
       <AppRoutes />
+      <ToastContainer position="bottom-center" autoClose={3000} />
     </AuthWrapper>
   );
 };
