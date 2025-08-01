@@ -173,7 +173,7 @@ router.get('/drive/files/download-new', async (req, res) => {
         }
 
         res.status(200).json({
-            message: `✅ Obradno ${files.length} fajlova iz "finetica" foldera. Preuzeto: ${downloadedCount}, Preskočeno: ${skippedCount}`,
+            message: `✅ Obradjeno ${files.length} fajlova iz "finetica" foldera. Preuzeto: ${downloadedCount}, Preskočeno: ${skippedCount}`,
             summary: {
                 totalChecked: files.length,
                 newFiles: downloadedCount,
