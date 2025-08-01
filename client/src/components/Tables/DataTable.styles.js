@@ -1,15 +1,19 @@
 const makeCustomStyles = () => ({
   rows: {
     style: {
-      minHeight: '48px',
+      minHeight: '52px',
+      width: '100%',
+      fontFamily: "'Segoe UI', system-ui, sans-serif",
+      fontSize: '0.95rem',
       color: 'var(--cui-body-color)',
       backgroundColor: 'var(--cui-body-bg)',
-      width: '100%',
+      transition: 'background-color 0.2s ease-in-out',
     },
     highlightOnHoverStyle: {
       backgroundColor: 'var(--cui-primary-bg-subtle)',
       color: 'var(--cui-primary-text-emphasis)',
-      transitionDuration: '0.15s',
+      transition: 'background-color 0.2s ease-in-out, color 0.2s ease-in-out',
+      cursor: 'pointer',
       outline: 'none',
     },
     stripedStyle: {
@@ -17,39 +21,53 @@ const makeCustomStyles = () => ({
       color: 'var(--cui-body-color)',
     },
   },
+
   headCells: {
     style: {
-      paddingTop: '12px',
-      paddingBottom: '12px',
-      fontWeight: 600,
+      padding: '14px 16px',
+      fontWeight: 700,
+      fontSize: '1rem',
+      whiteSpace: 'nowrap',
+      fontFamily: "'Segoe UI', system-ui, sans-serif",
       backgroundColor: 'var(--cui-body-bg)',
       color: 'var(--cui-secondary-color, var(--cui-body-color))',
-      borderBottomWidth: '2px',
-      borderBottomStyle: 'solid',
-      borderBottomColor: 'var(--cui-border-color)',
-      whiteSpace: 'nowrap',
+      borderBottom: '2px solid var(--cui-border-color)',
+      letterSpacing: '0.5px',
     },
   },
+
   cells: {
     style: {
-      paddingTop: '12px',
-      paddingBottom: '12px',
-      borderBottomColor: 'var(--cui-border-color)',
+      padding: '14px 16px',
+      fontSize: '0.95rem',
+      fontFamily: "'Segoe UI', system-ui, sans-serif",
       color: 'var(--cui-body-color)',
+      borderBottom: '1px solid var(--cui-border-color)',
+      transition: 'color 0.2s ease',
     },
   },
+
   pagination: {
     style: {
-      borderTop: '1px solid var(--cui-border-color)',
-      padding: '8px 16px',
+      padding: '10px 20px',
+      fontFamily: "'Segoe UI', system-ui, sans-serif",
       backgroundColor: 'var(--cui-body-bg)',
       color: 'var(--cui-body-color)',
+      borderTop: '1px solid var(--cui-border-color)',
+      fontSize: '0.9rem',
     },
     pageButtonsStyle: {
       fill: 'var(--cui-body-color)',
-      '&:disabled': { fill: 'var(--cui-secondary-color, var(--cui-body-color))' },
+      transition: 'background-color 0.2s ease, fill 0.2s ease',
+      borderRadius: '6px',
+      padding: '6px 10px',
+      '&:disabled': {
+        fill: 'var(--cui-secondary-color, var(--cui-body-color))',
+        opacity: 0.5,
+      },
       '&:hover:not(:disabled)': {
         backgroundColor: 'var(--cui-table-hover-bg)',
+        cursor: 'pointer',
       },
     },
   },

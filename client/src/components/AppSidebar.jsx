@@ -1,12 +1,9 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useColorModes } from '@coreui/react';
 
-import CIcon from '@coreui/icons-react';
 import {
   CCloseButton,
   CSidebar,
-  CSidebarBrand,
   CSidebarFooter,
   CSidebarHeader,
   CSidebarToggler,
@@ -15,14 +12,10 @@ import {
 import { AppSidebarNav } from './AppSidebarNav';
 import navigation from '../_nav';
 
-const AppSidebar = () => {
+const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
   const unfoldable = useSelector((state) => state.sidebarUnfoldable);
   const sidebarShow = useSelector((state) => state.sidebarShow);
-
-  const { colorMode } = useColorModes('coreui-free-react-admin-template-theme');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const isDarkMode = colorMode === 'dark' || (colorMode === 'auto' && prefersDark);
 
   return (
     <CSidebar
