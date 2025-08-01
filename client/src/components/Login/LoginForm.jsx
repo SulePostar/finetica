@@ -50,14 +50,12 @@ const LoginForm = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    //Example of how to use toast notifications
-    notify.onSuccess('Login successful!');
-
     setLoading(true);
     setError('');
     try {
       const result = await authService.login(formData);
       if (result.success) {
+        notify.onSuccess('Login successful!'); //Example of how to use toast notifications
         dispatch(loginSuccess({ token: result.token }));
         await Promise.resolve(); // Wait one tick for store to update
         navigate('/', { replace: true });
