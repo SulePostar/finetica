@@ -7,7 +7,8 @@ const { USER_STATUS } = require('../utils/constants');
 
 class AuthService {
   async register(registerData) {
-    const { email, password, ...rest } = registerData;
+    const { email, password, profileImage, ...rest } = registerData;
+
     const existingUser = await User.findOne({
       where: { email },
     });
@@ -16,14 +17,21 @@ class AuthService {
       throw new AppError('User with this email already exists', 409);
     }
 
-    const passwordHash = await bcrypt.hash(registerData.password, 10);
+    const passwordHash = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+    const userData = {
       email,
       passwordHash,
       ...rest,
       statusId: USER_STATUS.PENDING,
-    });
+    };
+
+    // Add profile image if provided
+    if (profileImage) {
+      userData.profileImage = profileImage;
+    }
+
+    const user = await User.create(userData);
 
     return {
       success: true,
@@ -34,6 +42,7 @@ class AuthService {
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
+          profileImage: user.profileImage,
           roleId: user.roleId,
           roleName: user.role?.name || null,
           statusId: user.statusId,
@@ -82,6 +91,7 @@ class AuthService {
           roleId: user.roleId,
           firstName: user.firstName,
           lastName: user.lastName,
+          profileImage: user.profileImage,
           roleName: user.role?.name || '',
           statusId: user.statusId,
           statusName: user.userStatus?.status || '',

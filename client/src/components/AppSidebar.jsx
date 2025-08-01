@@ -5,12 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import {
   CCloseButton,
   CSidebar,
-  CSidebarBrand,
   CSidebarFooter,
   CSidebarHeader,
   CSidebarToggler,
-  CBadge,
-  CSpinner
+  CSidebarBrand
 } from '@coreui/react';
 
 import { AppSidebarNav } from './AppSidebarNav';
@@ -20,7 +18,7 @@ import ConfirmationModal from './Modals/ConfirmationModal';
 import GoogleAuthButton from './GoogleAuth/GoogleAuthButton';
 import googleDriveService from '../services/googleDriveService';
 
-const AppSidebar = () => {
+const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const unfoldable = useSelector((state) => state.sidebarUnfoldable);
