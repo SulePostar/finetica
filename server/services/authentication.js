@@ -48,7 +48,7 @@ class AuthService {
       where: { email },
       include: [
         { model: Role, as: 'role', attributes: ['id', 'name'] },
-        { model: UserStatus, as: 'userStatus', attributes: ['id', 'status'] },
+        { model: UserStatus, as: 'status', attributes: ['id', 'status'] },
       ],
     });
 

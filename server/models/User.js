@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
 
       User.belongsTo(UserStatus, {
         foreignKey: 'statusId',
-        as: 'userStatus',
+        as: 'status',
       });
     }
   }
