@@ -141,4 +141,3 @@ vite.config.ts.timestamp-*
 
 googleDriveDownloads/
 stored-tokens.json
-cookies.txt
