@@ -28,6 +28,11 @@ const registerUserSchema = Joi.object({
     'string.min': 'Last name must be at least 2 characters long',
     'any.required': 'Last name is required',
   }),
+
+  profileImage: Joi.string().uri().optional().messages({
+    'string.base': 'Profile image must be a valid URL',
+    'string.uri': 'Profile image must be a valid URL',
+  }),
 });
 
 module.exports = registerUserSchema;
