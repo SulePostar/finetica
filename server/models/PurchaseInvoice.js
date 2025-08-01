@@ -89,9 +89,8 @@ module.exports = (sequelize) => {
       },
       updatedAt: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
         field: 'updated_at',
-        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
     },
     {

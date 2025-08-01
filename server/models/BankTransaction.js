@@ -1,6 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize) => {
   class BankTransaction extends Model {
     static associate({ BusinessPartner, TransactionCategory }) {
       BankTransaction.belongsTo(BusinessPartner, { foreignKey: 'partnerId' });
@@ -55,9 +55,8 @@ module.exports = (sequelize, DataTypes) => {
       },
       updatedAt: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
         field: 'updated_at',
-        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
     },
     {
