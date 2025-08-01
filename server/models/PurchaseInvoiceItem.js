@@ -46,7 +46,6 @@ module.exports = (sequelize) => {
         type: DataTypes.DATE,
         allowNull: false,
         field: 'created_at',
-        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updatedAt: {
         type: DataTypes.DATE,
@@ -58,6 +57,9 @@ module.exports = (sequelize) => {
       sequelize,
       modelName: 'PurchaseInvoiceItem',
       tableName: 'purchase_invoice_items',
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
     }
   );
 

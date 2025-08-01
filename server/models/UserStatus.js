@@ -27,7 +27,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: false,
         field: 'created_at',
-        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updatedAt: {
         type: DataTypes.DATE,
@@ -39,6 +38,9 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: 'UserStatus',
       tableName: 'user_statuses',
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
     }
   );
 
