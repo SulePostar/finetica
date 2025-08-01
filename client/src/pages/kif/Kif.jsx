@@ -36,7 +36,7 @@ const Kif = () => {
 
                         <CRow>
                             <CCol>
-                                <DynamicTable title="KIF Table" columns={columns} apiEndpoint="http://localhost:10000/api/kif-data" />
+                                <DynamicTable title="KIF Table" columns={columns} apiEndpoint="http://localhost:4000/api/kif-data" />
 
                             </CCol>
                         </CRow>

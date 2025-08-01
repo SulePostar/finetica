@@ -59,7 +59,7 @@ const DynamicTable = ({ title, columns, apiEndpoint }) => {
     }, [page, perPage, sortField, sortOrder]);
 
     return (
-        <div style={containerStyle}><Card className="my-4 shadow-sm border-0">
+        <div style={containerStyle}><Card className="my-4 shadow-sm border-0 bg-light dark:bg-dark">
             <Card.Body>
                 <Card.Title style={titleStyle}>{title}</Card.Title>
                 <DataTable

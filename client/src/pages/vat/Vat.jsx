@@ -38,7 +38,7 @@ const Vat = () => {
 
                         <CRow>
                             <CCol>
-                                <DynamicTable title="VAT Table" columns={columns} apiEndpoint="http://localhost:10000/api/kif-data" />
+                                <DynamicTable title="VAT Table" columns={columns} apiEndpoint="http://localhost:4000/api/vat-data" />
 
                             </CCol>
                         </CRow>

@@ -38,7 +38,7 @@ const Kuf = () => {
 
                         <CRow>
                             <CCol>
-                                <DynamicTable title="KUF Table" columns={columns} apiEndpoint="http://localhost:10000/api/kif-data" />
+                                <DynamicTable title="KUF Table" columns={columns} apiEndpoint="http://localhost:4000/api/kuf-data" />
 
                             </CCol>
                         </CRow>
