@@ -1,4 +1,5 @@
-// src/utils/toastHelper.jsx
+// Helper for showing toast notifications using react-toastify.
+
 import { toast } from 'react-toastify';
 
 const notify = {

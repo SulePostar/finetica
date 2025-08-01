@@ -49,6 +49,8 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
+
+    //Example of how to use toast notifications
     notify.onSuccess('Login successful!');
 
     setLoading(true);
