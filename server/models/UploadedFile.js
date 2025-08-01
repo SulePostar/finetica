@@ -1,8 +1,18 @@
-const { DataTypes } = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  const UploadedFile = sequelize.define(
-    'UploadedFile',
+  class UploadedFile extends Model {
+    static associate(models) {
+      UploadedFile.belongsTo(models.User, {
+        foreignKey: 'uploadedBy',
+        as: 'uploader',
+        onDelete: 'SET NULL',
+        onUpdate: 'CASCADE',
+      });
+    }
+  }
+
+  UploadedFile.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -10,39 +20,38 @@ module.exports = (sequelize) => {
         autoIncrement: true,
         allowNull: false,
       },
-      file_name: {
+      fileName: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-          notEmpty: true,
-        },
+        field: 'file_name',
+        validate: { notEmpty: true },
       },
-      file_url: {
+      fileUrl: {
         type: DataTypes.TEXT,
         allowNull: false,
-        validate: {
-          notEmpty: true,
-          isUrl: true,
-        },
+        field: 'file_url',
+        validate: { notEmpty: true, isUrl: true },
       },
-      file_size: {
+      fileSize: {
         type: DataTypes.INTEGER,
         allowNull: true,
-        validate: {
-          min: 0,
-        },
+        field: 'file_size',
+        validate: { min: 0 },
       },
-      mime_type: {
+      mimeType: {
         type: DataTypes.STRING,
         allowNull: true,
+        field: 'mime_type',
       },
-      bucket_name: {
+      bucketName: {
         type: DataTypes.STRING,
         allowNull: false,
+        field: 'bucket_name',
       },
-      uploaded_by: {
+      uploadedBy: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        field: 'uploaded_by',
         references: {
           model: 'users',
           key: 'id',
@@ -52,44 +61,30 @@ module.exports = (sequelize) => {
         type: DataTypes.TEXT,
         allowNull: true,
       },
-      is_active: {
+      isActive: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: true,
+        field: 'is_active',
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        field: 'created_at',
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        field: 'updated_at',
       },
     },
     {
+      sequelize,
+      modelName: 'UploadedFile',
       tableName: 'uploaded_files',
-      timestamps: true,
-      createdAt: 'created_at',
-      updatedAt: 'updated_at',
-      indexes: [
-        {
-          fields: ['uploaded_by'],
-        },
-        {
-          fields: ['bucket_name'],
-        },
-        {
-          fields: ['is_active'],
-        },
-        {
-          fields: ['created_at'],
-        },
-      ],
     }
   );
-
-  // Define associations
-  UploadedFile.associate = (models) => {
-    // Association with User model
-    UploadedFile.belongsTo(models.User, {
-      foreignKey: 'uploaded_by',
-      as: 'uploader',
-      onDelete: 'SET NULL',
-      onUpdate: 'CASCADE',
-    });
-  };
 
   return UploadedFile;
 };
