@@ -1,8 +1,7 @@
-import { AppHeader, AppSidebar, UploadButton } from '../../components/index';
 import { CContainer, CRow, CCol } from '@coreui/react';
-import { useBucketName } from '../../lib/bucketUtils';
 import './Kuf.styles.css';
 import DynamicTable from '../../components/Tables/DynamicTable';
+import DefaultLayout from '../../layout/DefaultLayout';
 
 const Kuf = () => {
 
@@ -14,28 +13,11 @@ const Kuf = () => {
         { name: 'Date', selector: row => row.date, sortable: true },
     ];
 
-    const bucketName = useBucketName();
-
     return (
         <>
-            <AppSidebar />
-            <CContainer className="wrapper d-flex flex-column min-vh-100" fluid>
-                <AppHeader />
-
-                {/* Main content area */}
+            <DefaultLayout>
                 <div className="body flex-grow-1 px-3">
                     <CContainer className="h-100" fluid>
-                        {/* Page header with upload button */}
-                        <CRow className="mb-2">
-                            <CCol>
-                                <div className="d-flex justify-content-end align-items-center">
-                                    <UploadButton
-                                        bucketName={bucketName}
-                                    />
-                                </div>
-                            </CCol>
-                        </CRow>
-
                         <CRow>
                             <CCol>
                                 <DynamicTable title="KUF Table" columns={columns} apiEndpoint="http://localhost:4000/api/kuf-data" />
@@ -44,7 +26,7 @@ const Kuf = () => {
                         </CRow>
                     </CContainer>
                 </div>
-            </CContainer>
+            </DefaultLayout>
         </>
     );
 };
