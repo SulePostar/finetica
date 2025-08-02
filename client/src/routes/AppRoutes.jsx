@@ -3,10 +3,9 @@ import React, { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from '../protectedRoutes/ProtectedRouter';
 
-const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
-const AdminDashboard = React.lazy(() => import('../pages/AdminDashboard/AdminDashboard'));
+const Admin = React.lazy(() => import('../pages/Admin/Admin'));
 const Kif = React.lazy(() => import('../pages/kif/Kif'));
 const Vat = React.lazy(() => import('../pages/vat/Vat'));
 const Kuf = React.lazy(() => import('../pages/kuf/Kuf'));
@@ -42,16 +41,15 @@ export default function AppRoutes() {
           path="/"
           element={
             <ProtectedRoute>
-              <DefaultLayout />
+              <Navigate to="/admin" replace />
             </ProtectedRoute>
           }
         />
-        {/* Protected admin routes */}
         <Route
-          path="/admin/*"
+          path="/admin"
           element={
             <ProtectedRoute>
-              <AdminDashboard />
+              <Admin />
             </ProtectedRoute>
           }
         />
@@ -64,7 +62,7 @@ export default function AppRoutes() {
           }
         />
         <Route
-          path='/vat'
+          path="/vat"
           element={
             <ProtectedRoute>
               <Vat />
@@ -72,7 +70,7 @@ export default function AppRoutes() {
           }
         />
         <Route
-          path='/kuf'
+          path="/kuf"
           element={
             <ProtectedRoute>
               <Kuf />

@@ -4,13 +4,13 @@ const bcrypt = require('bcrypt');
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    static associate({ Role, UserStatus }) {
-      User.belongsTo(Role, {
+    static associate(models) {
+      User.belongsTo(models.Role, {
         foreignKey: 'roleId',
         as: 'role',
       });
 
-      User.belongsTo(UserStatus, {
+      User.belongsTo(models.UserStatus, {
         foreignKey: 'statusId',
         as: 'userStatus',
       });

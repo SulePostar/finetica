@@ -2,14 +2,16 @@ class UserResponseDTO {
   constructor(user) {
     this.id = user.id;
     this.email = user.email;
-    this.first_name = user.first_name;
-    this.last_name = user.last_name;
-    this.role_id = user.role_id;
+    this.firstName = user.firstName;
+    this.lastName = user.lastName;
+    this.fullName = user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : null;
+    this.roleId = user.roleId;
     this.role = user.role;
-    this.user_status = user.user_status;
-    this.is_email_verified = user.is_email_verified;
-    this.created_at = user.created_at;
-    this.updated_at = user.updated_at;
+    this.userStatus = user.userStatus;
+    this.statusId = user.statusId;
+    this.isEmailVerified = user.isEmailVerified;
+    this.createdAt = user.createdAt;
+    this.updatedAt = user.updatedAt;
   }
 }
 module.exports = {
