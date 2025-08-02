@@ -5,12 +5,15 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "jest"
+    "test": "jest",
+    "sync": "node sync/googleDriveSync.js",
+    "sync:enhanced": "node sync/googleDriveSyncEnhanced.js"
   },
   "author": "FEP",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
