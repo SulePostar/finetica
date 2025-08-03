@@ -7,19 +7,29 @@ const dotenv = require('dotenv');
 // Load environment variables
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
+// Simple logger with timestamps
+const log = {
+    info: (msg) => console.log(`[${new Date().toISOString()}] ℹ️  ${msg}`),
+    success: (msg) => console.log(`[${new Date().toISOString()}] ✅ ${msg}`),
+    warn: (msg) => console.log(`[${new Date().toISOString()}] ⚠️  ${msg}`),
+    error: (msg) => console.log(`[${new Date().toISOString()}] ❌ ${msg}`),
+    debug: (msg) => process.env.DEBUG && console.log(`[${new Date().toISOString()}] 🐛 ${msg}`)
+};
+
 // Validate refresh token
 if (!process.env.GOOGLE_REFRESH_TOKEN) {
-    console.error('❌ Missing GOOGLE_REFRESH_TOKEN in .env file');
+    log.error('Missing GOOGLE_REFRESH_TOKEN in .env file');
     process.exit(1);
 }
 
 (async function googleDriveSync() {
-    console.log('🚀 Starting Google Drive to Supabase sync...');
+    const startTime = Date.now();
+    log.info('Starting Google Drive to Supabase sync...');
 
     const config = {
         supabase: {
             url: process.env.VITE_SUPABASE_URL,
-            anonKey: process.env.VITE_SUPABASE_ANON_KEY
+            serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY // Use service role for backend operations
         },
         google: {
             clientId: process.env.CLIENT_ID,
@@ -34,7 +44,7 @@ if (!process.env.GOOGLE_REFRESH_TOKEN) {
         }
     };
 
-    if (!config.supabase.url || !config.supabase.anonKey) {
+    if (!config.supabase.url || !config.supabase.serviceKey) {
         console.error('❌ Missing Supabase configuration');
         process.exit(1);
     }
@@ -44,7 +54,7 @@ if (!process.env.GOOGLE_REFRESH_TOKEN) {
         process.exit(1);
     }
 
-    const supabase = createClient(config.supabase.url, config.supabase.anonKey);
+    const supabase = createClient(config.supabase.url, config.supabase.serviceKey);
 
     const oauth2Client = new google.auth.OAuth2(
         config.google.clientId,
@@ -83,23 +93,32 @@ if (!process.env.GOOGLE_REFRESH_TOKEN) {
         }
     }
 
-    async function downloadDriveFile(fileId, fileName, mimeType) {
+    async function downloadDriveFile(fileId, fileName, mimeType, retries = 3) {
         const tempDir = path.join(__dirname, 'temp');
         if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir, { recursive: true });
         const tempPath = path.join(tempDir, fileName);
 
-        try {
-            if (mimeType.startsWith('application/vnd.google-apps.')) {
-                const exportFormat = getExportFormat(mimeType);
-                const response = await drive.files.export({ fileId, mimeType: exportFormat }, { responseType: 'stream' });
-                return await streamToFile(response.data, tempPath);
-            } else {
-                const response = await drive.files.get({ fileId, alt: 'media' }, { responseType: 'stream' });
-                return await streamToFile(response.data, tempPath);
+        for (let attempt = 1; attempt <= retries; attempt++) {
+            try {
+                if (mimeType.startsWith('application/vnd.google-apps.')) {
+                    const exportFormat = getExportFormat(mimeType);
+                    const response = await drive.files.export({ fileId, mimeType: exportFormat }, { responseType: 'stream' });
+                    return await streamToFile(response.data, tempPath);
+                } else {
+                    const response = await drive.files.get({ fileId, alt: 'media' }, { responseType: 'stream' });
+                    return await streamToFile(response.data, tempPath);
+                }
+            } catch (error) {
+                console.warn(`⚠️  Download attempt ${attempt}/${retries} failed for ${fileName}: ${error.message}`);
+
+                if (attempt === retries) {
+                    console.error(`❌ All download attempts failed for ${fileName}`);
+                    throw error;
+                }
+
+                // Wait before retry (exponential backoff)
+                await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
             }
-        } catch (error) {
-            console.error(`❌ Error downloading file ${fileName}:`, error.message);
-            throw error;
         }
     }
 
@@ -148,13 +167,24 @@ if (!process.env.GOOGLE_REFRESH_TOKEN) {
     }
 
     async function uploadToSupabase(filePath, fileName, bucketName) {
+        const stats = fs.statSync(filePath);
+        const fileSizeMB = (stats.size / 1024 / 1024).toFixed(2);
+
+        // Check file size limit (50MB for Supabase free tier)
+        if (stats.size > 50 * 1024 * 1024) {
+            throw new Error(`File ${fileName} (${fileSizeMB}MB) exceeds 50MB limit`);
+        }
+
+        console.log(`📤 Uploading ${fileName} (${fileSizeMB}MB)...`);
+
         const fileBuffer = fs.readFileSync(filePath);
         const { data, error } = await supabase.storage.from(bucketName).upload(fileName, fileBuffer, {
             upsert: true,
             contentType: getContentType(fileName)
         });
+
         if (error) throw error;
-        console.log(`✅ Uploaded ${fileName} to ${bucketName}`);
+        console.log(`✅ Uploaded ${fileName} to ${bucketName} (${fileSizeMB}MB)`);
         return data;
     }
 
@@ -184,17 +214,41 @@ if (!process.env.GOOGLE_REFRESH_TOKEN) {
             if (!supaMap.has(name)) toUpload.push({ name, file });
         }
 
-        for (const { name, file } of toUpload) {
-            try {
-                const tempPath = await downloadDriveFile(file.id, name, file.mimeType);
-                await uploadToSupabase(tempPath, name, bucketName);
-                fs.unlinkSync(tempPath);
-            } catch (err) {
-                console.error(`❌ Failed to upload ${name}:`, err.message);
-            }
+        console.log(`📊 Found ${toUpload.length} files to upload in ${folderName}`);
+
+        // Process files in batches to avoid memory issues
+        const BATCH_SIZE = 5;
+        let uploaded = 0;
+        let failed = 0;
+
+        for (let i = 0; i < toUpload.length; i += BATCH_SIZE) {
+            const batch = toUpload.slice(i, i + BATCH_SIZE);
+
+            // Process batch in parallel
+            const uploadPromises = batch.map(async ({ name, file }) => {
+                try {
+                    const tempPath = await downloadDriveFile(file.id, name, file.mimeType);
+                    await uploadToSupabase(tempPath, name, bucketName);
+
+                    // Clean up temp file immediately
+                    if (fs.existsSync(tempPath)) {
+                        fs.unlinkSync(tempPath);
+                    }
+
+                    uploaded++;
+                    console.log(`📤 [${uploaded}/${toUpload.length}] Uploaded: ${name}`);
+                    return { success: true, name };
+                } catch (err) {
+                    failed++;
+                    console.error(`❌ Failed to upload ${name}:`, err.message);
+                    return { success: false, name, error: err.message };
+                }
+            });
+
+            await Promise.allSettled(uploadPromises);
         }
 
-        return { uploaded: toUpload.length, deleted: 0 };
+        return { uploaded, failed, total: toUpload.length };
     }
 
     async function performSync() {
@@ -214,13 +268,29 @@ if (!process.env.GOOGLE_REFRESH_TOKEN) {
 
         console.log('\n📋 Sync Summary:\n================');
         let totalUploaded = 0;
+        let totalFailed = 0;
+        let totalFiles = 0;
 
         for (const [folder, res] of Object.entries(results)) {
-            console.log(`📁 ${folder}: Uploaded ${res.uploaded}`);
+            console.log(`📁 ${folder.toUpperCase()}: ${res.uploaded}/${res.total} uploaded${res.failed > 0 ? `, ${res.failed} failed` : ''}`);
             totalUploaded += res.uploaded;
+            totalFailed += res.failed;
+            totalFiles += res.total;
         }
 
-        console.log(`\n✅ Done. Total uploaded: ${totalUploaded}`);
+        console.log(`\n🎯 Overall: ${totalUploaded}/${totalFiles} files synced successfully`);
+        if (totalFailed > 0) {
+            console.log(`⚠️  ${totalFailed} files failed to sync`);
+        }
+
+        const successRate = totalFiles > 0 ? ((totalUploaded / totalFiles) * 100).toFixed(1) : 100;
+        console.log(`📊 Success rate: ${successRate}%`);
+
+        if (totalUploaded > 0) {
+            console.log(`✅ Sync completed! ${totalUploaded} new files added to Supabase storage.`);
+        } else {
+            console.log(`ℹ️  All files are already in sync. No new uploads needed.`);
+        }
 
         const tempDir = path.join(__dirname, 'temp');
         if (fs.existsSync(tempDir)) fs.rmSync(tempDir, { recursive: true, force: true });
@@ -228,8 +298,18 @@ if (!process.env.GOOGLE_REFRESH_TOKEN) {
 
     try {
         await performSync();
+
+        const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+        log.success(`Sync completed in ${duration} seconds`);
     } catch (error) {
-        console.error('❌ Sync failed:', error.message);
+        log.error(`Sync failed: ${error.message}`);
         process.exit(1);
+    } finally {
+        // Cleanup temp directory
+        const tempDir = path.join(__dirname, 'temp');
+        if (fs.existsSync(tempDir)) {
+            fs.rmSync(tempDir, { recursive: true, force: true });
+            log.debug('Cleaned up temporary files');
+        }
     }
 })();
