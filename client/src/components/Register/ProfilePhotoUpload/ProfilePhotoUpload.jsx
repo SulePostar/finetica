@@ -1,20 +1,19 @@
 import React, { useState, useCallback } from 'react';
-import { CModal, CModalBody, CModalHeader, CModalFooter, CButton, CAlert } from '@coreui/react';
+import { CModal, CModalBody, CModalHeader, CModalFooter, CButton } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilCamera, cilUser } from '@coreui/icons';
 import FileUploadService from '../../../services/fileUploadService';
+import notify from '../../../utilis/toastHelper';
 import './ProfilePhotoUpload.styles.css';
 
 const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false, initialPhoto = null }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(initialPhoto);
-    const [error, setError] = useState('');
 
     const handlePhotoClick = useCallback(() => {
         if (!disabled) {
             setShowModal(true);
-            setError('');
         }
     }, [disabled]);
 
@@ -25,7 +24,7 @@ const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false, initialPhoto = nu
         // Validate file
         const validation = FileUploadService.validateImageFile(file);
         if (!validation.isValid) {
-            setError(validation.error);
+            notify.onError(validation.error);
             return;
         }
 
@@ -35,22 +34,22 @@ const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false, initialPhoto = nu
 
             setSelectedFile(file);
             setPreviewUrl(preview);
-            setError('');
 
             // Notify parent component
             if (onPhotoSelect) {
                 onPhotoSelect(file);
             }
+
+            // Show success message
+            notify.onSuccess('Photo selected! It will be uploaded when you register.');
         } catch (err) {
-            setError('Failed to process image');
-            console.error('Preview creation error:', err);
+            notify.onError('Failed to process image');
         }
     }, [onPhotoSelect]);
 
     const handleRemovePhoto = useCallback(() => {
         setSelectedFile(null);
         setPreviewUrl(null);
-        setError('');
 
         if (onPhotoSelect) {
             onPhotoSelect(null);
@@ -102,18 +101,6 @@ const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false, initialPhoto = nu
                 </CModalHeader>
 
                 <CModalBody className="text-center">
-                    {error && (
-                        <CAlert color="danger" className="mb-3">
-                            {error}
-                        </CAlert>
-                    )}
-
-                    {selectedFile && !error && (
-                        <CAlert color="success" className="mb-3">
-                            Photo selected! It will be uploaded when you register.
-                        </CAlert>
-                    )}
-
                     {previewUrl && (
                         <div className="preview-container mb-3">
                             <img

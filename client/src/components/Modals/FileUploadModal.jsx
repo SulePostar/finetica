@@ -8,7 +8,6 @@ import {
     CForm,
     CFormInput,
     CFormLabel,
-    CAlert,
     CSpinner,
     CProgress,
     CBadge,
@@ -16,13 +15,12 @@ import {
 import CIcon from '@coreui/icons-react';
 import { cilCloudUpload, cilDescription, cilCheckCircle, cilFile } from '@coreui/icons';
 import FileUploadService from '../../services/fileUploadService';
+import notify from '../../utilis/toastHelper';
 
 const FileUploadModal = ({ visible, onClose, bucketName }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [uploading, setUploading] = useState(false);
-    const [uploadSuccess, setUploadSuccess] = useState(false);
-    const [uploadError, setUploadError] = useState('');
     const [uploadProgress, setUploadProgress] = useState(0);
     const [dragOver, setDragOver] = useState(false);
     const fileInputRef = useRef(null);
@@ -32,26 +30,19 @@ const FileUploadModal = ({ visible, onClose, bucketName }) => {
         if (file) {
             setSelectedFile(file);
             setFileName(file.name);
-            setUploadError('');
-            setUploadSuccess(false);
         }
     };
 
     const handleDrop = (event) => {
         event.preventDefault();
         setDragOver(false);
-
         const files = event.dataTransfer.files;
         if (files.length > 0) {
             const file = files[0];
             setSelectedFile(file);
             setFileName(file.name);
-            setUploadError('');
-            setUploadSuccess(false);
         }
-    };
-
-    const handleDragOver = (event) => {
+    }; const handleDragOver = (event) => {
         event.preventDefault();
         setDragOver(true);
     };
@@ -71,15 +62,13 @@ const FileUploadModal = ({ visible, onClose, bucketName }) => {
 
     const handleUpload = async () => {
         if (!selectedFile) {
-            setUploadError('Please select a file to upload');
+            notify.onError('Please select a file to upload');
             return;
         }
 
         const finalFileName = fileName.trim() || selectedFile.name;
 
         setUploading(true);
-        setUploadError('');
-        setUploadSuccess(false);
         setUploadProgress(0);
 
         try {
@@ -109,16 +98,15 @@ const FileUploadModal = ({ visible, onClose, bucketName }) => {
             setUploadProgress(100);
 
             if (result.success) {
-                setUploadSuccess(true);
+                notify.onSuccess(`File "${finalFileName}" uploaded successfully to ${bucketName.toUpperCase()} bucket!`);
                 setTimeout(() => {
                     handleClose();
                 }, 1500);
             } else {
-                setUploadError('Upload failed. Please try again.');
+                notify.onError(result.error || 'Upload failed. Please try again.');
             }
         } catch (error) {
-            console.error('Upload error:', error);
-            setUploadError(error.message || 'Upload failed. Please try again.');
+            notify.onError(error.message || 'Upload failed. Please try again.');
         } finally {
             setUploading(false);
         }
@@ -128,8 +116,6 @@ const FileUploadModal = ({ visible, onClose, bucketName }) => {
         if (!uploading) {
             setSelectedFile(null);
             setFileName('');
-            setUploadError('');
-            setUploadSuccess(false);
             setUploadProgress(0);
             setDragOver(false);
             onClose();
@@ -162,19 +148,6 @@ const FileUploadModal = ({ visible, onClose, bucketName }) => {
             </CModalHeader>
 
             <CModalBody>
-                {uploadError && (
-                    <CAlert color="danger" className="mb-3">
-                        {uploadError}
-                    </CAlert>
-                )}
-
-                {uploadSuccess && (
-                    <CAlert color="success" className="mb-3 d-flex align-items-center">
-                        <CIcon icon={cilCheckCircle} className="me-2" />
-                        File uploaded successfully!
-                    </CAlert>
-                )}
-
                 <CForm>
                     <div className="mb-3">
                         <CFormLabel htmlFor="fileInput">Select File</CFormLabel>
