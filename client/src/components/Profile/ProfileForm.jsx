@@ -12,8 +12,8 @@ import {
   CFormLabel,
 } from '@coreui/react';
 import { profileFormStyles } from './ProfileForm.styles';
-import { formatDateTime } from '../../helpers/dateHelper.js';
-import { capitalizeFirst } from '../../helpers/capitalizeFirstHelper.js';
+import { formatDateTime } from '../../helpers/formatDate.js';
+import { capitalizeFirst } from '../../helpers/capitalizeFirstLetter.js';
 import ConfirmationModal from '../Modals/ConfirmationModal';
 import { setUserProfile } from '../../redux/user/userSlice';
 
@@ -50,20 +50,15 @@ const ProfileForm = () => {
     if (error) setError('');
   };
 
-  console.log('ProfileForm rendered with formData:', formData);
   const handleSubmit = async (e) => {
-    console.log('Submitting profile form with data:', formData);
 
     e.preventDefault();
-    console.log('Submitting profile form with data:', formData);
     try {
-      console.log('Submitting profile data:', formData);
       const res = await axios.put('http://localhost:4000/api/users/me', formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      console.log('Profile update response:', res.data);
       dispatch(setUserProfile(res.data));
       setSuccess('Profile updated!');
       setShowSuccessModal(true);
