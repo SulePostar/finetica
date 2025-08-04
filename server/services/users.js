@@ -18,7 +18,7 @@ class UserService {
         {
           model: Role,
           as: 'role',
-          attributes: ['id', 'name'],
+          attributes: ['id', 'role'],
         },
         {
           model: UserStatus,
@@ -49,7 +49,7 @@ class UserService {
         {
           model: Role,
           as: 'role',
-          attributes: ['id', 'name'],
+          attributes: ['id', 'role'],
         },
         {
           model: UserStatus,
