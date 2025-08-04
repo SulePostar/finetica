@@ -11,9 +11,13 @@ class AuthService {
         firstName: userData.firstName,
         lastName: userData.lastName,
       };
-      console.log('Sending registration data:', requestData);
+
+      // Add profile image if provided
+      if (userData.profileImage) {
+        requestData.profileImage = userData.profileImage;
+      }
+
       const response = await api.post('/auth/register', requestData);
-      console.log('Registration response:', response.data);
       if (response.data.success) {
         return {
           success: true,
