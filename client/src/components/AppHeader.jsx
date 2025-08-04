@@ -1,11 +1,4 @@
-import { useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  cilMenu,
-  cilSun,
-  cilMoon,
-  cilContrast
-} from '@coreui/icons';
+import { cilContrast, cilMenu, cilMoon, cilSun } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import {
   CContainer,
@@ -18,6 +11,8 @@ import {
   CHeaderToggler,
   useColorModes,
 } from '@coreui/react';
+import { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
 
@@ -31,18 +26,15 @@ const AppHeader = () => {
   useEffect(() => {
     const handleScroll = () => {
       if (headerRef.current) {
-        headerRef.current.classList.toggle(
-          'shadow-sm',
-          document.documentElement.scrollTop > 0
-        );
+        headerRef.current.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
       }
     };
     document.addEventListener('scroll', handleScroll);
     return () => document.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-  const isDarkMode = colorMode === 'dark' || (colorMode === 'auto' && prefersDark)
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode = colorMode === 'dark' || (colorMode === 'auto' && prefersDark);
 
   return (
     <CHeader position="sticky" className="mb-4 p-0" ref={headerRef}>
@@ -59,12 +51,14 @@ const AppHeader = () => {
         <CHeaderNav>
           <CDropdown variant="nav-item" placement="bottom-end">
             <CDropdownToggle caret={false} className="bg-transparent border-0">
-              {colorMode === 'dark' ? (
-                <CIcon icon={cilMoon} size="lg" className="text-white" />
-              ) : colorMode === 'auto' ? (
-                <CIcon icon={cilContrast} size="lg" className={isDarkMode ? 'text-white' : 'text-dark'} />
-              ) : (
-                <CIcon icon={cilSun} size="lg" className="text-dark" />
+              {colorMode === 'dark' && <CIcon icon={cilMoon} size="lg" className="text-white" />}
+              {colorMode === 'light' && <CIcon icon={cilSun} size="lg" className="text-dark" />}
+              {colorMode === 'auto' && (
+                <CIcon
+                  icon={cilContrast}
+                  size="lg"
+                  className={isDarkMode ? 'text-white' : 'text-dark'}
+                />
               )}
             </CDropdownToggle>
 
@@ -99,13 +93,11 @@ const AppHeader = () => {
             </CDropdownMenu>
           </CDropdown>
 
-
           <AppHeaderDropdown isDarkMode={isDarkMode} />
         </CHeaderNav>
       </CContainer>
     </CHeader>
-  )
-
+  );
 };
 
 export default AppHeader;

@@ -1,7 +1,7 @@
+import { CRow, useColorModes } from '@coreui/react';
 import { useEffect, useState } from 'react';
-import { Container, Col } from 'react-bootstrap';
+import { Col, Container } from 'react-bootstrap';
 import { AppHeader, AppSidebar } from '../components/index';
-import { useColorModes, CRow } from '@coreui/react';
 import makeLayoutStyles from './DefaultLayout.styles';
 
 const DefaultLayout = ({ children }) => {
@@ -10,8 +10,8 @@ const DefaultLayout = ({ children }) => {
   const styles = makeLayoutStyles();
 
   useEffect(() => {
-    if (colorMode === 'auto') {
-      setColorMode('dark');
+    if (colorMode !== 'light') {
+      setColorMode('light');
     }
   }, [colorMode, setColorMode]);
 
@@ -29,19 +29,14 @@ const DefaultLayout = ({ children }) => {
   return (
     <Container fluid className={styles.container.className}>
       {/* Sidebar */}
-      <Col
-        xs="auto"
-        className={styles.sidebarCol.className}
-        style={styles.sidebarCol.style}
-      >
+      <Col xs="auto" className={styles.sidebarCol.className} style={styles.sidebarCol.style}>
         <AppSidebar isDarkMode={isDarkMode} />
       </Col>
 
       {/* Main Content */}
       <Col className={styles.mainCol.className}>
         <AppHeader />
-        <CRow className="mb-2 mx-5">
-        </CRow>
+        <CRow className="mb-2 mx-5"></CRow>
         <Container fluid as="main" className={styles.mainContent.className}>
           {children}
         </Container>
