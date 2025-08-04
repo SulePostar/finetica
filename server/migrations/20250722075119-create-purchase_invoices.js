@@ -6,7 +6,7 @@ module.exports = {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
-        primaryKey: true
+        primaryKey: true,
       },
       vat_period: Sequelize.STRING,
       invoice_type: Sequelize.STRING,
@@ -15,23 +15,27 @@ module.exports = {
       note: Sequelize.TEXT,
       supplier_id: {
         type: Sequelize.INTEGER,
+        allowNull: true, // Allowing null here because it may not always be provided
         references: {
           model: 'business_partners',
-          key: 'id'
+          key: 'id',
         },
-        onDelete: 'SET NULL'
+        onDelete: 'SET NULL',
       },
       invoice_date: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        allowNull: true, // Allowing null here because it may not always be provided and today's date is ineffective
+        defaultValue: null,
       },
       due_date: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        allowNull: true, // Allowing null here because it may not always be provided and today's date is ineffective
+        defaultValue: null,
       },
       received_date: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        allowNull: true, // Allowing null here because it may not always be provided and today's date is ineffective
+        defaultValue: null,
       },
       net_total: Sequelize.DECIMAL(18, 2),
       lump_sum: Sequelize.DECIMAL(18, 2),
@@ -39,18 +43,19 @@ module.exports = {
       deductible_vat: Sequelize.DECIMAL(18, 2),
       non_deductible_vat: Sequelize.DECIMAL(18, 2),
       vat_exempt_region: Sequelize.STRING,
-      createdAt: {
+      created_at: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
-      updatedAt: {
+      updated_at: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        allowNull: true,
       },
     });
   },
 
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('purchase_invoices');
-  }
+  },
 };
