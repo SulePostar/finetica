@@ -9,19 +9,16 @@ import {
   CHeader,
   CHeaderNav,
   CHeaderToggler,
-  useColorModes,
 } from '@coreui/react';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
 
-const AppHeader = () => {
+const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const headerRef = useRef();
   const dispatch = useDispatch();
   const sidebarShow = useSelector((state) => state.sidebarShow);
-
-  const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,7 +31,6 @@ const AppHeader = () => {
   }, []);
 
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const isDarkMode = colorMode === 'dark' || (colorMode === 'auto' && prefersDark);
 
   return (
     <CHeader position="sticky" className="mb-4 p-0" ref={headerRef}>

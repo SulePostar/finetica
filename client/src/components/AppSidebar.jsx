@@ -9,8 +9,8 @@ import {
   CSidebarToggler,
 } from '@coreui/react';
 
-import { AppSidebarNav } from './AppSidebarNav';
 import navigation from '../_nav';
+import { AppSidebarNav } from './AppSidebarNav';
 
 const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();

@@ -10,12 +10,6 @@ const DefaultLayout = ({ children }) => {
   const styles = makeLayoutStyles();
 
   useEffect(() => {
-    if (colorMode !== 'light') {
-      setColorMode('light');
-    }
-  }, [colorMode, setColorMode]);
-
-  useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     const checkDarkMode = () => {
       const dark = colorMode === 'dark' || (colorMode === 'auto' && media.matches);
@@ -35,7 +29,7 @@ const DefaultLayout = ({ children }) => {
 
       {/* Main Content */}
       <Col className={styles.mainCol.className}>
-        <AppHeader />
+        <AppHeader isDarkMode={isDarkMode} colorMode={colorMode} setColorMode={setColorMode} />
         <CRow className="mb-2 mx-5"></CRow>
         <Container fluid as="main" className={styles.mainContent.className}>
           {children}
