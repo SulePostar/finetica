@@ -43,6 +43,9 @@ module.exports = (sequelize) => {
       sequelize,
       modelName: 'TransactionCategory',
       tableName: 'transaction_categories',
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
     }
   );
 

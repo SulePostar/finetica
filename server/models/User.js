@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
 
       User.belongsTo(UserStatus, {
         foreignKey: 'statusId',
-        as: 'userStatus',
+        as: 'status',
       });
     }
   }
@@ -35,14 +35,18 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         field: 'password_hash',
       },
+      profileImage: {
+        type: DataTypes.STRING,
+        field: 'profile_image',
+      },
       firstName: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
         field: 'first_name',
       },
       lastName: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
         field: 'last_name',
       },
       profileImage: {
@@ -52,16 +56,14 @@ module.exports = (sequelize, DataTypes) => {
       },
       roleId: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: true, // Allowed null here because some users may not have a role assigned initially
         defaultValue: null,
-        references: { model: 'user_roles', key: 'id' },
         field: 'role_id',
       },
       statusId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 1,
-        references: { model: 'user_statuses', key: 'id' },
         field: 'status_id',
       },
       isEmailVerified: {
@@ -69,6 +71,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: false,
         field: 'is_email_verified',
+      },
+      isEnabled: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+        field: 'is_enabled',
       },
       verificationToken: {
         type: DataTypes.STRING,
@@ -105,6 +113,9 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: 'User',
       tableName: 'users',
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
       defaultScope: {
         attributes: { exclude: ['passwordHash'] },
       },

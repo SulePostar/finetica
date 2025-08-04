@@ -6,50 +6,51 @@ module.exports = {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
-        primaryKey: true
+        primaryKey: true,
       },
       type: {
         type: Sequelize.ENUM('customer', 'supplier', 'both'),
-        allowNull: false
+        allowNull: false,
       },
       name: Sequelize.STRING,
       short_name: Sequelize.STRING,
-      country_code: Sequelize.STRING(2),
+      country_code: Sequelize.STRING(3),
       vat_number: Sequelize.STRING,
       tax_id: Sequelize.STRING,
       registration_number: Sequelize.STRING,
       is_vat_registered: {
         type: Sequelize.BOOLEAN,
-        defaultValue: false
+        defaultValue: false,
       },
       address: Sequelize.STRING,
       city: Sequelize.STRING,
       postal_code: Sequelize.STRING,
       email: Sequelize.STRING,
       phone: Sequelize.STRING,
-      iban: Sequelize.TEXT,
+      iban: Sequelize.STRING,
       bank_name: Sequelize.STRING,
       swift_code: Sequelize.STRING(20),
       default_currency: Sequelize.STRING(3),
-      language_code: Sequelize.STRING(2),
+      language_code: Sequelize.STRING(3),
       payment_terms: Sequelize.TEXT,
       is_active: {
         type: Sequelize.BOOLEAN,
-        defaultValue: true
+        defaultValue: true,
       },
       note: Sequelize.TEXT,
-      createdAt: {
+      created_at: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
-      updatedAt: {
+      updated_at: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
-      }
+        allowNull: true,
+      },
     });
   },
 
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('business_partners');
-  }
+  },
 };
