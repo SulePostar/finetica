@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Container, Col } from 'react-bootstrap';
 import { AppHeader, AppSidebar } from '../components/index';
-import { useColorModes, CRow, CCol } from '@coreui/react';
+import { useColorModes, CRow } from '@coreui/react';
 import makeLayoutStyles from './DefaultLayout.styles';
-import { UploadButton } from '../components/index';
-import { useBucketName } from '../lib/bucketUtils';
 
 const DefaultLayout = ({ children }) => {
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme');
@@ -28,9 +26,6 @@ const DefaultLayout = ({ children }) => {
     return () => media.removeEventListener('change', checkDarkMode);
   }, [colorMode]);
 
-  const bucketName = useBucketName();
-
-
   return (
     <Container fluid className={styles.container.className}>
       {/* Sidebar */}
@@ -46,13 +41,6 @@ const DefaultLayout = ({ children }) => {
       <Col className={styles.mainCol.className}>
         <AppHeader />
         <CRow className="mb-2 mx-5">
-          <CCol>
-            <div className="d-flex justify-content-end align-items-center">
-              <UploadButton
-                bucketName={bucketName}
-              />
-            </div>
-          </CCol>
         </CRow>
         <Container fluid as="main" className={styles.mainContent.className}>
           {children}

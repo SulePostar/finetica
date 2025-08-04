@@ -1,4 +1,6 @@
+import { UploadButton } from '../../components/index';
 import { CContainer, CRow, CCol } from '@coreui/react';
+import { useBucketName } from '../../lib/bucketUtils';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import './Kif.styles.css';
@@ -12,9 +14,18 @@ const Kif = () => {
         { name: 'Date', selector: row => row.date, sortable: true },
     ];
 
+    const bucketName = useBucketName();
+
     return (
         <DefaultLayout>
             <div className="body flex-grow-1 px-3">
+                <CCol>
+                    <div className="d-flex justify-content-end align-items-center">
+                        <UploadButton
+                            bucketName={bucketName}
+                        />
+                    </div>
+                </CCol>
                 <CContainer className="h-100" fluid>
                     <CRow>
                         <CCol>
