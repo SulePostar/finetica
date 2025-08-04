@@ -1,8 +1,9 @@
-import { AppHeader, AppSidebar, UploadButton } from '../../components/index';
 import { CContainer, CRow, CCol } from '@coreui/react';
+import { UploadButton } from '../../components/index';
 import { useBucketName } from '../../lib/bucketUtils';
 import './Vat.styles.css';
 import DynamicTable from '../../components/Tables/DynamicTable';
+import DefaultLayout from '../../layout/DefaultLayout';
 
 const Vat = () => {
 
@@ -18,24 +19,16 @@ const Vat = () => {
 
     return (
         <>
-            <AppSidebar />
-            <CContainer className="wrapper d-flex flex-column min-vh-100" fluid>
-                <AppHeader />
-
-                {/* Main content area */}
+            <DefaultLayout>
                 <div className="body flex-grow-1 px-3">
+                    <CCol>
+                        <div className="d-flex justify-content-end align-items-center">
+                            <UploadButton
+                                bucketName={bucketName}
+                            />
+                        </div>
+                    </CCol>
                     <CContainer className="h-100" fluid>
-                        {/* Page header with upload button */}
-                        <CRow className="mb-2">
-                            <CCol>
-                                <div className="d-flex justify-content-end align-items-center">
-                                    <UploadButton
-                                        bucketName={bucketName}
-                                    />
-                                </div>
-                            </CCol>
-                        </CRow>
-
                         <CRow>
                             <CCol>
                                 <DynamicTable title="VAT Table" columns={columns} apiEndpoint="http://localhost:4000/api/vat-data" />
@@ -44,7 +37,7 @@ const Vat = () => {
                         </CRow>
                     </CContainer>
                 </div>
-            </CContainer>
+            </DefaultLayout>
         </>
     );
 };
