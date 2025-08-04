@@ -19,12 +19,9 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
       },
       role: {
-        type: DataTypes.ENUM('guest', 'user', 'admin'),
+        type: DataTypes.STRING,
         allowNull: false,
         unique: true,
-        validate: {
-          isIn: [['guest', 'user', 'admin']],
-        },
       },
       createdAt: {
         type: DataTypes.DATE,

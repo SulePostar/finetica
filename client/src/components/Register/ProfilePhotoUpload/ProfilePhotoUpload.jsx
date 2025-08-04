@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { CModal, CModalBody, CModalHeader, CModalFooter, CButton, CAlert } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilCamera, cilUser } from '@coreui/icons';
-import PhotoUploadService from '../../../services/photoUploadService';
+import FileUploadService from '../../../services/fileUploadService';
 import './ProfilePhotoUpload.styles.css';
 
 const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false, initialPhoto = null }) => {
@@ -23,7 +23,7 @@ const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false, initialPhoto = nu
         if (!file) return;
 
         // Validate file
-        const validation = PhotoUploadService.validateImageFile(file);
+        const validation = FileUploadService.validateImageFile(file);
         if (!validation.isValid) {
             setError(validation.error);
             return;
@@ -31,7 +31,7 @@ const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false, initialPhoto = nu
 
         try {
             // Create preview
-            const preview = await PhotoUploadService.createPreviewUrl(file);
+            const preview = await FileUploadService.createPreviewUrl(file);
 
             setSelectedFile(file);
             setPreviewUrl(preview);
@@ -127,7 +127,7 @@ const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false, initialPhoto = nu
                     <div className="upload-section">
                         <input
                             type="file"
-                            accept={PhotoUploadService.ALLOWED_TYPES.join(',')}
+                            accept={FileUploadService.ALLOWED_IMAGE_TYPES.join(',')}
                             onChange={handleFileSelect}
                             style={{ display: 'none' }}
                             id="photo-upload-input"

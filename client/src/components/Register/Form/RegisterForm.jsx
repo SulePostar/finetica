@@ -6,7 +6,7 @@ import { cilUser, cilEnvelopeClosed, cilLockLocked, cilContact } from '@coreui/i
 import { injectRegisterFormStyles, registerFormStyles } from './RegisterForm.styles';
 import { authService } from '../../../services';
 import { useRegistrationForm } from '../../../hooks/useRegistrationForm';
-import PhotoUploadService from '../../../services/photoUploadService';
+import FileUploadService from '../../../services/fileUploadService';
 import ProfilePhotoUpload from '../ProfilePhotoUpload';
 
 const RegisterForm = () => {
@@ -52,18 +52,18 @@ const RegisterForm = () => {
 
       // Upload profile photo if provided
       if (profilePhoto) {
-        const uploadResult = await PhotoUploadService.uploadProfileImage(
+        const uploadResult = await FileUploadService.uploadProfileImage(
           profilePhoto,
           formData.firstName,
           formData.lastName
         );
 
-        if (!uploadResult.success) {
-          setError(`Photo upload failed: ${uploadResult.error}`);
-          return;
+        if (uploadResult.success && uploadResult.url) {
+          registrationData.profileImage = uploadResult.url;
+        } else {
+          console.warn('Profile image upload failed:', uploadResult.error);
+          // Continue with registration even if image upload fails
         }
-
-        registrationData.profileImage = uploadResult.url;
       }
 
       const result = await authService.register(registrationData);

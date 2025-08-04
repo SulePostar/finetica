@@ -15,7 +15,7 @@ import {
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilCloudUpload, cilDescription, cilCheckCircle, cilFile } from '@coreui/icons';
-import { uploadFile } from '../../lib/uploadFile';
+import FileUploadService from '../../services/fileUploadService';
 
 const FileUploadModal = ({ visible, onClose, bucketName }) => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -103,7 +103,7 @@ const FileUploadModal = ({ visible, onClose, bucketName }) => {
                 });
             }, 100);
 
-            const result = await uploadFile(fileToUpload, bucketName);
+            const result = await FileUploadService.uploadFile(fileToUpload, bucketName);
 
             clearInterval(progressInterval);
             setUploadProgress(100);
