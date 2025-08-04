@@ -3,9 +3,9 @@ require('dotenv').config();
 const cors = require('cors');
 const { connectToDatabase } = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
-const kifRouter = require('./services/kif');
-const kufRouter = require('./services/kuf');
-const vatRouter = require('./services/vat');
+const kifRouter = require('./routes/kif');
+const kufRouter = require('./routes/kuf');
+const vatRouter = require('./routes/vat');
 
 const app = express();
 

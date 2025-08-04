@@ -1,5 +1,5 @@
 'use strict';
-/** @type {import('sequelize-cli').Migration} */
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('users', {
@@ -31,7 +31,7 @@ module.exports = {
       },
       role_id: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: true, // Allowed null here because some users may not have a role assigned initially
         references: {
           model: 'user_roles',
           key: 'id',
@@ -42,6 +42,7 @@ module.exports = {
       status_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        defaultValue: 1,
         references: {
           model: 'user_statuses',
           key: 'id',
@@ -49,19 +50,19 @@ module.exports = {
         onDelete: 'RESTRICT',
         onUpdate: 'CASCADE',
       },
-       verification_token:{
+      verification_token: {
         type: Sequelize.STRING,
-      allowNull: true,
+        allowNull: true,
       },
-      password_reset_token:{
+      password_reset_token: {
         type: Sequelize.STRING,
-      allowNull: true,
+        allowNull: true,
       },
-      reset_expires_at:{
+      reset_expires_at: {
         type: Sequelize.DATE,
-      allowNull: true,
+        allowNull: true,
       },
-       is_email_verified: {
+      is_email_verified: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
       },
@@ -70,17 +71,18 @@ module.exports = {
         allowNull: false,
         defaultValue: true,
       },
-      last_login_at:{
+      last_login_at: {
         type: Sequelize.DATE,
-      allowNull: true,
-      }, 
+        allowNull: true,
+      },
       created_at: {
-        allowNull: false,
         type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updated_at: {
-        allowNull: false,
         type: Sequelize.DATE,
+        allowNull: true,
       },
     });
     await queryInterface.addIndex('users', ['email']);

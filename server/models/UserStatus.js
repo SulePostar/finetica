@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
   class UserStatus extends Model {
     static associate(models) {
       UserStatus.hasMany(models.User, {
-        foreignKey: 'status_id',
+        foreignKey: 'statusId',
         as: 'users',
       });
     }
@@ -23,12 +23,21 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         unique: true,
       },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        field: 'created_at',
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        field: 'updated_at',
+      },
     },
     {
       sequelize,
       modelName: 'UserStatus',
       tableName: 'user_statuses',
-      underscored: true,
       timestamps: true,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
