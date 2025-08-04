@@ -16,6 +16,7 @@ module.exports = (sequelize) => {
       },
       invoiceId: {
         type: DataTypes.INTEGER,
+        allowNull: false, // Added this to force the value of invoiceId to be set
         field: 'invoice_id',
       },
       orderNumber: {
@@ -56,6 +57,9 @@ module.exports = (sequelize) => {
       sequelize,
       modelName: 'PurchaseInvoiceItem',
       tableName: 'purchase_invoice_items',
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
     }
   );
 
