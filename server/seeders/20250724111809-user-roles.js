@@ -22,19 +22,13 @@ module.exports = {
       [
         {
           id: 1,
-          role: 'guest',
+          role: 'admin',
           created_at: new Date(),
           updated_at: new Date(),
         },
         {
           id: 2,
           role: 'user',
-          created_at: new Date(),
-          updated_at: new Date(),
-        },
-        {
-          id: 3,
-          role: 'admin',
           created_at: new Date(),
           updated_at: new Date(),
         },

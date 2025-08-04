@@ -28,16 +28,6 @@ module.exports = (sequelize) => {
         defaultValue: false,
         field: 'is_manual',
       },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        field: 'created_at',
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        field: 'updated_at',
-      },
     },
     {
       sequelize,
