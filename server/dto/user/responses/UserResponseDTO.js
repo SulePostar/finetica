@@ -7,7 +7,7 @@ class UserResponseDTO {
     this.fullName = user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : null;
     this.roleId = user.roleId;
     this.role = user.role;
-    this.userStatus = user.userStatus;
+    this.status = user.status;
     this.statusId = user.statusId;
     this.isEmailVerified = user.isEmailVerified;
     this.createdAt = user.createdAt;

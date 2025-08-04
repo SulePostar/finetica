@@ -22,7 +22,7 @@ class UserService {
         },
         {
           model: UserStatus,
-          as: 'userStatus',
+          as: 'status',
           attributes: ['id', 'status'],
         },
       ],
@@ -53,7 +53,7 @@ class UserService {
         },
         {
           model: UserStatus,
-          as: 'userStatus',
+          as: 'status',
           attributes: ['id', 'status'],
         },
       ],
