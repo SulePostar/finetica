@@ -43,6 +43,7 @@ import {
 
 // Utility imports
 import { filterUsers } from '../../utils/formatters';
+import notify from '../../utilis/toastHelper';
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -78,6 +79,14 @@ const AdminDashboard = () => {
   // Clear messages after a delay
   useEffect(() => {
     if (error || success) {
+      // Show toast notifications
+      if (error) {
+        notify.onError(error);
+      }
+      if (success) {
+        notify.onSuccess(success);
+      }
+
       const timer = setTimeout(() => {
         if (error) dispatch(clearError());
         if (success) dispatch(clearSuccess());
@@ -135,6 +144,7 @@ const AdminDashboard = () => {
   const handleConfirmDelete = useCallback(() => {
     dispatch(deleteUser(selectedUser.id));
     setShowDeleteModal(false);
+    notify.onWarning(`Deleting user: ${selectedUser.firstName || selectedUser.email}`);
   }, [dispatch, selectedUser]);
 
   const handleConfirmQuickChange = useCallback(() => {
@@ -167,18 +177,6 @@ const AdminDashboard = () => {
             </h4>
           </CCardHeader>
           <CCardBody>
-            {/* Error and Success Messages */}
-            {error && (
-              <CAlert color="danger" dismissible onClose={() => dispatch(clearError())}>
-                {error}
-              </CAlert>
-            )}
-            {success && (
-              <CAlert color="success" dismissible onClose={() => dispatch(clearSuccess())}>
-                {success}
-              </CAlert>
-            )}
-
             {/* Search and Filters */}
             <CRow className="mb-3">
               <SearchFilters
