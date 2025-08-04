@@ -60,16 +60,6 @@ module.exports = (sequelize) => {
         field: 'signed_at',
         defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        field: 'created_at',
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        field: 'updated_at',
-      },
     },
     {
       sequelize,
