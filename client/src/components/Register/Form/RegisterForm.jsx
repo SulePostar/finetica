@@ -1,64 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CForm, CInputGroup, CInputGroupText, CFormInput, CButton, CAlert } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilUser, cilEnvelopeClosed, cilLockLocked, cilContact } from '@coreui/icons';
 import { injectRegisterFormStyles, registerFormStyles } from './RegisterForm.styles';
 import { authService } from '../../../services';
+import { useRegistrationForm } from '../../../hooks/useRegistrationForm';
+import PhotoUploadService from '../../../services/photoUploadService';
+import ProfilePhotoUpload from '../ProfilePhotoUpload';
 
 const RegisterForm = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
+  const {
+    formData,
+    errors,
+    handleInputChange,
+    validateForm,
+    resetForm,
+    getFieldError
+  } = useRegistrationForm();
 
+  const [profilePhoto, setProfilePhoto] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
+  const handlePhotoSelect = useCallback((file) => {
+    setProfilePhoto(file);
     if (error) setError('');
-  };
+  }, [error]);
 
-  const validateForm = () => {
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
-      setError('All fields are required');
-      return false;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return false;
-    }
-
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
-      return false;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      setError('Please enter a valid email address');
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
+      setError('Please fix the errors below');
       return;
     }
 
@@ -67,43 +43,56 @@ const RegisterForm = () => {
     setSuccess('');
 
     try {
-      const result = await authService.register({
+      const registrationData = {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         password: formData.password,
-      });
+      };
+
+      // Upload profile photo if provided
+      if (profilePhoto) {
+        const uploadResult = await PhotoUploadService.uploadProfileImage(
+          profilePhoto,
+          formData.firstName,
+          formData.lastName
+        );
+
+        if (!uploadResult.success) {
+          setError(`Photo upload failed: ${uploadResult.error}`);
+          return;
+        }
+
+        registrationData.profileImage = uploadResult.url;
+      }
+
+      const result = await authService.register(registrationData);
 
       if (result.success) {
         setSuccess('Registration successful! Redirecting to login page...');
-        // Reset form
-        setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-        });
+        resetForm();
+        setProfilePhoto(null);
 
-        // Redirect to login page after a delay to show success message
         setTimeout(() => {
           navigate('/login');
         }, 2000);
       } else {
-        // Handle validation errors or other backend errors
-        if (result.errors && result.errors.length > 0) {
-          setError(result.errors.join(', '));
-        } else {
-          setError(result.message || 'Registration failed');
-        }
+        const errorMessage = result.errors?.length > 0
+          ? result.errors.join(', ')
+          : result.message || 'Registration failed';
+        setError(errorMessage);
       }
     } catch (error) {
-      console.error('Unexpected error:', error);
+      console.error('Registration error:', error);
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [validateForm, formData, profilePhoto, resetForm, navigate]);
+
+  const clearGeneralError = useCallback(() => {
+    if (error) setError('');
+  }, [error]);
 
   useEffect(() => {
     const cleanup = injectRegisterFormStyles();
@@ -130,7 +119,12 @@ const RegisterForm = () => {
           </CAlert>
         )}
 
-        <CForm onSubmit={handleSubmit}>
+        <CForm onSubmit={handleSubmit} noValidate>
+          <ProfilePhotoUpload
+            onPhotoSelect={handlePhotoSelect}
+            disabled={loading}
+          />
+
           <CInputGroup className="mb-3">
             <CInputGroupText style={registerFormStyles.inputGroupText}>
               <CIcon icon={cilUser} style={registerFormStyles.icon} />
@@ -139,11 +133,18 @@ const RegisterForm = () => {
               placeholder="First Name"
               name="firstName"
               value={formData.firstName}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                handleInputChange(e);
+                clearGeneralError();
+              }}
               disabled={loading}
+              invalid={Boolean(getFieldError('firstName'))}
               required
             />
           </CInputGroup>
+          {getFieldError('firstName') && (
+            <div className="text-danger small mb-2">{getFieldError('firstName')}</div>
+          )}
 
           <CInputGroup className="mb-3">
             <CInputGroupText style={registerFormStyles.inputGroupText}>
@@ -153,11 +154,18 @@ const RegisterForm = () => {
               placeholder="Last Name"
               name="lastName"
               value={formData.lastName}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                handleInputChange(e);
+                clearGeneralError();
+              }}
               disabled={loading}
+              invalid={Boolean(getFieldError('lastName'))}
               required
             />
           </CInputGroup>
+          {getFieldError('lastName') && (
+            <div className="text-danger small mb-2">{getFieldError('lastName')}</div>
+          )}
 
           <CInputGroup className="mb-3">
             <CInputGroupText style={registerFormStyles.inputGroupText}>
@@ -168,11 +176,18 @@ const RegisterForm = () => {
               placeholder="Email"
               name="email"
               value={formData.email}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                handleInputChange(e);
+                clearGeneralError();
+              }}
               disabled={loading}
+              invalid={Boolean(getFieldError('email'))}
               required
             />
           </CInputGroup>
+          {getFieldError('email') && (
+            <div className="text-danger small mb-2">{getFieldError('email')}</div>
+          )}
 
           <CInputGroup className="mb-3">
             <CInputGroupText style={registerFormStyles.inputGroupText}>
@@ -183,11 +198,18 @@ const RegisterForm = () => {
               placeholder="Password"
               name="password"
               value={formData.password}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                handleInputChange(e);
+                clearGeneralError();
+              }}
               disabled={loading}
+              invalid={Boolean(getFieldError('password'))}
               required
             />
           </CInputGroup>
+          {getFieldError('password') && (
+            <div className="text-danger small mb-2">{getFieldError('password')}</div>
+          )}
 
           <CInputGroup className="mb-4">
             <CInputGroupText style={registerFormStyles.inputGroupText}>
@@ -198,11 +220,18 @@ const RegisterForm = () => {
               placeholder="Confirm Password"
               name="confirmPassword"
               value={formData.confirmPassword}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                handleInputChange(e);
+                clearGeneralError();
+              }}
               disabled={loading}
+              invalid={Boolean(getFieldError('confirmPassword'))}
               required
             />
           </CInputGroup>
+          {getFieldError('confirmPassword') && (
+            <div className="text-danger small mb-2">{getFieldError('confirmPassword')}</div>
+          )}
 
           <CButton type="submit" className="register-form-button" disabled={loading}>
             {loading ? 'Creating Account...' : 'Create Account'}

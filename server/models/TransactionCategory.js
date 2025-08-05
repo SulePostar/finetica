@@ -28,21 +28,14 @@ module.exports = (sequelize) => {
         defaultValue: false,
         field: 'is_manual',
       },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        field: 'created_at',
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        field: 'updated_at',
-      },
     },
     {
       sequelize,
       modelName: 'TransactionCategory',
       tableName: 'transaction_categories',
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
     }
   );
 

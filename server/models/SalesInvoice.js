@@ -36,14 +36,19 @@ module.exports = (sequelize) => {
       },
       customerId: {
         type: DataTypes.INTEGER,
+        allowNull: true, // Allowing null here because it may not always be provided
         field: 'customer_id',
       },
       invoiceDate: {
         type: DataTypes.DATE,
+        allowNull: true, // Allowing null here because it may not always be provided and today's date is ineffective
+        defaultValue: null,
         field: 'invoice_date',
       },
       dueDate: {
         type: DataTypes.DATE,
+        allowNull: true, // Allowing null here because it may not always be provided and today's date is ineffective
+        defaultValue: null,
         field: 'due_date',
       },
       deliveryPeriod: {
@@ -58,21 +63,14 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         field: 'vat_category',
       },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        field: 'created_at',
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        field: 'updated_at',
-      },
     },
     {
       sequelize,
       modelName: 'SalesInvoice',
       tableName: 'sales_invoices',
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
     }
   );
 

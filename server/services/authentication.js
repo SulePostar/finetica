@@ -7,7 +7,8 @@ const { USER_STATUS } = require('../utils/constants');
 
 class AuthService {
   async register(registerData) {
-    const { email, password, ...rest } = registerData;
+    const { email, password, profileImage, ...rest } = registerData;
+
     const existingUser = await User.findOne({
       where: { email },
     });
@@ -16,14 +17,21 @@ class AuthService {
       throw new AppError('User with this email already exists', 409);
     }
 
-    const passwordHash = await bcrypt.hash(registerData.password, 10);
+    const passwordHash = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+    const userData = {
       email,
       passwordHash,
       ...rest,
       statusId: USER_STATUS.PENDING,
-    });
+    };
+
+    // Add profile image if provided
+    if (profileImage) {
+      userData.profileImage = profileImage;
+    }
+
+    const user = await User.create(userData);
 
     return {
       success: true,
@@ -34,8 +42,9 @@ class AuthService {
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
+          profileImage: user.profileImage,
           roleId: user.roleId,
-          roleName: user.role?.name || null,
+          roleName: user.role?.role || null,
           statusId: user.statusId,
         },
       },
@@ -47,10 +56,12 @@ class AuthService {
     const user = await User.scope('withPassword').findOne({
       where: { email },
       include: [
-        { model: Role, as: 'role', attributes: ['id', 'name'] },
+        { model: Role, as: 'role', attributes: ['id', 'role'] },
         { model: UserStatus, as: 'status', attributes: ['id', 'status'] },
       ],
     });
+
+    console.log('User found:', user);
 
     if (!user) throw new AppError('Invalid credentials', 401);
 
@@ -69,7 +80,8 @@ class AuthService {
 
     await user.update({ lastLoginAt: new Date() });
 
-    const token = this.#generateToken(user.id, user.role?.id, user.role?.name);
+    const token = this.#generateToken(user.id, user.role?.id, user.role?.role);
+    console.log('Generated token:', token);
 
     return {
       success: true,
@@ -82,9 +94,10 @@ class AuthService {
           roleId: user.roleId,
           firstName: user.firstName,
           lastName: user.lastName,
-          roleName: user.role?.name || '',
+          profileImage: user.profileImage,
+          roleName: user.role?.role || '',
           statusId: user.statusId,
-          statusName: user.userStatus?.status || '',
+          statusName: user.status?.status || '',
           isEmailVerified: user.isEmailVerified,
           lastLoginAt: user.lastLoginAt,
           createdAt: user.createdAt,
@@ -101,7 +114,7 @@ class AuthService {
         {
           model: Role,
           as: 'role',
-          attributes: ['id', 'name'],
+          attributes: ['id', 'role'],
         },
       ],
     });
@@ -138,7 +151,7 @@ class AuthService {
         {
           model: Role,
           as: 'role',
-          attributes: ['id', 'name'],
+          attributes: ['id', 'role'],
         },
       ],
     });

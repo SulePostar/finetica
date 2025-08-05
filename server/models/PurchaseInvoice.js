@@ -36,18 +36,25 @@ module.exports = (sequelize) => {
       },
       supplierId: {
         type: DataTypes.INTEGER,
+        allowNull: true, // Allowing null here because it may not always be provided
         field: 'supplier_id',
       },
       invoiceDate: {
         type: DataTypes.DATE,
+        allowNull: true, // Allowing null here because it may not always be provided and today's date is ineffective
+        defaultValue: null,
         field: 'invoice_date',
       },
       dueDate: {
         type: DataTypes.DATE,
+        allowNull: true, // Allowing null here because it may not always be provided and today's date is ineffective
+        defaultValue: null,
         field: 'due_date',
       },
       receivedDate: {
         type: DataTypes.DATE,
+        allowNull: true, // Allowing null here because it may not always be provided and today's date is ineffective
+        defaultValue: null,
         field: 'received_date',
       },
       netTotal: {
@@ -74,21 +81,14 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         field: 'vat_exempt_region',
       },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        field: 'created_at',
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        field: 'updated_at',
-      },
     },
     {
       sequelize,
       modelName: 'PurchaseInvoice',
       tableName: 'purchase_invoices',
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
     }
   );
 

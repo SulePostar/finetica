@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
   class Role extends Model {
     static associate(models) {
       Role.hasMany(models.User, {
-        foreignKey: 'role_id',
+        foreignKey: 'roleId',
         as: 'users',
       });
     }
@@ -18,20 +18,16 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      name: {
-        type: DataTypes.ENUM('guest', 'user', 'admin'),
+      role: {
+        type: DataTypes.STRING,
         allowNull: false,
         unique: true,
-        validate: {
-          isIn: [['guest', 'user', 'admin']],
-        },
-      }
+      },
     },
     {
       sequelize,
       modelName: 'Role',
       tableName: 'user_roles',
-      underscored: true,
       timestamps: true,
       createdAt: 'created_at',
       updatedAt: 'updated_at',

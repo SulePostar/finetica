@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
+
+module.exports = (sequelize) => {
   class BankTransaction extends Model {
     static associate({ BusinessPartner, TransactionCategory }) {
       BankTransaction.belongsTo(BusinessPartner, { foreignKey: 'partnerId' });
@@ -17,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       date: {
         type: DataTypes.DATE,
         allowNull: false,
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
       amount: {
         type: DataTypes.DECIMAL(18, 2),
@@ -35,23 +37,24 @@ module.exports = (sequelize, DataTypes) => {
       },
       invoiceId: {
         field: 'invoice_id',
+        type: DataTypes.STRING, // It's a string because we assume we will get it in such format
+      },
+      partnerId: {
+        field: 'partner_id',
         type: DataTypes.INTEGER,
       },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        field: 'created_at',
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        field: 'updated_at',
+      categoryId: {
+        field: 'category_id',
+        type: DataTypes.INTEGER,
       },
     },
     {
       sequelize,
       modelName: 'BankTransaction',
       tableName: 'bank_transactions',
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
     }
   );
   return BankTransaction;

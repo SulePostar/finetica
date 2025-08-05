@@ -37,26 +37,29 @@ module.exports = (sequelize, DataTypes) => {
       },
       firstName: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
         field: 'first_name',
       },
       lastName: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
         field: 'last_name',
+      },
+      profileImage: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        field: 'profile_image',
       },
       roleId: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: true, // Allowed null here because some users may not have a role assigned initially
         defaultValue: null,
-        references: { model: 'user_roles', key: 'id' },
         field: 'role_id',
       },
       statusId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 1,
-        references: { model: 'user_statuses', key: 'id' },
         field: 'status_id',
       },
       isEmailVerified: {
@@ -64,6 +67,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: false,
         field: 'is_email_verified',
+      },
+      isEnabled: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+        field: 'is_enabled',
       },
       verificationToken: {
         type: DataTypes.STRING,
@@ -85,21 +94,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         field: 'last_login_at',
       },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        field: 'created_at',
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        field: 'updated_at',
-      },
     },
     {
       sequelize,
       modelName: 'User',
       tableName: 'users',
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
       defaultScope: {
         attributes: { exclude: ['passwordHash'] },
       },

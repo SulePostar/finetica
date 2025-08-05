@@ -1,5 +1,4 @@
 'use strict';
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('user_roles', {
@@ -9,20 +8,23 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      name: {
+      role: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true,
       },
       created_at: {
-        allowNull: false,
         type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updated_at: {
-        allowNull: false,
         type: Sequelize.DATE,
+        allowNull: true,
       },
     });
+
+    await queryInterface.addIndex('user_roles', ['role']); // Added index for role column
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('user_roles');

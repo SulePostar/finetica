@@ -3,50 +3,29 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import {
   CSidebar,
-  CSidebarBrand,
   CSidebarFooter,
   CSidebarHeader,
   CSidebarToggler,
   CCloseButton,
 } from '@coreui/react';
 
-import { AppSidebarNav } from './AppSidebarNav';
 import navigation from '../_nav';
+import { AppSidebarNav } from './AppSidebarNav';
 
-const AppSidebar = () => {
+const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
-  const unfoldable = useSelector((state) => state.sidebarUnfoldable);
-  const sidebarShow = useSelector((state) => state.sidebarShow);
-
-  const [isDarkMode, setIsDarkMode] = useState(
-    document.documentElement.getAttribute('data-coreui-theme') === 'dark'
-  );
-
-  useEffect(() => {
-    const handler = () => {
-      const theme = document.documentElement.getAttribute('data-coreui-theme');
-      setIsDarkMode(theme === 'dark');
-    };
-
-    document.documentElement.addEventListener('ColorSchemeChange', handler);
-    return () => document.documentElement.removeEventListener('ColorSchemeChange', handler);
-  }, []);
-
+  const unfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
+  const sidebarShow = useSelector((state) => state.ui.sidebarShow);
 
   return (
     <CSidebar
-      className='border-end'
+      className="border-end"
       colorScheme={isDarkMode ? 'dark' : 'light'}
       position="fixed"
       unfoldable={unfoldable}
       visible={sidebarShow}
-      onVisibleChange={(visible) => dispatch({ type: 'set', sidebarShow: visible })}
     >
       <CSidebarHeader className="border-bottom">
-        <CSidebarBrand to="/" className="text-decoration-none">
-          {/* Logo position */}
-        </CSidebarBrand>
-
         <CCloseButton
           className="d-lg-none"
           dark={isDarkMode}
