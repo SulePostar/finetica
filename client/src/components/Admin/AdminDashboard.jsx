@@ -1,17 +1,13 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  CCard,
-  CCardBody,
-  CCardHeader,
-  CCol,
-  CRow,
-  CAlert,
-  CSpinner,
-  CContainer,
-} from '@coreui/react';
+import { Card, Spinner } from 'react-bootstrap';
+import DataTable from 'react-data-table-component';
+import makeCustomStyles from '../Tables/DynamicTable.styles';
 import CIcon from '@coreui/icons-react';
-import { cilUser } from '@coreui/icons';
+import { cilUser, cilPencil, cilTrash } from '@coreui/icons';
+
+// Import CSS
+import './AdminDashboard.css';
 
 // Redux imports
 import {
@@ -33,16 +29,10 @@ import {
 } from '../../redux/users/usersSlice';
 
 // Component imports
-import {
-  UserTable,
-  SearchFilters,
-  EditUserModal,
-  DeleteUserModal,
-  QuickChangeModal,
-} from '../index';
+import { SearchFilters, EditUserModal, DeleteUserModal, QuickChangeModal } from '../index';
 
 // Utility imports
-import { filterUsers } from '../../utils/formatters';
+import { filterUsers, getRoleName, getStatusBadge, isNewUser } from '../../utils/formatters';
 import notify from '../../utilis/toastHelper';
 
 const AdminDashboard = () => {
@@ -99,6 +89,9 @@ const AdminDashboard = () => {
   const filteredUsers = useMemo(() => {
     return filterUsers(users, searchTerm, filterRole);
   }, [users, searchTerm, filterRole]);
+
+  // Custom styles for the table
+  const customStyles = useMemo(() => makeCustomStyles(), []);
 
   // Event handlers
   const handleRefresh = useCallback(() => {
@@ -157,28 +150,137 @@ const AdminDashboard = () => {
     setShowQuickChangeModal(false);
   }, [dispatch, selectedUser, quickChangeData]);
 
+  // Define columns for DynamicTable
+  const columns = useMemo(
+    () => [
+      {
+        name: 'Name',
+        selector: (row) => row.fullName || row.email,
+        sortable: true,
+        width: '150px',
+        cell: (row) => (
+          <div>
+            {row.fullName || row.email}
+            {isNewUser(row) && <span className="badge bg-warning ms-2">New User</span>}
+          </div>
+        ),
+      },
+      {
+        name: 'Email',
+        selector: (row) => row.email,
+        sortable: true,
+        width: '250px',
+        cell: (row) => (
+          <div className="admin-dashboard-email-cell" title={row.email}>
+            {row.email}
+          </div>
+        ),
+      },
+      {
+        name: 'Role',
+        selector: (row) => getRoleName(row),
+        sortable: true,
+        width: '100px',
+      },
+      {
+        name: 'Status',
+        selector: (row) => row.statusId,
+        sortable: true,
+        width: '120px',
+        cell: (row) => getStatusBadge(row.statusId),
+      },
+      {
+        name: 'Actions',
+        selector: (row) => row.id,
+        sortable: false,
+        width: '280px',
+        cell: (row) => {
+          const isSelf = row.id === currentUser?.id;
+          return (
+            <div className="admin-dashboard-actions-container">
+              <button
+                className="btn btn-info btn-sm admin-dashboard-edit-btn"
+                onClick={() => handleEditUser(row)}
+                disabled={updatingUser || deletingUser}
+                title="Edit User"
+              >
+                <CIcon icon={cilPencil} />
+              </button>
+              <div className="admin-dashboard-status-dropdown-wrapper">
+                <select
+                  className="form-select form-select-sm admin-dashboard-status-dropdown"
+                  value={row.statusId}
+                  onChange={(e) => handleQuickStatusChange(row.id, parseInt(e.target.value))}
+                  title="Change Status"
+                  disabled={changingStatus}
+                >
+                  <option value={1}>Pending</option>
+                  <option value={2}>Approved</option>
+                  <option value={3}>Rejected</option>
+                  <option value={4}>Deleted</option>
+                </select>
+              </div>
+              <div className="admin-dashboard-role-dropdown-wrapper">
+                <select
+                  className="form-select form-select-sm admin-dashboard-role-dropdown"
+                  value={row.roleId || row.role_id || ''}
+                  onChange={(e) => handleQuickRoleChange(row.id, parseInt(e.target.value))}
+                  title="Change Role"
+                  disabled={changingRole}
+                >
+                  <option value="">No Role</option>
+                  <option value={1}>Guest</option>
+                  <option value={2}>User</option>
+                  <option value={3}>Admin</option>
+                </select>
+              </div>
+              <button
+                className="btn btn-danger btn-sm admin-dashboard-delete-btn"
+                onClick={() => handleDeleteUser(row)}
+                disabled={isSelf || updatingUser || deletingUser}
+                title="Delete User"
+              >
+                <CIcon icon={cilTrash} />
+              </button>
+            </div>
+          );
+        },
+      },
+    ],
+    [
+      currentUser,
+      updatingUser,
+      deletingUser,
+      changingStatus,
+      changingRole,
+      handleEditUser,
+      handleQuickStatusChange,
+      handleQuickRoleChange,
+      handleDeleteUser,
+    ]
+  );
+
   // Loading state
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '400px' }}>
-        <CSpinner />
+      <div className="admin-dashboard-loading">
+        <Spinner animation="border" variant="primary" />
       </div>
     );
   }
 
   return (
     <div>
-      <CContainer fluid className="p-4">
-        <CCard className="admin-dashboard-card mb-4">
-          <CCardHeader>
-            <h4 className="mb-0">
+      <div className="admin-dashboard-container">
+        <Card className="my-4 shadow-sm border-0 bg-light dark:bg-dark">
+          <Card.Body>
+            <Card.Title className="admin-dashboard-title">
               <CIcon icon={cilUser} className="me-2" />
               User Management Dashboard
-            </h4>
-          </CCardHeader>
-          <CCardBody>
+            </Card.Title>
+
             {/* Search and Filters */}
-            <CRow className="mb-3">
+            <div className="admin-dashboard-search-filters">
               <SearchFilters
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
@@ -186,62 +288,62 @@ const AdminDashboard = () => {
                 onFilterRoleChange={setFilterRole}
                 onRefresh={handleRefresh}
               />
-            </CRow>
+            </div>
 
             {/* Users Table */}
-            <UserTable
-              users={filteredUsers}
-              onEdit={handleEditUser}
-              onQuickStatus={handleQuickStatusChange}
-              onQuickRole={handleQuickRoleChange}
-              onDelete={handleDeleteUser}
-              currentUser={currentUser}
-              isUpdating={updatingUser}
-              isDeleting={deletingUser}
-              isChangingStatus={changingStatus}
-              isChangingRole={changingRole}
+            <DataTable
+              columns={columns}
+              data={filteredUsers}
+              progressPending={loading}
+              progressComponent={<Spinner animation="border" variant="primary" />}
+              pagination
+              paginationTotalRows={filteredUsers.length}
+              highlightOnHover
+              responsive
+              customStyles={customStyles}
+              dense
             />
-          </CCardBody>
-        </CCard>
+          </Card.Body>
+        </Card>
+      </div>
 
-        {/* Edit User Modal */}
-        {selectedUser && (
-          <EditUserModal
-            visible={showEditModal}
-            onCancel={() => setShowEditModal(false)}
-            onConfirm={handleUpdateUser}
-            user={selectedUser}
-            loading={updatingUser === selectedUser?.id}
-            error={error}
-          />
-        )}
+      {/* Edit User Modal */}
+      {selectedUser && (
+        <EditUserModal
+          visible={showEditModal}
+          onCancel={() => setShowEditModal(false)}
+          onConfirm={handleUpdateUser}
+          user={selectedUser}
+          loading={updatingUser === selectedUser?.id}
+          error={error}
+        />
+      )}
 
-        {/* Delete User Modal */}
-        {selectedUser && (
-          <DeleteUserModal
-            visible={showDeleteModal}
-            onCancel={() => setShowDeleteModal(false)}
-            onConfirm={handleConfirmDelete}
-            user={selectedUser}
-            loading={deletingUser === selectedUser?.id}
-            error={error}
-          />
-        )}
+      {/* Delete User Modal */}
+      {selectedUser && (
+        <DeleteUserModal
+          visible={showDeleteModal}
+          onCancel={() => setShowDeleteModal(false)}
+          onConfirm={handleConfirmDelete}
+          user={selectedUser}
+          loading={deletingUser === selectedUser?.id}
+          error={error}
+        />
+      )}
 
-        {/* Quick Change Modal */}
-        {selectedUser && (
-          <QuickChangeModal
-            visible={showQuickChangeModal}
-            onCancel={() => setShowQuickChangeModal(false)}
-            onConfirm={handleConfirmQuickChange}
-            type={quickChangeData.type}
-            newValue={quickChangeData.newValue}
-            user={selectedUser}
-            loading={changingStatus === selectedUser?.id || changingRole === selectedUser?.id}
-            error={error}
-          />
-        )}
-      </CContainer>
+      {/* Quick Change Modal */}
+      {selectedUser && (
+        <QuickChangeModal
+          visible={showQuickChangeModal}
+          onCancel={() => setShowQuickChangeModal(false)}
+          onConfirm={handleConfirmQuickChange}
+          type={quickChangeData.type}
+          newValue={quickChangeData.newValue}
+          user={selectedUser}
+          loading={changingStatus === selectedUser?.id || changingRole === selectedUser?.id}
+          error={error}
+        />
+      )}
     </div>
   );
 };

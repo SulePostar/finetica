@@ -1,5 +1,5 @@
 import React from 'react';
-import { CCol, CFormInput, CFormSelect, CButton } from '@coreui/react';
+import { CFormInput, CFormSelect, CButton } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilSearch, cilReload } from '@coreui/icons';
 
@@ -11,34 +11,34 @@ const SearchFilters = ({
   onRefresh,
 }) => {
   return (
-    <>
-      <CCol md={6}>
+    <div className="d-flex gap-3 align-items-center w-100">
+      <div className="flex-grow-1">
         <CFormInput
           placeholder="Search users..."
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="mb-2"
+          className="mb-0"
         />
-      </CCol>
-      <CCol md={3}>
+      </div>
+      <div style={{ width: '200px' }}>
         <CFormSelect
           value={filterRole}
           onChange={(e) => onFilterRoleChange(e.target.value)}
-          className="mb-2"
+          className="mb-0"
         >
           <option value="">All Roles</option>
           <option value="1">Guest</option>
           <option value="2">User</option>
           <option value="3">Admin</option>
         </CFormSelect>
-      </CCol>
-      <CCol md={3}>
-        <CButton color="primary" onClick={onRefresh}>
+      </div>
+      <div style={{ width: '120px' }}>
+        <CButton color="primary" onClick={onRefresh} size="sm">
           <CIcon icon={cilReload} className="me-1" />
           Refresh
         </CButton>
-      </CCol>
-    </>
+      </div>
+    </div>
   );
 };
 
