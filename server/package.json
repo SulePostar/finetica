@@ -6,8 +6,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "jest",
-    "sync": "node sync/googleDriveSync.js",
-    "sync:enhanced": "node sync/googleDriveSyncEnhanced.js"
+    "sync": "node sync/googleDriveSync.js"
   },
   "author": "FEP",
   "license": "ISC",

@@ -3,7 +3,7 @@ const { google } = require("googleapis");
 const oauth2Client = new google.auth.OAuth2(
   "YOUR_CLIENT_ID",
   "YOUR_CLIENT_SECRET",
-  "http://localhost:4000" // use the same redirect URI you used earlier
+  "YOUR_REDIRECT_URI" // use the same redirect URI you used in get-auth-url.js
 );
 
 (async () => {
