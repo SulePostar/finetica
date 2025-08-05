@@ -14,6 +14,7 @@ import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
+import './AppHeader.css';
 
 const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const headerRef = useRef();
@@ -40,9 +41,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
           className="ms-n3"
         >
           <CIcon icon={cilMenu} size="lg" />
-        </CHeaderToggler>
-
-        <CHeaderNav className="d-none d-md-flex" />
+        </CHeaderToggler>        <CHeaderNav className="d-none d-md-flex" />
 
         <CHeaderNav>
           <CDropdown variant="nav-item" placement="bottom-end">
