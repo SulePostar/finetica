@@ -4,6 +4,7 @@ const cors = require('cors');
 const session = require('express-session');
 const { connectToDatabase } = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
+const backgroundSyncService = require('./services/backgroundSyncService');
 
 const app = express();
 
@@ -13,12 +14,12 @@ app.use(session({
   saveUninitialized: true,
   cookie: {
     secure: false, // Set `secure: true` only if using HTTPS
-    maxAge: 24 * 60 * 60 * 1000 // 1 day in milliseconds (24 hours * 60 minutes * 60 seconds * 1000 ms)
+    maxAge: 30 * 24 * 60 * 60 * 1000 // 1 month in milliseconds (30 days * 24 hours * 60 minutes * 60 seconds * 1000 ms)
   }
 }));
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001'],
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -35,6 +36,10 @@ app.use(errorHandler);
 
 connectToDatabase();
 
+// Start background sync service
+backgroundSyncService.start();
+
 app.listen(process.env.PORT, () => {
   console.log(`🟢 Server is running at port: ${process.env.PORT}`);
+  console.log(`🔄 Background file sync service is active`);
 });

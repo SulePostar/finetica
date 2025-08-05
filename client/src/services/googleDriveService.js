@@ -118,6 +118,39 @@ class GoogleDriveService {
         }
     }
 
+    async getBackgroundSyncStatus() {
+        try {
+            const response = await driveApi.get('/auth/google/background-status');
+            return {
+                success: true,
+                ...response.data
+            };
+        } catch (error) {
+            console.error('Background sync status error:', error);
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Failed to get background sync status'
+            };
+        }
+    }
+
+    async triggerBackgroundSync() {
+        try {
+            const response = await driveApi.post('/auth/google/sync-now');
+            return {
+                success: true,
+                message: response.data.message,
+                timestamp: response.data.timestamp
+            };
+        } catch (error) {
+            console.error('Manual background sync error:', error);
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Failed to trigger background sync'
+            };
+        }
+    }
+
     isConnected(status) {
         return status && status.authenticated && status.sessionValid;
     }

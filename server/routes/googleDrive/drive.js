@@ -17,7 +17,7 @@ async function findFineticaFolderId(drive) {
 
         if (response.data.files.length > 0) {
             const folderId = response.data.files[0].id;
-            console.log(`✅ Found "finetica" folder ID: ${folderId}`);
+            console.log(`✅ Found "finetica"`);
             return folderId; // ako se pronadje fajl, ispise se u konzoli njegov id, obrisati conosle.log po potrebi 
         } else {
             console.log('⚠️ "finetica" folder not found in Google Drive');
@@ -30,14 +30,37 @@ async function findFineticaFolderId(drive) {
 }
 
 router.post('/drive/files/download-new', async (req, res) => {
+    console.log('🔍 POST /drive/files/download-new called');
+
     const tokens = req.session.tokens;
     const sessionCreated = req.session.createdAt;
     const now = Date.now();
 
-    // Check if session exists and is within 24 hours (1 day)
-    const isSessionValid = tokens && sessionCreated && (now - sessionCreated < 24 * 60 * 60 * 1000);
+    // Check if session exists and is within 1 month (30 days)
+    const oneMonthInMs = 30 * 24 * 60 * 60 * 1000; // 1 month in milliseconds
+    let isSessionValid = tokens && sessionCreated && (now - sessionCreated < oneMonthInMs);
+
+    // If session is expired but we have a refresh token, try to refresh
+    if (tokens && !isSessionValid && tokens.refresh_token) {
+        try {
+            console.log('🔄 Attempting to refresh expired access token...');
+            oauth2Client.setCredentials(tokens);
+            const { credentials } = await oauth2Client.refreshAccessToken();
+
+            // Update session with new tokens
+            req.session.tokens = credentials;
+            req.session.createdAt = Date.now();
+            isSessionValid = true;
+
+            console.log('✅ Access token refreshed successfully');
+        } catch (refreshError) {
+            console.error('❌ Failed to refresh token:', refreshError.message);
+            isSessionValid = false;
+        }
+    }
 
     if (!isSessionValid) {
+        console.log('❌ Session invalid or expired');
         // Clear invalid session
         if (req.session.tokens) {
             delete req.session.tokens;
@@ -49,6 +72,7 @@ router.post('/drive/files/download-new', async (req, res) => {
         });
     }
 
+    console.log('✅ Session valid, setting up Google Drive client');
     oauth2Client.setCredentials(tokens);
     const drive = createDriveClient();
 
@@ -114,10 +138,31 @@ router.get('/drive/files/download-new', async (req, res) => {
     const sessionCreated = req.session.createdAt;
     const now = Date.now();
 
-    // Check if session exists and is within 24 hours (1 day)
-    const isSessionValid = tokens && sessionCreated && (now - sessionCreated < 24 * 60 * 60 * 1000);
+    // Check if session exists and is within 1 month (30 days)
+    const oneMonthInMs = 30 * 24 * 60 * 60 * 1000; // 1 month in milliseconds
+    let isSessionValid = tokens && sessionCreated && (now - sessionCreated < oneMonthInMs);
+
+    // If session is expired but we have a refresh token, try to refresh
+    if (tokens && !isSessionValid && tokens.refresh_token) {
+        try {
+            console.log('🔄 Attempting to refresh expired access token...');
+            oauth2Client.setCredentials(tokens);
+            const { credentials } = await oauth2Client.refreshAccessToken();
+
+            // Update session with new tokens
+            req.session.tokens = credentials;
+            req.session.createdAt = Date.now();
+            isSessionValid = true;
+
+            console.log('✅ Access token refreshed successfully');
+        } catch (refreshError) {
+            console.error('❌ Failed to refresh token:', refreshError.message);
+            isSessionValid = false;
+        }
+    }
 
     if (!isSessionValid) {
+        console.log('❌ Session invalid or expired');
         // Clear invalid session
         if (req.session.tokens) {
             delete req.session.tokens;
@@ -129,6 +174,7 @@ router.get('/drive/files/download-new', async (req, res) => {
         });
     }
 
+    console.log('✅ Session valid, setting up Google Drive client');
     oauth2Client.setCredentials(tokens);
     const drive = createDriveClient();
 
@@ -173,7 +219,7 @@ router.get('/drive/files/download-new', async (req, res) => {
         }
 
         res.status(200).json({
-            message: `✅ Obradjeno ${files.length} fajlova iz "finetica" foldera. Preuzeto: ${downloadedCount}, Preskočeno: ${skippedCount}`,
+            message: `✅ Obradno ${files.length} fajlova iz "finetica" foldera. Preuzeto: ${downloadedCount}, Preskočeno: ${skippedCount}`,
             summary: {
                 totalChecked: files.length,
                 newFiles: downloadedCount,
@@ -208,7 +254,6 @@ async function downloadOrExportFile(drive, file, downloadPath) {
 
             // If remote file is newer, download it; otherwise skip
             if (localFileStats.mtime >= remoteModifiedTime) {
-                console.log(`⏭️ File is up to date: ${fileName}`);
                 return { downloaded: false, reason: 'Already up to date' };
             } else {
                 console.log(`🔄 File has been updated on Drive, re-downloading: ${fileName}`);
@@ -237,7 +282,6 @@ async function downloadOrExportFile(drive, file, downloadPath) {
 
             // If remote file is newer, download it; otherwise skip
             if (localFileStats.mtime >= remoteModifiedTime) {
-                console.log(`⏭️ File is up to date: ${fileName}`);
                 return { downloaded: false, reason: 'Already up to date' };
             } else {
                 console.log(`🔄 File has been updated on Drive, re-downloading: ${fileName}`);

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { oauth2Client } = require('./../../config/driveConfig');
+const backgroundSyncService = require('../../services/backgroundSyncService');
 
 const scopes = ['https://www.googleapis.com/auth/drive']; // Traži se puna dozvola za pristup korisničkom Google Drive-u (čitanje, pisanje, brisanje)
 
@@ -26,7 +27,13 @@ router.get('/auth/google/callback', async (req, res) => {
 
         oauth2Client.setCredentials(tokens); // 
 
-        console.log('✅ Google authentication successful - session will last 24 hours');
+        // Register user for background sync
+        const userId = req.sessionID; // Use session ID as user identifier
+        backgroundSyncService.registerUserSession(userId, tokens, req.session.createdAt);
+
+        console.log('✅ Google authentication successful - session will last 1 month');
+        console.log('🔄 Refresh token available:', !!tokens.refresh_token);
+        console.log('📝 User registered for background file sync');
         res.redirect('http://localhost:3000/'); // NACI BOLJI NAČIN ZA REDIRECT 
 
     } catch (error) {
@@ -35,26 +42,65 @@ router.get('/auth/google/callback', async (req, res) => {
     }
 });
 
-// Add a route to check authentication status with session expiry
-router.get('/auth/google/status', (req, res) => {
+// Add a route to check authentication status with session expiry and refresh token handling
+router.get('/auth/google/status', async (req, res) => {
     const tokens = req.session.tokens; // uzimamo tokene koje smo spasili u express sesiju 
     const sessionCreated = req.session.createdAt; // uzimamo i vrijeme u koje se token spasio 
     const now = Date.now();
 
-    // provjeravamo da li je vrijeme spasavanja uredno (postavili smo ga na 24 sata da je spojen sa google računom, MIJENJA SE PO POTREBI)
-    const isValid = tokens && sessionCreated && (now - sessionCreated < 24 * 60 * 60 * 1000);
+    // provjeravamo da li je vrijeme spasavanja uredno (postavili smo ga na 1 mjesec da je spojen sa google računom)
+    const oneMonthInMs = 30 * 24 * 60 * 60 * 1000; // 1 month in milliseconds
+    const isSessionValid = tokens && sessionCreated && (now - sessionCreated < oneMonthInMs);
 
-    if (isValid) {
+    if (tokens && !isSessionValid) {
+        // Session expired, try to refresh tokens if refresh token is available
+        if (tokens.refresh_token) {
+            try {
+                oauth2Client.setCredentials(tokens);
+                const { credentials } = await oauth2Client.refreshAccessToken();
+
+                // Update session with new tokens
+                req.session.tokens = credentials;
+                req.session.createdAt = Date.now();
+
+                console.log('🔄 Access token refreshed successfully');
+
+                oauth2Client.setCredentials(credentials);
+                return res.json({
+                    authenticated: true,
+                    message: 'User is authenticated with Google (token refreshed)',
+                    sessionValid: true,
+                    expiresAt: new Date(Date.now() + oneMonthInMs).toISOString()
+                });
+            } catch (refreshError) {
+                console.error('❌ Failed to refresh token:', refreshError.message);
+                // Clear invalid session
+                delete req.session.tokens;
+                delete req.session.createdAt;
+                return res.json({
+                    authenticated: false,
+                    message: 'Session expired and refresh failed',
+                    sessionValid: false
+                });
+            }
+        }
+    }
+
+    if (isSessionValid) {
         oauth2Client.setCredentials(tokens);
         res.json({
             authenticated: true,
             message: 'User is authenticated with Google',
             sessionValid: true,
-            expiresAt: new Date(sessionCreated + 24 * 60 * 60 * 1000).toISOString()
+            expiresAt: new Date(sessionCreated + oneMonthInMs).toISOString()
         });
     } else {
         // Clear invalid session
         if (req.session.tokens) {
+            // Unregister from background sync
+            const userId = req.sessionID;
+            backgroundSyncService.unregisterUserSession(userId);
+
             delete req.session.tokens;
             delete req.session.createdAt; // ako sesija nije validna, brisemo sve podatke i korisnik se smatra neautentikovnim 
         }
@@ -66,5 +112,39 @@ router.get('/auth/google/status', (req, res) => {
     }
 });
 
+// Add endpoint to get background sync status
+router.get('/auth/google/background-status', (req, res) => {
+    const status = backgroundSyncService.getStatus();
+    res.json({
+        ...status,
+        message: status.isRunning ? 'Background sync is active' : 'Background sync is stopped'
+    });
+});
+
+// Add endpoint to manually trigger background sync
+router.post('/auth/google/sync-now', async (req, res) => {
+    try {
+        const status = backgroundSyncService.getStatus();
+        if (!status.isRunning) {
+            return res.status(503).json({
+                error: 'Background sync service is not running'
+            });
+        }
+
+        // Trigger immediate sync
+        await backgroundSyncService.performSync();
+
+        res.json({
+            message: 'Background sync completed successfully',
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('Manual sync error:', error);
+        res.status(500).json({
+            error: 'Failed to perform background sync',
+            message: error.message
+        });
+    }
+});
 
 module.exports = router;
