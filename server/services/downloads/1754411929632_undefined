@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script async src="https://cdn.ampproject.org/v0.js"></script>
+<style amp4email-boilerplate>body{visibility:hidden}</style>
+<style type="text/css" amp-custom>
+*{box-sizing:border-box}
+body{margin: 0; padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%;}
+table, td{border-collapse: collapse;}
+img{border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic;}
+p{display: block; margin: 13px 0;}
+@media only screen and (min-width: 480px) {
+.dys-mobile { display: none; }
+.dys-desktop { display: block; }
+}
+@media only screen and (max-width: 480px) {
+.dys-mobile { display: block; }
+.dys-desktop { display: none; } 
+}
+
+.dys-img > * { box-sizing: content-box; }
+amp-img.contain img { object-fit: contain; }
+amp-img.cover img { object-fit: cover; }
+amp-img.fill img { object-fit: fill; }
+@media only screen and (max-width:480px) {
+.dys-img > .full-width-mobile { min-width: 100%; }
+}
+@media only screen and (min-width:480px) {
+.row {
+display: flex;
+flex-direction: row;
+flex-wrap: nowrap;
+width: 100%;
+margin: auto;
+justify-content: center;
+}
+.dys-column-per-100 { flex: 0 0 100.000000%; }
+}
+u + #body a {color: #0E1318;text-decoration: none;font-size: inherit; font-family: inherit; font-weight: inherit; line-height: inherit; }
+ a {color: #0E1318;text-decoration: none;}
+ /* Buttery smooth fonts */
+ html {
+ font-size: 100%;
+ -webkit-text-size-adjust: 100%;
+ font-variant-ligatures: none;
+ -webkit-font-variant-ligatures: none;
+ text-rendering: optimizeLegibility;
+ -moz-osx-font-smoothing: grayscale;
+ font-smoothing: antialiased;
+ -webkit-font-smoothing: antialiased;
+ text-shadow: rgba(0, 0, 0, 0.01) 0 0 1px;
+ }
+ .button {
+ background: #00c4cc ;
+ border-radius: 4px;
+ color: #ffffff ;
+ display: inline-block;
+ font-family: Open Sans, Helvetica, Arial, sans serif;
+ font-size: 14px;
+ font-weight: 600;
+ line-height: 160%;
+ margin: 0;
+ padding: 9px 16px;
+ }
+ .show-for-mobile table {
+ mso-hide: all;
+ }
+ .monoGreyLight {
+ color: #edf0f2;
+ }
+ .monoBlack {
+ color: #0e1318;
+ }
+ .colorCanvaBrand {
+ color: #00c4cc;
+ }
+ .monoBlackA100 {
+ color: #565a5d;
+ }
+ .monoBlackA150 {
+ color: #6e7174;
+ }
+ .monoBlackA200 {
+ color: #939597;
+ }
+ .monoBlackA400 {
+ color: #e8e9e9;
+ }
+ .monoBlackA500 {
+ color: #eeeeef;
+ }
+ .monoWhite {
+ color: #fff;
+ }
+ .monoGrey {
+ color: #293039;
+ }
+ .show-for-large {
+ display: block;
+ }
+ .hide-for-large {
+ display: none;
+ }
+ .wrapper {
+ background-color: #edf0f2;
+ }
+ .wrapper-padding {
+ padding: 0 48px;
+ }
+ .wrapper-margin {
+ width: 48px;
+ }
+ .wrapper-typography {
+ padding: 12px 48px;
+ }
+ .wrapper-margin-wide {
+ width: 140px;
+ }
+ .header-bottom {
+ height: 36px;
+ }
+ .card-image {
+ width: 38.8%;
+ }
+ .card-content {
+ width: 61.2%;
+ }
+ .grid-cta {
+ background: #f8f9f9;
+ border-radius: 4px;
+ border: 1px solid #e8e9e9;
+ }
+ .word-break,
+ word-break > div {
+ word-break: break-all;
+ }
+ .device-image-container table {
+ margin: auto;
+ }
+ .grid-cta-button {
+ border: 1px solid #edf0f2;
+ border-radius: 4px;
+ }
+ .padding-quote {
+ padding: 80px 80px 80px 100px;
+ }
+ .desktop_hide,
+ .desktop_hide table {
+ mso-hide: all;
+ display: none;
+ max-height: 0;
+ overflow: hidden;
+ }
+ @media only screen and (max-width: 480px) {
+ .icon-image,
+ .icon-image table {
+ width: 70px ;
+ }
+ .logo-image,
+ .logo-image table {
+ width: 106px ;
+ }
+ .width-50-mobile {
+ width: 50% ;
+ }
+ .wrapper-margin-narrow {
+ width: 14px ;
+ }
+ .wrapper-margin-mobile {
+ width: 24px ;
+ }
+ .top-10-copy-padding {
+ padding-left: 16px ;
+ padding-right: 16px ;
+ }
+ .top-10-copy-margin {
+ height: 16px ;
+ line-height: 16px ;
+ }
+ .card-horizontal .card-image {
+ width: 30%;
+ }
+ .card-horizontal .card-content {
+ width: 70%;
+ }
+ .card-contained .card-image {
+ display: table-footer-group ;
+ width: 100% ;
+ }
+ .card-contained .card-content {
+ display: table-caption;
+ width: 100% ;
+ }
+ .card-template-stacked .card-image {
+ width: calc(100% - 32px) ;
+ display: table-caption ;
+ }
+ .card-template-stacked .card-content {
+ display: table-footer-group ;
+ width: 100% ;
+ }
+ .card-template-stacked .gutter {
+ display: none ;
+ }
+ .card-template-stacked .card-content > p {
+ margin-top: 16px ;
+ }
+ .card-horizontal-stacked,
+ .card-horizontal-stacked-reversed {
+ display: inline-block ;
+ width: 100% ;
+ }
+ .card-horizontal-stacked .card-content {
+ display: inline-block ;
+ width: 100% ;
+ }
+ .card-horizontal-stacked .card-image {
+ display: inline-block ;
+ width: 100% ;
+ }
+ .card-horizontal-stacked .gutter {
+ display: inline-block;
+ width: 100% ;
+ height: 16px ;
+ }
+ .card-horizontal-stacked-reversed .card-content {
+ display: table-caption ;
+ width: 300px ;
+ }
+ .card-horizontal-stacked-reversed .card-image {
+ display: table-footer-group ;
+ width: 300px ;
+ }
+ .card-horizontal-stacked-reversed .gutter {
+ display: table-header-group ;
+ width: 300px ;
+ }
+ .hide-for-mobile {
+ display: none ;
+ }
+ .show-for-mobile {
+ display: block ;
+ max-height: none ;
+ }
+ .mobile_hide {
+ display: none ;
+ }
+ .mobile_hide {
+ min-height: 0 ;
+ max-height: 0 ;
+ max-width: 0 ;
+ overflow: hidden ;
+ font-size: 0 ;
+ }
+ .desktop_hide,
+ .desktop_hide table {
+ display: table ;
+ max-height: none ;
+ }
+ .font-smaller div,
+ .font-smaller {
+ font-size: 36px ;
+ line-height: 38px ;
+ }
+ .font-smaller-2 div,
+ .font-smaller-2 {
+ font-size: 30px ;
+ line-height: 31px ;
+ }
+ .font-smaller-3 div,
+ .font-smaller-3 {
+ font-size: 47px ;
+ line-height: 48px ;
+ }
+ .font-smaller-4 div,
+ .font-smaller-4 {
+ font-size: 22px ;
+ line-height: 24px ;
+ }
+ .font-smaller-28 div,
+ .font-smaller-28 {
+ font-size: 28px ;
+ line-height: 29px ;
+ }
+ .font-smaller-12 div,
+ .font-smaller-12 {
+ font-size: 12px ;
+ line-height: 19px ;
+ letter-spacing: 1px ;
+ font-weight: 600 ;
+ }
+ .font-smaller-16 div,
+ .font-smaller-16 {
+ font-size: 16px ;
+ line-height: 23px ;
+ }
+ .font-smaller-22 div,
+ .font-smaller-22 {
+ font-size: 22px ;
+ line-height: 24px ;
+ }
+ .font-smaller-58 div,
+ .font-smaller-58 {
+ font-size: 58px ;
+ line-height: 55px ;
+ }
+ .card-horizontal-stacked-reversed-alt {
+ display: block ;
+ width: 100% ;
+ }
+ .card-horizontal-stacked-reversed-alt tbody,
+ .card-horizontal-stacked-reversed-alt tbody tr {
+ width: 100% ;
+ display: table ;
+ }
+ .card-horizontal-stacked-reversed-alt .card-content {
+ display: table-caption ;
+ width: 100% ;
+ }
+ .card-horizontal-stacked-reversed-alt .card-image {
+ display: table-footer-group ;
+ width: 100% ;
+ }
+ .card-horizontal-stacked-reversed-alt .gutter {
+ display: table-header-group ;
+ width: 100% ;
+ }
+ .height_24 {
+ height: 24px ;
+ line-height: 24px ;
+ }
+ .padding-quote {
+ padding: 40px 40px 40px 58px;
+ }
+ .padding-70 {
+ padding: 70px ;
+ }
+ .font-600,
+ .font-600 div {
+ font-weight: 600 ;
+ }
+ .width-100 {
+ width: 100% ;
+ max-width: 100% ;
+ }
+ .column-stack {
+ display: block ;
+ width: 100% ;
+ }
+ .column-stack tbody,
+ .column-stack tbody tr {
+ width: 100% ;
+ display: table ;
+ }
+ .column-stack .column-lhs {
+ display: table-caption ;
+ width: 100% ;
+ }
+ .column-stack .column-rhs {
+ display: table-footer-group ;
+ width: 100% ;
+ }
+ .column-stack .column-gutter {
+ display: table-header-group ;
+ width: 100% ;
+ }
+ .text-xs,
+ .text-xs div,
+ .text-xs span {
+ font-size: 12px ;
+ }
+ .text-xxs,
+ .text-xxs div,
+ .text-xxs span {
+ font-size: 11px ;
+ }
+ .bg-n200 {
+ background-color: #F2F3F5 ; 
+ }
+ .va-top {
+ vertical-align: top ;
+ }
+ .rounded-none {
+ border-radius: 0 ; 
+ }
+ .p-0 {
+ padding: 0px ; 
+ }
+ .pr-2 {
+ padding-right: 2px ;
+ }
+ .pt-5 {
+ padding-top: 5px ;
+ }
+ .pt-32 {
+ padding-top: 32px ; 
+ }
+ .pb-16 {
+ padding-bottom: 16px ;
+ }
+ .w-16 {
+ width: 16px 
+ }
+ .w-1 {
+ width: 1px ;
+ }
+ .h-1 {
+ height: 1px ;
+ line-height: 1px ;
+ }
+ .h-16 {
+ height: 16px ;
+ line-height: 16px ;
+ }
+ .h-20 {
+ height: 20px ;
+ line-height: 20px ;
+ }
+ .h-24 {
+ height: 24px ;
+ line-height: 24px ;
+ }
+ .h-78 {
+ height: 78px ; 
+ }
+ .w-full {
+ width: 100% ;
+ max-width: 100% ;
+ }
+ .w-20-percent {
+ width: 20% ; 
+ }
+ .w-30-percent {
+ width: 30% ; 
+ }
+ .font-26, .font-26 div, .font-26 span {
+ font-size: 26px ; 
+ }
+ .font-22, .font-22 div, .font-22 span {
+ font-size: 22px ; 
+ }
+ .font-20, .font-20 div, .font-20 span {
+ font-size: 20px ; 
+ }
+ .font-18, .font-18 div, .font-18 span {
+ font-size: 18px ; 
+ }
+ .font-12, .font-12 div, .font-12 span {
+ font-size: 12px ; 
+ }
+ }
+ @media only screen and (max-width: 648px) {
+ body {
+ background-color: #ffffff ;
+ }
+ body > div {
+ background-color: #ffffff ;
+ }
+ .wrapper {
+ background-color: #ffffff ;
+ }
+ .footer-bg-mobile {
+ background-color: #ffffff ;
+ }
+ .header-top-padding {
+ border-radius: 0 ;
+ }
+ .header-top-padding td {
+ height: 24px ;
+ line-height: 24px;
+ }
+ .show-for-large {
+ display: none ;
+ }
+ .hide-for-large {
+ display: block ;
+ }
+ .wrapper-padding {
+ padding: 0 24px ;
+ }
+ .wrapper-margin {
+ width: 24px ;
+ }
+ .wrapper-margin-wide {
+ width: 36px ;
+ }
+ .header-bottom {
+ height: 12px;
+ line-height: 12px;
+ }
+ .wrapper-typography {
+ padding: 12px 24px ;
+ }
+ .border-radius-for-large,
+ .border-radius-for-large img {
+ border-radius: 0 ;
+ }
+ .spacing-for-large {
+ height: 1px ;
+ line-height: 0 ;
+ }
+ .image_grid .col {
+ width: 47%;
+ }
+ .full-image-block-spacing {
+ height: 24px ;
+ }
+ .card-horizontal-image > table > tbody > tr > td {
+ padding: 0 24px 12px 24px ;
+ }
+ .card-horizontal-content > table > tbody > tr > td {
+ padding: 12px 24px 0 24px ;
+ }
+ .header-left {
+ display: table-footer-group ;
+ width: 320px ;
+ }
+ .header-right {
+ width: 320px ;
+ display: table-caption ;
+ }
+ .header-right th {
+ text-align: left ;
+ }
+ .card-left {
+ padding: 0 12px 0 24px ;
+ }
+ .card-right {
+ padding: 0 24px 0 12px ;
+ }
+ }
+</style>
+<script async custom-element="amp-bind" src="https://cdn.ampproject.org/v0/amp-bind-0.1.js"></script>
+
+</head>
+<body id="body" style="background-color: #EDF0F2;"><div style="background-color: #EDF0F2;">
+<amp-state id="state"><script type="application/json">{}</script></amp-state>
+ <div class="row" style="background:#FFE6FF;background-color:#FFE6FF;direction:ltr;margin-left:auto;margin-right:auto;max-width:600px;padding:0px;padding-bottom:24px;text-align:center;vertical-align:top;">
+ <div class="dys-column-per-100" style="align-self:flex-start;direction:ltr;height:fit-content;min-width:0;"><div style=""><amp-layout layout="container">
+ <amp-layout style="font-size:0;line-height:0;padding:0;text-align:left;word-break:break-word;"><div style="display:inline-block;width:100%;"><table border="0" cellpadding="0" cellspacing="0" style="color:#000000;font-family:Helvetica, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;">
+ <tr>
+ <td class="wrapper-margin" width="48">&nbsp;</td>
+ <td>
+ <table cellpadding="0" cellspacing="0" padding="0" style="width: 100%" width="100%">
+ <tr>
+ <td align="center" class="font-26" style="padding-top: 16px">
+ <div class="dys-text" style="padding:0px;padding-bottom:0;padding-top:0;word-break:break-word;"><div style="color:#0D1216;font-family:Open Sans, Helvetica, sans-serif;font-size:32px;font-weight:700;line-height:120%;text-align:center;"><p style="margin-top:0;margin-bottom:0;"><strong>Try everyone’s favorite premium Canva features </strong></p></div></div>
+ </td>
+ </tr>
+ </table>
+ <table cellpadding="0" cellspacing="0" padding="0" style="width: 100%" width="100%">
+ <tr>
+ <td align="center" style="padding-top: 16px">
+ <div class="dys-text" style="padding:0px;padding-bottom:0;padding-top:0;word-break:break-word;"><div style="color:#2F3337;font-family:Open Sans, Helvetica, sans-serif;font-size:14px;font-weight:400;line-height:160%;text-align:center;"><p style="margin-top:0;margin-bottom:0;">Create professional, on-brand content with these game-changing premium Canva features. </p></div></div>
+ </td>
+ </tr>
+ </table>
+ <table cellpadding="0" cellspacing="0" padding="0" style="width: 100%" width="100%">
+ <tr>
+ <td align="center" style="padding-top: 32px; padding-bottom: 40px;"> 
+ <table cellpadding="0" cellspacing="0" class="w-full" padding="0" style="width: auto;" width="auto">
+ <tr>
+ <td align="center" bgcolor="#8B3DFF" role="presentation" style="background: #8B3DFF; border-radius: 4px; cursor: auto; mso-padding-alt: 0px; text-decoration: none" valign="middle">
+ <a href="https://l.engage.canva.com/ss/c/N56jrjxtajclrFz56qumlQutsr5J_0b-EtCZIlInmZSBn0wmQQjugutk0KKNp21266W0gVJp55cd5IMDYfR5REB3frD9DcDNBs2uaOLPTdz4iOLYos6eO5HhAA32Rh-l_nT8UAzxcshbI9fR5nu3A59fLZzSSkB9GrBJqkYNR2o1x9OKpo04uhQ42btBCF7l/41a/tutEhFA6TbWsxga7UUxUfQ/a23/k_kCmpDUoIaF_8YxN2DeX0Hk7tyCRrTsCvqSCfYrSUk" rel="noopener" style="background: #8B3DFF; border-radius: 4px; color: #FBFCFC; display: inline-block; font-family: 'Open Sans', Arial, sans serif; font-size: 14px; font-weight: 600; line-height: 160%; margin: 0; mso-padding-alt: 0px; padding: 9px 16px; text-decoration: none; text-transform: none; letter-spacing:
+ 0.005em;" target="_blank"><span style="color:#FBFCFC;text-decoration:none;">
+ <!--[if mso]>
+ <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt"></i>
+ <![endif]-->
+ <span style="mso-text-raise: 15pt"><strong>Start your free trial</strong></span>
+ <!--[if mso]>
+ <i style="letter-spacing: 25px; mso-font-width: -100%"></i>
+ <![endif]-->
+ </span></a>
+ </td>
+ </tr>
+ </table>
+ </td>
+ </tr>
+ </table>
+ </td>
+ <td class="wrapper-margin" width="48">&nbsp;</td>
+ </tr>
+ </table></div></amp-layout>
+ <amp-layout style="font-size:0;line-height:0;padding:0;text-align:left;word-break:break-word;"><div style="display:inline-block;width:100%;"><table border="0" cellpadding="0" cellspacing="0" style="color:#000000;font-family:Helvetica, Arial, sans-serif;font-size:13px;line-height:22px;table-layout:auto;width:100%;">
+ <tr>
+ <td>
+ <div class="dys-img" style="font-size:0;line-height:0;padding:0px;text-align:center;"><a class="full-width-mobile" href="https://l.engage.canva.com/ss/c/N56jrjxtajclrFz56qumlUF8K8kEAAbiKns5h6GOWp30yHeaoRi3w1Maram23VKs6_4kIwkFosX5yJvJWHSGoe6hZCjeQeF8j00PgRyJNSWke8wf5Wd-2JJ_anVLGpij0alXCZWcKALUHS-3RULDFbP1rstUcA0z1NZbUes3CYA5iW9gtXfajkw7o_a51qc6rS_gP-Iy1wGxEd-c1XFZTXXzZFMkL3WSDa4w_-RkTS8/41a/tutEhFA6TbWsxga7UUxUfQ/a24/ucApJVsXsskwFZHNvY_0qjm2j6oCHDCnvvycWt4y2Rg" style="border:none;display:inline-block;font-size:0;line-height:0;max-width:100%;position:relative;width:600px;color:#0E1318;text-decoration:none;" target="_blank"><span style="color:#0E1318;text-decoration:none;"><amp-img alt="" class="cover" height="674" layout="responsive" src="https://braze-images.com/appboy/communication/assets/image_assets/images/646e8a589df9597580614bf1/original.png?1684965976" style="" title="" width="1200"></amp-img></span></a></div>
+ </td>
+ </tr>
+ </table></div></amp-layout>
+ </amp-layout></div></div>
+ </div>
+</div><amp-img src="https://l.engage.canva.com/ss/o/WidYBisxQHTw4AV5utnA-Q/41a/tutEhFA6TbWsxga7UUxUfQ/ao.gif" alt="" width="1" height="1"></amp-img></body> </html>

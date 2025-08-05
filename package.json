@@ -2,8 +2,12 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.53.0",
     "cors": "^2.8.5",
-    "framer-motion": "^12.23.9",
+    "dotenv": "^17.2.1",
+    "framer-motion": "^12.23.12",
+    "imapflow": "^1.0.193",
     "jwt-decode": "^4.0.0",
+    "mailparser": "^3.7.4",
+    "node-imap": "^0.9.6",
     "react-data-table-component": "^7.7.0",
     "react-icons": "^5.5.0"
   }
