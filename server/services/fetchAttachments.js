@@ -1,71 +1,147 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
+const { ImapFlow } = require('imapflow');
+const { simpleParser } = require('mailparser');
 const fs = require('fs');
 const path = require('path');
-const Imap = require('node-imap');
-const { simpleParser } = require('mailparser');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
-// Setup Gmail IMAP
-const imap = new Imap({
-    user: process.env.EMAIL_USER,
-    password: process.env.EMAIL_PASS,
-    host: 'imap.gmail.com',
-    port: 993,
-    tls: true,
-});
-
-// Create downloads folder
+// Paths
 const DOWNLOAD_DIR = path.join(__dirname, 'downloads');
+const UID_TRACK_FILE = path.join(__dirname, 'downloaded_uids.json');
+
+// Create download directory if it doesn't exist
 if (!fs.existsSync(DOWNLOAD_DIR)) {
     fs.mkdirSync(DOWNLOAD_DIR);
 }
 
-imap.once('ready', function () {
-    imap.openBox('INBOX', false, function (err, box) {
-        if (err) throw err;
+// Load previously downloaded UIDs
+function loadDownloadedUIDs() {
+    if (!fs.existsSync(UID_TRACK_FILE)) return {};
+    try {
+        return JSON.parse(fs.readFileSync(UID_TRACK_FILE, 'utf8'));
+    } catch (err) {
+        console.error('Failed to read UID tracking file, starting fresh.');
+        return {};
+    }
+}
 
-        // Fetch unread emails
-        imap.search(['UNSEEN'], function (err, results) {
-            if (err || !results.length) {
-                console.log('No new emails.');
-                imap.end();
-                return;
+// Save UIDs to prevent reprocessing
+function saveDownloadedUIDs(uids) {
+    fs.writeFileSync(UID_TRACK_FILE, JSON.stringify(uids, null, 2));
+}
+
+// Helper to sanitize filenames
+function sanitizeFilename(name) {
+    return name.replace(/[^a-z0-9_.-]/gi, '_');
+}
+
+// Check if file exists
+function isFileExists(filename) {
+    return fs.existsSync(path.join(DOWNLOAD_DIR, filename));
+}
+
+(async () => {
+    const client = new ImapFlow({
+        host: 'imap.gmail.com',
+        port: 993,
+        secure: true,
+        logger: false,
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+        },
+    });
+
+    try {
+        await client.connect();
+        const lock = await client.getMailboxLock('[Gmail]/All Mail');
+
+        const downloadedUIDs = loadDownloadedUIDs();
+        const since = new Date();
+        since.setDate(since.getDate() - 2); // Only last 2 days
+
+        // Search for unread emails from the last 2 days
+        let messages = await client.search({
+            seen: false,
+            since,
+        });
+
+        messages = messages.reverse(); // newest first
+
+        if (!messages.length) {
+            console.log('No new unread emails.');
+            return;
+        }
+
+        let emailsWithAttachments = [];
+
+        for await (let message of client.fetch(messages, { source: true, envelope: true })) {
+            const parsed = await simpleParser(message.source);
+            if (parsed.attachments && parsed.attachments.length > 0) {
+                emailsWithAttachments.push({ message, parsed });
+            }
+        }
+
+        if (!emailsWithAttachments.length) {
+            console.log('No unread emails with attachments found.');
+            return;
+        }
+
+        console.log(`Found ${emailsWithAttachments.length} unread emails with attachments from the last 2 days.\n`);
+
+        for (const { message, parsed } of emailsWithAttachments) {
+            const uid = message.uid;
+
+            // Skip if UID already processed
+            if (downloadedUIDs[uid]) {
+                console.log(`Skipping UID ${uid} (already processed)`);
+                continue;
             }
 
-            const f = imap.fetch(results, { bodies: '', struct: true });
+            console.log(`Processing email from: ${message.envelope.from[0].address} | Subject: ${message.envelope.subject || '[No subject]'}`);
 
-            f.on('message', function (msg, seqno) {
-                msg.on('body', function (stream) {
-                    simpleParser(stream, async (err, parsed) => {
-                        if (err) {
-                            console.error('Parser error:', err);
-                            return;
-                        }
+            // Mark as read before processing to avoid race conditions
+            await client.messageFlagsAdd(uid, ['\\Seen']);
+            console.log(`Marked as read (UID: ${uid}). Now processing attachments...`);
 
-                        const attachments = parsed.attachments || [];
+            let savedCount = 0;
 
-                        for (const attachment of attachments) {
-                            const filePath = path.join(DOWNLOAD_DIR, `${Date.now()}_${attachment.filename}`);
-                            fs.writeFileSync(filePath, attachment.content);
-                            console.log(`Saved: ${filePath}`);
-                        }
-                    });
-                });
-            });
+            for (const attachment of parsed.attachments) {
+                // Skip .p7s (signature) files
+                if (attachment.filename?.toLowerCase().endsWith('.p7s')) {
+                    console.log(`Skipped signature file: ${attachment.filename}`);
+                    continue;
+                }
 
-            f.once('end', function () {
-                console.log('All messages processed.');
-                imap.end();
-            });
-        });
-    });
-});
+                let baseName = attachment.filename || (attachment.contentId ? `${attachment.contentId}.bin` : 'unnamed_attachment.bin');
+                baseName = sanitizeFilename(baseName);
 
-imap.once('error', function (err) {
-    console.error('IMAP error:', err);
-});
+                const fileName = `${uid}_${Date.now()}_${baseName}`;
+                const filePath = path.join(DOWNLOAD_DIR, fileName);
 
-imap.once('end', function () {
-    console.log('IMAP connection closed.');
-});
+                if (isFileExists(fileName)) {
+                    console.log(`File already exists, skipping: ${fileName}`);
+                    continue;
+                }
 
-imap.connect();
+                fs.writeFileSync(filePath, attachment.content);
+                console.log(`Saved attachment: ${fileName} (${attachment.contentType}, ${attachment.size} bytes)`);
+                savedCount++;
+            }
+
+            if (savedCount > 0) {
+                downloadedUIDs[uid] = true;
+                saveDownloadedUIDs(downloadedUIDs);
+            } else {
+                console.log('No valid attachments saved.');
+            }
+
+            console.log('');
+        }
+
+        lock.release();
+        await client.logout();
+        console.log('IMAP session closed.');
+    } catch (err) {
+        console.error('Script error:', err);
+    }
+})();
