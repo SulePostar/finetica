@@ -4,6 +4,9 @@ const cors = require('cors');
 const session = require('express-session');
 const { connectToDatabase } = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
+const kifRouter = require('./routes/kif');
+const kufRouter = require('./routes/kuf');
+const vatRouter = require('./routes/vat');
 
 const app = express();
 
@@ -30,6 +33,9 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/files', require('./routes/uploadedFiles'));
 app.use('/', require('./routes/googleDrive/googleDrive'));
 app.use('/api', require('./routes/googleDrive/drive'));
+app.use('/api', kifRouter);
+app.use('/api', kufRouter);
+app.use('/api', vatRouter);
 
 app.use(errorHandler);
 

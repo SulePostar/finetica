@@ -12,12 +12,12 @@ import {
   CSpinner
 } from '@coreui/react';
 
-import { AppSidebarNav } from './AppSidebarNav';
 import navigation from '../_nav';
 import { logout } from './../redux/auth/authSlice';
 import ConfirmationModal from './Modals/ConfirmationModal';
 import GoogleAuthButton from './GoogleAuth/GoogleAuthButton';
 import googleDriveService from '../services/googleDriveService';
+import { AppSidebarNav } from './AppSidebarNav';
 
 const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();

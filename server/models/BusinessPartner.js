@@ -3,10 +3,10 @@ const { Model, DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
   class BusinessPartner extends Model {
     static associate({ Contract, SalesInvoice, PurchaseInvoice, BankTransaction }) {
-      this.hasMany(Contract, { foreignKey: 'partnerId' });
-      this.hasMany(SalesInvoice, { foreignKey: 'customerId' });
-      this.hasMany(PurchaseInvoice, { foreignKey: 'supplierId' });
-      this.hasMany(BankTransaction, { foreignKey: 'partnerId' });
+      BusinessPartner.hasMany(Contract, { foreignKey: 'partnerId' });
+      BusinessPartner.hasMany(SalesInvoice, { foreignKey: 'customerId' });
+      BusinessPartner.hasMany(PurchaseInvoice, { foreignKey: 'supplierId' });
+      BusinessPartner.hasMany(BankTransaction, { foreignKey: 'partnerId' });
     }
   }
 
@@ -112,6 +112,9 @@ module.exports = (sequelize) => {
       sequelize,
       modelName: 'BusinessPartner',
       tableName: 'business_partners',
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
     }
   );
 

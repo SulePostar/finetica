@@ -1,4 +1,4 @@
-import { cilUser, cilExitToApp } from '@coreui/icons';
+import { cilExitToApp, cilUser } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import {
   CDropdown,
@@ -7,10 +7,11 @@ import {
   CDropdownMenu,
   CDropdownToggle,
 } from '@coreui/react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { logout } from '../../redux/auth/authSlice';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { logout } from '../../redux/auth/authSlice';
+import notify from '../../utilis/toastHelper';
 import ConfirmationModal from './../Modals/ConfirmationModal';
 
 const AppHeaderDropdown = ({ isDarkMode }) => {
@@ -20,17 +21,14 @@ const AppHeaderDropdown = ({ isDarkMode }) => {
 
   const handleLogout = () => {
     dispatch(logout());
+    notify.onSuccess('Logout successful');
     navigate('/login');
   };
 
   return (
     <>
       <CDropdown variant="nav-item">
-        <CDropdownToggle
-          placement="bottom-end"
-          caret={false}
-          className="bg-transparent border-0"
-        >
+        <CDropdownToggle placement="bottom-end" caret={false} className="bg-transparent border-0">
           <CIcon icon={cilUser} size="lg" className={isDarkMode ? 'text-white' : 'text-dark'} />
         </CDropdownToggle>
 
