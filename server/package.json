@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "jest"
+    "test": "jest",
+    "setup-drive": "node scripts/setupGoogleDrive.js"
   },
   "author": "FEP",
   "license": "ISC",

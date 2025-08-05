@@ -4,7 +4,11 @@ const cors = require('cors');
 const session = require('express-session');
 const { connectToDatabase } = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
-const backgroundSyncService = require('./services/backgroundSyncService');
+const kifRouter = require('./routes/kif');
+const kufRouter = require('./routes/kuf');
+const vatRouter = require('./routes/vat');
+
+const googleDriveAutoSync = require('./services/googleDriveAutoSync');
 
 const app = express();
 
@@ -29,17 +33,19 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/authentication'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/files', require('./routes/uploadedFiles'));
-app.use('/', require('./routes/googleDrive/googleDrive'));
-app.use('/api', require('./routes/googleDrive/drive'));
+app.use('/api', kifRouter);
+app.use('/api', kufRouter);
+app.use('/api', vatRouter);
+app.use('/admin', require('./routes/driveAdmin'));
 
 app.use(errorHandler);
 
 connectToDatabase();
 
-// Start background sync service
-backgroundSyncService.start();
+// Start Google Drive auto sync service
+googleDriveAutoSync.start();
 
 app.listen(process.env.PORT, () => {
   console.log(`🟢 Server is running at port: ${process.env.PORT}`);
-  console.log(`🔄 Background file sync service is active`);
+  console.log(`🔄 Google Drive auto sync service is active`);
 });

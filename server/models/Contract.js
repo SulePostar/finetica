@@ -3,7 +3,7 @@ const { Model, DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
   class Contract extends Model {
     static associate({ BusinessPartner }) {
-      this.belongsTo(BusinessPartner, { foreignKey: 'partnerId' });
+      Contract.belongsTo(BusinessPartner, { foreignKey: 'partnerId' });
     }
   }
 
@@ -16,6 +16,7 @@ module.exports = (sequelize) => {
       },
       partnerId: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         field: 'partner_id',
       },
       contractNumber: {
@@ -32,10 +33,12 @@ module.exports = (sequelize) => {
       startDate: {
         type: DataTypes.DATE,
         field: 'start_date',
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
       endDate: {
         type: DataTypes.DATE,
         field: 'end_date',
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
       isActive: {
         type: DataTypes.BOOLEAN,
@@ -55,6 +58,7 @@ module.exports = (sequelize) => {
       signedAt: {
         type: DataTypes.DATE,
         field: 'signed_at',
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
       createdAt: {
         type: DataTypes.DATE,
@@ -71,6 +75,9 @@ module.exports = (sequelize) => {
       sequelize,
       modelName: 'Contract',
       tableName: 'contracts',
+      timestamps: true,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
     }
   );
 

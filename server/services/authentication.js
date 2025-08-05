@@ -44,7 +44,7 @@ class AuthService {
           email: user.email,
           profileImage: user.profileImage,
           roleId: user.roleId,
-          roleName: user.role?.name || null,
+          roleName: user.role?.role || null,
           statusId: user.statusId,
         },
       },
@@ -56,10 +56,12 @@ class AuthService {
     const user = await User.scope('withPassword').findOne({
       where: { email },
       include: [
-        { model: Role, as: 'role', attributes: ['id', 'name'] },
-        { model: UserStatus, as: 'userStatus', attributes: ['id', 'status'] },
+        { model: Role, as: 'role', attributes: ['id', 'role'] },
+        { model: UserStatus, as: 'status', attributes: ['id', 'status'] },
       ],
     });
+
+    console.log('User found:', user);
 
     if (!user) throw new AppError('Invalid credentials', 401);
 
@@ -78,7 +80,8 @@ class AuthService {
 
     await user.update({ lastLoginAt: new Date() });
 
-    const token = this.#generateToken(user.id, user.role?.id, user.role?.name);
+    const token = this.#generateToken(user.id, user.role?.id, user.role?.role);
+    console.log('Generated token:', token);
 
     return {
       success: true,
@@ -92,9 +95,9 @@ class AuthService {
           firstName: user.firstName,
           lastName: user.lastName,
           profileImage: user.profileImage,
-          roleName: user.role?.name || '',
+          roleName: user.role?.role || '',
           statusId: user.statusId,
-          statusName: user.userStatus?.status || '',
+          statusName: user.status?.status || '',
           isEmailVerified: user.isEmailVerified,
           lastLoginAt: user.lastLoginAt,
           createdAt: user.createdAt,
@@ -111,7 +114,7 @@ class AuthService {
         {
           model: Role,
           as: 'role',
-          attributes: ['id', 'name'],
+          attributes: ['id', 'role'],
         },
       ],
     });
@@ -148,7 +151,7 @@ class AuthService {
         {
           model: Role,
           as: 'role',
-          attributes: ['id', 'name'],
+          attributes: ['id', 'role'],
         },
       ],
     });

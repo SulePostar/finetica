@@ -11,6 +11,7 @@ import {
   CSidebarBrand
 } from '@coreui/react';
 
+import navigation from '../_nav';
 import { AppSidebarNav } from './AppSidebarNav';
 import navigation from '../_nav';
 import { logout } from './../redux/auth/authSlice';

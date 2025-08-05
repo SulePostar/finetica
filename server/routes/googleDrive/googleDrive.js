@@ -63,8 +63,6 @@ router.get('/auth/google/status', async (req, res) => {
                 req.session.tokens = credentials;
                 req.session.createdAt = Date.now();
 
-                console.log('🔄 Access token refreshed successfully');
-
                 oauth2Client.setCredentials(credentials);
                 return res.json({
                     authenticated: true,
