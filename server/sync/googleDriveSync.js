@@ -28,7 +28,7 @@ if (!process.env.GOOGLE_REFRESH_TOKEN) {
 
     const config = {
         supabase: {
-            url: process.env.VITE_SUPABASE_URL,
+            url: process.env.SUPABASE_URL,
             serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY // Use service role for backend operations
         },
         google: {
