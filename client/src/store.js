@@ -14,29 +14,23 @@ const initialUIState = {
 
 const uiReducer = (state = initialUIState, action) => {
   if (action.type === 'set') {
-    return { ...state, ...action };
+    // Only update the UI state properties that are provided in the action
+    const updates = {};
+    if ('sidebarShow' in action) updates.sidebarShow = action.sidebarShow;
+    if ('sidebarUnfoldable' in action) updates.sidebarUnfoldable = action.sidebarUnfoldable;
+    if ('headerShow' in action) updates.headerShow = action.headerShow;
+
+    return { ...state, ...updates };
   }
   return state;
 };
 
-// Root reducer: auth, user (persistirani) + ui (nije persistiran)
-const rootReducer = (state, action) => {
-  return combineReducers({
-    user: userReducer,
-    auth: authReducer,
-  })(state, action);
-};
-
-// Enhanced root reducer with UI state
-const enhancedRootReducer = (state, action) => {
-  const combinedState = rootReducer(state, action);
-  const uiState = uiReducer(state, action);
-
-  return {
-    ...combinedState,
-    ...uiState,
-  };
-};
+// Root reducer: auth, user, ui
+const rootReducer = combineReducers({
+  user: userReducer,
+  auth: authReducer,
+  ui: uiReducer,
+});
 
 // Konfiguracija za redux-persist
 const persistConfig = {
@@ -45,7 +39,7 @@ const persistConfig = {
   whitelist: ['user', 'auth'], // samo user i auth se čuvaju u localStorage, UI state nije persistovan
 };
 
-const persistedReducer = persistReducer(persistConfig, enhancedRootReducer);
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 // Store konfiguracija
 export const store = configureStore({

@@ -19,7 +19,7 @@ import './AppHeader.css';
 const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const headerRef = useRef();
   const dispatch = useDispatch();
-  const sidebarShow = useSelector((state) => state.sidebarShow);
+  const sidebarShow = useSelector((state) => state.ui.sidebarShow);
 
   useEffect(() => {
     const handleScroll = () => {

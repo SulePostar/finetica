@@ -8,7 +8,7 @@ import makeLayoutStyles from './DefaultLayout.styles';
 const DefaultLayout = ({ children }) => {
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme');
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const sidebarShow = useSelector((state) => state.sidebarShow);
+  const sidebarShow = useSelector((state) => state.ui.sidebarShow);
   const styles = makeLayoutStyles();
 
   useEffect(() => {
