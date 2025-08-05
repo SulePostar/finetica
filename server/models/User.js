@@ -35,10 +35,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         field: 'password_hash',
       },
-      profileImage: {
-        type: DataTypes.STRING,
-        field: 'profile_image',
-      },
       firstName: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -97,16 +93,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: true,
         field: 'last_login_at',
-      },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        field: 'created_at',
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        field: 'updated_at',
       },
     },
     {
