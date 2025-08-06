@@ -1,12 +1,4 @@
-// Color Palette Documentation
-// Primary Purple Theme: #5b3cc4 (buttons, links, focus)
-// Primary Purple Hover: #553c9a (button hover)
-// Background Gradient: linear-gradient(to right, #dbd9e3ff, #a294ebff)
-// Card Background: #ffffff
-// Text Colors: #2d3748 (primary), #718096 (secondary), #a0aec0 (placeholder)
-// Input Background: #f7fafc
-// Borders: #e2e8f0 (light), #d1d5db (medium)
-// Alert Colors: Error(#fed7d7, #9b2c2c), Success(#c6f6d5, #276749)
+// RegisterForm styles - uses colors from '../../../styles/colors'
 
 import { colors } from '../../../styles/colors';
 
