@@ -1,12 +1,88 @@
 const uploadedFilesService = require('../services/uploadedFiles');
-const { handleError } = require('../utils/errorHandler');
+const AppError = require('../utils/errorHandler');
 
 class UploadedFilesController {
+  /**
+   * Upload profile image (unprotected for registration)
+   * POST /api/files/upload-profile-image
+   */
+  async uploadProfileImage(req, res, next) {
+    try {
+      if (!req.file) {
+        throw new AppError('No image file provided', 400);
+      }
+
+      const { firstName, lastName } = req.body;
+
+      // Use service method to handle complete upload process
+      const result = await uploadedFilesService.uploadProfileImage(req.file, firstName, lastName);
+
+      res.status(200).json({
+        success: true,
+        message: 'Profile image uploaded successfully',
+        data: result.data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Upload file with admin protection
+   * POST /api/files/upload
+   */
+  async uploadFile(req, res, next) {
+    try {
+      if (!req.file) {
+        throw new AppError('No file provided', 400);
+      }
+
+      const { bucketName, description } = req.body;
+      const userId = req.user?.userId;
+
+      // Use service method to handle complete upload process
+      const result = await uploadedFilesService.uploadFile(
+        req.file,
+        bucketName,
+        userId,
+        description
+      );
+
+      res.status(201).json({
+        success: true,
+        message: 'File uploaded successfully',
+        data: result.data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Delete file from storage and database
+   * DELETE /api/files/storage/:id
+   */
+  async deleteFileFromStorage(req, res, next) {
+    try {
+      const fileId = req.params.id;
+
+      // Use service method to handle complete deletion process
+      const result = await uploadedFilesService.deleteFileFromStorage(fileId);
+
+      res.status(200).json({
+        success: true,
+        message: result.message,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   /**
    * Create a new file record
    * POST /api/files
    */
-  async createFile(req, res) {
+  async createFile(req, res, next) {
     try {
       const fileData = uploadedFilesService.prepareFileData(req.body, req.user?.id);
       const file = await uploadedFilesService.createFileRecord(fileData);
@@ -17,7 +93,7 @@ class UploadedFilesController {
         data: file,
       });
     } catch (error) {
-      handleError(res, error, 'Failed to create file record');
+      next(error);
     }
   }
 
@@ -25,7 +101,7 @@ class UploadedFilesController {
    * Get file by ID
    * GET /api/files/:id
    */
-  async getFile(req, res) {
+  async getFile(req, res, next) {
     try {
       const { id } = req.params;
       const file = await uploadedFilesService.getFileById(id);
@@ -42,7 +118,7 @@ class UploadedFilesController {
         data: file,
       });
     } catch (error) {
-      handleError(res, error, 'Failed to get file');
+      next(error);
     }
   }
 
@@ -50,7 +126,7 @@ class UploadedFilesController {
    * Get all files with pagination and filters
    * GET /api/files
    */
-  async getFiles(req, res) {
+  async getFiles(req, res, next) {
     try {
       const options = uploadedFilesService.parseFileQuery(req.query);
       const result = await uploadedFilesService.getFiles(options);
@@ -60,7 +136,7 @@ class UploadedFilesController {
         data: result,
       });
     } catch (error) {
-      handleError(res, error, 'Failed to get files');
+      next(error);
     }
   }
 
@@ -68,7 +144,7 @@ class UploadedFilesController {
    * Get current user's files
    * GET /api/files/my-files
    */
-  async getMyFiles(req, res) {
+  async getMyFiles(req, res, next) {
     try {
       const userId = req.user?.userId;
       if (!userId) {
@@ -86,7 +162,7 @@ class UploadedFilesController {
         data: files,
       });
     } catch (error) {
-      handleError(res, error, 'Failed to get user files');
+      next(error);
     }
   }
 
@@ -94,7 +170,7 @@ class UploadedFilesController {
    * Update file record
    * PUT /api/files/:id
    */
-  async updateFile(req, res) {
+  async updateFile(req, res, next) {
     try {
       const { id } = req.params;
       const file = await uploadedFilesService.updateFile(id, req.body);
@@ -105,7 +181,7 @@ class UploadedFilesController {
         data: file,
       });
     } catch (error) {
-      handleError(res, error, 'Failed to update file');
+      next(error);
     }
   }
 
@@ -113,7 +189,7 @@ class UploadedFilesController {
    * Soft delete file (mark as inactive)
    * DELETE /api/files/:id
    */
-  async deleteFile(req, res) {
+  async deleteFile(req, res, next) {
     try {
       const { id } = req.params;
       await uploadedFilesService.deleteFile(id);
@@ -123,7 +199,7 @@ class UploadedFilesController {
         message: 'File deleted successfully',
       });
     } catch (error) {
-      handleError(res, error, 'Failed to delete file');
+      next(error);
     }
   }
 
@@ -131,7 +207,7 @@ class UploadedFilesController {
    * Permanently delete file
    * DELETE /api/files/:id/permanent
    */
-  async permanentDeleteFile(req, res) {
+  async permanentDeleteFile(req, res, next) {
     try {
       const { id } = req.params;
       await uploadedFilesService.permanentDeleteFile(id);
@@ -141,7 +217,7 @@ class UploadedFilesController {
         message: 'File permanently deleted',
       });
     } catch (error) {
-      handleError(res, error, 'Failed to permanently delete file');
+      next(error);
     }
   }
 
@@ -149,7 +225,7 @@ class UploadedFilesController {
    * Get file statistics
    * GET /api/files/stats
    */
-  async getFileStats(req, res) {
+  async getFileStats(req, res, next) {
     try {
       const stats = await uploadedFilesService.getFileStats();
 
@@ -158,7 +234,7 @@ class UploadedFilesController {
         data: stats,
       });
     } catch (error) {
-      handleError(res, error, 'Failed to get file statistics');
+      next(error);
     }
   }
 }
