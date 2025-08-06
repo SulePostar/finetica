@@ -54,24 +54,7 @@ const AppSidebar = ({ isDarkMode }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Add drive status to navigation
-  const navigationWithStatus = [
-    ...navigation,
-    {
-      component: () => (
-        <div className="d-flex justify-content-between align-items-center px-3 py-2">
-          <span className="text-white-50 small">Google Drive</span>
-          <CBadge
-            color={driveConnected ? 'success' : 'secondary'}
-            size="sm"
-          >
-            {driveConnected ? 'Connected' : 'Disconnected'}
-          </CBadge>
-        </div>
-      ),
-      name: 'Drive Status'
-    }
-  ];
+  // Remove drive status from navigation - it will be shown in footer instead
 
   return (
     <>
@@ -92,7 +75,18 @@ const AppSidebar = ({ isDarkMode }) => {
           />
         </CSidebarHeader>
 
-        <AppSidebarNav items={navigationWithStatus} />
+        <AppSidebarNav items={navigation} />
+
+        {/* Google Drive Status - Above Footer */}
+        <div className="border-top d-none d-lg-flex justify-content-between align-items-center px-3 py-2" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
+          <span className="text-white-50 small">Google Drive</span>
+          <CBadge
+            color={driveConnected ? 'success' : 'secondary'}
+            size="sm"
+          >
+            {driveConnected ? 'Connected' : 'Disconnected'}
+          </CBadge>
+        </div>
 
         <CSidebarFooter className="border-top d-none d-lg-flex justify-content-center align-items-center p-3">
           <div
