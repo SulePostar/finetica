@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CForm, CInputGroup, CInputGroupText, CFormInput, CButton, CAlert } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
@@ -14,7 +14,6 @@ const RegisterForm = () => {
   const navigate = useNavigate();
   const {
     formData,
-    errors,
     handleInputChange,
     validateForm,
     resetForm,
