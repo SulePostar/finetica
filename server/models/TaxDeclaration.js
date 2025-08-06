@@ -82,16 +82,6 @@ module.exports = (sequelize) => {
         type: DataTypes.DECIMAL(18, 2),
         field: 'final_cons_bd',
       },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        field: 'created_at',
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        field: 'updated_at',
-      },
     },
     {
       sequelize,
@@ -100,6 +90,7 @@ module.exports = (sequelize) => {
       timestamps: true,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
+      underscored: true,
     }
   );
 

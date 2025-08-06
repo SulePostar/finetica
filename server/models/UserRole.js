@@ -19,22 +19,9 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
       },
       role: {
-        type: DataTypes.ENUM('guest', 'user', 'admin'),
+        type: DataTypes.STRING,
         allowNull: false,
         unique: true,
-        validate: {
-          isIn: [['guest', 'user', 'admin']],
-        },
-      },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        field: 'created_at',
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: true,
-        field: 'updated_at',
       },
     },
     {
@@ -44,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
+      underscored: true,
     }
   );
 
