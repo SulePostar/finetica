@@ -37,27 +37,12 @@ const AppHeaderDropdown = ({ isDarkMode }) => {
           className={`pt-0 ${isDarkMode ? 'dropdown-menu-dark' : ''}`}
         >
           <CDropdownHeader className="bg-body-secondary fw-semibold my-1">Settings</CDropdownHeader>
-          <CDropdownItem href="#">
+          <CDropdownItem href="profile">
             <CIcon icon={cilUser} className="me-2" />
             Profile
           </CDropdownItem>
-          <CDropdownItem onClick={() => setShowModal(true)} style={{ cursor: 'pointer' }}>
-            <CIcon icon={cilExitToApp} className="me-2" />
-            Logout
-          </CDropdownItem>
         </CDropdownMenu>
       </CDropdown>
-
-      <ConfirmationModal
-        visible={showModal}
-        onCancel={() => setShowModal(false)}
-        onConfirm={handleLogout}
-        title="Confirm Logout"
-        body="Are you sure you want to log out?"
-        cancelText="Cancel"
-        confirmText="Logout"
-        confirmColor="danger"
-      />
     </>
   );
 };
