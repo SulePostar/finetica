@@ -18,13 +18,11 @@ class BackgroundSyncService {
             sessionCreated,
             lastSync: null
         });
-        console.log(`📝 Registered user ${userId} for background sync`);
     }
 
     // Remove user session from background sync
     unregisterUserSession(userId) {
         this.activeSessions.delete(userId);
-        console.log(`🗑️ Unregistered user ${userId} from background sync`);
     }
 
     // Start the background sync service

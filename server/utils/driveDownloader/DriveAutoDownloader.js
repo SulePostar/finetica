@@ -26,12 +26,11 @@ class DriveAutoDownloader {
                 if (tokenData.tokens && tokenData.expiresAt > Date.now()) {
                     this.tokens = tokenData.tokens;
                     oauth2Client.setCredentials(this.tokens);
-                    console.log('✅ Loaded stored Google tokens');
                     return true;
                 }
             }
         } catch (err) {
-            console.error('❌ Error loading tokens:', err.message);
+            console.error('Error loading tokens:', err.message);
         }
         return false;
     }
