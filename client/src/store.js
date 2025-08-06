@@ -5,7 +5,6 @@ import storage from 'redux-persist/lib/storage';
 import usersReducer from './redux/users/usersSlice';
 import userReducer from './redux/user/userSlice';
 import authReducer from './redux/auth/authSlice';
-import usersReducer from './redux/users/usersSlice';
 
 // Simple UI state reducer
 const initialUIState = {
