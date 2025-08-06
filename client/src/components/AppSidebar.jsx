@@ -1,6 +1,5 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
 import {
   CCloseButton,
   CSidebar,
@@ -16,6 +15,30 @@ const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
   const unfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
+  const userRole = useSelector((state) => state.user.profile.roleName); // ✅ Corrected
+
+  const filteredNav = navigation
+    .map((item) => {
+      // If it's a group, filter its children
+      if (item.component?.displayName === 'CNavGroup' && item.component?.displayName === 'CNavTitle' && item.items) {
+        const filteredItems = item.items.filter(
+          (child) => !child.adminOnly || userRole === 'admin'
+        );
+
+        if (filteredItems.length === 0) return null;
+
+        return {
+          ...item,
+          items: filteredItems,
+        };
+      }
+
+      // Filter admin-only top-level items
+      if (item.adminOnly && userRole !== 'admin') return null;
+
+      return item;
+    })
+    .filter(Boolean); // Remove nulls
 
   return (
     <CSidebar
@@ -33,7 +56,7 @@ const AppSidebar = ({ isDarkMode }) => {
         />
       </CSidebarHeader>
 
-      <AppSidebarNav items={navigation} />
+      <AppSidebarNav items={filteredNav} />
 
       <CSidebarFooter className="border-top d-none d-lg-flex">
         <CSidebarToggler

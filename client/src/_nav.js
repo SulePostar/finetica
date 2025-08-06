@@ -1,4 +1,4 @@
-import { CNavItem, CNavTitle } from '@coreui/react';
+import { CNavItem, CNavTitle, CNavGroup } from '@coreui/react';
 
 const _nav = [
   {
@@ -6,7 +6,6 @@ const _nav = [
     name: 'FINETICA',
     to: '/',
   },
-
   {
     component: CNavTitle,
     name: 'Components',
@@ -25,6 +24,28 @@ const _nav = [
     component: CNavItem,
     name: 'VAT',
     to: '/vat',
+  },
+  {
+    component: CNavTitle,
+    name: 'Dashboard',
+    adminOnly: true,
+  },
+  {
+    component: CNavGroup,
+    name: 'Management',
+    adminOnly: true,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Users',
+        to: '/management/users',
+      },
+      {
+        component: CNavItem,
+        name: 'Roles/Status',
+        to: '/management/roles-status',
+      },
+    ],
   },
 ];
 
