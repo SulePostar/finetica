@@ -38,6 +38,7 @@ const persistConfig = {
   key: 'root',
   storage,
   whitelist: ['user', 'auth'],, // samo user i auth se čuvaju u localStorage, UI state nije persistovan
+  whitelist: ['user', 'auth'],, // samo user i auth se čuvaju u localStorage, UI state nije persistovan
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -50,6 +51,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
       },
+    }),,
     }),,
 });
 
