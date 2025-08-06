@@ -12,11 +12,12 @@ import {
     CProgress,
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
-import { cilCloudUpload, cilDescription, cilCheckCircle, cilFile } from '@coreui/icons';
+import { cilCloudUpload, cilDescription, cilFile } from '@coreui/icons';
 import FileUploadService from '../../services/fileUploadService';
 import notify from '../../utilis/toastHelper';
+import './FileUploadModal.css';
 
-const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess, onUploadError }) => {
+const FileUploadModal = ({ visible, onClose, bucketName }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [uploading, setUploading] = useState(false);
