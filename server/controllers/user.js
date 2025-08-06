@@ -16,10 +16,26 @@ const getMyProfile = async (req, res, next) => {
     res.json(new UserResponseDTO(user));
   } catch (error) {
     next(error);
+
   }
 };
+
+const editMyProfile = async (req, res, next) => {
+  if (!req.body.id) {
+    return res.status(400).json({ error: 'User ID is required in request body' });
+  }
+  try {
+    const { id, ...updateData } = req.body;
+    const updatedUser = await userService.updateProfile(id, updateData);
+    res.json(new UserResponseDTO(updatedUser));
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 module.exports = {
   getAllUsers,
   getMyProfile,
+  editMyProfile,
 };
