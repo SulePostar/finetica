@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   CCloseButton,
@@ -10,19 +10,25 @@ import {
 
 import navigation from '../_nav';
 import { AppSidebarNav } from './AppSidebarNav';
+import './AppSidebar.css';
 
 const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
   const unfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
-  const userRole = useSelector((state) => state.user.profile.roleName); // ✅ Corrected
+  const userRole = useSelector((state) => state.user.profile.roleName);
+  const [isHovered, setIsHovered] = useState(false);
 
   const filteredNav = navigation
     .map((item) => {
-      // If it's a group, filter its children
-      if (item.component?.displayName === 'CNavGroup' && item.component?.displayName === 'CNavTitle' && item.items) {
+      const isAdmin = userRole === 'admin';
+
+      // CNavGroup (ima children/items)
+      if (item.component?.displayName === 'CNavGroup' && item.items) {
+        if (item.adminOnly && !isAdmin) return null;
+
         const filteredItems = item.items.filter(
-          (child) => !child.adminOnly || userRole === 'admin'
+          (child) => !child.adminOnly || isAdmin
         );
 
         if (filteredItems.length === 0) return null;
@@ -33,20 +39,32 @@ const AppSidebar = ({ isDarkMode }) => {
         };
       }
 
-      // Filter admin-only top-level items
-      if (item.adminOnly && userRole !== 'admin') return null;
+      // CNavTitle (nema items)
+      if (item.component?.displayName === 'CNavTitle') {
+        if (item.adminOnly && !isAdmin) return null;
+        return item;
+      }
 
+      // Obični CNavItem
+      if (item.adminOnly && !isAdmin) return null;
       return item;
     })
-    .filter(Boolean); // Remove nulls
+    .filter(Boolean);
+
 
   return (
     <CSidebar
-      className="border-end"
+      className={`border-end sidebar ${sidebarShow ? 'show' : ''} ${unfoldable ? 'sidebar-unfoldable' : ''} ${unfoldable && isHovered ? 'sidebar-hover-expanded' : ''}`}
       colorScheme={isDarkMode ? 'dark' : 'light'}
       position="fixed"
       unfoldable={unfoldable}
       visible={sidebarShow}
+      style={{
+        zIndex: unfoldable && isHovered ? 1060 : 1050,
+        transition: 'z-index 0.1s ease',
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <CSidebarHeader className="border-bottom">
         <CCloseButton
@@ -60,7 +78,9 @@ const AppSidebar = ({ isDarkMode }) => {
 
       <CSidebarFooter className="border-top d-none d-lg-flex">
         <CSidebarToggler
-          onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
+          onClick={() =>
+            dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })
+          }
         />
       </CSidebarFooter>
     </CSidebar>
