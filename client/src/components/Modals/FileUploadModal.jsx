@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import {
     CModal,
     CModalHeader,
@@ -11,13 +11,13 @@ import {
     CAlert,
     CSpinner,
     CProgress,
-    CBadge,
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilCloudUpload, cilDescription, cilCheckCircle, cilFile } from '@coreui/icons';
 import { uploadFile } from '../../lib/uploadFile';
+import './FileUploadModal.css';
 
-const FileUploadModal = ({ visible, onClose, bucketName }) => {
+const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess, onUploadError }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [uploading, setUploading] = useState(false);
@@ -110,15 +110,24 @@ const FileUploadModal = ({ visible, onClose, bucketName }) => {
 
             if (result.success) {
                 setUploadSuccess(true);
+                if (onUploadSuccess) {
+                    onUploadSuccess(result);
+                }
                 setTimeout(() => {
                     handleClose();
                 }, 1500);
             } else {
                 setUploadError('Upload failed. Please try again.');
+                if (onUploadError) {
+                    onUploadError(new Error('Upload failed. Please try again.'));
+                }
             }
         } catch (error) {
             console.error('Upload error:', error);
             setUploadError(error.message || 'Upload failed. Please try again.');
+            if (onUploadError) {
+                onUploadError(error);
+            }
         } finally {
             setUploading(false);
         }
@@ -186,14 +195,13 @@ const FileUploadModal = ({ visible, onClose, bucketName }) => {
                             onDragOver={handleDragOver}
                             onDragLeave={handleDragLeave}
                             onClick={triggerFileSelect}
-                            style={{ cursor: uploading ? 'not-allowed' : 'pointer' }}
                         >
                             <input
                                 type="file"
                                 ref={fileInputRef}
                                 onChange={handleFileSelect}
                                 disabled={uploading}
-                                style={{ display: 'none' }}
+                                className="d-none"
                             />
 
                             {selectedFile ? (
@@ -209,8 +217,8 @@ const FileUploadModal = ({ visible, onClose, bucketName }) => {
                                 </div>
                             ) : (
                                 <div className="text-center">
-                                    <CIcon icon={cilCloudUpload} size="2xl" className="text-primary mb-2" />
-                                    <div className="fw-bold text-primary">Drop your file here</div>
+                                    <CIcon icon={cilCloudUpload} size="2xl" className="text-upload-primary mb-2" />
+                                    <div className="fw-bold text-upload-primary">Drop your file here</div>
                                     <div className="text-muted">or click to browse</div>
                                 </div>
                             )}
@@ -238,14 +246,13 @@ const FileUploadModal = ({ visible, onClose, bucketName }) => {
                     {uploading && (
                         <div className="mb-3">
                             <div className="d-flex justify-content-between align-items-center mb-2">
-                                <span className="fw-semibold">Uploading to {bucketName.toUpperCase()} bucket...</span>
-                                <span className="fw-bold text-primary">{uploadProgress}%</span>
+                                <span className="fw-semibold text-upload-primary">Uploading to {bucketName.toUpperCase()} bucket...</span>
+                                <span className="fw-bold text-upload-primary">{uploadProgress}%</span>
                             </div>
                             <CProgress
                                 value={uploadProgress}
                                 className="upload-progress"
                                 color="primary"
-                                height={8}
                             />
                         </div>
                     )}
@@ -262,9 +269,9 @@ const FileUploadModal = ({ visible, onClose, bucketName }) => {
                     Cancel
                 </CButton>
                 <CButton
-                    color="primary"
                     onClick={handleUpload}
                     disabled={!selectedFile || uploading}
+                    className="upload-primary-button"
                 >
                     {uploading ? (
                         <>
