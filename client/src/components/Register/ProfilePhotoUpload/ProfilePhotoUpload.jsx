@@ -6,7 +6,7 @@ import FileUploadService from '../../../services/fileUploadService';
 import notify from '../../../utilis/toastHelper';
 import './ProfilePhotoUpload.styles.css';
 
-const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false, initialPhoto = null }) => {
+const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(initialPhoto);

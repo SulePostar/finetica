@@ -109,6 +109,5 @@ export const useRegistrationForm = () => {
     validateForm,
     resetForm,
     getFieldError,
-    hasErrors: Object.keys(errors).length > 0,
   };
 };

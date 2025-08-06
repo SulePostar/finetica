@@ -1,0 +1,141 @@
+/* FileUploadModal Styles */
+
+.upload-modal .modal-header {
+  background-color: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.file-input-area {
+  border: 2px dashed #e2e8f0;
+  border-radius: 12px;
+  padding: 40px 20px;
+  background-color: #f7fafc;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-input-area:hover {
+  border-color: #5b3cc4;
+  background-color: rgba(91, 60, 196, 0.1);
+}
+
+.file-input-area.drag-over {
+  border-color: #5b3cc4;
+  background-color: rgba(91, 60, 196, 0.15);
+  border-style: solid;
+}
+
+.file-input-area.has-file {
+  border-color: #276749;
+  background-color: #c6f6d5;
+}
+
+.file-input-area.has-file:hover {
+  border-color: #22543d;
+  background-color: #9ae6b4;
+}
+
+.upload-progress {
+  border-radius: 6px;
+  overflow: hidden;
+  height: 8px;
+}
+
+.upload-progress .progress-bar {
+  transition: width 0.3s ease;
+  background-color: #5b3cc4;
+}
+
+/* File info styles */
+.file-info {
+  padding: 12px;
+  background-color: #f7fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.file-name {
+  font-weight: 600;
+  color: #276749;
+  margin-bottom: 4px;
+}
+
+.file-details {
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+.file-change-hint {
+  font-size: 0.8rem;
+  color: #718096;
+  margin-top: 8px;
+}
+
+/* Modal styles */
+.upload-modal .modal-content {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 10px 25px rgba(91, 60, 196, 0.15);
+}
+
+.upload-modal .modal-header h4 {
+  margin: 0;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.upload-modal .modal-footer {
+  border-top: 1px solid #e2e8f0;
+  background-color: #f7fafc;
+}
+
+/* Success/Error states */
+.upload-success-icon {
+  color: #276749;
+}
+
+.upload-error-text {
+  color: #9b2c2c;
+}
+
+/* Custom primary color override to match upload button */
+.upload-modal .text-upload-primary {
+  color: #8367deff !important;
+}
+
+.upload-modal .upload-primary-button {
+  background-color: #8367deff !important;
+  border-color: #8367deff !important;
+  color: white !important;
+  transition: all 0.2s ease-in-out;
+}
+
+.upload-modal .upload-primary-button:hover:not(:disabled) {
+  background-color: #6c4fd8 !important;
+  border-color: #6c4fd8 !important;
+  color: white !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.upload-modal .upload-primary-button:disabled {
+  background-color: #8367deff !important;
+  border-color: #8367deff !important;
+  opacity: 0.6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .file-input-area {
+    padding: 30px 15px;
+    min-height: 100px;
+  }
+
+  .upload-modal .modal-body {
+    padding: 20px 15px;
+  }
+}
