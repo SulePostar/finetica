@@ -6,12 +6,13 @@ import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
 
 import { CBadge, CNavLink, CSidebarNav } from '@coreui/react';
+import CIcon from '@coreui/icons-react';
 
 export const AppSidebarNav = ({ items }) => {
   const renderNavLinkContent = (name, icon, badge, indent = false) => (
     <>
       {icon ? (
-        icon
+        <CIcon icon={icon} className="nav-icon" />
       ) : (
         indent && (
           <CBadge

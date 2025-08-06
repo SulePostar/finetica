@@ -1,0 +1,69 @@
+/* Force sidebar to start at top-left corner with smooth transitions */
+.sidebar {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  height: 100vh !important;
+  transition: transform 0.3s ease-in-out !important;
+}
+
+/* Hidden sidebar slides out to the left */
+.sidebar:not(.show) {
+  transform: translateX(-100%) !important;
+}
+
+/* Visible sidebar stays in place */
+.sidebar.show {
+  transform: translateX(0) !important;
+}
+
+/* Sidebar Hover Expansion in Icon Mode */
+.sidebar-unfoldable {
+  transition: width 0.3s ease-in-out, transform 0.3s ease-in-out !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+}
+
+.sidebar-unfoldable:hover {
+  width: 240px !important;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  z-index: 1050 !important;
+}
+
+/* Ensure sidebar content is hidden when collapsed */
+.sidebar-unfoldable .sidebar-nav .nav-title,
+.sidebar-unfoldable .sidebar-nav .nav-link-text {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  white-space: nowrap;
+}
+
+.sidebar-unfoldable:hover .sidebar-nav .nav-title,
+.sidebar-unfoldable:hover .sidebar-nav .nav-link-text {
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out 0.1s;
+}
+
+/* Sidebar nav item styling for better hover experience */
+.sidebar-unfoldable .nav-item {
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar-unfoldable .nav-link {
+  justify-content: flex-start !important;
+  padding-left: 1rem !important;
+}
+
+/* Ensure proper z-index layering */
+.sidebar-hover-expanded {
+  z-index: 1050 !important;
+}
+
+/* Prevent sidebar from affecting layout when hovering */
+.sidebar-unfoldable:hover {
+  position: fixed !important;
+  left: 0 !important;
+  top: 0 !important;
+}

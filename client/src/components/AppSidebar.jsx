@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
@@ -11,20 +11,29 @@ import {
 
 import navigation from '../_nav';
 import { AppSidebarNav } from './AppSidebarNav';
+import './AppSidebar.css';
 
 const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
-  const unfoldable = useSelector((state) => state.sidebarUnfoldable);
-  const sidebarShow = useSelector((state) => state.sidebarShow);
+  const unfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
+  const sidebarShow = useSelector((state) => state.ui.sidebarShow);
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Debug logging
+  console.log('AppSidebar render - sidebarShow:', sidebarShow, 'unfoldable:', unfoldable);
 
   return (
     <CSidebar
-      className="border-end"
+      className={`border-end sidebar ${sidebarShow ? 'show' : ''} ${unfoldable ? 'sidebar-unfoldable' : ''} ${unfoldable && isHovered ? 'sidebar-hover-expanded' : ''}`}
       colorScheme={isDarkMode ? 'dark' : 'light'}
       position="fixed"
       unfoldable={unfoldable}
-      visible={sidebarShow}
-      onVisibleChange={(visible) => dispatch({ type: 'set', sidebarShow: visible })}
+      style={{
+        zIndex: (unfoldable && isHovered) ? 1060 : 1050,
+        transition: 'z-index 0.1s ease'
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <CSidebarHeader className="border-bottom">
         <CCloseButton
