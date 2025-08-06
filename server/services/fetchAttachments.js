@@ -39,6 +39,68 @@ function isFileExists(filename) {
     return fs.existsSync(path.join(DOWNLOAD_DIR, filename));
 }
 
+// Process messages
+async function processMessages(messages, downloadedUIDs, client, markAsRead = false) {
+    for (const { message, parsed } of messages) {
+        const uid = message.uid;
+
+        if (downloadedUIDs[uid]) {
+            console.log(`Skipping UID ${uid} (already processed)`);
+            continue;
+        }
+
+        console.log(`Processing email from: ${message.envelope.from[0].address} | Subject: ${message.envelope.subject || '[No subject]'}`);
+
+        if (markAsRead) {
+            await client.messageFlagsAdd(uid, ['\\Seen']);
+            console.log(`Marked as read (UID: ${uid})`);
+        }
+
+        let savedCount = 0;
+
+        for (const attachment of parsed.attachments) {
+            const filename = attachment.filename?.toLowerCase() || '';
+
+            const isSignatureFile = filename.endsWith('.p7s');
+
+            const isInlineSmallImage = (
+                attachment.contentDisposition === 'inline' &&
+                attachment.contentType?.startsWith('image/') &&
+                attachment.size < 50 * 1024 // < 50KB
+            );
+
+            if (isSignatureFile || isInlineSmallImage) {
+                console.log(`Skipped signature or small inline image: ${attachment.filename || attachment.contentId}`);
+                continue;
+            }
+
+            let baseName = attachment.filename || `attachment_${Date.now()}.bin`;
+            baseName = sanitizeFilename(baseName);
+
+            const fileName = `${uid}_${Date.now()}_${baseName}`;
+            const filePath = path.join(DOWNLOAD_DIR, fileName);
+
+            if (isFileExists(fileName)) {
+                console.log(`File already exists, skipping: ${fileName}`);
+                continue;
+            }
+
+            fs.writeFileSync(filePath, attachment.content);
+            console.log(`Saved attachment: ${fileName} (${attachment.contentType}, ${attachment.size} bytes)`);
+            savedCount++;
+        }
+
+        if (savedCount > 0) {
+            downloadedUIDs[uid] = true;
+            saveDownloadedUIDs(downloadedUIDs);
+        } else {
+            console.log('No valid attachments saved.');
+        }
+
+        console.log('');
+    }
+}
+
 (async () => {
     const client = new ImapFlow({
         host: 'imap.gmail.com',
@@ -59,83 +121,43 @@ function isFileExists(filename) {
         const since = new Date();
         since.setDate(since.getDate() - 2); // Only last 2 days
 
-        // Search for unread emails from the last 2 days
-        let messages = await client.search({
-            seen: false,
-            since,
-        });
-
+        // Search for all emails from the last 2 days
+        let messages = await client.search({ since });
         messages = messages.reverse(); // newest first
 
         if (!messages.length) {
-            console.log('No new unread emails.');
+            console.log('No emails found from the last 2 days.');
             return;
         }
 
-        let emailsWithAttachments = [];
+        const unreadMessages = [];
+        const readMessages = [];
 
-        for await (let message of client.fetch(messages, { source: true, envelope: true })) {
+        for await (let message of client.fetch(messages, { source: true, envelope: true, flags: true })) {
             const parsed = await simpleParser(message.source);
-            if (parsed.attachments && parsed.attachments.length > 0) {
-                emailsWithAttachments.push({ message, parsed });
-            }
-        }
+            const hasAttachments = parsed.attachments && parsed.attachments.length > 0;
 
-        if (!emailsWithAttachments.length) {
-            console.log('No unread emails with attachments found.');
-            return;
-        }
+            if (!hasAttachments) continue;
 
-        console.log(`Found ${emailsWithAttachments.length} unread emails with attachments from the last 2 days.\n`);
-
-        for (const { message, parsed } of emailsWithAttachments) {
-            const uid = message.uid;
-
-            // Skip if UID already processed
-            if (downloadedUIDs[uid]) {
-                console.log(`Skipping UID ${uid} (already processed)`);
-                continue;
-            }
-
-            console.log(`Processing email from: ${message.envelope.from[0].address} | Subject: ${message.envelope.subject || '[No subject]'}`);
-
-            // Mark as read before processing to avoid race conditions
-            await client.messageFlagsAdd(uid, ['\\Seen']);
-            console.log(`Marked as read (UID: ${uid}). Now processing attachments...`);
-
-            let savedCount = 0;
-
-            for (const attachment of parsed.attachments) {
-                // Skip .p7s (signature) files
-                if (attachment.filename?.toLowerCase().endsWith('.p7s')) {
-                    console.log(`Skipped signature file: ${attachment.filename}`);
-                    continue;
-                }
-
-                let baseName = attachment.filename || (attachment.contentId ? `${attachment.contentId}.bin` : 'unnamed_attachment.bin');
-                baseName = sanitizeFilename(baseName);
-
-                const fileName = `${uid}_${Date.now()}_${baseName}`;
-                const filePath = path.join(DOWNLOAD_DIR, fileName);
-
-                if (isFileExists(fileName)) {
-                    console.log(`File already exists, skipping: ${fileName}`);
-                    continue;
-                }
-
-                fs.writeFileSync(filePath, attachment.content);
-                console.log(`Saved attachment: ${fileName} (${attachment.contentType}, ${attachment.size} bytes)`);
-                savedCount++;
-            }
-
-            if (savedCount > 0) {
-                downloadedUIDs[uid] = true;
-                saveDownloadedUIDs(downloadedUIDs);
+            if (message.flags?.has('\\Seen')) {
+                readMessages.push({ message, parsed });
             } else {
-                console.log('No valid attachments saved.');
+                unreadMessages.push({ message, parsed });
             }
+        }
 
-            console.log('');
+        if (unreadMessages.length > 0) {
+            console.log(`\nFound ${unreadMessages.length} unread emails with attachments.\n`);
+            await processMessages(unreadMessages, downloadedUIDs, client, true);
+        }
+
+        if (readMessages.length > 0) {
+            console.log(`\nFound ${readMessages.length} read emails with attachments.\n`);
+            await processMessages(readMessages, downloadedUIDs, client, false);
+        }
+
+        if (unreadMessages.length === 0 && readMessages.length === 0) {
+            console.log('No emails with attachments found.');
         }
 
         lock.release();
