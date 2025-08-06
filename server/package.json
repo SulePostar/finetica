@@ -6,7 +6,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "jest",
-    "sync": "node sync/googleDriveSync.js"
+    "sync": "node tasks/googleDriveAndSupabaseSync.js"
   },
   "author": "FEP",
   "license": "ISC",
