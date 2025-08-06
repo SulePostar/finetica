@@ -36,7 +36,7 @@ app.use('/api/files', require('./routes/uploadedFiles'));
 app.use('/api', kifRouter);
 app.use('/api', kufRouter);
 app.use('/api', vatRouter);
-app.use('/admin', require('./routes/driveAdmin'));
+app.use('/admin', require('./routes/googleDrive/driveAdmin'));
 
 app.use(errorHandler);
 

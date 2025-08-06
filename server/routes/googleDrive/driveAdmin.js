@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const googleDriveAutoSync = require('../services/googleDriveAutoSync');
-const tokenStorage = require('../services/tokenStorage');
+const googleDriveAutoSync = require('../../services/googleDriveAutoSync');
+const tokenStorage = require('../../services/tokenStorage');
 
 // Simple drive connection status for frontend
 router.get('/drive-connection', (req, res) => {
