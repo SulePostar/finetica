@@ -8,16 +8,14 @@ import {
   CSidebarFooter,
   CSidebarHeader,
   CSidebarToggler,
-  CSidebarBrand
+  CSidebarBrand,
+  CBadge
 } from '@coreui/react';
 
 import navigation from '../_nav';
 import { AppSidebarNav } from './AppSidebarNav';
-import navigation from '../_nav';
 import { logout } from './../redux/auth/authSlice';
 import ConfirmationModal from './Modals/ConfirmationModal';
-import GoogleAuthButton from './GoogleAuth/GoogleAuthButton';
-import googleDriveService from '../services/googleDriveService';
 
 const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
@@ -26,7 +24,7 @@ const AppSidebar = ({ isDarkMode }) => {
   const sidebarShow = useSelector((state) => state.sidebarShow);
 
   const [showModal, setShowModal] = useState(false);
-  const [driveStatus, setDriveStatus] = useState(null); // Will hold the drive status object
+  const [driveConnected, setDriveConnected] = useState(false);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -35,60 +33,45 @@ const AppSidebar = ({ isDarkMode }) => {
 
   const checkDriveConnection = async () => {
     try {
-      const status = await googleDriveService.checkConnection();
-      setDriveStatus(status);
+      const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
+      const response = await fetch(`${baseUrl}/admin/drive-connection`, {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      setDriveConnected(data.connected);
     } catch (error) {
       console.error('Drive connection check error:', error);
-      setDriveStatus({ success: false, authenticated: false, sessionValid: false });
-    }
-  };
-
-  const fetchAndDownloadFiles = async () => {
-    try {
-      const result = await googleDriveService.downloadFiles();
-    } catch (error) {
-      console.error('Auto download error:', error);
+      setDriveConnected(false);
     }
   };
 
   useEffect(() => {
-    // Check connection immediately
     checkDriveConnection();
 
-    // Set up interval for checking connection
-    const connectionInterval = setInterval(checkDriveConnection, 5000); // Check every 5 seconds for testing
+    // Check connection every 30 seconds
+    const interval = setInterval(checkDriveConnection, 30000);
 
-    return () => {
-      clearInterval(connectionInterval);
-    };
-  }, []); // Empty dependency array - run only once
-
-  // Separate useEffect for download interval that depends on driveStatus
-  useEffect(() => {
-    if (!driveStatus) {
-      return; // Don't start interval until we have status
-    }
-
-    const downloadInterval = setInterval(() => {
-      if (googleDriveService.isConnected(driveStatus)) {
-        fetchAndDownloadFiles();
-      }
-    }, 10000); // Download every 10 seconds for testing (was 60000)
-
-    return () => {
-      clearInterval(downloadInterval);
-    };
-  }, [driveStatus]); // Depends on driveStatus
-
-  // Check connection when user returns from auth (window focus)
-  useEffect(() => {
-    const handleWindowFocus = () => {
-      checkDriveConnection();
-    };
-
-    window.addEventListener('focus', handleWindowFocus);
-    return () => window.removeEventListener('focus', handleWindowFocus);
+    return () => clearInterval(interval);
   }, []);
+
+  // Add drive status to navigation
+  const navigationWithStatus = [
+    ...navigation,
+    {
+      component: () => (
+        <div className="d-flex justify-content-between align-items-center px-3 py-2">
+          <span className="text-white-50 small">Google Drive</span>
+          <CBadge
+            color={driveConnected ? 'success' : 'secondary'}
+            size="sm"
+          >
+            {driveConnected ? 'Connected' : 'Disconnected'}
+          </CBadge>
+        </div>
+      ),
+      name: 'Drive Status'
+    }
+  ];
 
   return (
     <>
@@ -109,8 +92,7 @@ const AppSidebar = ({ isDarkMode }) => {
           />
         </CSidebarHeader>
 
-        <AppSidebarNav items={navigation} />
-        <GoogleAuthButton driveStatus={driveStatus} />
+        <AppSidebarNav items={navigationWithStatus} />
 
         <CSidebarFooter className="border-top d-none d-lg-flex justify-content-center align-items-center p-3">
           <div
