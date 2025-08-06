@@ -33,7 +33,7 @@ class GoogleDriveAutoSync {
         this.isRunning = true;
 
         // Perform initial sync
-        setTimeout(() => this.performSync(), 5000); // Wait 5 seconds then sync
+        setTimeout(() => this.performSync(), 5000);
     }
 
     // Stop the sync service
