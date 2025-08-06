@@ -11,8 +11,8 @@ class UserService {
         'lastName',
         'roleId',
         'statusId',
-        'createdAt',
-        'updatedAt',
+        ['created_at', 'createdAt'],
+        ['updated_at', 'updatedAt'],
       ],
       include: [
         {
