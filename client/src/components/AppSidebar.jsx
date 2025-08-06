@@ -9,22 +9,25 @@ import {
   CSidebarHeader,
   CSidebarToggler,
   CSidebarBrand,
-  CBadge
+  CBadge,
 } from '@coreui/react';
 
 import navigation from '../_nav';
 import { AppSidebarNav } from './AppSidebarNav';
 import { logout } from './../redux/auth/authSlice';
 import ConfirmationModal from './Modals/ConfirmationModal';
+import './AppSidebar.css';
+import { colors } from '../styles/colors';
 
 const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const unfoldable = useSelector((state) => state.sidebarUnfoldable);
-  const sidebarShow = useSelector((state) => state.sidebarShow);
+  const unfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
+  const sidebarShow = useSelector((state) => state.ui.sidebarShow);
 
   const [showModal, setShowModal] = useState(false);
   const [driveConnected, setDriveConnected] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -35,7 +38,7 @@ const AppSidebar = ({ isDarkMode }) => {
     try {
       const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
       const response = await fetch(`${baseUrl}/admin/drive-connection`, {
-        credentials: 'include'
+        credentials: 'include',
       });
       const data = await response.json();
       setDriveConnected(data.connected);
@@ -47,55 +50,90 @@ const AppSidebar = ({ isDarkMode }) => {
 
   useEffect(() => {
     checkDriveConnection();
-
-    // Check connection every 30 seconds
     const interval = setInterval(checkDriveConnection, 30000);
-
     return () => clearInterval(interval);
   }, []);
-
-  // Remove drive status from navigation - it will be shown in footer instead
 
   return (
     <>
       <CSidebar
-        className="border-end"
-        colorScheme="dark"
+        className={`border-end sidebar ${sidebarShow ? 'show' : ''} ${unfoldable ? 'sidebar-unfoldable' : ''} ${unfoldable && isHovered ? 'sidebar-hover-expanded' : ''}`}
+        colorScheme={isDarkMode ? 'dark' : 'light'}
         position="fixed"
         unfoldable={unfoldable}
         visible={sidebarShow}
         onVisibleChange={(visible) => dispatch({ type: 'set', sidebarShow: visible })}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        style={{
+          zIndex: unfoldable && isHovered ? 1060 : 1050,
+          transition: 'z-index 0.1s ease',
+        }}
       >
         <CSidebarHeader className="border-bottom d-flex justify-content-between align-items-center px-3">
           <CSidebarBrand to="/" />
           <CCloseButton
             className="d-lg-none"
-            dark
+            dark={isDarkMode}
             onClick={() => dispatch({ type: 'set', sidebarShow: false })}
           />
         </CSidebarHeader>
 
         <AppSidebarNav items={navigation} />
 
-        {/* Google Drive Status - Above Footer */}
-        <div className="border-top d-none d-lg-flex justify-content-between align-items-center px-3 py-2" style={{ backgroundColor: 'rgba(255,255,255,0.05)' }}>
-          <span className="text-white-50 small">Google Drive</span>
+        {/* Google Drive Status */}
+        <div
+          className="border-top d-none d-lg-flex justify-content-between align-items-center px-3 py-2"
+          style={{
+            backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+          }}
+        >
+          <div
+            className="fw-semibold small"
+            style={{
+              color: isDarkMode ? '#ffffff' : '#212529', // White on dark, dark text on light
+            }}
+          >
+            Google Drive
+          </div>
+
           <CBadge
-            color={driveConnected ? 'success' : 'secondary'}
             size="sm"
+            style={{
+              backgroundColor: driveConnected
+                ? colors.success.background
+                : isDarkMode
+                  ? colors.white // gray badge in dark
+                  : colors.textPrimary, // light gray badge in light mode
+              color: driveConnected
+                ? colors.success.text
+                : isDarkMode
+                  ? colors.white
+                  : colors.textPrimary,
+            }}
           >
             {driveConnected ? 'Connected' : 'Disconnected'}
           </CBadge>
         </div>
 
+
+        {/* Footer */}
         <CSidebarFooter className="border-top d-none d-lg-flex justify-content-center align-items-center p-3">
           <div
             className="d-flex align-items-center gap-2"
             style={{ cursor: 'pointer' }}
             onClick={() => setShowModal(true)}
           >
-            <CSidebarToggler />
-            <span className="text-white small">Logout</span>
+            <CSidebarToggler
+              onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
+            />
+            <span
+              className="small"
+              style={{ color: isDarkMode ? colors.white : colors.textPrimary }}
+            >
+              Logout
+            </span>
+
           </div>
         </CSidebarFooter>
       </CSidebar>
