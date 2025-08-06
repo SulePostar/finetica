@@ -4,6 +4,7 @@ import storage from 'redux-persist/lib/storage';
 
 import userReducer from './redux/user/userSlice';
 import authReducer from './redux/auth/authSlice';
+import usersReducer from './redux/users/usersSlice';
 
 // Simple UI state reducer
 const initialUIState = {
@@ -37,8 +38,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['user', 'auth'],, // samo user i auth se čuvaju u localStorage, UI state nije persistovan
-  whitelist: ['user', 'auth'],, // samo user i auth se čuvaju u localStorage, UI state nije persistovan
+  whitelist: ['user', 'auth'], // samo user i auth se čuvaju u localStorage, UI state nije persistovan
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -51,8 +51,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
       },
-    }),,
-    }),,
+    }),
 });
 
 // Persistor (za redux-persist)
