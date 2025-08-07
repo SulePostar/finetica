@@ -6,9 +6,9 @@ class UserResponseDTO {
     this.lastName = user.lastName;
     this.fullName = `${user.firstName} ${user.lastName}`;
     this.roleId = user.roleId;
-    this.roleName = user.role.get('role');
+    this.roleName = user.role ? user.role.get('role') : null;
     this.statusId = user.statusId;
-    this.statusName = user.status.get('status');
+    this.statusName = user.status ? user.status.get('status') : null;
     this.isEmailVerified = user.isEmailVerified;
     this.createdAt = user.createdAt;
     this.updatedAt = user.updatedAt;

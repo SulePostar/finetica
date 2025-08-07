@@ -33,7 +33,8 @@ const authorizeAdmin = (req, res, next) => {
     req.user = decoded;
     console.log('req.user', decoded);
 
-    if (req.user.roleId === 3) {
+    if (req.user.roleId === 1) {
+      // admin is id 1
       return next();
     } else {
       return res.status(403).json({ message: 'Access denied! Admin only!' });
