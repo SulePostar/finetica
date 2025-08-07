@@ -9,6 +9,7 @@ const Admin = React.lazy(() => import('../pages/Admin/Admin'));
 const Kif = React.lazy(() => import('../pages/kif/Kif'));
 const Vat = React.lazy(() => import('../pages/vat/Vat'));
 const Kuf = React.lazy(() => import('../pages/kuf/Kuf'));
+const ProfilePage = React.lazy(() => import('../pages/Profile/ProfilePage'));
 const GuestWrapper = React.lazy(() => import('../protectedRoutes/GuestWrapper'));
 
 export default function AppRoutes() {
@@ -78,6 +79,14 @@ export default function AppRoutes() {
           }
         />
 
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
         {/* Fallback for unknown routes */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

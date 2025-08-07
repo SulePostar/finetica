@@ -19,6 +19,19 @@ const getMyProfile = async (req, res, next) => {
   }
 };
 
+const editMyProfile = async (req, res, next) => {
+  if (!req.body.id) {
+    return res.status(400).json({ error: 'User ID is required in request body' });
+  }
+  try {
+    const { id, ...updateData } = req.body;
+    const updatedUser = await userService.updateProfile(id, updateData);
+    res.json(new UserResponseDTO(updatedUser));
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Admin functions
 const getUserById = async (req, res) => {
   try {
@@ -89,4 +102,5 @@ module.exports = {
   updateUser,
   deleteUser,
   getUserStats,
+  editMyProfile,
 };

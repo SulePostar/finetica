@@ -115,6 +115,22 @@ class UserService {
       })),
     };
   }
+
+  async updateProfile(id, updatedData) {
+    const user = await User.findByPk(id);
+    if (!user) throw new AppError('User not found', 404);
+
+    const allowedFields = ['firstName', 'lastName', 'email'];
+    allowedFields.forEach((field) => {
+      if (updatedData[field] !== undefined) {
+        user[field] = updatedData[field];
+      }
+    });
+
+    await user.save();
+
+    return await this.getUserById(id);
+  }
 }
 
 module.exports = new UserService();
