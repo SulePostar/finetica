@@ -4,7 +4,6 @@ import './Kuf.styles.css';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useBucketName } from '../../lib/bucketUtils';
-import { Container } from 'react-bootstrap';
 
 const Kuf = () => {
 
@@ -22,13 +21,11 @@ const Kuf = () => {
         <DefaultLayout>
             <div className="body flex-grow-1 px-3" style={{ paddingTop: '80px' }}>
 
-                <Container>
-                    <CCol>
-                        <UploadButton
-                            bucketName={bucketName}
-                        />
-                    </CCol>
-                </Container>
+                <div className="d-flex justify-content-end mb-3">
+                    <UploadButton
+                        bucketName={bucketName}
+                    />
+                </div>
                 <CContainer className="h-100" fluid>
                     <CRow>
                         <CCol>
