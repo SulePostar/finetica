@@ -6,8 +6,9 @@ import { cilUser, cilEnvelopeClosed, cilLockLocked, cilContact } from '@coreui/i
 import { injectRegisterFormStyles, registerFormStyles } from './RegisterForm.styles';
 import { authService } from '../../../services';
 import { useRegistrationForm } from '../../../hooks/useRegistrationForm';
-import PhotoUploadService from '../../../services/photoUploadService';
+import FileUploadService from '../../../services/fileUploadService';
 import ProfilePhotoUpload from '../ProfilePhotoUpload';
+import notify from '../../../utilis/toastHelper';
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -22,7 +23,6 @@ const RegisterForm = () => {
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
 
   const handlePhotoSelect = useCallback((file) => {
     setProfilePhoto(file);
@@ -33,13 +33,11 @@ const RegisterForm = () => {
     e.preventDefault();
 
     if (!validateForm()) {
-      setError('Please fix the errors below');
+      notify.onError('Please fix the errors below');
       return;
     }
 
     setLoading(true);
-    setError('');
-    setSuccess('');
 
     try {
       const registrationData = {
@@ -51,24 +49,25 @@ const RegisterForm = () => {
 
       // Upload profile photo if provided
       if (profilePhoto) {
-        const uploadResult = await PhotoUploadService.uploadProfileImage(
+        const uploadResult = await FileUploadService.uploadProfileImage(
           profilePhoto,
           formData.firstName,
           formData.lastName
         );
 
-        if (!uploadResult.success) {
-          setError(`Photo upload failed: ${uploadResult.error}`);
-          return;
+        if (uploadResult.success && uploadResult.url) {
+          registrationData.profileImage = uploadResult.url;
+          notify.onSuccess('Profile image uploaded successfully!');
+        } else {
+          notify.onWarning('Profile image upload failed, but registration will continue');
+          // Continue with registration even if image upload fails
         }
-
-        registrationData.profileImage = uploadResult.url;
       }
 
       const result = await authService.register(registrationData);
 
       if (result.success) {
-        setSuccess('Registration successful! Redirecting to login page...');
+        notify.onSuccess('Registration successful! Redirecting to login page...');
         resetForm();
         setProfilePhoto(null);
 
@@ -79,11 +78,11 @@ const RegisterForm = () => {
         const errorMessage = result.errors?.length > 0
           ? result.errors.join(', ')
           : result.message || 'Registration failed';
-        setError(errorMessage);
+        notify.onError(errorMessage);
       }
     } catch (error) {
       console.error('Registration error:', error);
-      setError('An unexpected error occurred. Please try again.');
+      notify.onError('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -109,12 +108,6 @@ const RegisterForm = () => {
         {error && (
           <CAlert color="danger" style={{ marginBottom: '20px' }}>
             {error}
-          </CAlert>
-        )}
-
-        {success && (
-          <CAlert color="success" style={{ marginBottom: '20px' }}>
-            {success}
           </CAlert>
         )}
 
