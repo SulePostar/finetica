@@ -7,9 +7,8 @@ import { CBadge } from '@coreui/react';
  * @type {Object.<number, string>}
  */
 export const ROLES = {
-  1: 'Guest',
+  1: 'Admin',
   2: 'User',
-  3: 'Admin',
 };
 
 /**

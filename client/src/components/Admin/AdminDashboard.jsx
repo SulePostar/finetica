@@ -228,10 +228,8 @@ const AdminDashboard = () => {
                   title="Change Role"
                   disabled={changingRole}
                 >
-                  <option value="">No Role</option>
-                  <option value={1}>Guest</option>
+                  <option value={1}>Admin</option>
                   <option value={2}>User</option>
-                  <option value={3}>Admin</option>
                 </select>
               </div>
               <button

@@ -67,9 +67,8 @@ const UserRow = ({
             disabled={isChangingRole}
           >
             <option value="">No Role</option>
-            <option value={1}>Guest</option>
-            <option value={2}>User</option>
-            <option value={3}>Admin</option>
+            <option value={2}>Admin</option>
+            <option value={3}>User</option>
           </CFormSelect>
           <CButton
             size="sm"
