@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 // Import modular services
 const Logger = require('../utils/loggerSync');
 const ConfigManager = require('../config/configManagerSync');
-const SyncOrchestrator = require('../services/driveToSupabaseSync');
+const SyncOrchestrator = require('../utils/supabase/driveToSupabaseSync');
 const FileUtils = require('../utils/fileUtils');
 
 // Load environment variables
