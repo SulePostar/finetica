@@ -15,10 +15,41 @@ const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
   const unfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
+  const userRole = useSelector((state) => state.user.profile.roleName);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Debug logging
-  console.log('AppSidebar render - sidebarShow:', sidebarShow, 'unfoldable:', unfoldable);
+  const filteredNav = navigation
+    .map((item) => {
+      const isAdmin = userRole === 'admin';
+
+      // CNavGroup (ima children/items)
+      if (item.component?.displayName === 'CNavGroup' && item.items) {
+        if (item.adminOnly && !isAdmin) return null;
+
+        const filteredItems = item.items.filter(
+          (child) => !child.adminOnly || isAdmin
+        );
+
+        if (filteredItems.length === 0) return null;
+
+        return {
+          ...item,
+          items: filteredItems,
+        };
+      }
+
+      // CNavTitle (nema items)
+      if (item.component?.displayName === 'CNavTitle') {
+        if (item.adminOnly && !isAdmin) return null;
+        return item;
+      }
+
+      // Obični CNavItem
+      if (item.adminOnly && !isAdmin) return null;
+      return item;
+    })
+    .filter(Boolean);
+
 
   return (
     <CSidebar
@@ -26,9 +57,10 @@ const AppSidebar = ({ isDarkMode }) => {
       colorScheme={isDarkMode ? 'dark' : 'light'}
       position="fixed"
       unfoldable={unfoldable}
+      visible={sidebarShow}
       style={{
-        zIndex: (unfoldable && isHovered) ? 1060 : 1050,
-        transition: 'z-index 0.1s ease'
+        zIndex: unfoldable && isHovered ? 1060 : 1050,
+        transition: 'z-index 0.1s ease',
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -41,11 +73,13 @@ const AppSidebar = ({ isDarkMode }) => {
         />
       </CSidebarHeader>
 
-      <AppSidebarNav items={navigation} />
+      <AppSidebarNav items={filteredNav} />
 
       <CSidebarFooter className="border-top d-none d-lg-flex">
         <CSidebarToggler
-          onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
+          onClick={() =>
+            dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })
+          }
         />
       </CSidebarFooter>
     </CSidebar>

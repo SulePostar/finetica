@@ -61,8 +61,6 @@ class AuthService {
       ],
     });
 
-    console.log('User found:', user);
-
     if (!user) throw new AppError('Invalid credentials', 401);
 
     if (user.statusId === USER_STATUS.DELETED) throw new AppError('Account deactivated', 403);
@@ -81,7 +79,6 @@ class AuthService {
     await user.update({ lastLoginAt: new Date() });
 
     const token = this.#generateToken(user.id, user.role?.id, user.role?.role);
-    console.log('Generated token:', token);
 
     return {
       success: true,
