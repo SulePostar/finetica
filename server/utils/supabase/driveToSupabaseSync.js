@@ -1,7 +1,7 @@
 const fs = require('fs');
-const Logger = require('../utils/loggerSync');
-const FileUtils = require('../utils/fileUtils');
-const GoogleDriveService = require('./googleDriveService');
+const Logger = require('../loggerSync');
+const FileUtils = require('../fileUtils');
+const GoogleDriveService = require('../../services/googleDriveService');
 const SupabaseStorageService = require('./supabaseStorage');
 
 /**

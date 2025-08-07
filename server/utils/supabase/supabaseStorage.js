@@ -1,7 +1,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
-const Logger = require('../utils/loggerSync');
-const FileUtils = require('../utils/fileUtils');
+const Logger = require('../loggerSync');
+const FileUtils = require('../fileUtils');
 
 /**
  * Supabase Storage service class for handling file storage operations
