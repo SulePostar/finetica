@@ -48,24 +48,22 @@
 
 .admin-dashboard-delete-btn {
   padding: 6px 10px;
-  margin-left: 30px;
 }
 
 /* Status dropdown wrapper */
 .admin-dashboard-status-dropdown-wrapper {
-  width: 150px;
+  width: 50%;
 }
 
 /* Role dropdown wrapper */
 .admin-dashboard-role-dropdown-wrapper {
-  width: 140px;
-  margin-left: 20px;
+  width: 50%;
 }
 
 /* Dropdown styles */
 .admin-dashboard-status-dropdown,
 .admin-dashboard-role-dropdown {
-  width: 170%;
+  width: 100%;
   padding: 4px 6px;
   font-size: 13px;
 }

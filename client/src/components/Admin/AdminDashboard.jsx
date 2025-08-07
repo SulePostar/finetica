@@ -8,6 +8,7 @@ import { cilUser, cilPencil, cilTrash } from '@coreui/icons';
 
 // Import CSS
 import './AdminDashboard.css';
+import { colors } from '../../styles/colors';
 
 // Redux imports
 import {
@@ -157,11 +158,11 @@ const AdminDashboard = () => {
         name: 'Name',
         selector: (row) => row.fullName || row.email,
         sortable: true,
-        width: '150px',
+        width: '15%',
         cell: (row) => (
           <div>
             {row.fullName || row.email}
-            {isNewUser(row) && <span className="badge bg-warning ms-2">New User</span>}
+            {isNewUser(row) && <span className="badge bg-success ms-2">New User</span>}
           </div>
         ),
       },
@@ -169,7 +170,7 @@ const AdminDashboard = () => {
         name: 'Email',
         selector: (row) => row.email,
         sortable: true,
-        width: '250px',
+        width: '25%',
         cell: (row) => (
           <div className="admin-dashboard-email-cell" title={row.email}>
             {row.email}
@@ -180,32 +181,24 @@ const AdminDashboard = () => {
         name: 'Role',
         selector: (row) => getRoleName(row),
         sortable: true,
-        width: '100px',
+        width: '12.5%',
       },
       {
         name: 'Status',
         selector: (row) => row.statusId,
         sortable: true,
-        width: '120px',
+        width: '12.5%',
         cell: (row) => getStatusBadge(row.statusId),
       },
       {
         name: 'Actions',
         selector: (row) => row.id,
         sortable: false,
-        width: '280px',
+        width: '35%',
         cell: (row) => {
           const isSelf = row.id === currentUser?.id;
           return (
             <div className="admin-dashboard-actions-container">
-              <button
-                className="btn btn-info btn-sm admin-dashboard-edit-btn"
-                onClick={() => handleEditUser(row)}
-                disabled={updatingUser || deletingUser}
-                title="Edit User"
-              >
-                <CIcon icon={cilPencil} />
-              </button>
               <div className="admin-dashboard-status-dropdown-wrapper">
                 <select
                   className="form-select form-select-sm admin-dashboard-status-dropdown"
@@ -233,7 +226,16 @@ const AdminDashboard = () => {
                 </select>
               </div>
               <button
-                className="btn btn-danger btn-sm admin-dashboard-delete-btn"
+                className="btn btn-sm admin-dashboard-edit-btn"
+                onClick={() => handleEditUser(row)}
+                disabled={updatingUser || deletingUser}
+                title="Edit User"
+                style={{ backgroundColor: colors.primary }}
+              >
+                <CIcon icon={cilPencil} />
+              </button>
+              <button
+                className="btn bg-danger btn-sm admin-dashboard-delete-btn"
                 onClick={() => handleDeleteUser(row)}
                 disabled={isSelf || updatingUser || deletingUser}
                 title="Delete User"
@@ -243,7 +245,7 @@ const AdminDashboard = () => {
             </div>
           );
         },
-      },
+      }
     ],
     [
       currentUser,
@@ -273,7 +275,6 @@ const AdminDashboard = () => {
         <Card className="my-4 shadow-sm border-0 bg-light dark:bg-dark">
           <Card.Body>
             <Card.Title className="admin-dashboard-title">
-              <CIcon icon={cilUser} className="me-2" />
               User Management Dashboard
             </Card.Title>
 

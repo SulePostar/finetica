@@ -2,6 +2,7 @@ import React from 'react';
 import { CFormInput, CFormSelect, CButton } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilSearch, cilReload } from '@coreui/icons';
+import { colors } from '../../styles/colors';
 
 const SearchFilters = ({
   searchTerm,
@@ -27,13 +28,12 @@ const SearchFilters = ({
           className="mb-0"
         >
           <option value="">All Roles</option>
-          <option value="1">Guest</option>
+          <option value="1">Admin</option>
           <option value="2">User</option>
-          <option value="3">Admin</option>
         </CFormSelect>
       </div>
       <div style={{ width: '120px' }}>
-        <CButton color="primary" onClick={onRefresh} size="sm">
+        <CButton style={{ backgroundColor: colors.primary }} onClick={onRefresh} size="sm">
           <CIcon icon={cilReload} className="me-1" />
           Refresh
         </CButton>

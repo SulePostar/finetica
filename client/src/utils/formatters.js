@@ -60,7 +60,7 @@ export const getRoleName = (user, roles = []) => {
   }
 
   const roleId = user.role_id || user.roleId;
-  if (!roleId) return 'No Role Assigned';
+  if (!roleId) return 'No Role';
 
   // Try to find role in dynamic roles first
   const dynamicRole = roles.find((r) => r.id === roleId);
@@ -69,7 +69,7 @@ export const getRoleName = (user, roles = []) => {
   }
 
   // Fallback to hardcoded roles
-  return ROLES[roleId] || 'No Role Assigned';
+  return ROLES[roleId] || 'No Role';
 };
 
 /**
