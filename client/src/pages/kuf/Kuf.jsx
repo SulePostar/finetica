@@ -4,6 +4,7 @@ import './Kuf.styles.css';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useBucketName } from '../../lib/bucketUtils';
+import { Container } from 'react-bootstrap';
 
 const Kuf = () => {
 
@@ -18,27 +19,25 @@ const Kuf = () => {
     const bucketName = useBucketName();
 
     return (
-        <>
-            <DefaultLayout>
-                <div className="body flex-grow-1 px-3">
-                    <CCol>
-                        <div className="d-flex justify-content-end align-items-center">
-                            <UploadButton
-                                bucketName={bucketName}
-                            />
-                        </div>
-                    </CCol>
-                    <CContainer className="h-100" fluid>
-                        <CRow>
-                            <CCol>
-                                <DynamicTable title="KUF Table" columns={columns} apiEndpoint="http://localhost:4000/api/kuf-data" />
+        <DefaultLayout>
+            <div className="body flex-grow-1 px-3" style={{ paddingTop: '80px' }}>
 
-                            </CCol>
-                        </CRow>
-                    </CContainer>
-                </div>
-            </DefaultLayout>
-        </>
+                <Container>
+                    <CCol>
+                        <UploadButton
+                            bucketName={bucketName}
+                        />
+                    </CCol>
+                </Container>
+                <CContainer className="h-100" fluid>
+                    <CRow>
+                        <CCol>
+                            <DynamicTable title="KUF Table" columns={columns} apiEndpoint="http://localhost:4000/api/kuf-data" />
+                        </CCol>
+                    </CRow>
+                </CContainer>
+            </div>
+        </DefaultLayout>
     );
 };
 

@@ -4,6 +4,7 @@ import { useBucketName } from '../../lib/bucketUtils';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import './Kif.styles.css';
+import { Container } from 'react-bootstrap';
 
 const Kif = () => {
     const columns = [
@@ -18,14 +19,15 @@ const Kif = () => {
 
     return (
         <DefaultLayout>
-            <div className="body flex-grow-1 px-3">
-                <CCol>
-                    <div className="d-flex justify-content-end align-items-center">
+            <div className="body flex-grow-1 px-3" style={{ paddingTop: '80px' }}>
+
+                <Container>
+                    <CCol>
                         <UploadButton
                             bucketName={bucketName}
                         />
-                    </div>
-                </CCol>
+                    </CCol>
+                </Container>
                 <CContainer className="h-100" fluid>
                     <CRow>
                         <CCol>
