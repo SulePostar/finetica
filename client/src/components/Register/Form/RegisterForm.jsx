@@ -111,12 +111,6 @@ const RegisterForm = () => {
           </CAlert>
         )}
 
-        {success && (
-          <CAlert color="success" style={{ marginBottom: '20px' }}>
-            {success}
-          </CAlert>
-        )}
-
         <CForm onSubmit={handleSubmit} noValidate>
           <ProfilePhotoUpload
             onPhotoSelect={handlePhotoSelect}

@@ -1,6 +1,6 @@
 const { UploadedFile, User } = require('../models');
 const { Op } = require('sequelize');
-const supabaseService = require('./supabaseService');
+const supabaseService = require('../utils/supabase/supabaseService');
 const AppError = require('../utils/errorHandler');
 
 class UploadedFilesService {

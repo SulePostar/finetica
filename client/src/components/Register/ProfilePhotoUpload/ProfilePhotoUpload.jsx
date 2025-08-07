@@ -9,7 +9,7 @@ import './ProfilePhotoUpload.styles.css';
 const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [previewUrl, setPreviewUrl] = useState(initialPhoto);
+    const [previewUrl, setPreviewUrl] = useState(null);
 
     const handlePhotoClick = useCallback(() => {
         if (!disabled) {
