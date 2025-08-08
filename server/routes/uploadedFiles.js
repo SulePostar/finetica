@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const uploadedFilesController = require('../controllers/uploadedFiles');
-const authorizeAdmin = require('../middleware/authMiddleware');
+const { authorizeAdmin } = require('../middleware/authMiddleware');
 const {
   profileImageUpload,
   fileUpload,

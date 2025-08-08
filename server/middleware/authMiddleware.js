@@ -20,7 +20,7 @@ const verifyToken = (req, res, next) => {
 };
 
 // Function to authorize admin users
-module.exports = function authorizeAdmin(req, res, next) {
+const authorizeAdmin = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ message: 'Missing token!' });
