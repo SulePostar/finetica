@@ -4,6 +4,12 @@
 
 This project now has Jest testing configured for both frontend (React) and backend (Node.js/Express). The setup uses mock data and services, so no test database is required.
 
+**📚 Documentation Structure:**
+
+- **This guide**: General overview and quick start for both frontend and backend
+- **[Frontend Testing Guide](./frontend-testing-guide.md)**: Comprehensive React/Redux testing with advanced patterns
+- **[Backend Testing Guide](../../server/documentation/backend-testing-guide.md)**: Detailed Node.js/Express API testing with external service mocking
+
 ## Project Structure
 
 ```
