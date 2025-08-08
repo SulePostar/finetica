@@ -1,14 +1,14 @@
 /* AdminDashboard.css - Extracted styles from AdminDashboard.jsx */
 
 /* Container styles */
-.admin-dashboard-container {
+.user-dashboard-container {
   max-width: 1000px;
   margin: 0 auto;
   width: 100%;
 }
 
 /* Loading state */
-.admin-dashboard-loading {
+.user-dashboard-loading {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,7 +16,7 @@
 }
 
 /* Dashboard title */
-.admin-dashboard-title {
+.user-dashboard-title {
   margin-bottom: 20px;
   font-size: 28px;
   font-weight: 700;
@@ -25,7 +25,7 @@
 }
 
 /* Email cell styles */
-.admin-dashboard-email-cell {
+.user-dashboard-email-cell {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -33,7 +33,7 @@
 }
 
 /* Actions container */
-.admin-dashboard-actions-container {
+.user-dashboard-actions-container {
   display: flex;
   gap: 0.75rem;
   align-items: center;
@@ -42,34 +42,34 @@
 }
 
 /* Action buttons */
-.admin-dashboard-edit-btn {
+.user-dashboard-edit-btn {
   padding: 6px 10px;
 }
 
-.admin-dashboard-delete-btn {
+.user-dashboard-delete-btn {
   padding: 6px 10px;
 }
 
 /* Status dropdown wrapper */
-.admin-dashboard-status-dropdown-wrapper {
+.user-dashboard-status-dropdown-wrapper {
   width: 50%;
 }
 
 /* Role dropdown wrapper */
-.admin-dashboard-role-dropdown-wrapper {
+.user-dashboard-role-dropdown-wrapper {
   width: 50%;
 }
 
 /* Dropdown styles */
-.admin-dashboard-status-dropdown,
-.admin-dashboard-role-dropdown {
+.user-dashboard-status-dropdown,
+.user-dashboard-role-dropdown {
   width: 100%;
   padding: 4px 6px;
   font-size: 13px;
 }
 
 /* Search filters container */
-.admin-dashboard-search-filters {
+.user-dashboard-search-filters {
   margin-bottom: 1rem;
   width: 100%;
 }

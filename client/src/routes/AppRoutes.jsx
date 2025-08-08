@@ -5,7 +5,8 @@ import ProtectedRoute from '../protectedRoutes/ProtectedRouter';
 
 const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
-const Admin = React.lazy(() => import('../pages/Admin/Admin'));
+const AdminUserDahsboard = React.lazy(() => import('../pages/Admin/AdminUserDahsboard'));
+const AdminRoleStatusDashboard = React.lazy(() => import('../pages/Admin/AdminRoleStatusDashboard'));
 const Kif = React.lazy(() => import('../pages/Kif/Kif'));
 const Vat = React.lazy(() => import('../pages/vat/Vat'));
 const Kuf = React.lazy(() => import('../pages/kuf/Kuf'));
@@ -42,15 +43,23 @@ export default function AppRoutes() {
           path="/"
           element={
             <ProtectedRoute>
-              <Navigate to="/admin" replace />
+              <Navigate to="/admin/user-dashboard" replace />
             </ProtectedRoute>
           }
         />
         <Route
-          path="/admin"
+          path="/admin/user-dashboard"
           element={
             <ProtectedRoute>
-              <Admin />
+              <AdminUserDahsboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/role-status-dashboard"
+          element={
+            <ProtectedRoute>
+              <AdminRoleStatusDashboard />
             </ProtectedRoute>
           }
         />

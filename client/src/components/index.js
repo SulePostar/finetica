@@ -1,7 +1,7 @@
 import AppHeader from './AppHeader.jsx';
 import AppSidebar from './AppSidebar.jsx';
 import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
-import AdminDashboard from './Admin/AdminDashboard.jsx';
+import UserDashboard from './Admin/User dahboard/UserDashboard.jsx';
 import ConfirmationModal from './Modals/ConfirmationModal.jsx';
 import FileUploadModal from './Modals/FileUploadModal.jsx';
 import EditUserModal from './Modals/EditUserModal.jsx';
@@ -16,7 +16,7 @@ export {
   AppHeader,
   AppHeaderDropdown,
   AppSidebar,
-  AdminDashboard,
+  UserDashboard,
   ConfirmationModal,
   FileUploadModal,
   EditUserModal,

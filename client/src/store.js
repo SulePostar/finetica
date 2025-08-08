@@ -5,6 +5,8 @@ import storage from 'redux-persist/lib/storage';
 import usersReducer from './redux/users/usersSlice';
 import userReducer from './redux/user/userSlice';
 import authReducer from './redux/auth/authSlice';
+import rolesReducer from './redux/roles/rolesSlice';
+import statusesReducer from './redux/statuses/statusesSlice';
 
 // Simple UI state reducer
 const initialUIState = {
@@ -32,6 +34,8 @@ const rootReducer = combineReducers({
   auth: authReducer,
   ui: uiReducer,
   users: usersReducer,
+  roles: rolesReducer,
+  statuses: statusesReducer,
 });
 
 // Konfiguracija za redux-persist

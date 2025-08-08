@@ -43,12 +43,12 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Users',
-        to: '/management/users',
+        to: '/admin/user-dashboard',
       },
       {
         component: CNavItem,
         name: 'Roles/Status',
-        to: '/management/roles-status',
+        to: '/admin/role-status-dashboard',
       },
     ],
   },

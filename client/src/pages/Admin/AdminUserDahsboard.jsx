@@ -1,19 +1,19 @@
 import React from 'react';
 import { AppHeader, AppSidebar } from '../../components/index';
-import AdminDashboard from '../../components/Admin/AdminDashboard';
+import UserDashboard from '../../components/Admin/User dahboard/UserDashboard';
 
-const Admin = () => {
+const AdminUserDashboard = () => {
   return (
     <>
       <AppSidebar />
       <div className="wrapper d-flex flex-column min-vh-100">
         <AppHeader />
         <div className="body flex-grow-1 px-3">
-          <AdminDashboard />
+          <UserDashboard />
         </div>
       </div>
     </>
   );
 };
 
-export default Admin;
+export default AdminUserDashboard;

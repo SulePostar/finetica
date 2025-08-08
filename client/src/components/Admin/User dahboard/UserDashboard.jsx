@@ -2,13 +2,13 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Card, Spinner } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
-import makeCustomStyles from '../Tables/DynamicTable.styles';
+import makeCustomStyles from '../../Tables/DynamicTable.styles';
 import CIcon from '@coreui/icons-react';
 import { cilUser, cilPencil, cilTrash } from '@coreui/icons';
 
 // Import CSS
-import './AdminDashboard.css';
-import { colors } from '../../styles/colors';
+import './UserDashboard.css';
+import { colors } from '../../../styles/colors';
 
 // Redux imports
 import {
@@ -27,16 +27,16 @@ import {
   selectDeletingUser,
   selectChangingStatus,
   selectChangingRole,
-} from '../../redux/users/usersSlice';
+} from '../../../redux/users/usersSlice';
 
 // Component imports
-import { SearchFilters, EditUserModal, DeleteUserModal, QuickChangeModal } from '../index';
+import { SearchFilters, EditUserModal, DeleteUserModal, QuickChangeModal } from '../../index';
 
 // Utility imports
-import { filterUsers, getRoleName, getStatusBadge, isNewUser } from '../../utils/formatters';
-import notify from '../../utilis/toastHelper';
+import { filterUsers, getRoleName, getStatusBadge, isNewUser } from '../../../utils/formatters';
+import notify from '../../../utilis/toastHelper';
 
-const AdminDashboard = () => {
+const UserDashboard = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.profile);
 
@@ -172,7 +172,7 @@ const AdminDashboard = () => {
         sortable: true,
         width: '25%',
         cell: (row) => (
-          <div className="admin-dashboard-email-cell" title={row.email}>
+          <div className="user-dashboard-email-cell" title={row.email}>
             {row.email}
           </div>
         ),
@@ -198,10 +198,10 @@ const AdminDashboard = () => {
         cell: (row) => {
           const isSelf = row.id === currentUser?.id;
           return (
-            <div className="admin-dashboard-actions-container">
-              <div className="admin-dashboard-status-dropdown-wrapper">
+            <div className="user-dashboard-actions-container">
+              <div className="user-dashboard-status-dropdown-wrapper">
                 <select
-                  className="form-select form-select-sm admin-dashboard-status-dropdown"
+                  className="form-select form-select-sm user-dashboard-status-dropdown"
                   value={row.statusId}
                   onChange={(e) => handleQuickStatusChange(row.id, parseInt(e.target.value))}
                   title="Change Status"
@@ -213,9 +213,9 @@ const AdminDashboard = () => {
                   <option value={4}>Deleted</option>
                 </select>
               </div>
-              <div className="admin-dashboard-role-dropdown-wrapper">
+              <div className="user-dashboard-role-dropdown-wrapper">
                 <select
-                  className="form-select form-select-sm admin-dashboard-role-dropdown"
+                  className="form-select form-select-sm user-dashboard-role-dropdown"
                   value={row.roleId || row.role_id || ''}
                   onChange={(e) => handleQuickRoleChange(row.id, parseInt(e.target.value))}
                   title="Change Role"
@@ -226,7 +226,7 @@ const AdminDashboard = () => {
                 </select>
               </div>
               <button
-                className="btn btn-sm admin-dashboard-edit-btn"
+                className="btn btn-sm user-dashboard-edit-btn"
                 onClick={() => handleEditUser(row)}
                 disabled={updatingUser || deletingUser}
                 title="Edit User"
@@ -235,7 +235,7 @@ const AdminDashboard = () => {
                 <CIcon icon={cilPencil} />
               </button>
               <button
-                className="btn bg-danger btn-sm admin-dashboard-delete-btn"
+                className="btn bg-danger btn-sm user-dashboard-delete-btn"
                 onClick={() => handleDeleteUser(row)}
                 disabled={isSelf || updatingUser || deletingUser}
                 title="Delete User"
@@ -263,7 +263,7 @@ const AdminDashboard = () => {
   // Loading state
   if (loading) {
     return (
-      <div className="admin-dashboard-loading">
+      <div className="user-dashboard-loading">
         <Spinner animation="border" variant="primary" />
       </div>
     );
@@ -271,15 +271,15 @@ const AdminDashboard = () => {
 
   return (
     <div>
-      <div className="admin-dashboard-container">
+      <div className="user-dashboard-container">
         <Card className="my-4 shadow-sm border-0 bg-light dark:bg-dark">
           <Card.Body>
-            <Card.Title className="admin-dashboard-title">
+            <Card.Title className="user-dashboard-title">
               User Management Dashboard
             </Card.Title>
 
             {/* Search and Filters */}
-            <div className="admin-dashboard-search-filters">
+            <div className="user-dashboard-search-filters">
               <SearchFilters
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
@@ -347,4 +347,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default UserDashboard;
