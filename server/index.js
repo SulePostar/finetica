@@ -1,6 +1,7 @@
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
+const session = require('express-session');
 const { connectToDatabase } = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 const kifRouter = require('./routes/kif');
