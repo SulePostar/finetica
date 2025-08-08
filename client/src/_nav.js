@@ -1,4 +1,4 @@
-import { CNavItem, CNavTitle } from '@coreui/react';
+import { CNavItem, CNavTitle, CNavGroup } from '@coreui/react';
 import { cilHome, cilListNumbered, cilList, cilCalculator, cilSpeedometer } from '@coreui/icons';
 
 const _nav = [
@@ -8,7 +8,6 @@ const _nav = [
     to: '/',
     icon: cilSpeedometer,
   },
-
   {
     component: CNavTitle,
     name: 'Components',
@@ -30,6 +29,28 @@ const _nav = [
     name: 'VAT',
     to: '/vat',
     icon: cilCalculator,
+  },
+  {
+    component: CNavTitle,
+    name: 'Dashboard',
+    adminOnly: true,
+  },
+  {
+    component: CNavGroup,
+    name: 'Management',
+    adminOnly: true,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Users',
+        to: '/management/users',
+      },
+      {
+        component: CNavItem,
+        name: 'Roles/Status',
+        to: '/management/roles-status',
+      },
+    ],
   },
 ];
 

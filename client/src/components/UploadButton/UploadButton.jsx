@@ -3,13 +3,10 @@ import { CButton } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilCloudUpload } from '@coreui/icons';
 import { FileUploadModal } from '../Modals';
+import './UploadButton.css';
 
 const UploadButton = ({
     bucketName,
-    description = '',
-    size = 'sm',
-    variant = 'outline',
-    color = 'primary',
     className = '',
     onUploadSuccess,
     onUploadError,
@@ -43,14 +40,12 @@ const UploadButton = ({
         <>
             <div className={`upload-button-container ${className}`}>
                 <CButton
-                    color="info"
                     variant="outline"
                     onClick={handleUploadClick}
-                    className="d-flex align-items-center"
-                    style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
+                    className="d-flex align-items-center upload-button"
                     {...props}
                 >
-                    <CIcon icon={cilCloudUpload} className="me-1" style={{ width: '12px', height: '12px' }} />
+                    <CIcon icon={cilCloudUpload} className="me-1 upload-button-icon" />
                     {children || 'Upload File'}
                 </CButton>
             </div>
