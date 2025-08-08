@@ -1,7 +1,42 @@
 const { UploadedFile, User } = require('../models');
 const { Op } = require('sequelize');
+const supabaseService = require('../utils/supabase/supabaseService');
+const AppError = require('../utils/errorHandler');
 
 class UploadedFilesService {
+  /**
+   * Get allowed buckets for file uploads
+   * @returns {Array<string>} Array of allowed bucket names
+   */
+  getAllowedBuckets() {
+    return ['kif', 'kuf', 'transactions'];
+  }
+
+  /**
+   * Validate bucket name
+   * @param {string} bucketName - Bucket name to validate
+   * @returns {Object} Validation result
+   */
+  validateBucket(bucketName) {
+    const allowedBuckets = this.getAllowedBuckets();
+
+    if (!bucketName) {
+      return {
+        isValid: false,
+        error: 'Bucket name is required',
+      };
+    }
+
+    if (!allowedBuckets.includes(bucketName)) {
+      return {
+        isValid: false,
+        error: `Invalid bucket name. Allowed buckets: ${allowedBuckets.join(', ')}`,
+      };
+    }
+
+    return { isValid: true };
+  }
+
   /**
    * Prepare file data from request body and user info
    * @param {Object} requestBody - Request body containing file data
@@ -32,7 +67,7 @@ class UploadedFilesService {
       const fileRecord = await UploadedFile.create(fileData);
       return fileRecord;
     } catch (error) {
-      throw new Error(`Failed to create file record: ${error.message}`);
+      throw new AppError(`Failed to create file record: ${error.message}`, 500);
     }
   }
 
@@ -175,7 +210,7 @@ class UploadedFilesService {
     try {
       const file = await UploadedFile.findByPk(fileId);
       if (!file) {
-        throw new Error('File not found');
+        throw new AppError('File not found', 404);
       }
 
       // Sanitize the update data
@@ -184,7 +219,10 @@ class UploadedFilesService {
       await file.update(sanitizedData);
       return file;
     } catch (error) {
-      throw new Error(`Failed to update file: ${error.message}`);
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError(`Failed to update file: ${error.message}`, 500);
     }
   }
 
@@ -279,6 +317,105 @@ class UploadedFilesService {
     } catch (error) {
       throw new Error(`Failed to get file stats: ${error.message}`);
     }
+  }
+
+  /**
+   * Handle complete profile image upload process
+   * @param {Object} file - Multer file object
+   * @param {string} firstName - User's first name
+   * @param {string} lastName - User's last name
+   * @returns {Promise<Object>} Upload result with formatted response
+   */
+  async uploadProfileImage(file, firstName, lastName) {
+    // Validate required fields
+    if (!firstName || !lastName) {
+      throw new AppError('First name and last name are required for profile image upload', 400);
+    }
+
+    // Upload to Supabase storage
+    const uploadResult = await supabaseService.uploadProfileImage(file, firstName, lastName);
+
+    if (!uploadResult.success) {
+      throw new Error(`Profile image upload failed: ${uploadResult.error}`);
+    }
+
+    // Return formatted response
+    return {
+      success: true,
+      data: {
+        imageUrl: uploadResult.publicUrl,
+        fileName: uploadResult.fileName,
+      },
+    };
+  }
+
+  /**
+   * Handle complete file upload process
+   * @param {Object} file - Multer file object
+   * @param {string} bucketName - Storage bucket name
+   * @param {number} userId - ID of uploading user
+   * @param {string} description - Optional file description
+   * @returns {Promise<Object>} Upload result with database record
+   */
+  async uploadFile(file, bucketName, userId, description = null) {
+    // Validate bucket
+    const bucketValidation = this.validateBucket(bucketName);
+    if (!bucketValidation.isValid) {
+      throw new AppError(bucketValidation.error, 400);
+    }
+
+    // Upload to Supabase storage
+    const uploadResult = await supabaseService.uploadFile(file, null, bucketName);
+
+    if (!uploadResult.success) {
+      throw new Error(`Upload failed: ${uploadResult.error}`);
+    }
+
+    // Create database record with proper field mapping
+    const fileData = {
+      fileName: uploadResult.fileName,
+      fileUrl: uploadResult.publicUrl,
+      fileSize: file.size,
+      mimeType: file.mimetype,
+      uploadedBy: userId,
+      bucketName: bucketName,
+      description: description,
+    };
+
+    const createdFile = await this.createFileRecord(fileData);
+
+    return {
+      success: true,
+      data: createdFile,
+    };
+  }
+
+  /**
+   * Delete file from both storage and database
+   * @param {number} fileId - File ID to delete
+   * @returns {Promise<Object>} Delete result
+   */
+  async deleteFileFromStorage(fileId) {
+    // Get file record first
+    const file = await this.getFileById(fileId);
+    if (!file) {
+      throw new Error('File not found');
+    }
+
+    // Delete from Supabase storage using the bucket name from the file record
+    const deleteResult = await supabaseService.deleteFile(file.fileName, file.bucketName);
+
+    if (!deleteResult.success) {
+      throw new Error(`Storage deletion failed: ${deleteResult.error}`);
+    }
+
+    // Delete from database
+    await this.deleteFile(fileId);
+
+    return {
+      success: true,
+      message: 'File deleted successfully',
+    };
   }
 }
 

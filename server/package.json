@@ -6,12 +6,13 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "jest",
-    "setup-drive": "node scripts/setupGoogleDrive.js"
+    "sync": "node tasks/googleDriveAndSupabaseSync.js"
   },
   "author": "FEP",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@supabase/supabase-js": "^2.53.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",

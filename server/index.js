@@ -1,7 +1,6 @@
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
-const session = require('express-session');
 const { connectToDatabase } = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 const kifRouter = require('./routes/kif');
@@ -21,7 +20,7 @@ app.use(session({
     maxAge: 30 * 24 * 60 * 60 * 1000 // 1 month in milliseconds (30 days * 24 hours * 60 minutes * 60 seconds * 1000 ms)
   }
 }));
-
+// app.use(cors());
 app.use(cors({
   origin: ['http://localhost:3000'],
   credentials: true,
@@ -39,6 +38,8 @@ app.use('/api', vatRouter);
 app.use('/admin', require('./routes/googleDrive/driveAdmin'));
 
 app.use(errorHandler);
+
+const PORT = process.env.PORT;
 
 connectToDatabase();
 

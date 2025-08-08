@@ -22,18 +22,22 @@ import { colors } from '../styles/colors';
 const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const unfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
+  const userRole = useSelector((state) => state.user.profile.roleName);
 
   const [showModal, setShowModal] = useState(false);
   const [driveConnected, setDriveConnected] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
+  // Logout handler
   const handleLogout = () => {
     dispatch(logout());
     navigate('/login');
   };
 
+  // Google Drive connection check
   const checkDriveConnection = async () => {
     try {
       const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
@@ -53,6 +57,39 @@ const AppSidebar = ({ isDarkMode }) => {
     const interval = setInterval(checkDriveConnection, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  // Filter navigation based on role
+  const filteredNav = navigation
+    .map((item) => {
+      const isAdmin = userRole === 'admin';
+
+      // CNavGroup (ima children/items)
+      if (item.component?.displayName === 'CNavGroup' && item.items) {
+        if (item.adminOnly && !isAdmin) return null;
+
+        const filteredItems = item.items.filter(
+          (child) => !child.adminOnly || isAdmin
+        );
+
+        if (filteredItems.length === 0) return null;
+
+        return {
+          ...item,
+          items: filteredItems,
+        };
+      }
+
+      // CNavTitle (nema items)
+      if (item.component?.displayName === 'CNavTitle') {
+        if (item.adminOnly && !isAdmin) return null;
+        return item;
+      }
+
+      // Obični CNavItem
+      if (item.adminOnly && !isAdmin) return null;
+      return item;
+    })
+    .filter(Boolean);
 
   return (
     <>
@@ -79,7 +116,7 @@ const AppSidebar = ({ isDarkMode }) => {
           />
         </CSidebarHeader>
 
-        <AppSidebarNav items={navigation} />
+        <AppSidebarNav items={filteredNav} />
 
         {/* Google Drive Status */}
         <div
@@ -91,7 +128,7 @@ const AppSidebar = ({ isDarkMode }) => {
           <div
             className="fw-semibold small"
             style={{
-              color: isDarkMode ? '#ffffff' : '#212529', // White on dark, dark text on light
+              color: isDarkMode ? '#ffffff' : '#212529',
             }}
           >
             Google Drive
@@ -103,8 +140,8 @@ const AppSidebar = ({ isDarkMode }) => {
               backgroundColor: driveConnected
                 ? colors.success.background
                 : isDarkMode
-                  ? colors.white // gray badge in dark
-                  : colors.textPrimary, // light gray badge in light mode
+                  ? colors.white
+                  : colors.textPrimary,
               color: driveConnected
                 ? colors.success.text
                 : isDarkMode
@@ -116,7 +153,6 @@ const AppSidebar = ({ isDarkMode }) => {
           </CBadge>
         </div>
 
-
         {/* Footer */}
         <CSidebarFooter className="border-top d-none d-lg-flex justify-content-center align-items-center p-3">
           <div
@@ -125,7 +161,9 @@ const AppSidebar = ({ isDarkMode }) => {
             onClick={() => setShowModal(true)}
           >
             <CSidebarToggler
-              onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
+              onClick={() =>
+                dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })
+              }
             />
             <span
               className="small"
@@ -133,7 +171,6 @@ const AppSidebar = ({ isDarkMode }) => {
             >
               Logout
             </span>
-
           </div>
         </CSidebarFooter>
       </CSidebar>
