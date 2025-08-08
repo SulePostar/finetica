@@ -20,7 +20,7 @@ const verifyToken = (req, res, next) => {
 };
 
 // Function to authorize admin users
-const authorizeAdmin = (req, res, next) => {
+module.exports = function authorizeAdmin(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ message: 'Missing token!' });
@@ -31,10 +31,8 @@ const authorizeAdmin = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
-    console.log('req.user', decoded);
 
     if (req.user.roleId === 1) {
-      // admin is id 1
       return next();
     } else {
       return res.status(403).json({ message: 'Access denied! Admin only!' });

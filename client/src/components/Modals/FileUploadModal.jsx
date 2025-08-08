@@ -8,21 +8,19 @@ import {
     CForm,
     CFormInput,
     CFormLabel,
-    CAlert,
     CSpinner,
     CProgress,
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
-import { cilCloudUpload, cilDescription, cilCheckCircle, cilFile } from '@coreui/icons';
-import { uploadFile } from '../../lib/uploadFile';
+import { cilCloudUpload, cilDescription, cilFile } from '@coreui/icons';
+import FileUploadService from '../../services/fileUploadService';
+import notify from '../../utilis/toastHelper';
 import './FileUploadModal.css';
 
-const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess, onUploadError }) => {
+const FileUploadModal = ({ visible, onClose, bucketName }) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileName, setFileName] = useState('');
     const [uploading, setUploading] = useState(false);
-    const [uploadSuccess, setUploadSuccess] = useState(false);
-    const [uploadError, setUploadError] = useState('');
     const [uploadProgress, setUploadProgress] = useState(0);
     const [dragOver, setDragOver] = useState(false);
     const fileInputRef = useRef(null);
@@ -32,26 +30,19 @@ const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess, onUplo
         if (file) {
             setSelectedFile(file);
             setFileName(file.name);
-            setUploadError('');
-            setUploadSuccess(false);
         }
     };
 
     const handleDrop = (event) => {
         event.preventDefault();
         setDragOver(false);
-
         const files = event.dataTransfer.files;
         if (files.length > 0) {
             const file = files[0];
             setSelectedFile(file);
             setFileName(file.name);
-            setUploadError('');
-            setUploadSuccess(false);
         }
-    };
-
-    const handleDragOver = (event) => {
+    }; const handleDragOver = (event) => {
         event.preventDefault();
         setDragOver(true);
     };
@@ -71,15 +62,13 @@ const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess, onUplo
 
     const handleUpload = async () => {
         if (!selectedFile) {
-            setUploadError('Please select a file to upload');
+            notify.onError('Please select a file to upload');
             return;
         }
 
         const finalFileName = fileName.trim() || selectedFile.name;
 
         setUploading(true);
-        setUploadError('');
-        setUploadSuccess(false);
         setUploadProgress(0);
 
         try {
@@ -103,31 +92,21 @@ const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess, onUplo
                 });
             }, 100);
 
-            const result = await uploadFile(fileToUpload, bucketName);
+            const result = await FileUploadService.uploadFile(fileToUpload, bucketName);
 
             clearInterval(progressInterval);
             setUploadProgress(100);
 
             if (result.success) {
-                setUploadSuccess(true);
-                if (onUploadSuccess) {
-                    onUploadSuccess(result);
-                }
+                notify.onSuccess(`File "${finalFileName}" uploaded successfully to ${bucketName.toUpperCase()} bucket!`);
                 setTimeout(() => {
                     handleClose();
                 }, 1500);
             } else {
-                setUploadError('Upload failed. Please try again.');
-                if (onUploadError) {
-                    onUploadError(new Error('Upload failed. Please try again.'));
-                }
+                notify.onError(result.error || 'Upload failed. Please try again.');
             }
         } catch (error) {
-            console.error('Upload error:', error);
-            setUploadError(error.message || 'Upload failed. Please try again.');
-            if (onUploadError) {
-                onUploadError(error);
-            }
+            notify.onError(error.message || 'Upload failed. Please try again.');
         } finally {
             setUploading(false);
         }
@@ -137,8 +116,6 @@ const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess, onUplo
         if (!uploading) {
             setSelectedFile(null);
             setFileName('');
-            setUploadError('');
-            setUploadSuccess(false);
             setUploadProgress(0);
             setDragOver(false);
             onClose();
@@ -171,19 +148,6 @@ const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess, onUplo
             </CModalHeader>
 
             <CModalBody>
-                {uploadError && (
-                    <CAlert color="danger" className="mb-3">
-                        {uploadError}
-                    </CAlert>
-                )}
-
-                {uploadSuccess && (
-                    <CAlert color="success" className="mb-3 d-flex align-items-center">
-                        <CIcon icon={cilCheckCircle} className="me-2" />
-                        File uploaded successfully!
-                    </CAlert>
-                )}
-
                 <CForm>
                     <div className="mb-3">
                         <CFormLabel htmlFor="fileInput">Select File</CFormLabel>

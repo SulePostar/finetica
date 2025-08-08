@@ -6,7 +6,7 @@ import ProtectedRoute from '../protectedRoutes/ProtectedRouter';
 const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
 const Admin = React.lazy(() => import('../pages/Admin/Admin'));
-const Kif = React.lazy(() => import('../pages/kif/Kif'));
+const Kif = React.lazy(() => import('../pages/Kif/Kif'));
 const Vat = React.lazy(() => import('../pages/vat/Vat'));
 const Kuf = React.lazy(() => import('../pages/kuf/Kuf'));
 const ProfilePage = React.lazy(() => import('../pages/Profile/ProfilePage'));

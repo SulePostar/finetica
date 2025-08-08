@@ -12,9 +12,8 @@ class RoleService {
         return {
           success: true,
           roles: [
-            { id: 1, name: 'guest', description: 'Guest user with limited access' },
+            { id: 1, name: 'admin', description: 'Administrator with full access' },
             { id: 2, name: 'user', description: 'Regular user with standard access' },
-            { id: 3, name: 'admin', description: 'Administrator with full access' },
           ],
         };
       }
@@ -31,9 +30,8 @@ class RoleService {
       // If roles endpoint doesn't exist yet, return default role
       if (error.response?.status === 404) {
         const defaultRoles = [
-          { id: 1, name: 'guest', description: 'Guest user with limited access' },
+          { id: 1, name: 'admin', description: 'Administrator with full access' },
           { id: 2, name: 'user', description: 'Regular user with standard access' },
-          { id: 3, name: 'admin', description: 'Administrator with full access' },
         ];
         const role = defaultRoles.find((r) => r.id === parseInt(id));
         return {
@@ -95,9 +93,8 @@ class RoleService {
   // Get role name by ID (helper function)
   getRoleName(roleId) {
     const roleNames = {
-      1: 'guest',
+      1: 'admin',
       2: 'user',
-      3: 'admin',
     };
     return roleNames[roleId] || 'unknown';
   }
@@ -105,9 +102,8 @@ class RoleService {
   // Check if role has permission (helper function)
   hasPermission(roleId, permission) {
     const permissions = {
-      1: ['read'], // guest
+      1: ['read', 'write', 'admin'], // admin
       2: ['read', 'write'], // user
-      3: ['read', 'write', 'admin'], // admin
     };
     return permissions[roleId]?.includes(permission) || false;
   }
