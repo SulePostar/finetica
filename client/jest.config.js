@@ -1,7 +1,8 @@
 export default {
     testEnvironment: 'jsdom',
     setupFilesAfterEnv: ['<rootDir>/src/tests/setup.js'],
-    moduleNameMapping: {
+    collectCoverage: false,
+    moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
         '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
         '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/src/tests/__mocks__/fileMock.js'
@@ -22,5 +23,10 @@ export default {
         '<rootDir>/src/**/*.{test,spec}.{js,jsx}'
     ],
     moduleFileExtensions: ['js', 'jsx', 'json'],
-    verbose: true
+    verbose: true,
+    clearMocks: true,
+    resetMocks: false,
+    restoreMocks: false,
+    testTimeout: 5000,
+    errorOnDeprecated: true,
 };

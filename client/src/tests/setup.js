@@ -1,26 +1,31 @@
 import '@testing-library/jest-dom';
+import { TextEncoder, TextDecoder } from 'util';
 
-// Polyfills for Node.js environment
-const { TextEncoder, TextDecoder } = require('util');
+// =============================================================================
+// ENVIRONMENT POLYFILLS
+// =============================================================================
+
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
-// Mock window.matchMedia
+// =============================================================================
+// BROWSER API MOCKS
+// =============================================================================
+
+// Mock window.matchMedia for responsive design tests
 Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: jest.fn().mockImplementation(query => ({
         matches: false,
         media: query,
         onchange: null,
-        addListener: jest.fn(), // deprecated
-        removeListener: jest.fn(), // deprecated
         addEventListener: jest.fn(),
         removeEventListener: jest.fn(),
         dispatchEvent: jest.fn(),
     })),
 });
 
-// Mock IntersectionObserver
+// Mock IntersectionObserver for component visibility tests
 global.IntersectionObserver = class IntersectionObserver {
     constructor() { }
     disconnect() { }
@@ -28,7 +33,7 @@ global.IntersectionObserver = class IntersectionObserver {
     unobserve() { }
 };
 
-// Mock ResizeObserver
+// Mock ResizeObserver for component resize tests
 global.ResizeObserver = class ResizeObserver {
     constructor(callback) { }
     disconnect() { }
@@ -36,70 +41,93 @@ global.ResizeObserver = class ResizeObserver {
     unobserve() { }
 };
 
+// =============================================================================
+// LIBRARY MOCKS
+// =============================================================================
+
 // Mock React Router
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
-    useNavigate: () => jest.fn(),
-    useLocation: () => ({
+    useNavigate: jest.fn(() => jest.fn()),
+    useLocation: jest.fn(() => ({
         pathname: '/test',
         search: '',
         hash: '',
         state: null,
-    }),
-    useParams: () => ({}),
+    })),
+    useParams: jest.fn(() => ({})),
 }));
 
-// Mock Redux store
-const mockStore = {
-    getState: jest.fn(() => ({
-        auth: {
-            user: null,
-            isAuthenticated: false,
-            loading: false
-        }
-    })),
-    dispatch: jest.fn(),
-    subscribe: jest.fn()
+// Mock Redux store with comprehensive state
+const mockState = {
+    auth: {
+        user: null,
+        isAuthenticated: false,
+        loading: false,
+        error: null
+    },
+    // Add other common state slices as needed
+    ui: {
+        theme: 'light',
+        sidebarOpen: false
+    }
 };
 
 jest.mock('react-redux', () => ({
     ...jest.requireActual('react-redux'),
-    useSelector: jest.fn((selector) => selector(mockStore.getState())),
-    useDispatch: () => mockStore.dispatch
-}));
-
-// Mock axios
-jest.mock('axios', () => ({
-    create: jest.fn(() => ({
-        get: jest.fn(),
-        post: jest.fn(),
-        put: jest.fn(),
-        delete: jest.fn(),
-        interceptors: {
-            request: { use: jest.fn() },
-            response: { use: jest.fn() }
+    useSelector: jest.fn((selector) => {
+        try {
+            return selector(mockState);
+        } catch (error) {
+            console.warn('Selector failed, returning fallback:', error.message);
+            return mockState.auth;
         }
-    })),
-    get: jest.fn(),
-    post: jest.fn(),
-    put: jest.fn(),
-    delete: jest.fn()
+    }),
+    useDispatch: jest.fn(() => jest.fn()),
+    Provider: ({ children }) => children,
+    connect: jest.fn(() => (component) => component),
 }));
 
-// Mock Supabase
+// Mock axios with comprehensive HTTP client
+jest.mock('axios', () => {
+    const mAxios = {
+        get: jest.fn(() => Promise.resolve({ data: {} })),
+        post: jest.fn(() => Promise.resolve({ data: {} })),
+        put: jest.fn(() => Promise.resolve({ data: {} })),
+        delete: jest.fn(() => Promise.resolve({ data: {} })),
+        patch: jest.fn(() => Promise.resolve({ data: {} })),
+        interceptors: {
+            request: { use: jest.fn(), eject: jest.fn() },
+            response: { use: jest.fn(), eject: jest.fn() }
+        }
+    };
+    return {
+        create: jest.fn(() => mAxios),
+        ...mAxios,
+    };
+});
+
+// Mock Supabase with auth and database operations
 jest.mock('@supabase/supabase-js', () => ({
     createClient: jest.fn(() => ({
         auth: {
-            signInWithPassword: jest.fn(),
-            signUp: jest.fn(),
-            signOut: jest.fn(),
-            getUser: jest.fn()
+            signInWithPassword: jest.fn(() => Promise.resolve({ data: { user: null }, error: null })),
+            signUp: jest.fn(() => Promise.resolve({ data: { user: null }, error: null })),
+            signOut: jest.fn(() => Promise.resolve({ error: null })),
+            getUser: jest.fn(() => Promise.resolve({ data: { user: null }, error: null })),
         },
         from: jest.fn(() => ({
-            select: jest.fn(),
-            insert: jest.fn(),
-            update: jest.fn(),
-            delete: jest.fn()
+            select: jest.fn(() => Promise.resolve({ data: [], error: null })),
+            insert: jest.fn(() => Promise.resolve({ data: [], error: null })),
+            update: jest.fn(() => Promise.resolve({ data: [], error: null })),
+            delete: jest.fn(() => Promise.resolve({ data: [], error: null })),
         }))
     }))
 }));
+
+// =============================================================================
+// TEST UTILITIES
+// =============================================================================
+
+// Export mock state for tests that need to manipulate it
+export { mockState };

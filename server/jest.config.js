@@ -1,6 +1,6 @@
 module.exports = {
     testEnvironment: 'node',
-    collectCoverage: true,
+    collectCoverage: false,
     coverageDirectory: 'coverage',
     coverageReporters: ['text', 'lcov', 'html'],
     testMatch: [
@@ -20,6 +20,9 @@ module.exports = {
         '!**/seeders/**'
     ],
     setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
-    testTimeout: 10000,
-    verbose: true
+    testTimeout: 5000,
+    verbose: true,
+    clearMocks: true,
+    resetMocks: false,
+    restoreMocks: false,
 };
