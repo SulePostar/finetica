@@ -1,4 +1,7 @@
 const { createClient } = require('@supabase/supabase-js');
+const fs = require('fs');
+const path = require('path');
+const mime = require('mime-types');
 
 class SupabaseService {
   constructor() {
@@ -294,6 +297,42 @@ class SupabaseService {
     } catch (error) {
       console.error('Create bucket error:', error);
       throw error;
+    }
+  }
+  /**
+   * Uploads all valid files from a local folder to a Supabase storage bucket.
+   *
+   * @param {string} folderPath - Path to the local folder containing files to upload.
+   * @param {string} bucketName - Name of the Supabase storage bucket where files will be uploaded.
+   * @param {Object} [options={}] - Optional validation options passed to the file validation method.
+   */
+  async uploadFolder(folderPath, bucketName, options = {}) {
+    const files = fs.readdirSync(folderPath);
+
+    for (const fileName of files) {
+      const filePath = path.join(folderPath, fileName);
+      const fileBuffer = fs.readFileSync(filePath);
+      const mimeType = mime.lookup(filePath) || 'application/octet-stream';
+      const fileSize = fileBuffer.length;
+
+      // Validate file before upload
+      const validation = this.validateFile(mimeType, fileSize, options);
+      if (!validation.isValid) {
+        console.log(`Skipping ${fileName}: ${validation.error}`);
+        continue;
+      }
+
+      const result = await this.uploadFile(fileBuffer, fileName, bucketName, mimeType);
+
+      if (result.success) {
+        console.log(`Successfully uploaded: ${fileName}`);
+      } else {
+        if (result.error.includes('The resource already exists')) {
+          console.log(`File already exists: ${fileName}, skipping.`);
+        } else {
+          console.error(`Error during upload ${fileName}:`, result.error);
+        }
+      }
     }
   }
 }
