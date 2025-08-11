@@ -1,6 +1,13 @@
+import { useMemo } from 'react';
+import PropTypes from 'prop-types';
 import { CCard, CCardHeader, CCardBody, CCardTitle } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilFile } from '@coreui/icons';
+import {
+    DOCUMENT_FIELD_CONFIGS,
+    DocumentDataPropTypes,
+    formatValue
+} from './DocumentInfo.constants';
 
 /**
  * DocumentInfo Component
@@ -10,109 +17,145 @@ import { cilFile } from '@coreui/icons';
  * 
  * @param {Object} data - The document data object
  * @param {string} type - The document type: 'kuf' for purchase invoices, 'kif' for sales invoices
+ * @param {boolean} loading - Loading state
+ * @param {Error} error - Error state
  */
-const DocumentInfo = ({ data, type = 'kuf' }) => {
-    // Define fields based on document type (from database schema)
-    const getFields = () => {
-        if (type === 'kuf') {
-            // Purchase Invoice fields (purchase_invoices table)
-            return [
-                { label: 'Document Number', key: 'documentNumber' },
-                { label: 'Invoice Number', key: 'invoice_number' },
-                { label: 'Bill Number', key: 'bill_number' },
-                { label: 'Supplier', key: 'supplier_name' },
-                { label: 'Supplier ID', key: 'supplier_id' },
-                { label: 'VAT Period', key: 'vat_period' },
-                { label: 'Invoice Type', key: 'invoice_type' },
-                { label: 'Invoice Date', key: 'invoice_date' },
-                { label: 'Due Date', key: 'due_date' },
-                { label: 'Received Date', key: 'received_date' },
-                { label: 'Net Total', key: 'net_total' },
-                { label: 'Lump Sum', key: 'lump_sum' },
-                { label: 'VAT Amount', key: 'vat_amount' },
-                { label: 'Deductible VAT', key: 'deductible_vat' },
-                { label: 'Non-deductible VAT', key: 'non_deductible_vat' },
-                { label: 'VAT Exempt Region', key: 'vat_exempt_region' },
-                { label: 'Note', key: 'note' },
-                { label: 'Created', key: 'created_at' },
-                { label: 'Updated', key: 'updated_at' }
-            ];
-        } else {
-            // Sales Invoice fields (sales_invoices table)
-            return [
-                { label: 'Document Number', key: 'documentNumber' },
-                { label: 'Invoice Number', key: 'invoice_number' },
-                { label: 'Bill Number', key: 'bill_number' },
-                { label: 'Customer', key: 'customer_name' },
-                { label: 'Customer ID', key: 'customer_id' },
-                { label: 'VAT Period', key: 'vat_period' },
-                { label: 'Invoice Type', key: 'invoice_type' },
-                { label: 'Invoice Date', key: 'invoice_date' },
-                { label: 'Due Date', key: 'due_date' },
-                { label: 'Delivery Period', key: 'delivery_period' },
-                { label: 'Total Amount', key: 'total_amount' },
-                { label: 'VAT Category', key: 'vat_category' },
-                { label: 'Note', key: 'note' },
-                { label: 'Created', key: 'created_at' },
-                { label: 'Updated', key: 'updated_at' }
-            ];
-        }
-    };
+const DocumentInfo = ({ data, type = 'kuf', loading = false, error = null }) => {
+    // Memoize field configuration to prevent unnecessary re-renders
+    const fields = useMemo(() => {
+        return DOCUMENT_FIELD_CONFIGS[type] || DOCUMENT_FIELD_CONFIGS.kuf;
+    }, [type]);
 
-    const formatValue = (value, key) => {
-        if (!value && value !== 0) return 'N/A';
+    // Memoize filtered and formatted data
+    const formattedFields = useMemo(() => {
+        if (!data) return [];
 
-        // Format dates
-        if (key.includes('date') || key.includes('_at')) {
-            try {
-                return new Date(value).toLocaleString();
-            } catch {
-                return value;
-            }
-        }
+        return fields
+            .map(({ label, key }) => {
+                const value = data[key];
+                if (value === undefined || value === null || value === '') return null;
 
-        // Format currency values
-        if (key.includes('amount') || key.includes('total') || key.includes('vat') || key.includes('sum')) {
-            if (typeof value === 'number') {
-                return `${value.toLocaleString()} ${data.currency || '$'}`;
-            }
-        }
+                return {
+                    key,
+                    label,
+                    value: formatValue(value, key, data.currency)
+                };
+            })
+            .filter(Boolean);
+    }, [data, fields]);
 
-        // Format boolean values
-        if (typeof value === 'boolean') {
-            return value ? 'Yes' : 'No';
-        }
+    if (loading) {
+        return (
+            <CCard className="h-100 shadow-sm detail-card" aria-busy="true">
+                <CCardHeader>
+                    <CCardTitle className="mb-0">
+                        <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
+                        Document Information
+                    </CCardTitle>
+                </CCardHeader>
+                <CCardBody>
+                    <div className="text-center p-4" role="status" aria-label="Loading document information">
+                        <div className="spinner-border" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                        <p className="mt-3 text-muted">Loading document information...</p>
+                    </div>
+                </CCardBody>
+            </CCard>
+        );
+    }
 
-        return value;
-    };
+    if (error) {
+        return (
+            <CCard className="h-100 shadow-sm detail-card border-danger">
+                <CCardHeader>
+                    <CCardTitle className="mb-0 text-danger">
+                        <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
+                        Document Information
+                    </CCardTitle>
+                </CCardHeader>
+                <CCardBody>
+                    <div className="text-center p-4" role="alert">
+                        <div className="text-danger mb-3">
+                            <CIcon icon={cilFile} size="xl" />
+                        </div>
+                        <h6 className="text-danger">Error Loading Document</h6>
+                        <p className="text-muted small">{error.message || 'Failed to load document information'}</p>
+                    </div>
+                </CCardBody>
+            </CCard>
+        );
+    }
 
-    const fields = getFields();
+    if (!data || formattedFields.length === 0) {
+        return (
+            <CCard className="h-100 shadow-sm detail-card">
+                <CCardHeader>
+                    <CCardTitle className="mb-0">
+                        <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
+                        Document Information
+                    </CCardTitle>
+                </CCardHeader>
+                <CCardBody>
+                    <div className="text-center p-4">
+                        <div className="text-muted mb-3">
+                            <CIcon icon={cilFile} size="xl" />
+                        </div>
+                        <p className="text-muted">No document information available</p>
+                    </div>
+                </CCardBody>
+            </CCard>
+        );
+    }
 
     return (
         <CCard className="h-100 shadow-sm detail-card">
             <CCardHeader>
                 <CCardTitle className="mb-0">
-                    <CIcon icon={cilFile} className="me-2" />
+                    <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
                     Document Information
                 </CCardTitle>
             </CCardHeader>
             <CCardBody>
-                <div className="document-info-list">
-                    {fields.map(({ label, key }) => {
-                        const value = data[key];
-                        if (value === undefined || value === null || value === '') return null;
-
-                        return (
-                            <div key={key} className="info-row">
-                                <span className="info-label">{label}:</span>
-                                <span className="info-value">{formatValue(value, key)}</span>
-                            </div>
-                        );
-                    })}
+                <div className="document-info-list" role="list" aria-label="Document details">
+                    {formattedFields.map(({ key, label, value }) => (
+                        <div
+                            key={key}
+                            className="info-row"
+                            role="listitem"
+                            tabIndex="0"
+                            aria-label={`${label}: ${value}`}
+                        >
+                            <span className="info-label" id={`label-${key}`}>
+                                {label}:
+                            </span>
+                            <span
+                                className="info-value"
+                                aria-labelledby={`label-${key}`}
+                                title={value}
+                            >
+                                {value}
+                            </span>
+                        </div>
+                    ))}
                 </div>
             </CCardBody>
         </CCard>
     );
+};
+
+DocumentInfo.propTypes = {
+    data: DocumentDataPropTypes,
+    type: PropTypes.oneOf(['kuf', 'kif']),
+    loading: PropTypes.bool,
+    error: PropTypes.instanceOf(Error)
+};
+
+DocumentInfo.defaultProps = {
+    data: null,
+    type: 'kuf',
+    loading: false,
+    error: null
 };
 
 export default DocumentInfo;
