@@ -13,9 +13,9 @@ import {
 import CIcon from '@coreui/icons-react';
 import { cilFile } from '@coreui/icons';
 import DefaultLayout from '../../layout/DefaultLayout';
-import './KifDetail.styles.css';
+import './KifDetails.styles.css';
 
-const KifDetail = () => {
+const KifDetails = () => {
     const { id } = useParams();
 
 
@@ -40,8 +40,8 @@ const KifDetail = () => {
 
     return (
         <DefaultLayout>
-            <div className="body flex-grow-1 px-3 kif-detail-layout">
-                <CContainer fluid className="kif-detail-container">
+            <div className="body flex-grow-1 px-3 kif-details-layout">
+                <CContainer fluid className="kif-details-container">
 
                     <CRow className="mb-4">
 
@@ -90,4 +90,4 @@ const KifDetail = () => {
     );
 };
 
-export default KifDetail;
+export default KifDetails;

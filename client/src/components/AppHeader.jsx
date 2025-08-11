@@ -27,14 +27,14 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const sidebarUnfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
 
 
-  const isKifDetailPage = location.pathname.startsWith('/kif/') && location.pathname !== '/kif';
+  const isKifDetailsPage = location.pathname.startsWith('/kif/') && location.pathname !== '/kif';
 
 
   useEffect(() => {
-    if (isKifDetailPage && sidebarShow) {
+    if (isKifDetailsPage && sidebarShow) {
       dispatch({ type: 'set', sidebarShow: false });
     }
-  }, [isKifDetailPage, sidebarShow, dispatch]);
+  }, [isKifDetailsPage, sidebarShow, dispatch]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,7 +80,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
             transition: 'margin-left 0.3s ease-in-out'
           }}
         >
-          {isKifDetailPage ? (
+          {isKifDetailsPage ? (
             <CButton
               variant="outline"
               onClick={() => navigate('/kif')}
