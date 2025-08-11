@@ -1,9 +1,9 @@
 import { UploadButton } from '../../components/index';
-import { CContainer, CRow, CCol } from '@coreui/react';
 import { useBucketName } from '../../lib/bucketUtils';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import './Kif.styles.css';
 
 const Kif = () => {
@@ -23,30 +23,35 @@ const Kif = () => {
         console.log('Navigating to:', `/kif/${row.id}`);
         navigate(`/kif/${row.id}`);
     };
+    const sidebarShow = useSelector(state => state.ui.sidebarShow);
+    const sidebarWidth = 250;
 
     return (
         <DefaultLayout>
-            <div className="body flex-grow-1 px-3" style={{ paddingTop: '80px' }}>
-
-
-                <div className="d-flex justify-content-end mb-3">
-                    <UploadButton
-                        bucketName={bucketName}
+            <div
+                className="kif-table-outer"
+                style={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    transition: 'margin-left 0.3s',
+                    marginLeft: sidebarShow ? sidebarWidth : 0,
+                    padding: 0,
+                }}
+            >
+                <div className="w-100 d-flex justify-content-end align-items-center mb-3">
+                    <UploadButton bucketName={bucketName} />
+                </div>
+                <div className="w-100 d-flex justify-content-center align-items-center flex-grow-1">
+                    <DynamicTable
+                        title="KIF Table"
+                        columns={columns}
+                        apiEndpoint="http://localhost:4000/api/kif-data"
+                        onRowClick={handleRowClick}
                     />
                 </div>
-
-                <CContainer className="h-100" fluid>
-                    <CRow>
-                        <CCol>
-                            <DynamicTable
-                                title="KIF Table"
-                                columns={columns}
-                                apiEndpoint="http://localhost:4000/api/kif-data"
-                                onRowClick={handleRowClick}
-                            />
-                        </CCol>
-                    </CRow>
-                </CContainer>
             </div>
         </DefaultLayout>
     );
