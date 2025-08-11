@@ -16,6 +16,9 @@
 
 /* KIF Page Styles */
 
+.kif-table-outer {
+  box-sizing: border-box;
+}
 .kif-page-header {
   margin-bottom: 2rem;
 }

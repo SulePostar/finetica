@@ -16,6 +16,10 @@
 
 /* VAT Page Styles */
 
+.kuf-table-outer {
+  box-sizing: border-box;
+}
+
 .vat-page-header {
   margin-bottom: 2rem;
 }
