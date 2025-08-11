@@ -1,12 +1,11 @@
 import { UploadButton } from '../../components/index';
-import { CContainer, CRow, CCol } from '@coreui/react';
 import './Kuf.styles.css';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useBucketName } from '../../lib/bucketUtils';
+import { useSelector } from 'react-redux';
 
 const Kuf = () => {
-
     const columns = [
         { name: 'ID', selector: row => row.id, sortable: true },
         { name: 'Name', selector: row => row.name, sortable: true },
@@ -16,23 +15,34 @@ const Kuf = () => {
     ];
 
     const bucketName = useBucketName();
+    const sidebarShow = useSelector(state => state.ui.sidebarShow);
+    const sidebarWidth = 250;
 
     return (
         <DefaultLayout>
-            <div className="body flex-grow-1 px-3" style={{ paddingTop: '80px' }}>
-
-                <div className="d-flex justify-content-end mb-3">
-                    <UploadButton
-                        bucketName={bucketName}
+            <div
+                className="kuf-table-outer"
+                style={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    transition: 'margin-left 0.3s',
+                    marginLeft: sidebarShow ? sidebarWidth : 0,
+                    padding: 0,
+                }}
+            >
+                <div className="w-100 d-flex justify-content-end align-items-center mb-3">
+                    <UploadButton bucketName={bucketName} />
+                </div>
+                <div className="w-100 d-flex justify-content-center align-items-center flex-grow-1">
+                    <DynamicTable
+                        title="KUF Table"
+                        columns={columns}
+                        apiEndpoint="http://localhost:4000/api/kuf-data"
                     />
                 </div>
-                <CContainer className="h-100" fluid>
-                    <CRow>
-                        <CCol>
-                            <DynamicTable title="KUF Table" columns={columns} apiEndpoint="http://localhost:4000/api/kuf-data" />
-                        </CCol>
-                    </CRow>
-                </CContainer>
             </div>
         </DefaultLayout>
     );
