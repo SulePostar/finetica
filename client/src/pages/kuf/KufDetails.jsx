@@ -14,6 +14,7 @@ import CIcon from '@coreui/icons-react';
 import { cilFile } from '@coreui/icons';
 import DefaultLayout from '../../layout/DefaultLayout';
 import './KufDetails.styles.css';
+import KufDocumentInfo from '../../components/InfoCards/KufDocumentInfo';
 
 const KufDetails = () => {
     const { id } = useParams();
@@ -49,68 +50,8 @@ const KufDetails = () => {
                     <CRow className="justify-content-center">
 
                         <CCol lg={4} className="mb-4 kuf-info-column">
-                            <CCard className="h-100 shadow-sm detail-card">
-                                <CCardHeader>
-                                    <CCardTitle className="mb-0">
-                                        <CIcon icon={cilFile} className="me-2" />
-                                        Document Information
-                                    </CCardTitle>
-                                </CCardHeader>
-                                <CCardBody>
-                                    <div className="kuf-info-list">
-                                        <div className="info-row">
-                                            <span className="info-label">Document:</span>
-                                            <span className="info-value">{mockKufData.documentNumber}</span>
-                                        </div>
-                                        <div className="info-row">
-                                            <span className="info-label">Name:</span>
-                                            <span className="info-value">{mockKufData.name}</span>
-                                        </div>
-                                        <div className="info-row">
-                                            <span className="info-label">Supplier:</span>
-                                            <span className="info-value">{mockKufData.supplier}</span>
-                                        </div>
-                                        <div className="info-row">
-                                            <span className="info-label">Category:</span>
-                                            <span className="info-value">{mockKufData.category}</span>
-                                        </div>
-                                        <div className="info-row">
-                                            <span className="info-label">Amount:</span>
-                                            <span className="info-value">{mockKufData.amount}</span>
-                                        </div>
-                                        <div className="info-row">
-                                            <span className="info-label">Price:</span>
-                                            <span className="info-value">{mockKufData.price} {mockKufData.currency}</span>
-                                        </div>
-                                        <div className="info-row">
-                                            <span className="info-label">Total:</span>
-                                            <span className="info-value">{mockKufData.total} {mockKufData.currency}</span>
-                                        </div>
-                                        <div className="info-row">
-                                            <span className="info-label">Status:</span>
-                                            <span className="info-value">{mockKufData.status}</span>
-                                        </div>
-                                        <div className="info-row">
-                                            <span className="info-label">Date:</span>
-                                            <span className="info-value">{mockKufData.date}</span>
-                                        </div>
-                                        <div className="info-row">
-                                            <span className="info-label">Created:</span>
-                                            <span className="info-value">{new Date(mockKufData.createdAt).toLocaleString()}</span>
-                                        </div>
-                                        <div className="info-row">
-                                            <span className="info-label">Updated:</span>
-                                            <span className="info-value">{new Date(mockKufData.updatedAt).toLocaleString()}</span>
-                                        </div>
-                                        <div className="info-row">
-                                            <span className="info-label">Description:</span>
-                                            <span className="info-value">{mockKufData.description}</span>
-                                        </div>
-                                    </div>
-                                </CCardBody>
-                            </CCard>
+                            <KufDocumentInfo data={mockKufData} />
                         </CCol>
-
 
                         <CCol lg={6} className="mb-4">
                             <CCard className="h-100 shadow-sm detail-card">
