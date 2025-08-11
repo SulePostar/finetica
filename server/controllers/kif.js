@@ -1,5 +1,4 @@
-const { tr } = require('zod/v4/locales');
-const { getPaginatedKifData} = require('../services/kif');
+const { getPaginatedKifData } = require('../services/kif');
 
 const getKifData = (req, res) => {
     const { page, perPage, sortField, sortOrder } = req.query;
