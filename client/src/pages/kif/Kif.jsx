@@ -3,9 +3,13 @@ import { CContainer, CRow, CCol } from '@coreui/react';
 import { useBucketName } from '../../lib/bucketUtils';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
+import { useNavigate } from 'react-router-dom';
 import './Kif.styles.css';
 
 const Kif = () => {
+    const navigate = useNavigate();
+    const bucketName = useBucketName();
+
     const columns = [
         { name: 'ID', selector: row => row.id, sortable: true },
         { name: 'Name', selector: row => row.name, sortable: true },
@@ -14,7 +18,11 @@ const Kif = () => {
         { name: 'Date', selector: row => row.date, sortable: true },
     ];
 
-    const bucketName = useBucketName();
+    const handleRowClick = (row) => {
+        console.log('Row clicked:', row);
+        console.log('Navigating to:', `/kif/${row.id}`);
+        navigate(`/kif/${row.id}`);
+    };
 
     return (
         <DefaultLayout>
@@ -29,7 +37,12 @@ const Kif = () => {
                 <CContainer className="h-100" fluid>
                     <CRow>
                         <CCol>
-                            <DynamicTable title="KIF Table" columns={columns} apiEndpoint="http://localhost:4000/api/kif-data" />
+                            <DynamicTable
+                                title="KIF Table"
+                                columns={columns}
+                                apiEndpoint="http://localhost:4000/api/kif-data"
+                                onRowClick={handleRowClick}
+                            />
                         </CCol>
                     </CRow>
                 </CContainer>
