@@ -5,8 +5,8 @@
   color: white !important;
   border: none !important;
   transition: all 0.2s ease-in-out;
-  margin-top: 70px;
-  margin-right: 20px;
+  margin-top: 80px;
+  margin-right: 10px;
 }
 
 .upload-button:hover {
