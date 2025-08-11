@@ -65,7 +65,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
           width: '100%',
           marginLeft: 0,
           zIndex: 1040,
-          backgroundColor: 'var(--cui-body-bg)',
+          backgroundColor: isDarkMode ? '#432e62df' : '#d8d3e4ff',
           transition: 'none'
         }}
       >
