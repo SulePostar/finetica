@@ -6,6 +6,8 @@ import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useNavigate } from 'react-router-dom';
 import { Dropdown } from 'react-bootstrap';
+import { FaEllipsisV } from 'react-icons/fa';
+
 
 const Vat = () => {
 
@@ -13,6 +15,7 @@ const Vat = () => {
 
     const handleView = (row) => {
         console.log('View row:', row);
+
     };
     const handleEdit = (row) => {
         console.log('Edit row:', row);
@@ -37,7 +40,7 @@ const Vat = () => {
             cell: row => (
                 <Dropdown className="action-dropdown">
                     <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                        Actions
+                        <FaEllipsisV />
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                         <Dropdown.Item onClick={() => handleView(row)}>View</Dropdown.Item>

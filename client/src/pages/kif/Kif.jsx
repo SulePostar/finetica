@@ -6,6 +6,7 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import { Dropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import './Kif.styles.css';
+import { FaEllipsisV } from 'react-icons/fa';
 
 const Kif = () => {
     const navigate = useNavigate();
@@ -35,9 +36,9 @@ const Kif = () => {
         {
             name: 'Actions',
             cell: row => (
-                <Dropdown>
+                <Dropdown className="action-dropdown">
                     <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                        Actions
+                        <FaEllipsisV />
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                         <Dropdown.Item onClick={() => handleView(row)}>View</Dropdown.Item>
@@ -57,15 +58,14 @@ const Kif = () => {
 
     return (
         <DefaultLayout>
-            <div className="body flex-grow-1 px-3" style={{ paddingTop: '80px' }}>
-
-
-                <div className="d-flex justify-content-end mb-3">
-                    <UploadButton
-                        bucketName={bucketName}
-                    />
-                </div>
-
+            <div className="body flex-grow-1 px-3">
+                <CCol>
+                    <div className="d-flex justify-content-end align-items-center">
+                        <UploadButton
+                            bucketName={bucketName}
+                        />
+                    </div>
+                </CCol>
                 <CContainer className="h-100" fluid>
                     <CRow>
                         <CCol>

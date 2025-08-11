@@ -6,6 +6,7 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import { Dropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useBucketName } from '../../lib/bucketUtils';
+import { FaEllipsisV } from 'react-icons/fa';
 
 const Kuf = () => {
 
@@ -37,7 +38,7 @@ const Kuf = () => {
             cell: row => (
                 <Dropdown className="action-dropdown">
                     <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                        Actions
+                        <FaEllipsisV />
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
                         <Dropdown.Item onClick={() => handleView(row)}>View</Dropdown.Item>
