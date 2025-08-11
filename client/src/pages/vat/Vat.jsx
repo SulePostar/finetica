@@ -3,16 +3,17 @@ import { useBucketName } from '../../lib/bucketUtils';
 import './Vat.styles.css';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
-import { Container } from 'react-bootstrap';
+import { Dropdown } from 'react-bootstrap';
+import { FaEllipsisV } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const Vat = () => {
-
     const navigate = useNavigate();
 
     const handleView = (row) => {
         console.log('View row:', row);
-
+        // navigate(`/vat/${row.id}`); // Uncomment if you have a detail page
     };
     const handleEdit = (row) => {
         console.log('Edit row:', row);
@@ -24,8 +25,6 @@ const Vat = () => {
         console.log('Download row:', row);
     };
 
-
-
     const columns = [
         { name: 'ID', selector: row => row.id, sortable: true },
         { name: 'Name', selector: row => row.name, sortable: true },
@@ -33,7 +32,7 @@ const Vat = () => {
         { name: 'Price', selector: row => row.price, sortable: true },
         { name: 'Date', selector: row => row.date, sortable: true },
         {
-            name: 'Actions',
+            name: <FaEllipsisV />, // Icon as header
             cell: row => (
                 <Dropdown className="action-dropdown">
                     <Dropdown.Toggle variant="secondary" id="dropdown-basic">
@@ -59,46 +58,32 @@ const Vat = () => {
 
     return (
         <DefaultLayout>
-            <div className="body flex-grow-1 px-3" style={{ paddingTop: '80px' }}>
-
-
-                <div className="d-flex justify-content-end mb-3">
-                    <UploadButton
-                        bucketName={bucketName}
             <div
-                        className="vat-table-outer"
-                        style={{
-                            minHeight: '100vh',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            transition: 'margin-left 0.3s',
-                            marginLeft: sidebarShow ? sidebarWidth : 0,
-                            padding: 0,
-                        }}
-                    >
-                        <div className="w-100 d-flex justify-content-end align-items-center mb-3">
-                            <UploadButton bucketName={bucketName} />
-                        </div>
-                        <div className="w-100 d-flex justify-content-center align-items-center flex-grow-1">
-                            <DynamicTable
-                                title="VAT Table"
-                                columns={columns}
-                                apiEndpoint="http://localhost:4000/api/vat-data"
-                            />
-                        </div>
-
-                        <CContainer className="h-100" fluid>
-                            <CRow>
-                                <CCol>
-                                    <DynamicTable title="KIF Table" columns={columns} apiEndpoint="http://localhost:4000/api/kif-data" />
-                                </CCol>
-                            </CRow>
-                        </CContainer>
-                    </div>
-                </DefaultLayout>
-                );
+                className="vat-table-outer"
+                style={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    transition: 'margin-left 0.3s',
+                    marginLeft: sidebarShow ? sidebarWidth : 0,
+                    padding: 0,
+                }}
+            >
+                <div className="w-100 d-flex justify-content-end align-items-center mb-3">
+                    <UploadButton bucketName={bucketName} />
+                </div>
+                <div className="w-100 d-flex justify-content-center align-items-center flex-grow-1">
+                    <DynamicTable
+                        title="VAT Table"
+                        columns={columns}
+                        apiEndpoint="http://localhost:4000/api/vat-data"
+                    />
+                </div>
+            </div>
+        </DefaultLayout>
+    );
 };
 
-                export default Vat;
+export default Vat;

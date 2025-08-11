@@ -9,23 +9,14 @@ import { FaEllipsisV } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 
 const Kuf = () => {
-
     const navigate = useNavigate();
 
     const handleView = (row) => {
-        console.log('View row:', row);
         navigate(`/kuf/${row.id}`);
     };
-    const handleEdit = (row) => {
-        console.log('Edit row:', row);
-    };
-    const handleDelete = (row) => {
-        console.log('Delete row:', row);
-    };
-    const handleDownload = (row) => {
-        console.log('Download row:', row);
-    };
-
+    const handleEdit = (row) => { };
+    const handleDelete = (row) => { };
+    const handleDownload = (row) => { };
 
     const columns = [
         { name: 'ID', selector: row => row.id, sortable: true },
@@ -60,46 +51,32 @@ const Kuf = () => {
 
     return (
         <DefaultLayout>
-            <div className="body flex-grow-1 px-3" style={{ paddingTop: '80px' }}>
-
-
-                <div className="d-flex justify-content-end mb-3">
-                    <UploadButton
-                        bucketName={bucketName}
             <div
-                        className="kuf-table-outer"
-                        style={{
-                            minHeight: '100vh',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            transition: 'margin-left 0.3s',
-                            marginLeft: sidebarShow ? sidebarWidth : 0,
-                            padding: 0,
-                        }}
-                    >
-                        <div className="w-100 d-flex justify-content-end align-items-center mb-3">
-                            <UploadButton bucketName={bucketName} />
-                        </div>
-                        <div className="w-100 d-flex justify-content-center align-items-center flex-grow-1">
-                            <DynamicTable
-                                title="KUF Table"
-                                columns={columns}
-                                apiEndpoint="http://localhost:4000/api/kuf-data"
-                            />
-                        </div>
-
-                        <CContainer className="h-100" fluid>
-                            <CRow>
-                                <CCol>
-                                    <DynamicTable title="KIF Table" columns={columns} apiEndpoint="http://localhost:4000/api/kif-data" />
-                                </CCol>
-                            </CRow>
-                        </CContainer>
-                    </div>
-                </DefaultLayout>
-                );
+                className="kuf-table-outer"
+                style={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    transition: 'margin-left 0.3s',
+                    marginLeft: sidebarShow ? sidebarWidth : 0,
+                    padding: 0,
+                }}
+            >
+                <div className="w-100 d-flex justify-content-end align-items-center mb-3">
+                    <UploadButton bucketName={bucketName} />
+                </div>
+                <div className="w-100 d-flex justify-content-center align-items-center flex-grow-1">
+                    <DynamicTable
+                        title="KUF Table"
+                        columns={columns}
+                        apiEndpoint="http://localhost:4000/api/kuf-data"
+                    />
+                </div>
+            </div>
+        </DefaultLayout>
+    );
 };
 
-                export default Kuf;
+export default Kuf;
