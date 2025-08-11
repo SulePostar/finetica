@@ -8,7 +8,6 @@ import {
   CSidebarFooter,
   CSidebarHeader,
   CSidebarToggler,
-  CSidebarBrand,
   CBadge,
 } from '@coreui/react';
 
@@ -88,16 +87,15 @@ const AppSidebar = ({ isDarkMode }) => {
         position="fixed"
         unfoldable={unfoldable}
         visible={sidebarShow}
-        onVisibleChange={(visible) => dispatch({ type: 'set', sidebarShow: visible })}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
         style={{
           zIndex: unfoldable && isHovered ? 1060 : 1050,
           transition: 'z-index 0.1s ease',
+          backgroundColor: isDarkMode ? '#432e62df' : '#d8d3e4ff',
         }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
-        <CSidebarHeader className="border-bottom d-flex justify-content-between align-items-center px-3">
-          <CSidebarBrand to="/" />
+        <CSidebarHeader className="border-bottom">
           <CCloseButton
             className="d-lg-none"
             dark={isDarkMode}
