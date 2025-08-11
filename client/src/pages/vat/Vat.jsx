@@ -3,6 +3,7 @@ import { useBucketName } from '../../lib/bucketUtils';
 import './Vat.styles.css';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
+import { Container } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 
 const Vat = () => {
@@ -46,4 +47,6 @@ const Vat = () => {
             </div>
         </DefaultLayout>
     );
-}; export default Vat;
+};
+
+export default Vat;

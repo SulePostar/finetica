@@ -4,6 +4,8 @@
   background-color: #8367deff;
   color: white;
   transition: all 0.2s ease-in-out;
+  margin-top: 70px;
+  margin-right: 20px;
 }
 
 .upload-button:hover {
