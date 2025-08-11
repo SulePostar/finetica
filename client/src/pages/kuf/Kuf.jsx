@@ -50,21 +50,9 @@ const Kuf = () => {
                         title="KUF Table"
                         columns={columns}
                         apiEndpoint="http://localhost:4000/api/kuf-data"
+                        onRowClick={handleRowClick}
                     />
                 </div>
-
-                <CContainer className="h-100" fluid>
-                    <CRow>
-                        <CCol>
-                            <DynamicTable
-                                title="KUF Table"
-                                columns={columns}
-                                apiEndpoint="http://localhost:4000/api/kuf-data"
-                                onRowClick={handleRowClick}
-                            />
-                        </CCol>
-                    </CRow>
-                </CContainer>
             </div>
         </DefaultLayout>
     );

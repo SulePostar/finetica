@@ -37,7 +37,6 @@ const KufDetails = () => {
     };
 
 
-
     return (
         <DefaultLayout>
             <div className="body flex-grow-1 px-3 kuf-detail-layout">
