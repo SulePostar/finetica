@@ -2,12 +2,14 @@ import { CContainer, CSpinner } from '@coreui/react';
 import React, { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from '../protectedRoutes/ProtectedRouter';
+import KufDetails from '../pages/kuf/KufDetails';
 
 const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
 const AdminDashboard = React.lazy(() => import('../pages/AdminDashboard/AdminDashboard'));
-const Kif = React.lazy(() => import('../pages/Kif/Kif'));
+const Kif = React.lazy(() => import('../pages/kif/Kif'));
+const KifDetail = React.lazy(() => import('../pages/kuf/KufDetails'));
 const Vat = React.lazy(() => import('../pages/vat/Vat'));
 const Kuf = React.lazy(() => import('../pages/kuf/Kuf'));
 const ProfilePage = React.lazy(() => import('../pages/Profile/ProfilePage'));
@@ -47,7 +49,7 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
-        {/* Protected admin routes */}
+
         <Route
           path="/admin/*"
           element={
@@ -80,7 +82,14 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="/kuf/:id"
+          element={
+            <ProtectedRoute>
+              <KufDetails />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/profile"
           element={
@@ -89,7 +98,7 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
-        {/* Fallback for unknown routes */}
+
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Suspense>

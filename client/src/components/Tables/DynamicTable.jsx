@@ -3,7 +3,7 @@ import { Card, Spinner } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import makeCustomStyles from './DynamicTable.styles';
 
-const DynamicTable = ({ title, columns, apiEndpoint }) => {
+const DynamicTable = ({ title, columns, apiEndpoint, onRowClick }) => {
     const [data, setData] = useState([]);
     const [totalRows, setTotalRows] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -79,10 +79,12 @@ const DynamicTable = ({ title, columns, apiEndpoint }) => {
                         setSortField(col.sortField || col.selector?.name || col.selector);
                         setSortOrder(dir);
                     }}
+                    onRowClicked={onRowClick}
                     sortServer
                     highlightOnHover
                     responsive
                     customStyles={customStyles}
+                    pointerOnHover
                 />
             </Card.Body>
         </Card>

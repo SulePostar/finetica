@@ -1,4 +1,4 @@
-import { cilContrast, cilMenu, cilMoon, cilSun } from '@coreui/icons';
+import { cilContrast, cilMenu, cilMoon, cilSun, cilArrowLeft } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import {
   CContainer,
@@ -9,9 +9,11 @@ import {
   CHeader,
   CHeaderNav,
   CHeaderToggler,
+  CButton,
 } from '@coreui/react';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
 import './AppHeader.css';
@@ -19,8 +21,20 @@ import './AppHeader.css';
 const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const headerRef = useRef();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
   const sidebarUnfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
+
+
+  const isKifDetailPage = location.pathname.startsWith('/kif/') && location.pathname !== '/kif';
+
+
+  useEffect(() => {
+    if (isKifDetailPage && sidebarShow) {
+      dispatch({ type: 'set', sidebarShow: false });
+    }
+  }, [isKifDetailPage, sidebarShow, dispatch]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,7 +46,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
     return () => document.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Calculate header margin based on sidebar state
+
   const getHeaderMargin = () => {
     if (!sidebarShow) return 0;
     return sidebarUnfoldable ? 56 : 240;
@@ -42,7 +56,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
 
   return (
     <>
-      {/* Main Header with Left Controls */}
+
       <CHeader
         position="sticky"
         className="p-0"
@@ -66,39 +80,67 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
             transition: 'margin-left 0.3s ease-in-out'
           }}
         >
-          <CHeaderToggler
-            onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
-            className="ms-n3"
-            style={{
-              border: 'none',
-              borderRadius: '6px',
-              padding: '10px',
-              backgroundColor: 'transparent',
-              color: isDarkMode ? '#ffffff' : '#000000',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'background-color 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = 'transparent';
-            }}
-          >
-            <CIcon icon={cilMenu} size="lg" style={{ color: isDarkMode ? '#ffffff' : '#000000' }} />
-          </CHeaderToggler>
+          {isKifDetailPage ? (
+            <CButton
+              variant="outline"
+              onClick={() => navigate('/kif')}
+              className="ms-n3"
+              style={{
+                border: '1px solid var(--cui-border-color)',
+                borderRadius: '6px',
+                padding: '8px 12px',
+                backgroundColor: 'transparent',
+                color: 'var(--cui-body-color)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.2s ease',
+                fontSize: '0.875rem'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'var(--cui-light)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'transparent';
+              }}
+            >
+              <CIcon icon={cilArrowLeft} className="me-2" />
+              Back to KIF
+            </CButton>
+          ) : (
+            <CHeaderToggler
+              onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
+              className="ms-n3"
+              style={{
+                border: 'none',
+                borderRadius: '6px',
+                padding: '10px',
+                backgroundColor: 'transparent',
+                color: isDarkMode ? '#ffffff' : '#000000',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'background-color 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'transparent';
+              }}
+            >
+              <CIcon icon={cilMenu} size="lg" style={{ color: isDarkMode ? '#ffffff' : '#000000' }} />
+            </CHeaderToggler>
+          )}
 
           <CHeaderNav className="d-none d-md-flex" />
 
-          {/* Spacer to push content to the right */}
           <div style={{ flexGrow: 1 }}></div>
         </CContainer>
       </CHeader>
 
-      {/* Fixed Right Navigation */}
       <div
         className="fixed-header-nav"
         style={{
