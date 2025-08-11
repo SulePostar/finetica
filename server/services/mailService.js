@@ -48,7 +48,4 @@ async function sendTemplatedEmail(templateName, to, variables = {}) {
     return sendEmail({ to, subject, html });
 }
 
-// Preserve existing default export API (function), and add named export for templated emails
-sendEmail.sendTemplatedEmail = sendTemplatedEmail;
-
-module.exports = sendEmail;
+module.exports = { sendEmail, sendTemplatedEmail };
