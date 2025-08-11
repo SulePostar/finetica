@@ -108,7 +108,7 @@ export const formatValue = (value, key, currency = 'BAM') => {
 
     // Format boolean values
     if (typeof value === 'boolean') {
-        return value ? 'Da' : 'Ne'; 
+        return value ? 'Da' : 'Ne';
     }
 
     return value;
