@@ -47,7 +47,7 @@ connectToDatabase();
 // Start Google Drive auto sync service
 googleDriveAutoSync.start();
 
-app.listen(process.env.PORT, () => {
-  console.log(`🟢 Server is running at port: ${process.env.PORT}`);
+app.listen(PORT, () => {
+  console.log(`🟢 Server is running at port: ${PORT}`);
   console.log(`🔄 Google Drive auto sync service is active`);
 });

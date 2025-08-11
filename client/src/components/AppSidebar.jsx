@@ -18,6 +18,7 @@ import { logout } from './../redux/auth/authSlice';
 import ConfirmationModal from './Modals/ConfirmationModal';
 import './AppSidebar.css';
 import { colors } from '../styles/colors';
+import { setShowModal, setDriveConnected } from '../redux/sidebar/sidebarSlice';
 
 const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
@@ -27,17 +28,15 @@ const AppSidebar = ({ isDarkMode }) => {
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
   const userRole = useSelector((state) => state.user.profile.roleName);
 
-  const [showModal, setShowModal] = useState(false);
-  const [driveConnected, setDriveConnected] = useState(false);
+  const showModal = useSelector((state) => state.sidebar.showModal);
+  const driveConnected = useSelector((state) => state.sidebar.driveConnected);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Logout handler
   const handleLogout = () => {
     dispatch(logout());
     navigate('/login');
   };
 
-  // Google Drive connection check
   const checkDriveConnection = async () => {
     try {
       const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
@@ -45,10 +44,10 @@ const AppSidebar = ({ isDarkMode }) => {
         credentials: 'include',
       });
       const data = await response.json();
-      setDriveConnected(data.connected);
+      dispatch(setDriveConnected(data.connected));
     } catch (error) {
       console.error('Drive connection check error:', error);
-      setDriveConnected(false);
+      dispatch(setDriveConnected(false));
     }
   };
 
@@ -58,34 +57,24 @@ const AppSidebar = ({ isDarkMode }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Filter navigation based on role
   const filteredNav = navigation
     .map((item) => {
       const isAdmin = userRole === 'admin';
 
-      // CNavGroup (ima children/items)
       if (item.component?.displayName === 'CNavGroup' && item.items) {
         if (item.adminOnly && !isAdmin) return null;
-
         const filteredItems = item.items.filter(
           (child) => !child.adminOnly || isAdmin
         );
-
         if (filteredItems.length === 0) return null;
-
-        return {
-          ...item,
-          items: filteredItems,
-        };
+        return { ...item, items: filteredItems };
       }
 
-      // CNavTitle (nema items)
       if (item.component?.displayName === 'CNavTitle') {
         if (item.adminOnly && !isAdmin) return null;
         return item;
       }
 
-      // Obični CNavItem
       if (item.adminOnly && !isAdmin) return null;
       return item;
     })
@@ -158,7 +147,7 @@ const AppSidebar = ({ isDarkMode }) => {
           <div
             className="d-flex align-items-center gap-2"
             style={{ cursor: 'pointer' }}
-            onClick={() => setShowModal(true)}
+            onClick={() => dispatch(setShowModal(true))}
           >
             <CSidebarToggler
               onClick={() =>
@@ -177,7 +166,7 @@ const AppSidebar = ({ isDarkMode }) => {
 
       <ConfirmationModal
         visible={showModal}
-        onCancel={() => setShowModal(false)}
+        onCancel={() => dispatch(setShowModal(false))}
         onConfirm={handleLogout}
         title="Confirm Logout"
         body="Are you sure you want to log out?"
