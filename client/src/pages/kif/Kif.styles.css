@@ -169,6 +169,16 @@
   display: none !important;
 }
 
+[data-coreui-theme='dark'] .action-dropdown .dropdown-toggle {
+  color: #cbd5e0;
+  background: transparent;
+}
+
+[data-coreui-theme='dark'] .action-dropdown .dropdown-toggle:hover {
+  background-color: #ffffff;
+  color: #4a2ea0;
+}
+
 /* Animation for successful upload */
 @keyframes uploadSuccess {
   0% {
