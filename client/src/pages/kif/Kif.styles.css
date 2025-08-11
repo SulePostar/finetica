@@ -152,6 +152,19 @@
   margin: 0 auto 1rem;
 }
 
+.dropdown-toggle {
+  background-color: #5b3cc4;
+  border: none;
+  color: #f7fafc;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.dropdown-toggle:hover {
+  background-color: #4a2ea0;
+  color: #f7fafc;
+}
+
 /* Animation for successful upload */
 @keyframes uploadSuccess {
   0% {

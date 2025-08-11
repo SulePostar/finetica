@@ -3,9 +3,28 @@ import { CContainer, CRow, CCol } from '@coreui/react';
 import './Kuf.styles.css';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
+import { Dropdown } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import { useBucketName } from '../../lib/bucketUtils';
 
 const Kuf = () => {
+
+    const navigate = useNavigate();
+
+    const handleView = (row) => {
+        console.log('View row:', row);
+        navigate(`/kuf/${row.id}`);
+    };
+    const handleEdit = (row) => {
+        console.log('Edit row:', row);
+    };
+    const handleDelete = (row) => {
+        console.log('Delete row:', row);
+    };
+    const handleDownload = (row) => {
+        console.log('Download row:', row);
+    };
+
 
     const columns = [
         { name: 'ID', selector: row => row.id, sortable: true },
@@ -13,6 +32,25 @@ const Kuf = () => {
         { name: 'Quantity', selector: row => row.amount, sortable: true },
         { name: 'Price', selector: row => row.price, sortable: true },
         { name: 'Date', selector: row => row.date, sortable: true },
+        {
+            name: 'Actions',
+            cell: row => (
+                <Dropdown className="action-dropdown">
+                    <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                        Actions
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                        <Dropdown.Item onClick={() => handleView(row)}>View</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleEdit(row)}>Edit</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleDelete(row)}>Delete</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleDownload(row)}>Download</Dropdown.Item>
+                    </Dropdown.Menu>
+                </Dropdown>
+            ),
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+        }
     ];
 
     const bucketName = useBucketName();
