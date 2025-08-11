@@ -15,7 +15,6 @@
 }
 
 /* KUF Page Styles */
-
 .kuf-table-outer {
   box-sizing: border-box;
 }
@@ -122,23 +121,6 @@
   border-radius: 6px;
   overflow: hidden;
   background-color: #e2e8f0;
-}
-
-.action-dropdown .dropdown-toggle {
-  background-color: transparent;
-  border: none;
-  color: #5b3cc4;
-  padding: 0.5rem 0.75rem;
-  border-radius: 5px;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-.action-dropdown .dropdown-toggle:hover {
-  background-color: #4a2ea0;
-  color: #f7fafc;
-}
-
-.dropdown-toggle::after {
-  display: none !important;
 }
 
 .upload-progress .progress-bar {

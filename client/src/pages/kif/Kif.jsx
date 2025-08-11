@@ -2,7 +2,7 @@ import { UploadButton } from '../../components/index';
 import { useBucketName } from '../../lib/bucketUtils';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
-import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown'; // Import your dropdown component
+import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import './Kif.styles.css';
@@ -14,9 +14,7 @@ const Kif = () => {
         navigate(`/kif/${id}`);
     };
     //Placeholder functions for edit, delete, and download actions
-    const handleEdit = (id) => {
-        console.log(`Edit action for ID: ${id}`);
-    };
+    const handleEdit = (id) => { };
     const handleDelete = (id) => { };
     const handleDownload = (id) => { };
 

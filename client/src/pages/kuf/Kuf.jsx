@@ -3,7 +3,6 @@ import './Kuf.styles.css';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown'; // <-- Import the reusable dropdown
-import { FaEllipsisV } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useBucketName } from '../../lib/bucketUtils';
 import { useSelector } from 'react-redux';
@@ -14,6 +13,7 @@ const Kuf = () => {
     const handleView = (id) => {
         navigate(`/kuf/${id}`);
     };
+    // Placeholder functions for edit, delete, and download actions
     const handleEdit = (id) => { };
     const handleDelete = (id) => { };
     const handleDownload = (id) => { };
