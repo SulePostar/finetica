@@ -16,22 +16,11 @@ const Kuf = () => {
 
     const bucketName = useBucketName();
     const sidebarShow = useSelector(state => state.ui.sidebarShow);
-    const sidebarWidth = 250;
 
     return (
         <DefaultLayout>
             <div
-                className="kuf-table-outer"
-                style={{
-                    minHeight: '100vh',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    transition: 'margin-left 0.3s',
-                    marginLeft: sidebarShow ? sidebarWidth : 0,
-                    padding: 0,
-                }}
+                className={`kuf-table-outer ${sidebarShow ? 'sidebar-open' : 'sidebar-closed'}`}
             >
                 <div className="w-100 d-flex justify-content-end align-items-center mb-3">
                     <UploadButton bucketName={bucketName} />

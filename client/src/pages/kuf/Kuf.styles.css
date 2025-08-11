@@ -18,6 +18,21 @@
 
 .kuf-table-outer {
   box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  transition: margin-left 0.3s;
+  padding: 2rem 0;
+}
+
+.kuf-table-outer.sidebar-open {
+  margin-left: 250px;
+}
+
+.kuf-table-outer.sidebar-closed {
+  margin-left: 0;
 }
 
 .kuf-page-header {
