@@ -6,6 +6,8 @@ const errorHandler = require('./middleware/errorHandler');
 const kifRouter = require('./routes/kif');
 const kufRouter = require('./routes/kuf');
 const vatRouter = require('./routes/vat');
+const mailRoute = require("./routes/mailRoute");
+
 
 const app = express();
 
@@ -18,6 +20,7 @@ app.use('/api/files', require('./routes/uploadedFiles'));
 app.use('/api', kifRouter);
 app.use('/api', kufRouter);
 app.use('/api', vatRouter);
+app.use(mailRoute);
 
 app.use(errorHandler);
 
