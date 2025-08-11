@@ -13,7 +13,6 @@ const Vat = () => {
 
     const handleView = (row) => {
         console.log('View row:', row);
-        navigate(`/vat/${row.id}`);
     };
     const handleEdit = (row) => {
         console.log('Edit row:', row);
@@ -81,4 +80,4 @@ const Vat = () => {
     );
 };
 
-export default Vat; 
+export default Vat;
