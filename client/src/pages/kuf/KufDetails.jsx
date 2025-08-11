@@ -1,0 +1,77 @@
+import { cilFile } from '@coreui/icons';
+import CIcon from '@coreui/icons-react';
+import {
+    CCard,
+    CCardBody,
+    CCardHeader,
+    CCardTitle,
+    CCol,
+    CContainer,
+    CRow
+} from '@coreui/react';
+import { useParams } from 'react-router-dom';
+import KufDocumentInfo from '../../components/InfoCards/KufDocumentInfo';
+import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
+import DefaultLayout from '../../layout/DefaultLayout';
+import './KufDetails.styles.css';
+
+const KufDetails = () => {
+    const { id } = useParams();
+
+
+    const mockKufData = {
+        id: id || '1',
+        name: 'Sample KUF Document',
+        amount: 150,
+        price: 25.50,
+        date: '2024-01-15',
+        status: 'Active',
+        description: 'This is a sample KUF document for demonstration purposes.',
+        category: 'Invoice',
+        supplier: 'Sample Supplier Ltd.',
+        total: 3825.00,
+        currency: '$',
+        documentNumber: 'KUF-2024-001',
+        createdAt: '2024-01-15T10:30:00Z',
+        updatedAt: '2024-01-15T14:45:00Z'
+    };
+
+    const mockPdfUrl = 'https://pdfobject.com/pdf/sample.pdf'
+
+
+    return (
+        <DefaultLayout>
+            <div className="body flex-grow-1 px-3 kuf-detail-layout">
+                <CContainer fluid className="kuf-detail-container">
+
+                    <CRow className="mb-4">
+
+                    </CRow>
+
+                    <CRow className="justify-content-center">
+
+                        <CCol lg={4} className="mb-4 kuf-info-column">
+                            <KufDocumentInfo data={mockKufData} />
+                        </CCol>
+
+                        <CCol lg={8} className="mb-4">
+                            <CCard className="h-100 shadow-sm detail-card">
+                                <CCardHeader>
+                                    <CCardTitle className="mb-0">
+                                        <CIcon icon={cilFile} className="me-2" />
+                                        Document Viewer
+                                    </CCardTitle>
+                                </CCardHeader>
+                                <CCardBody>
+                                    <PdfViewer pdfUrl={mockPdfUrl} />
+                                </CCardBody>
+                            </CCard>
+                        </CCol>
+                    </CRow>
+                </CContainer>
+            </div>
+        </DefaultLayout>
+    );
+};
+
+export default KufDetails;

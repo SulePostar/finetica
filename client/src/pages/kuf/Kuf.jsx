@@ -1,11 +1,16 @@
+import { CCol, CContainer, CRow } from '@coreui/react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { UploadButton } from '../../components/index';
-import './Kuf.styles.css';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useBucketName } from '../../lib/bucketUtils';
-import { useSelector } from 'react-redux';
+import './Kuf.styles.css';
 
 const Kuf = () => {
+    const navigate = useNavigate();
+    const bucketName = useBucketName();
+
     const columns = [
         { name: 'ID', selector: row => row.id, sortable: true },
         { name: 'Name', selector: row => row.name, sortable: true },
@@ -14,7 +19,11 @@ const Kuf = () => {
         { name: 'Date', selector: row => row.date, sortable: true },
     ];
 
-    const bucketName = useBucketName();
+    const handleRowClick = (row) => {
+        console.log('Row clicked:', row);
+        console.log('Navigating to:', `/kuf/${row.id}`);
+        navigate(`/kuf/${row.id}`);
+    };
     const sidebarShow = useSelector(state => state.ui.sidebarShow);
     const sidebarWidth = 250;
 
@@ -41,6 +50,7 @@ const Kuf = () => {
                         title="KUF Table"
                         columns={columns}
                         apiEndpoint="http://localhost:4000/api/kuf-data"
+                        onRowClick={handleRowClick}
                     />
                 </div>
             </div>

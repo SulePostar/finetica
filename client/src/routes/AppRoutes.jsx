@@ -2,6 +2,7 @@ import { CContainer, CSpinner } from '@coreui/react';
 import React, { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from '../protectedRoutes/ProtectedRouter';
+import KufDetails from '../pages/kuf/KufDetails';
 
 const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const Register = React.lazy(() => import('../pages/Register/Register'));
@@ -89,7 +90,14 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="/kuf/:id"
+          element={
+            <ProtectedRoute>
+              <KufDetails />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/profile"
           element={
