@@ -2,21 +2,21 @@ import { UploadButton } from '../../components/index';
 import './Kuf.styles.css';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
-import { Dropdown } from 'react-bootstrap';
+import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown'; // <-- Import the reusable dropdown
+import { FaEllipsisV } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useBucketName } from '../../lib/bucketUtils';
-import { FaEllipsisV } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 
 const Kuf = () => {
     const navigate = useNavigate();
 
-    const handleView = (row) => {
-        navigate(`/kuf/${row.id}`);
+    const handleView = (id) => {
+        navigate(`/kuf/${id}`);
     };
-    const handleEdit = (row) => { };
-    const handleDelete = (row) => { };
-    const handleDownload = (row) => { };
+    const handleEdit = (id) => { };
+    const handleDelete = (id) => { };
+    const handleDownload = (id) => { };
 
     const columns = [
         { name: 'ID', selector: row => row.id, sortable: true },
@@ -27,17 +27,13 @@ const Kuf = () => {
         {
             name: 'Actions',
             cell: row => (
-                <Dropdown className="action-dropdown">
-                    <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                        <FaEllipsisV />
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => handleView(row)}>View</Dropdown.Item>
-                        <Dropdown.Item onClick={() => handleEdit(row)}>Edit</Dropdown.Item>
-                        <Dropdown.Item onClick={() => handleDelete(row)}>Delete</Dropdown.Item>
-                        <Dropdown.Item onClick={() => handleDownload(row)}>Download</Dropdown.Item>
-                    </Dropdown.Menu>
-                </Dropdown>
+                <ActionsDropdown
+                    row={row}
+                    onView={handleView}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    onDownload={handleDownload}
+                />
             ),
             ignoreRowClick: true,
             allowOverflow: true,

@@ -2,30 +2,23 @@ import { UploadButton } from '../../components/index';
 import { useBucketName } from '../../lib/bucketUtils';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
-import { Dropdown } from 'react-bootstrap';
+import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown'; // Import your dropdown component
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import './Kif.styles.css';
-import { FaEllipsisV } from 'react-icons/fa';
 
 const Kif = () => {
     const navigate = useNavigate();
 
-    const handleView = (row) => {
-        console.log('View row:', row);
-        navigate(`/kif/${row.id}`);
+    const handleView = (id) => {
+        navigate(`/kif/${id}`);
     };
-    const handleEdit = (row) => {
-        console.log('Edit row:', row);
+    //Placeholder functions for edit, delete, and download actions
+    const handleEdit = (id) => {
+        console.log(`Edit action for ID: ${id}`);
     };
-    const handleDelete = (row) => {
-        console.log('Delete row:', row);
-    };
-    const handleDownload = (row) => {
-        console.log('Download row:', row);
-    };
-
-
+    const handleDelete = (id) => { };
+    const handleDownload = (id) => { };
 
     const columns = [
         { name: 'ID', selector: row => row.id, sortable: true },
@@ -36,17 +29,13 @@ const Kif = () => {
         {
             name: 'Actions',
             cell: row => (
-                <Dropdown className="action-dropdown">
-                    <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                        <FaEllipsisV />
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => handleView(row)}>View</Dropdown.Item>
-                        <Dropdown.Item onClick={() => handleEdit(row)}>Edit</Dropdown.Item>
-                        <Dropdown.Item onClick={() => handleDelete(row)}>Delete</Dropdown.Item>
-                        <Dropdown.Item onClick={() => handleDownload(row)}>Download</Dropdown.Item>
-                    </Dropdown.Menu>
-                </Dropdown>
+                <ActionsDropdown
+                    row={row}
+                    onView={handleView}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    onDownload={handleDownload}
+                />
             ),
             ignoreRowClick: true,
             allowOverflow: true,
