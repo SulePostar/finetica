@@ -25,20 +25,14 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const location = useLocation();
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
   const sidebarUnfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
-
-
   const isKufDetailPage = location.pathname.startsWith('/kuf/') && location.pathname !== '/kuf';
-
+  const isKifDetailsPage = location.pathname.startsWith('/kif/') && location.pathname !== '/kif';
 
   useEffect(() => {
     if (isKufDetailPage && sidebarShow) {
       dispatch({ type: 'set', sidebarShow: false });
     }
   }, [isKufDetailPage, sidebarShow, dispatch]);
-
-
-  const isKifDetailsPage = location.pathname.startsWith('/kif/') && location.pathname !== '/kif';
-
 
   useEffect(() => {
     if (isKifDetailsPage && sidebarShow) {
@@ -118,8 +112,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
               <CIcon icon={cilArrowLeft} className="me-2" />
               Back to KUF
             </CButton>
-          ) : (
-            {isKifDetailsPage ? (
+          ) : isKifDetailsPage ? (
             <CButton
               variant="outline"
               onClick={() => navigate('/kif')}
@@ -149,37 +142,36 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
             </CButton>
           ) : (
             <CHeaderToggler
-                onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
-                className="ms-n3"
-                style={{
-                  border: 'none',
-                  borderRadius: '6px',
-                  padding: '10px',
-                  backgroundColor: 'transparent',
-                  color: isDarkMode ? '#ffffff' : '#000000',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'background-color 0.2s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = 'transparent';
-                }}
-              >
-                <CIcon icon={cilMenu} size="lg" style={{ color: isDarkMode ? '#ffffff' : '#000000' }} />
-              </CHeaderToggler>
-          )}
+              onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
+              className="ms-n3"
+              style={{
+                border: 'none',
+                borderRadius: '6px',
+                padding: '10px',
+                backgroundColor: 'transparent',
+                color: isDarkMode ? '#ffffff' : '#000000',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'background-color 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'transparent';
+              }}
+            >
+              <CIcon icon={cilMenu} size="lg" style={{ color: isDarkMode ? '#ffffff' : '#000000' }} />
+            </CHeaderToggler>
           )}
 
           <CHeaderNav className="d-none d-md-flex" />
 
           <div style={{ flexGrow: 1 }}></div>
         </CContainer>
-      </CHeader>
+      </CHeader >
 
       <div
         className="fixed-header-nav"
