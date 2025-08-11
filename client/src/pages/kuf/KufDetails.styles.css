@@ -175,3 +175,59 @@
 .card-body::-webkit-scrollbar-thumb:hover {
   background: var(--cui-secondary);
 }
+
+.kuf-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 1rem;
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 1.25rem 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border-left: 4px solid #d8d3e4ff;
+  margin-bottom: 1rem;
+}
+[data-coreui-theme='dark'] .kuf-info-list {
+  background: #23272f;
+  border-left: 4px solid #d8d3e4ff;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #e4e4e4;
+  transition: background 0.15s;
+  border-radius: 6px;
+}
+.info-row:last-child {
+  border-bottom: none;
+}
+.info-row:hover {
+  background: #e9f2ff;
+}
+[data-coreui-theme='dark'] .info-row:hover {
+  background: #2a3140;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #111; /* crna za light mode */
+  letter-spacing: 0.02em;
+}
+[data-coreui-theme='dark'] .info-label {
+  color: #d8d3e4ff;
+}
+
+.info-value {
+  color: #111; /* crna za light mode */
+  font-weight: 500;
+  text-align: right;
+  max-width: 60%;
+  word-break: break-word;
+  transition: color 0.2s;
+}
+[data-coreui-theme='dark'] .info-value {
+  color: #d8d3e4ff;
+}

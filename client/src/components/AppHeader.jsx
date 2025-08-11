@@ -27,14 +27,14 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const sidebarUnfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
 
 
-  const isKifDetailPage = location.pathname.startsWith('/kif/') && location.pathname !== '/kif';
+  const isKufDetailPage = location.pathname.startsWith('/kuf/') && location.pathname !== '/kuf';
 
 
   useEffect(() => {
-    if (isKifDetailPage && sidebarShow) {
+    if (isKufDetailPage && sidebarShow) {
       dispatch({ type: 'set', sidebarShow: false });
     }
-  }, [isKifDetailPage, sidebarShow, dispatch]);
+  }, [isKufDetailPage, sidebarShow, dispatch]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,10 +80,10 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
             transition: 'margin-left 0.3s ease-in-out'
           }}
         >
-          {isKifDetailPage ? (
+          {isKufDetailPage ? (
             <CButton
               variant="outline"
-              onClick={() => navigate('/kif')}
+              onClick={() => navigate('/kuf')}
               className="ms-n3"
               style={{
                 border: '1px solid var(--cui-border-color)',
@@ -106,7 +106,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
               }}
             >
               <CIcon icon={cilArrowLeft} className="me-2" />
-              Back to KIF
+              Back to KUF
             </CButton>
           ) : (
             <CHeaderToggler

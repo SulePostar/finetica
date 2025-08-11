@@ -30,7 +30,7 @@ const KufDetails = () => {
         category: 'Invoice',
         supplier: 'Sample Supplier Ltd.',
         total: 3825.00,
-        currency: 'EUR',
+        currency: '$',
         documentNumber: 'KUF-2024-001',
         createdAt: '2024-01-15T10:30:00Z',
         updatedAt: '2024-01-15T14:45:00Z'
@@ -58,9 +58,55 @@ const KufDetails = () => {
                                     </CCardTitle>
                                 </CCardHeader>
                                 <CCardBody>
-                                    <div className="text-center">
-                                        <CIcon icon={cilFile} className="text-muted mb-3" style={{ fontSize: '3rem' }} />
-                                        <p className="text-muted">Document information will be displayed here</p>
+                                    <div className="kuf-info-list">
+                                        <div className="info-row">
+                                            <span className="info-label">Document:</span>
+                                            <span className="info-value">{mockKufData.documentNumber}</span>
+                                        </div>
+                                        <div className="info-row">
+                                            <span className="info-label">Name:</span>
+                                            <span className="info-value">{mockKufData.name}</span>
+                                        </div>
+                                        <div className="info-row">
+                                            <span className="info-label">Supplier:</span>
+                                            <span className="info-value">{mockKufData.supplier}</span>
+                                        </div>
+                                        <div className="info-row">
+                                            <span className="info-label">Category:</span>
+                                            <span className="info-value">{mockKufData.category}</span>
+                                        </div>
+                                        <div className="info-row">
+                                            <span className="info-label">Amount:</span>
+                                            <span className="info-value">{mockKufData.amount}</span>
+                                        </div>
+                                        <div className="info-row">
+                                            <span className="info-label">Price:</span>
+                                            <span className="info-value">{mockKufData.price} {mockKufData.currency}</span>
+                                        </div>
+                                        <div className="info-row">
+                                            <span className="info-label">Total:</span>
+                                            <span className="info-value">{mockKufData.total} {mockKufData.currency}</span>
+                                        </div>
+                                        <div className="info-row">
+                                            <span className="info-label">Status:</span>
+                                            <span className="info-value">{mockKufData.status}</span>
+                                        </div>
+                                        <div className="info-row">
+                                            <span className="info-label">Date:</span>
+                                            <span className="info-value">{mockKufData.date}</span>
+                                        </div>
+                                        <div className="info-row">
+                                            <span className="info-label">Created:</span>
+                                            <span className="info-value">{new Date(mockKufData.createdAt).toLocaleString()}</span>
+                                        </div>
+                                        <div className="info-row">
+                                            <span className="info-label">Updated:</span>
+                                            <span className="info-value">{new Date(mockKufData.updatedAt).toLocaleString()}</span>
+                                        </div>
+                                        <div className="info-row">
+                                            <span className="info-label">Description:</span>
+                                            <span className="info-value">{mockKufData.description}</span>
+                                        </div>
                                     </div>
                                 </CCardBody>
                             </CCard>
