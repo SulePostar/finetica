@@ -18,27 +18,23 @@ const Kuf = () => {
     const bucketName = useBucketName();
 
     return (
-        <>
-            <DefaultLayout>
-                <div className="body flex-grow-1 px-3">
-                    <CCol>
-                        <div className="d-flex justify-content-end align-items-center">
-                            <UploadButton
-                                bucketName={bucketName}
-                            />
-                        </div>
-                    </CCol>
-                    <CContainer className="h-100" fluid>
-                        <CRow>
-                            <CCol>
-                                <DynamicTable title="KUF Table" columns={columns} apiEndpoint="http://localhost:4000/api/kuf-data" />
+        <DefaultLayout>
+            <div className="body flex-grow-1 px-3" style={{ paddingTop: '80px' }}>
 
-                            </CCol>
-                        </CRow>
-                    </CContainer>
+                <div className="d-flex justify-content-end mb-3">
+                    <UploadButton
+                        bucketName={bucketName}
+                    />
                 </div>
-            </DefaultLayout>
-        </>
+                <CContainer className="h-100" fluid>
+                    <CRow>
+                        <CCol>
+                            <DynamicTable title="KUF Table" columns={columns} apiEndpoint="http://localhost:4000/api/kuf-data" />
+                        </CCol>
+                    </CRow>
+                </CContainer>
+            </div>
+        </DefaultLayout>
     );
 };
 
