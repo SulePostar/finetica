@@ -1,20 +1,19 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import {
-    CContainer,
-    CRow,
-    CCol,
-    CCard,
-    CCardHeader,
-    CCardBody,
-    CCardTitle,
-    CButton
-} from '@coreui/react';
-import CIcon from '@coreui/icons-react';
 import { cilFile } from '@coreui/icons';
+import CIcon from '@coreui/icons-react';
+import {
+    CCard,
+    CCardBody,
+    CCardHeader,
+    CCardTitle,
+    CCol,
+    CContainer,
+    CRow
+} from '@coreui/react';
+import { useParams } from 'react-router-dom';
+import KufDocumentInfo from '../../components/InfoCards/KufDocumentInfo';
+import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
 import DefaultLayout from '../../layout/DefaultLayout';
 import './KufDetails.styles.css';
-import KufDocumentInfo from '../../components/InfoCards/KufDocumentInfo';
 
 const KufDetails = () => {
     const { id } = useParams();
@@ -37,6 +36,8 @@ const KufDetails = () => {
         updatedAt: '2024-01-15T14:45:00Z'
     };
 
+    const mockPdfUrl = 'https://pdfobject.com/pdf/sample.pdf'
+
 
     return (
         <DefaultLayout>
@@ -53,7 +54,7 @@ const KufDetails = () => {
                             <KufDocumentInfo data={mockKufData} />
                         </CCol>
 
-                        <CCol lg={6} className="mb-4">
+                        <CCol lg={8} className="mb-4">
                             <CCard className="h-100 shadow-sm detail-card">
                                 <CCardHeader>
                                     <CCardTitle className="mb-0">
@@ -62,10 +63,7 @@ const KufDetails = () => {
                                     </CCardTitle>
                                 </CCardHeader>
                                 <CCardBody>
-                                    <div className="text-center">
-                                        <CIcon icon={cilFile} className="text-muted mb-3" style={{ fontSize: '3rem' }} />
-                                        <p className="text-muted">Document viewer will be displayed here</p>
-                                    </div>
+                                    <PdfViewer pdfUrl={mockPdfUrl} />
                                 </CCardBody>
                             </CCard>
                         </CCol>
