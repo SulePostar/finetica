@@ -32,8 +32,6 @@ router.get('/auth/google/callback', async (req, res) => {
         backgroundSyncService.registerUserSession(userId, tokens, req.session.createdAt);
 
         console.log('✅ Google authentication successful - session will last 1 month');
-        console.log('🔄 Refresh token available:', !!tokens.refresh_token);
-        console.log('📝 User registered for background file sync');
         res.redirect('http://localhost:3000/'); // NACI BOLJI NAČIN ZA REDIRECT 
 
     } catch (error) {

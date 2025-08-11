@@ -134,7 +134,7 @@ const AppSidebar = ({ isDarkMode }) => {
               color: driveConnected
                 ? colors.success.text
                 : isDarkMode
-                  ? colors.white
+                  ? colors.error.text
                   : colors.textPrimary,
             }}
           >
