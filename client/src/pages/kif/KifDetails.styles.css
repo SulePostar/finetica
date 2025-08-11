@@ -70,22 +70,6 @@
   font-weight: 500;
 }
 
-.btn {
-  border-radius: 8px;
-  font-weight: 500;
-  padding: 0.75rem 1.5rem;
-  transition: all 0.3s ease;
-  border: 1px solid var(--cui-border-color);
-  background: transparent;
-  color: var(--cui-body-color);
-}
-
-.btn:hover {
-  transform: translateY(-1px);
-  background: var(--cui-light);
-  border-color: var(--cui-border-color);
-}
-
 @media (max-width: 991.98px) {
   .kif-info-column {
     flex: 0 0 100%;
@@ -94,11 +78,6 @@
 
   .detail-card {
     margin-bottom: 1.5rem;
-  }
-
-  .btn {
-    width: 100%;
-    margin-bottom: 0.5rem;
   }
 }
 
@@ -121,18 +100,6 @@
 
 [data-coreui-theme='dark'] .text-muted {
   color: var(--cui-secondary-color) !important;
-}
-
-[data-coreui-theme='dark'] .btn {
-  border-color: var(--cui-border-color);
-  color: var(--cui-body-color);
-  background: transparent;
-}
-
-[data-coreui-theme='dark'] .btn:hover {
-  background: var(--cui-secondary-bg);
-  border-color: var(--cui-border-color);
-  color: var(--cui-body-color);
 }
 
 @keyframes fadeInUp {
