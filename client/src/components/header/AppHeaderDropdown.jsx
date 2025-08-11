@@ -1,4 +1,4 @@
-import { cilExitToApp, cilUser } from '@coreui/icons';
+import { cilExitToApp, cilUser, cilAccountLogout } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import {
   CDropdown,
@@ -6,6 +6,7 @@ import {
   CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
+  CDropdownDivider
 } from '@coreui/react';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -40,6 +41,18 @@ const AppHeaderDropdown = ({ isDarkMode }) => {
           <CDropdownItem href="profile">
             <CIcon icon={cilUser} className="me-2" />
             Profile
+          </CDropdownItem>
+          <CDropdownDivider />
+          <CDropdownItem
+            onClick={() => {
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+              window.location.href = '/login';
+            }}
+            style={{ cursor: 'pointer' }}
+          >
+            <CIcon icon={cilAccountLogout} className="me-2" />
+            Logout
           </CDropdownItem>
         </CDropdownMenu>
       </CDropdown>

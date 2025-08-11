@@ -18,14 +18,15 @@ const Kif = () => {
 
     return (
         <DefaultLayout>
-            <div className="body flex-grow-1 px-3">
-                <CCol>
-                    <div className="d-flex justify-content-end align-items-center">
-                        <UploadButton
-                            bucketName={bucketName}
-                        />
-                    </div>
-                </CCol>
+            <div className="body flex-grow-1 px-3" style={{ paddingTop: '80px' }}>
+
+
+                <div className="d-flex justify-content-end mb-3">
+                    <UploadButton
+                        bucketName={bucketName}
+                    />
+                </div>
+
                 <CContainer className="h-100" fluid>
                     <CRow>
                         <CCol>
