@@ -1,18 +1,16 @@
 //file for testing
-
-const path = require('path');
-const fs = require('fs');
 require('dotenv').config();
+const path = require('path');
+const supabaseService = require('../utils/supabase/supabaseService');
 
-const { uploadDownloadsToBucket } = require('./supabaseUploader.js');
-
-const folderPath = path.join('services', 'downloads');
+const folderPath = path.join(__dirname, 'downloads');
 const bucketName = 'invoices';
 
-uploadDownloadsToBucket(folderPath, bucketName)
+supabaseService
+  .uploadFolder(folderPath, bucketName, { allowedTypes: ['application/pdf'] })
   .then(() => {
     console.log('All files processed.');
   })
   .catch((err) => {
-    console.error('An error occurred.', err);
+    console.error('An error occurred:', err);
   });
