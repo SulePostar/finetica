@@ -14,10 +14,8 @@ import {
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-
 import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
 import './AppHeader.css';
-
 const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const headerRef = useRef();
   const dispatch = useDispatch();
@@ -27,19 +25,16 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const sidebarUnfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
   const isKufDetailPage = location.pathname.startsWith('/kuf/') && location.pathname !== '/kuf';
   const isKifDetailsPage = location.pathname.startsWith('/kif/') && location.pathname !== '/kif';
-
   useEffect(() => {
     if (isKufDetailPage && sidebarShow) {
       dispatch({ type: 'set', sidebarShow: false });
     }
   }, [isKufDetailPage, sidebarShow, dispatch]);
-
   useEffect(() => {
     if (isKifDetailsPage && sidebarShow) {
       dispatch({ type: 'set', sidebarShow: false });
     }
   }, [isKifDetailsPage, sidebarShow, dispatch]);
-
   useEffect(() => {
     const handleScroll = () => {
       if (headerRef.current) {
@@ -49,18 +44,13 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
     document.addEventListener('scroll', handleScroll);
     return () => document.removeEventListener('scroll', handleScroll);
   }, []);
-
-
   const getHeaderMargin = () => {
     if (!sidebarShow) return 0;
     return sidebarUnfoldable ? 56 : 240;
   };
-
   const headerMargin = getHeaderMargin();
-
   return (
     <>
-
       <CHeader
         position="sticky"
         className="p-0"
@@ -149,7 +139,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
                 borderRadius: '6px',
                 padding: '10px',
                 backgroundColor: 'transparent',
-                color: isDarkMode ? '#ffffff' : '#000000',
+                color: isDarkMode ? '#FFFFFF' : '#000000',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -163,16 +153,13 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
                 e.target.style.backgroundColor = 'transparent';
               }}
             >
-              <CIcon icon={cilMenu} size="lg" style={{ color: isDarkMode ? '#ffffff' : '#000000' }} />
+              <CIcon icon={cilMenu} size="lg" style={{ color: isDarkMode ? '#FFFFFF' : '#000000' }} />
             </CHeaderToggler>
           )}
-
           <CHeaderNav className="d-none d-md-flex" />
-
           <div style={{ flexGrow: 1 }}></div>
         </CContainer>
       </CHeader >
-
       <div
         className="fixed-header-nav"
         style={{
@@ -201,7 +188,6 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
                 />
               )}
             </CDropdownToggle>
-
             <CDropdownMenu className={isDarkMode ? 'dropdown-menu-dark' : ''}>
               <CDropdownItem
                 active={colorMode === 'light'}
@@ -232,12 +218,19 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
               </CDropdownItem>
             </CDropdownMenu>
           </CDropdown>
-
           <AppHeaderDropdown isDarkMode={isDarkMode} />
         </CHeaderNav>
       </div>
     </>
   );
 };
-
 export default AppHeader;
+
+
+
+
+
+
+
+
+
