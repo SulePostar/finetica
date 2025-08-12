@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import {
@@ -7,15 +7,15 @@ import {
   CInputGroupText,
   CFormInput,
   CButton,
-  CAlert,
-  CAvatar,
   CFormLabel,
 } from '@coreui/react';
 import { profileFormStyles } from './ProfileForm.styles';
 import { formatDateTime } from '../../helpers/formatDate.js';
 import { capitalizeFirst } from '../../helpers/capitalizeFirstLetter.js';
-import ConfirmationModal from '../Modals/ConfirmationModal';
 import { setUserProfile } from '../../redux/user/userSlice';
+import ProfilePhotoUpload from '../Register/ProfilePhotoUpload/ProfilePhotoUpload';
+import FileUploadService from '../../services/fileUploadService';
+import notify from '../../utilis/toastHelper';
 
 const ProfileForm = () => {
   const dispatch = useDispatch();
@@ -41,33 +41,61 @@ const ProfileForm = () => {
     setFormData(profile);
   }, [profile]);
 
+  const [profilePhoto, setProfilePhoto] = useState(null);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleChange = ({ target: { name, value } }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (error) setError('');
   };
 
-  const handleSubmit = async (e) => {
+  const handlePhotoSelect = useCallback((file) => {
+    setProfilePhoto(file);
+  }, []);
 
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put('http://localhost:4000/api/users/me', formData, {
+      let profileImageUrl = formData.profileImage || null;
+
+      if (profilePhoto) {
+        const uploadResult = await FileUploadService.uploadProfileImage(
+          profilePhoto,
+          formData.firstName,
+          formData.lastName
+        );
+
+        if (uploadResult.success && uploadResult.url) {
+          profileImageUrl = uploadResult.url;
+          notify.onSuccess('Profile image selected successfully!');
+        } else {
+          notify.onWarning('Profile image upload failed, profile saved without new image.');
+        }
+      }
+
+      const payload = {
+        ...formData,
+        profileImage: profileImageUrl,
+      };
+
+      const res = await axios.put('http://localhost:4000/api/users/me', payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
+
       dispatch(setUserProfile(res.data));
       setSuccess('Profile updated!');
-      setShowSuccessModal(true);
+      notify.onSuccess('Profile updated successfully!');
     } catch (err) {
       setError('Failed to update profile.');
+      notify.onError('Failed to update profile. Please try again.');
     } finally {
       setIsEditable(false);
     }
   };
+
 
   return (
     <div className="container py-4">
@@ -76,24 +104,14 @@ const ProfileForm = () => {
           <div className="d-flex justify-content-center align-items-center mb-4">
             <h2 style={styles.title}>User Profile</h2>
           </div>
+
           <div className="text-center mb-4">
-            <CAvatar
-              src="https://i.pravatar.cc/150?u=filip"
-              size="l"
-              className="mb-3"
-              style={{ width: '6rem', height: '6rem' }}
+            <ProfilePhotoUpload
+              onPhotoSelect={handlePhotoSelect}
+              disabled={!isEditable}
             />
-            <div className="d-flex justify-content-center gap-2 flex-wrap">
-              <CButton color="outline-primary" size="sm">
-                Change Photo
-              </CButton>
-              <CButton color="outline-secondary" size="sm">
-                Remove
-              </CButton>
-            </div>
           </div>
-          {error && <CAlert color="danger">{error}</CAlert>}
-          {success && <CAlert color="success">{success}</CAlert>}
+
           <CForm onSubmit={handleSubmit}>
             <div className="d-flex justify-content-end mb-3">
               <CButton
@@ -170,15 +188,6 @@ const ProfileForm = () => {
           </CForm>
         </div>
       </div>
-      <ConfirmationModal
-        visible={showSuccessModal}
-        onCancel={() => setShowSuccessModal(false)}
-        onConfirm={() => setShowSuccessModal(false)}
-        title="Profile Updated"
-        body="Your changes have been saved successfully."
-        confirmText="OK"
-        confirmColor="success"
-      />
     </div>
   );
 };

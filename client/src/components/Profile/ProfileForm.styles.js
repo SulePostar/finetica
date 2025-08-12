@@ -1,19 +1,20 @@
+import { cilCursor } from '@coreui/icons';
 import { colors } from '../../styles/colors';
 
 export const profileFormStyles = (isDarkMode) => ({
   formContainerCard: {
+    marginTop: '64px',
     position: 'relative',
     width: '100%',
     maxWidth: '600px',
-    margin: '-30px',
     padding: '20px',
-    backgroundColor: isDarkMode ? '#2D3748' : '#FFFFFF',
+    backgroundColor: isDarkMode ? '#20252fff' : '#FFFFFF',
     borderRadius: '16px',
     boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
   },
 
   title: {
-    color: isDarkMode ? '#FFFFFF' : colors.textPrimary,
+    color: isDarkMode ? '#ffffff' : colors.primary,
     fontSize: '36px',
     fontWeight: 600,
     margin: 0,
@@ -29,7 +30,7 @@ export const profileFormStyles = (isDarkMode) => ({
   },
 
   inputGroupText: {
-    backgroundColor: isDarkMode ? '#b7b8bbff' : '#ecececff',
+    backgroundColor: isDarkMode ? '#ffffff' : '#ffffff',
     border: `1px solid ${colors.borderLight}`,
     borderRight: `2px solid ${colors.borderMedium}`,
     color: colors.primary,
@@ -41,11 +42,11 @@ export const profileFormStyles = (isDarkMode) => ({
   },
 
   formInput: {
-    backgroundColor: isDarkMode ? '#e0e0e0' : colors.lightGray,
+    backgroundColor: isDarkMode ? '#ffffff' : '#ffffff',
   },
 
   formInputDisabled: {
-    backgroundColor: isDarkMode ? '#b7b8bbff' : '#ecececff',
+    backgroundColor: isDarkMode ? '#d4d4d4ff' : '#e7e7e7ff',
   },
 
   labelInInputGroupText: {

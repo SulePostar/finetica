@@ -41,7 +41,7 @@ const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false }) => {
             }
 
             // Show success message
-            notify.onSuccess('Photo selected! It will be uploaded when you register.');
+            notify.onSuccess('Photo selected! It will be uploaded when you complete the process.');
         } catch (err) {
             notify.onError('Failed to process image');
         }
