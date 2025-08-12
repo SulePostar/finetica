@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
 import './AppHeader.css';
+
 const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const headerRef = useRef();
   const dispatch = useDispatch();
@@ -25,16 +26,13 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const sidebarUnfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
   const isKufDetailPage = location.pathname.startsWith('/kuf/') && location.pathname !== '/kuf';
   const isKifDetailsPage = location.pathname.startsWith('/kif/') && location.pathname !== '/kif';
+
   useEffect(() => {
     if (isKufDetailPage && sidebarShow) {
       dispatch({ type: 'set', sidebarShow: false });
     }
   }, [isKufDetailPage, sidebarShow, dispatch]);
-  useEffect(() => {
-    if (isKifDetailsPage && sidebarShow) {
-      dispatch({ type: 'set', sidebarShow: false });
-    }
-  }, [isKifDetailsPage, sidebarShow, dispatch]);
+
   useEffect(() => {
     const handleScroll = () => {
       if (headerRef.current) {
@@ -44,11 +42,14 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
     document.addEventListener('scroll', handleScroll);
     return () => document.removeEventListener('scroll', handleScroll);
   }, []);
+
   const getHeaderMargin = () => {
     if (!sidebarShow) return 0;
     return sidebarUnfoldable ? 56 : 240;
   };
+
   const headerMargin = getHeaderMargin();
+
   return (
     <>
       <CHeader
@@ -224,6 +225,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
     </>
   );
 };
+
 export default AppHeader;
 
 
