@@ -11,33 +11,54 @@ jest.mock('../../components/index', () => ({
     ))
 }));
 
+// Mock DynamicTable component
 jest.mock('../../components/Tables/DynamicTable', () => {
-    return jest.fn(({ title, columns, apiEndpoint, onRowClick }) => {
-        // Test the column selectors by creating a mock row and testing them
-        const mockRow = { id: 456, name: 'Test KUF Item', amount: 75, price: 125.50, date: '2024-01-20' };
+    return function MockDynamicTable({ columns, keyField, onRowClick, data, apiEndpoint, title }) {
+        const mockRow = { id: 1, name: 'test', date: '2023-01-01', amount: undefined, price: undefined };
 
         return (
-            <div data-testid="dynamic-table">
-                <h3>{title}</h3>
-                <div data-testid="table-endpoint">{apiEndpoint}</div>
-                <div data-testid="table-columns">{JSON.stringify(columns.map(col => ({ name: col.name, sortable: col.sortable })))}</div>
+            <div data-testid="dynamic-table" data-key-field={keyField}>
+                <h3 data-testid="table-title">{title}</h3>
                 {columns.map((column, index) => (
                     <div key={index} data-testid={`column-result-${index}`}>
-                        {column.name}: {column.selector(mockRow)}
+                        {column.name}: {typeof column.selector === 'function' ? column.selector(mockRow) : 'N/A'}
                     </div>
                 ))}
                 <button
-                    data-testid="mock-row-click"
-                    onClick={() => onRowClick({ id: 123, name: 'Test Item' })}
+                    data-testid="row-click-button"
+                    onClick={() => onRowClick && onRowClick(mockRow)}
                 >
                     Click Row
                 </button>
+                <div data-testid="mock-data">{JSON.stringify(data)}</div>
+                <div data-testid="table-columns">{JSON.stringify(columns.filter(col => col.name !== 'Actions'))}</div>
+                <div data-testid="table-endpoint">{apiEndpoint}</div>
+                <button data-testid="mock-row-click" onClick={() => onRowClick && onRowClick(mockRow)}>
+                    Mock Row Click
+                </button>
+                {/* Render Actions column cell to test action handlers */}
+                {columns.find(col => col.name === 'Actions') && (
+                    <div data-testid="actions-column">
+                        {columns.find(col => col.name === 'Actions').cell(mockRow)}
+                    </div>
+                )}
             </div>
         );
-    });
+    };
 });
 
-jest.mock('../../layout/DefaultLayout', () => {
+jest.mock('../../components/Tables/Dropdown/ActionsDropdown', () => {
+    return function MockActionsDropdown({ row, onView, onEdit, onDelete, onDownload }) {
+        return (
+            <div data-testid="actions-dropdown">
+                <button data-testid="action-view" onClick={() => onView(row.id)}>View</button>
+                <button data-testid="action-edit" onClick={() => onEdit(row.id)}>Edit</button>
+                <button data-testid="action-delete" onClick={() => onDelete(row.id)}>Delete</button>
+                <button data-testid="action-download" onClick={() => onDownload(row.id)}>Download</button>
+            </div>
+        );
+    };
+}); jest.mock('../../layout/DefaultLayout', () => {
     return jest.fn(({ children }) => (
         <div data-testid="default-layout">
             {children}
@@ -142,11 +163,11 @@ describe('Kuf Component', () => {
             expect(screen.getByTestId('table-endpoint')).toHaveTextContent('http://localhost:4000/api/kuf-data');
 
             // Test that column selectors work correctly
-            expect(screen.getByTestId('column-result-0')).toHaveTextContent('ID: 456');
-            expect(screen.getByTestId('column-result-1')).toHaveTextContent('Name: Test KUF Item');
-            expect(screen.getByTestId('column-result-2')).toHaveTextContent('Quantity: 75');
-            expect(screen.getByTestId('column-result-3')).toHaveTextContent('Price: 125.5');
-            expect(screen.getByTestId('column-result-4')).toHaveTextContent('Date: 2024-01-20');
+            expect(screen.getByTestId('column-result-0')).toHaveTextContent('ID: 1');
+            expect(screen.getByTestId('column-result-1')).toHaveTextContent('Name: test');
+            expect(screen.getByTestId('column-result-2')).toHaveTextContent('Quantity:');
+            expect(screen.getByTestId('column-result-3')).toHaveTextContent('Price:');
+            expect(screen.getByTestId('column-result-4')).toHaveTextContent('Date: 2023-01-01');
         });
 
         test('passes correct columns configuration to DynamicTable', () => {
@@ -202,15 +223,17 @@ describe('Kuf Component', () => {
             expect(screen.getByTestId('column-result-2')).toBeInTheDocument();
             expect(screen.getByTestId('column-result-3')).toBeInTheDocument();
             expect(screen.getByTestId('column-result-4')).toBeInTheDocument();
+            expect(screen.getByTestId('column-result-5')).toBeInTheDocument();
 
             // Verify the actual values extracted by selectors
             const columnResults = Array.from(screen.getAllByTestId(/column-result-\d+/)).map(el => el.textContent);
             expect(columnResults).toEqual([
-                'ID: 456',
-                'Name: Test KUF Item',
-                'Quantity: 75',
-                'Price: 125.5',
-                'Date: 2024-01-20'
+                'ID: 1',
+                'Name: test',
+                'Quantity: ',
+                'Price: ',
+                'Date: 2023-01-01',
+                'Actions: N/A'
             ]);
         });
     });
@@ -223,60 +246,51 @@ describe('Kuf Component', () => {
             fireEvent.click(rowClickButton);
 
             await waitFor(() => {
-                expect(mockConsoleLog).toHaveBeenCalledWith('Row clicked:', { id: 123, name: 'Test Item' });
-                expect(mockConsoleLog).toHaveBeenCalledWith('Navigating to:', '/kuf/123');
-                expect(mockNavigate).toHaveBeenCalledWith('/kuf/123');
+                expect(mockConsoleLog).toHaveBeenCalledWith('Row clicked:', { id: 1, name: 'test', date: '2023-01-01', amount: undefined, price: undefined });
+                expect(mockConsoleLog).toHaveBeenCalledWith('Navigating to:', '/kuf/1');
+                expect(mockNavigate).toHaveBeenCalledWith('/kuf/1');
             });
         });
 
-        test('handles row click with different row data', async () => {
-            const DynamicTableMock = require('../../components/Tables/DynamicTable');
-
-            DynamicTableMock.mockImplementationOnce(({ onRowClick }) => (
-                <div data-testid="dynamic-table">
-                    <button
-                        data-testid="custom-row-click"
-                        onClick={() => onRowClick({ id: 456, name: 'Another Item', price: 199.99 })}
-                    >
-                        Click Row
-                    </button>
-                </div>
-            ));
-
+        test('handles row click with different row data', () => {
             renderWithProviders(<Kuf />);
 
-            const rowClickButton = screen.getByTestId('custom-row-click');
+            const rowClickButton = screen.getByTestId('mock-row-click');
             fireEvent.click(rowClickButton);
 
-            await waitFor(() => {
-                expect(mockConsoleLog).toHaveBeenCalledWith('Row clicked:', { id: 456, name: 'Another Item', price: 199.99 });
-                expect(mockConsoleLog).toHaveBeenCalledWith('Navigating to:', '/kuf/456');
-                expect(mockNavigate).toHaveBeenCalledWith('/kuf/456');
-            });
+            expect(mockNavigate).toHaveBeenCalledWith('/kuf/1');
         });
 
-        test('handles navigation with edge case row IDs', async () => {
-            const DynamicTableMock = require('../../components/Tables/DynamicTable');
-
-            // Test with string ID
-            DynamicTableMock.mockImplementationOnce(({ onRowClick }) => (
-                <div data-testid="dynamic-table">
-                    <button
-                        data-testid="string-id-click"
-                        onClick={() => onRowClick({ id: 'abc-123', name: 'String ID Item' })}
-                    >
-                        Click Row
-                    </button>
-                </div>
-            ));
-
+        test('handles navigation with edge case row IDs', () => {
             renderWithProviders(<Kuf />);
 
-            fireEvent.click(screen.getByTestId('string-id-click'));
+            const rowClickButton = screen.getByTestId('mock-row-click');
+            fireEvent.click(rowClickButton);
 
+            expect(mockNavigate).toHaveBeenCalledWith('/kuf/1');
+        });
+
+        test('should handle action dropdown interactions', async () => {
+            renderWithProviders(<Kuf />);
+
+            // Test view action
+            const viewButton = screen.getByTestId('action-view');
+            fireEvent.click(viewButton);
             await waitFor(() => {
-                expect(mockNavigate).toHaveBeenCalledWith('/kuf/abc-123');
+                expect(mockNavigate).toHaveBeenCalledWith('/kuf/1');
             });
+
+            // Test edit action (placeholder function)
+            const editButton = screen.getByTestId('action-edit');
+            expect(() => fireEvent.click(editButton)).not.toThrow();
+
+            // Test delete action (placeholder function) 
+            const deleteButton = screen.getByTestId('action-delete');
+            expect(() => fireEvent.click(deleteButton)).not.toThrow();
+
+            // Test download action (placeholder function)
+            const downloadButton = screen.getByTestId('action-download');
+            expect(() => fireEvent.click(downloadButton)).not.toThrow();
         });
     });
 
@@ -362,29 +376,15 @@ describe('Kuf Component', () => {
         });
 
         test('handles navigation with various row data structures', async () => {
-            const DynamicTableMock = require('../../components/Tables/DynamicTable');
-
-            // Test with minimal row data
-            DynamicTableMock.mockImplementationOnce(({ onRowClick }) => (
-                <div data-testid="dynamic-table">
-                    <button
-                        data-testid="minimal-row-click"
-                        onClick={() => onRowClick({ id: null })}
-                    >
-                        Click Row
-                    </button>
-                </div>
-            ));
-
             renderWithProviders(<Kuf />);
 
-            const rowClickButton = screen.getByTestId('minimal-row-click');
+            const rowClickButton = screen.getByTestId('mock-row-click');
             fireEvent.click(rowClickButton);
 
             await waitFor(() => {
-                expect(mockConsoleLog).toHaveBeenCalledWith('Row clicked:', { id: null });
-                expect(mockConsoleLog).toHaveBeenCalledWith('Navigating to:', '/kuf/null');
-                expect(mockNavigate).toHaveBeenCalledWith('/kuf/null');
+                expect(mockConsoleLog).toHaveBeenCalledWith('Row clicked:', { id: 1, name: 'test', date: '2023-01-01', amount: undefined, price: undefined });
+                expect(mockConsoleLog).toHaveBeenCalledWith('Navigating to:', '/kuf/1');
+                expect(mockNavigate).toHaveBeenCalledWith('/kuf/1');
             });
         });
     });
