@@ -1,5 +1,5 @@
 import { screen, fireEvent, waitFor } from '@testing-library/react';
-import Kuf from '../../pages/kuf/Kuf.jsx';
+import Kuf from '../../pages/kuf/Kuf';
 import { renderWithProviders, commonAssertions, mockState } from '../../tests/testUtils';
 
 // Mock the additional dependencies not covered in setup.js
@@ -12,19 +12,29 @@ jest.mock('../../components/index', () => ({
 }));
 
 jest.mock('../../components/Tables/DynamicTable', () => {
-    return jest.fn(({ title, columns, apiEndpoint, onRowClick }) => (
-        <div data-testid="dynamic-table">
-            <h3>{title}</h3>
-            <div data-testid="table-endpoint">{apiEndpoint}</div>
-            <div data-testid="table-columns">{JSON.stringify(columns.map(col => ({ name: col.name, sortable: col.sortable })))}</div>
-            <button
-                data-testid="mock-row-click"
-                onClick={() => onRowClick({ id: 123, name: 'Test Item' })}
-            >
-                Click Row
-            </button>
-        </div>
-    ));
+    return jest.fn(({ title, columns, apiEndpoint, onRowClick }) => {
+        // Test the column selectors by creating a mock row and testing them
+        const mockRow = { id: 456, name: 'Test KUF Item', amount: 75, price: 125.50, date: '2024-01-20' };
+
+        return (
+            <div data-testid="dynamic-table">
+                <h3>{title}</h3>
+                <div data-testid="table-endpoint">{apiEndpoint}</div>
+                <div data-testid="table-columns">{JSON.stringify(columns.map(col => ({ name: col.name, sortable: col.sortable })))}</div>
+                {columns.map((column, index) => (
+                    <div key={index} data-testid={`column-result-${index}`}>
+                        {column.name}: {column.selector(mockRow)}
+                    </div>
+                ))}
+                <button
+                    data-testid="mock-row-click"
+                    onClick={() => onRowClick({ id: 123, name: 'Test Item' })}
+                >
+                    Click Row
+                </button>
+            </div>
+        );
+    });
 });
 
 jest.mock('../../layout/DefaultLayout', () => {
@@ -130,6 +140,13 @@ describe('Kuf Component', () => {
 
             // Check API endpoint
             expect(screen.getByTestId('table-endpoint')).toHaveTextContent('http://localhost:4000/api/kuf-data');
+
+            // Test that column selectors work correctly
+            expect(screen.getByTestId('column-result-0')).toHaveTextContent('ID: 456');
+            expect(screen.getByTestId('column-result-1')).toHaveTextContent('Name: Test KUF Item');
+            expect(screen.getByTestId('column-result-2')).toHaveTextContent('Quantity: 75');
+            expect(screen.getByTestId('column-result-3')).toHaveTextContent('Price: 125.5');
+            expect(screen.getByTestId('column-result-4')).toHaveTextContent('Date: 2024-01-20');
         });
 
         test('passes correct columns configuration to DynamicTable', () => {
@@ -174,6 +191,27 @@ describe('Kuf Component', () => {
 
             const columnNames = columnsData.map(col => col.name);
             expect(columnNames).toEqual(['ID', 'Name', 'Quantity', 'Price', 'Date']);
+        });
+
+        test('column selectors extract correct data from row objects', () => {
+            renderWithProviders(<Kuf />);
+
+            // Verify each column selector works with the test data
+            expect(screen.getByTestId('column-result-0')).toBeInTheDocument();
+            expect(screen.getByTestId('column-result-1')).toBeInTheDocument();
+            expect(screen.getByTestId('column-result-2')).toBeInTheDocument();
+            expect(screen.getByTestId('column-result-3')).toBeInTheDocument();
+            expect(screen.getByTestId('column-result-4')).toBeInTheDocument();
+
+            // Verify the actual values extracted by selectors
+            const columnResults = Array.from(screen.getAllByTestId(/column-result-\d+/)).map(el => el.textContent);
+            expect(columnResults).toEqual([
+                'ID: 456',
+                'Name: Test KUF Item',
+                'Quantity: 75',
+                'Price: 125.5',
+                'Date: 2024-01-20'
+            ]);
         });
     });
 
