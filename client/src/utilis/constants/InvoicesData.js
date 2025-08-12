@@ -1,5 +1,3 @@
-import PropTypes from 'prop-types';
-
 /**
  * Field configuration for different document types
  */
@@ -43,38 +41,6 @@ export const DOCUMENT_FIELD_CONFIGS = {
         { label: 'Updated', key: 'updated_at' }
     ]
 };
-
-/**
- * Document data PropTypes for validation
- */
-export const DocumentDataPropTypes = PropTypes.shape({
-    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    documentNumber: PropTypes.string,
-    invoice_number: PropTypes.string,
-    bill_number: PropTypes.string,
-    supplier_name: PropTypes.string,
-    supplier_id: PropTypes.string,
-    customer_name: PropTypes.string,
-    customer_id: PropTypes.string,
-    vat_period: PropTypes.string,
-    invoice_type: PropTypes.string,
-    invoice_date: PropTypes.string,
-    due_date: PropTypes.string,
-    received_date: PropTypes.string,
-    delivery_period: PropTypes.string,
-    net_total: PropTypes.number,
-    lump_sum: PropTypes.number,
-    vat_amount: PropTypes.number,
-    total_amount: PropTypes.number,
-    deductible_vat: PropTypes.number,
-    non_deductible_vat: PropTypes.number,
-    vat_exempt_region: PropTypes.string,
-    vat_category: PropTypes.string,
-    note: PropTypes.string,
-    currency: PropTypes.string,
-    created_at: PropTypes.string,
-    updated_at: PropTypes.string
-});
 
 /**
  * Formats values based on their type and context

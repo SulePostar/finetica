@@ -7,7 +7,7 @@ import {
     DOCUMENT_FIELD_CONFIGS,
     DocumentDataPropTypes,
     formatValue
-} from './DocumentInfo.constants';
+} from '../../utilis/constants/InvoicesData';
 
 /**
  * DocumentInfo Component

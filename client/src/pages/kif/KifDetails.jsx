@@ -11,7 +11,7 @@ import CIcon from '@coreui/icons-react';
 import { cilFile } from '@coreui/icons';
 import { useParams } from 'react-router-dom';
 import DocumentInfo from '../../components/InfoCards/DocumentInfo';
-import { createMockKifData } from '../../components/InfoCards/DocumentInfo.constants';
+import { createMockKifData } from '../../utilis/constants/InvoicesData';
 import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
 import DefaultLayout from '../../layout/DefaultLayout';
 import '../../components/InfoCards/DocumentInfo.styles.css';

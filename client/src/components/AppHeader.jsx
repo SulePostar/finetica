@@ -225,7 +225,6 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
     </>
   );
 };
-
 export default AppHeader;
 
 
