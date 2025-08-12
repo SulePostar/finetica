@@ -1,6 +1,4 @@
-import { CCol, CContainer, CRow } from '@coreui/react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { UploadButton } from '../../components/index';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
