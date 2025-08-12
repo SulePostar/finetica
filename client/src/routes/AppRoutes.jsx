@@ -2,14 +2,13 @@ import { CContainer, CSpinner } from '@coreui/react';
 import React, { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from '../protectedRoutes/ProtectedRouter';
-import KufDetails from '../pages/kuf/KufDetails';
 
 const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
 const AdminDashboard = React.lazy(() => import('../pages/AdminDashboard/AdminDashboard'));
 const Kif = React.lazy(() => import('../pages/kif/Kif'));
-const KifDetails = React.lazy(() => import('../pages/kif/KifDetails'));
+const InvoiceDetails = React.lazy(() => import('../pages/InvoiceDetails/InvoiceDetails'));
 const Vat = React.lazy(() => import('../pages/vat/Vat'));
 const Kuf = React.lazy(() => import('../pages/kuf/Kuf'));
 const ProfilePage = React.lazy(() => import('../pages/Profile/ProfilePage'));
@@ -70,7 +69,7 @@ export default function AppRoutes() {
           path="/kif/:id"
           element={
             <ProtectedRoute>
-              <KifDetails />
+              <InvoiceDetails />
             </ProtectedRoute>
           }
         />
@@ -94,7 +93,7 @@ export default function AppRoutes() {
           path="/kuf/:id"
           element={
             <ProtectedRoute>
-              <KufDetails />
+              <InvoiceDetails />
             </ProtectedRoute>
           }
         />

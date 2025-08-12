@@ -25,13 +25,14 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
   const sidebarUnfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
   const isKufDetailPage = location.pathname.startsWith('/kuf/') && location.pathname !== '/kuf';
-  const isKifDetailsPage = location.pathname.startsWith('/kif/') && location.pathname !== '/kif';
+  const isKifDetailPage = location.pathname.startsWith('/kif/') && location.pathname !== '/kif';
+  const isInvoiceDetailPage = isKufDetailPage || isKifDetailPage;
 
   useEffect(() => {
-    if (isKufDetailPage && sidebarShow) {
+    if (isInvoiceDetailPage && sidebarShow) {
       dispatch({ type: 'set', sidebarShow: false });
     }
-  }, [isKufDetailPage, sidebarShow, dispatch]);
+  }, [isInvoiceDetailPage, sidebarShow, dispatch]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -103,7 +104,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
               <CIcon icon={cilArrowLeft} className="me-2" />
               Back to KUF
             </CButton>
-          ) : isKifDetailsPage ? (
+          ) : isKifDetailPage ? (
             <CButton
               variant="outline"
               onClick={() => navigate('/kif')}
