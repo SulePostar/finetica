@@ -10,47 +10,37 @@ import {
 import navigation from '../_nav';
 import { AppSidebarNav } from './AppSidebarNav';
 import './AppSidebar.css';
-
 const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
   const unfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
   const userRole = useSelector((state) => state.user.profile.roleName);
   const [isHovered, setIsHovered] = useState(false);
-
   const filteredNav = navigation
     .map((item) => {
       const isAdmin = userRole === 'admin';
-
       // CNavGroup (ima children/items)
       if (item.component?.displayName === 'CNavGroup' && item.items) {
         if (item.adminOnly && !isAdmin) return null;
-
         const filteredItems = item.items.filter(
           (child) => !child.adminOnly || isAdmin
         );
-
         if (filteredItems.length === 0) return null;
-
         return {
           ...item,
           items: filteredItems,
         };
       }
-
       // CNavTitle (nema items)
       if (item.component?.displayName === 'CNavTitle') {
         if (item.adminOnly && !isAdmin) return null;
         return item;
       }
-
       // Obični CNavItem
       if (item.adminOnly && !isAdmin) return null;
       return item;
     })
     .filter(Boolean);
-
-
   return (
     <CSidebar
       className={`border-end sidebar ${sidebarShow ? 'show' : ''} ${unfoldable ? 'sidebar-unfoldable' : ''} ${unfoldable && isHovered ? 'sidebar-hover-expanded' : ''}`}
@@ -61,7 +51,7 @@ const AppSidebar = ({ isDarkMode }) => {
       style={{
         zIndex: unfoldable && isHovered ? 1060 : 1050,
         transition: 'z-index 0.1s ease',
-        backgroundColor: isDarkMode ? '#432e62df' : '#d8d3e4ff',
+        backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff',
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -73,9 +63,7 @@ const AppSidebar = ({ isDarkMode }) => {
           onClick={() => dispatch({ type: 'set', sidebarShow: false })}
         />
       </CSidebarHeader>
-
       <AppSidebarNav items={filteredNav} />
-
       <CSidebarFooter className="border-top d-none d-lg-flex">
         <CSidebarToggler
           onClick={() =>
@@ -86,5 +74,4 @@ const AppSidebar = ({ isDarkMode }) => {
     </CSidebar>
   );
 };
-
 export default React.memo(AppSidebar);
