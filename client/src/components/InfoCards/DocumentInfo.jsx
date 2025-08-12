@@ -5,9 +5,9 @@ import CIcon from '@coreui/icons-react';
 import { cilFile } from '@coreui/icons';
 import {
     DOCUMENT_FIELD_CONFIGS,
-    DocumentDataPropTypes,
     formatValue
-} from './DocumentInfo.constants';
+} from '../../utilis/constants/InvoicesData';
+import '../../components/InfoCards/DocumentInfo.styles.css';
 
 /**
  * DocumentInfo Component
@@ -145,7 +145,6 @@ const DocumentInfo = ({ data, type = 'kuf', loading = false, error = null }) => 
 };
 
 DocumentInfo.propTypes = {
-    data: DocumentDataPropTypes,
     type: PropTypes.oneOf(['kuf', 'kif']),
     loading: PropTypes.bool,
     error: PropTypes.instanceOf(Error)

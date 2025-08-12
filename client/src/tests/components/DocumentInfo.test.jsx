@@ -3,7 +3,7 @@ import DocumentInfo from '../../components/InfoCards/DocumentInfo';
 import {
     createMockKifData,
     createMockKufData
-} from '../../components/InfoCards/DocumentInfo.constants';
+} from '../../utilis/constants/InvoicesData';
 
 // Mock CoreUI components
 jest.mock('@coreui/react', () => ({

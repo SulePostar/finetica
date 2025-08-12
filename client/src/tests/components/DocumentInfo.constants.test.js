@@ -1,7 +1,7 @@
 import {
     formatValue,
     DOCUMENT_FIELD_CONFIGS
-} from '../../components/InfoCards/DocumentInfo.constants';
+} from '../../utilis/constants/InvoicesData';
 
 describe('DocumentInfo Constants and Utilities', () => {
     describe('formatValue function', () => {

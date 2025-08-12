@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 // Import the component under test
 import KifDetails from '../../pages/kif/KifDetails.jsx';
 import { renderWithProviders } from '../testUtils';
-import * as DocumentInfoConstants from '../../components/InfoCards/DocumentInfo.constants';
+import * as DocumentInfoConstants from '../../utilis/constants/InvoicesData';
 
 // Mock the dependencies with proper ESM shape
 jest.mock('../../components/InfoCards/DocumentInfo', () => ({
@@ -35,8 +35,8 @@ jest.mock('../../layout/DefaultLayout', () => ({
 }));
 
 // Mock the createMockKifData function with proper ESM shape
-jest.mock('../../components/InfoCards/DocumentInfo.constants', () => {
-    const actual = jest.requireActual('../../components/InfoCards/DocumentInfo.constants');
+jest.mock('../../utilis/constants/InvoicesData', () => {
+    const actual = jest.requireActual('../../utilis/constants/InvoicesData');
     return {
         __esModule: true,
         ...actual,
