@@ -2,8 +2,8 @@ const cron = require('node-cron');
 const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
-const { createDriveClient, oauth2Client } = require('../config/driveConfig');
-const tokenStorage = require('./tokenStorage');
+const { createDriveClient, oauth2Client } = require('../../config/driveConfig');
+const tokenStorage = require('../../services/tokenStorage');
 
 class GoogleDriveAutoSync {
     constructor() {

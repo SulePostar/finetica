@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
 const { createDriveClient, oauth2Client } = require('../config/driveConfig');
+const Logger = require('../utils/logger');
 
 class BackgroundSyncService {
     constructor() {
@@ -28,7 +29,7 @@ class BackgroundSyncService {
     // Start the background sync service
     start() {
         if (this.isRunning) {
-            console.log('⚠️ Background sync service is already running');
+            Logger.warn('Background sync service is already running');
             return;
         }
 
@@ -41,7 +42,7 @@ class BackgroundSyncService {
 
         this.cronJob.start();
         this.isRunning = true;
-        console.log('✅ Background sync service started successfully');
+        Logger.info('Background sync service started with interval:', this.syncInterval);
     }
 
     // Stop the background sync service
@@ -49,24 +50,24 @@ class BackgroundSyncService {
         if (this.cronJob) {
             this.cronJob.stop();
             this.isRunning = false;
-            console.log('🛑 Background sync service stopped');
+            Logger.error('Background sync service stopped');
         }
     }
 
     // Main sync function that runs in background
     async performSync() {
         if (this.activeSessions.size === 0) {
-            console.log('ℹ️ No active sessions for background sync');
+            Logger.info('No active user sessions for background sync');
             return;
         }
 
-        console.log(`🔄 Starting background sync for ${this.activeSessions.size} user(s)...`);
+        Logger.info(`Starting background sync for ${this.activeSessions.size} user(s)...`);
 
         for (const [userId, sessionData] of this.activeSessions) {
             try {
                 await this.syncUserFiles(userId, sessionData);
             } catch (error) {
-                console.error(`❌ Background sync failed for user ${userId}:`, error.message);
+                Logger.error(`Background sync failed for user ${userId}:`, error.message);
 
                 // If authentication failed, remove the session
                 if (error.message.includes('authentication') || error.message.includes('unauthorized')) {
@@ -75,7 +76,7 @@ class BackgroundSyncService {
             }
         }
 
-        console.log('✅ Background sync completed');
+        Logger.success('Background sync completed');
     }
 
     // Sync files for a specific user
@@ -99,9 +100,9 @@ class BackgroundSyncService {
                 sessionData.sessionCreated = Date.now();
                 isSessionValid = true;
 
-                console.log(`✅ Token refreshed for user ${userId}`);
+                Logger.success(`Token refreshed for user ${userId}`);
             } catch (refreshError) {
-                console.error(`❌ Failed to refresh token for user ${userId}:`, refreshError.message);
+                Logger.error(`❌ Failed to refresh token for user ${userId}:`, refreshError.message);
                 throw new Error('Token refresh failed - authentication required');
             }
         }
@@ -117,7 +118,7 @@ class BackgroundSyncService {
         // Find the "finetica" folder
         const fineticaFolderId = await this.findFineticaFolderId(drive);
         if (!fineticaFolderId) {
-            console.log(`⚠️ Finetica folder not found for user ${userId}`);
+            Logger.warn(`Finetica folder not found for user ${userId}`);
             return;
         }
 
@@ -145,12 +146,12 @@ class BackgroundSyncService {
                     skippedCount++;
                 }
             } catch (err) {
-                console.error(`❌ Failed to process ${file.name} for user ${userId}:`, err.message);
+                Logger.error(`Failed to process ${file.name} for user ${userId}:`, err.message);
             }
         }
 
         sessionData.lastSync = new Date().toISOString();
-        console.log(`📊 User ${userId}: ${downloadedCount} new, ${skippedCount} skipped files`);
+        Logger.info(`User ${userId}: ${downloadedCount} new, ${skippedCount} skipped files`);
     }
 
     // Helper function to find the "finetica" folder ID
@@ -167,12 +168,11 @@ class BackgroundSyncService {
             }
             return null;
         } catch (err) {
-            console.error('❌ Error finding finetica folder:', err.message);
+            Logger.error('Error finding finetica folder:', err.message);
             return null;
         }
     }
 
-    // Helper function to download or export files (copied from drive.js)
     async downloadOrExportFile(drive, file, downloadPath) {
         const isGoogleAppsFile = file.mimeType.startsWith('application/vnd.google-apps.');
         let fileName = file.name;
@@ -217,7 +217,6 @@ class BackgroundSyncService {
         }
     }
 
-    // Helper functions (copied from drive.js)
     getExtensionForGoogleAppsFile(mimeType) {
         switch (mimeType) {
             case 'application/vnd.google-apps.spreadsheet':

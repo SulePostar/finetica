@@ -39,7 +39,7 @@ const AppSidebar = ({ isDarkMode }) => {
   const checkDriveConnection = async () => {
     try {
       const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
-      const response = await fetch(`${baseUrl}/admin/drive-connection`, {
+      const response = await fetch(`${baseUrl}/drive/drive-connection`, {
         credentials: 'include',
       });
       const data = await response.json();

@@ -1,8 +1,30 @@
 const { createDriveClient, oauth2Client } = require('../config/driveConfig');
 const { findFineticaFolderId, downloadOrExportFile } = require('../utils/driveDownloader/driveHelper');
+
+const googleDriveAutoSync = require('../utils/driveDownloader/googleDriveAutoSync');
+const tokenStorage = require('./tokenStorage');
 const path = require('path');
 const mkdirp = require('mkdirp');
+
 class DriveSessionService {
+    getDriveConnectionStatus() {
+        try {
+            const hasToken = tokenStorage.hasValidRefreshToken();
+            const status = googleDriveAutoSync.getStatus();
+
+            return {
+                connected: hasToken && status.isRunning,
+                isRunning: status.isRunning,
+                hasToken: hasToken
+            };
+        } catch (error) {
+            return {
+                connected: false,
+                isRunning: false,
+                hasToken: false
+            };
+        }
+    }
     async validateAndRefreshSession(req) {
         const tokens = req.session.tokens;
         const sessionCreated = req.session.createdAt;
@@ -59,7 +81,6 @@ class DriveSessionService {
     }
     async downloadFineticaFiles(tokens, pageSize = 10) {
         try {
-            console.log('✅ Setting up Google Drive client');
             oauth2Client.setCredentials(tokens);
             const drive = createDriveClient();
 
