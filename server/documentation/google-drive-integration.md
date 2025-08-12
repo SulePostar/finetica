@@ -1,24 +1,25 @@
-# Google Drive Integration Documentation
+# Google Drive Integration - Backend Documentation
 
 ## Overview
 
-This documentation covers the Google Drive integration in the Finetica application, which allows users to authenticate with Google Drive and automatically sync files from a specific "finetica" folder.
+This documentation covers the backend implementation of Google Drive integration in the Finetica application, which handles authentication, automatic file synchronization, and provides APIs for frontend consumption.
 
 ## Architecture
 
-The Google Drive integration consists of several components:
-
 ### Backend Components
-- **Authentication Routes** (`/server/routes/googleDrive/googleDrive.js`)
-- **Drive API Routes** (`/server/routes/googleDrive/drive.js`)
-- **Google Drive Configuration** (`/server/config/googleDrive.js`)
+- **Drive Connection Routes** (`/server/routes/googleDrive.js`)
+- **Drive Session Service** (`/server/services/driveSessionService.js`)
+- **Google Drive Auto Sync** (`/server/utils/driveDownloader/googleDriveAutoSync.js`)
+- **Token Storage Service** (`/server/services/tokenStorage.js`)
+- **Google Drive Configuration** (`/server/config/driveConfig.js`)
 
-### Frontend Components
-- **Google Drive Service** (`/client/src/services/googleDriveService.js`)
-- **Google Auth Button** (`/client/src/components/GoogleAuth/GoogleAuthButton.jsx`)
-- **AppSidebar Integration** (`/client/src/components/AppSidebar.jsx`)
+### External Dependencies
+- Google Drive API v3
+- OAuth2 authentication
+- Cron job scheduling
+- File system operations
 
-## Setup Instructions
+## Setup Instructions - Backend
 
 ### 1. Google Cloud Console Setup
 
@@ -30,7 +31,7 @@ The Google Drive integration consists of several components:
    - `http://localhost:4000/auth/google/callback`
    - Add production URLs when deploying
 
-### 2. Environment Configuration
+### 2. Server Environment Configuration
 
 Create or update the `.env` file in the `/server` directory:
 
@@ -56,67 +57,139 @@ API_KEY=your-google-api-key
 REDIRECT_URI=http://localhost:4000/auth/google/callback
 ```
 
-### 3. Client Environment Configuration
-
-Create or update the `.env` file in the `/client` directory:
-
-```bash
-VITE_API_BASE_URL=http://localhost:4000/api
-```
-
-## File Structure
+## File Structure - Backend
 
 ```
 server/
 ├── config/
-│   └── googleDrive.js              # Google OAuth2 client configuration
+│   └── driveConfig.js              # Google OAuth2 client configuration
 ├── routes/
-│   └── googleDrive/
-│       ├── googleDrive.js          # Authentication routes
-│       └── drive.js                # File download/sync routes
+│   └── googleDrive.js              # Drive connection status route
+├── services/
+│   ├── driveSessionService.js      # Main drive session management
+│   └── tokenStorage.js             # Token storage and validation
+├── utils/
+│   └── driveDownloader/
+│       ├── googleDriveAutoSync.js  # Automatic sync service
+│       └── driveHelper.js          # Drive utility functions
 └── googleDriveDownloads/           # Local storage for downloaded files
-
-client/
-├── src/
-│   ├── services/
-│   │   └── googleDriveService.js   # Frontend service for API calls
-│   └── components/
-│       ├── GoogleAuth/
-│       │   └── GoogleAuthButton.jsx # Authentication button component
-│       └── AppSidebar.jsx          # Main sidebar with status indicator
-└── documentation/
-    └── google-drive-integration.md # This documentation
 ```
-
 ## Backend Implementation
 
-### Authentication Flow (`googleDrive.js`)
+### Drive Connection Status (`googleDrive.js`)
+
+The main route file has been simplified to use the service layer:
+
+```javascript
+const express = require('express');
+const router = express.Router();
+const driveSessionService = require('../services/driveSessionService');
+
+router.get('/drive-connection', (_, res) => {
+    const connectionStatus = driveSessionService.getDriveConnectionStatus();
+    res.json(connectionStatus);
+});
+
+module.exports = router;
+```
 
 #### Routes:
-- `GET /auth/google` - Initiates OAuth flow
-- `GET /auth/google/callback` - Handles OAuth callback
-- `GET /auth/google/status` - Checks authentication status
+- `GET /drive-connection` - Checks Google Drive connection status
+
+### Drive Session Service (`driveSessionService.js`)
+
+The main service handles all drive-related operations:
+
+```javascript
+class DriveSessionService {
+    getDriveConnectionStatus() {
+        try {
+            const hasToken = tokenStorage.hasValidRefreshToken();
+            const status = googleDriveAutoSync.getStatus();
+
+            return {
+                connected: hasToken && status.isRunning,
+                isRunning: status.isRunning,
+                hasToken: hasToken
+            };
+        } catch (error) {
+            return {
+                connected: false,
+                isRunning: false,
+                hasToken: false
+            };
+        }
+    }
+
+    async validateAndRefreshSession(req) {
+        // Session validation and token refresh logic
+    }
+
+    async downloadFineticaFiles(tokens, pageSize) {
+        // File download implementation
+    }
+
+    async getFineticaFolderInfo(tokens) {
+        // Folder information retrieval
+    }
+}
+```
+
+#### Methods:
+- `getDriveConnectionStatus()` - Returns connection status including token validity and sync status
+- `validateAndRefreshSession(req)` - Validates and refreshes OAuth tokens
+- `downloadFineticaFiles(tokens, pageSize)` - Downloads files from finetica folder
+- `getFineticaFolderInfo(tokens)` - Gets information about the finetica folder
 
 #### Session Management:
-- Sessions expire after 24 hours
-- Tokens are stored in `req.session.tokens`
+- Sessions expire after 30 days (one month)
+- Automatic token refresh using refresh tokens
 - Session creation time tracked in `req.session.createdAt`
 
-### File Sync API (`drive.js`)
-
-#### Routes:
-- `GET /api/drive/files/download-new` - Downloads new/updated files
-- `POST /api/drive/files/download-new` - Manual download trigger
+### Auto Sync Service (`googleDriveAutoSync.js`)
 
 #### Features:
-- **Folder Restriction**: Only downloads files from "finetica" folder
+- **Automatic Sync**: Runs every minute using cron jobs
+- **Token Management**: Integrates with tokenStorage service
+- **Folder Restriction**: Only processes files from "finetica" folder
 - **Smart Sync**: Compares modification times to avoid unnecessary downloads
 - **File Type Support**: 
   - Regular files (PDF, images, etc.) - direct download
   - Google Apps files (Docs, Sheets, Slides) - exported to Office formats
-- **Local Storage**: Files saved to `server/googleDriveDownloads/`
+- **Local Storage**: Files saved to `server/utils/googleDriveDownloads/`
 
-### Configuration (`config/googleDrive.js`)
+#### Status Methods:
+- `getStatus()` - Returns current sync status
+- `start()` - Starts the auto sync process
+- `stop()` - Stops the auto sync process
+
+#### Implementation Example:
+```javascript
+class GoogleDriveAutoSync {
+    constructor() {
+        this.isRunning = false;
+        this.syncInterval = '* * * * *'; // Every 1 minute
+        this.downloadPath = path.join(__dirname, '../googleDriveDownloads');
+    }
+
+    start() {
+        if (this.isRunning) return;
+        
+        this.cronJob = cron.schedule(this.syncInterval, async () => {
+            await this.performSync();
+        }, { scheduled: false, timezone: "Europe/Belgrade" });
+        
+        this.cronJob.start();
+        this.isRunning = true;
+    }
+
+    async performSync() {
+        // Sync implementation
+    }
+}
+```
+
+### Configuration (`config/driveConfig.js`)
 
 ```javascript
 const { google } = require('googleapis');
@@ -133,6 +206,11 @@ function createDriveClient() {
         auth: oauth2Client,
     });
 }
+
+module.exports = {
+    oauth2Client,
+    createDriveClient,
+};
 ```
 
 #### Required Environment Variables:
@@ -140,125 +218,146 @@ function createDriveClient() {
 - `CLIENT_SECRET` - Google OAuth2 client secret
 - `REDIRECT_URI` - OAuth callback URL
 
-## Frontend Implementation
+### Token Storage Service (`tokenStorage.js`)
 
-### Google Drive Service (`googleDriveService.js`)
+Handles secure token storage and validation:
 
 ```javascript
-class GoogleDriveService {
-    async checkConnection()          // Check authentication status
-    async downloadFiles()            // Trigger automatic download
-    async downloadFilesManual()      // Trigger manual download
-    isConnected(status)             // Helper to check connection status
-    getStatusDisplay(status)        // Get display status string
+class TokenStorage {
+    saveTokens(tokens) {
+        // Save tokens securely
+    }
+
+    hasValidRefreshToken() {
+        // Check if valid refresh token exists
+    }
+
+    clearTokens() {
+        // Clear invalid tokens
+    }
 }
 ```
+## Backend Usage Flow
 
-### Components
+### 1. Auto Sync Process
+1. **GoogleDriveAutoSync** service runs every minute via cron job
+2. Checks token validity using **tokenStorage** service
+3. If valid tokens exist, connects to Google Drive
+4. Scans "finetica" folder for new/updated files
+5. Downloads files to `server/utils/googleDriveDownloads/`
+6. Updates local file timestamps to match Google Drive
 
-#### GoogleAuthButton
-- Displays connection status
-- Handles authentication flow
-- Shows appropriate UI based on connection state
-
-#### AppSidebar Integration
-- **Auto Status Check**: Every 5 seconds
-- **Auto Download**: Every 10 seconds when connected
-- **Window Focus**: Checks status when user returns from auth
-
-## Usage Flow
-
-### 1. Initial Authentication
-1. User clicks "Prijavi se s Google Drive" button
-2. Redirected to Google OAuth consent screen
-3. After approval, redirected back to application
-4. Session tokens stored on server
-5. Status automatically updates in UI
-
-### 2. Automatic File Sync
-1. Background process checks connection every 5 seconds
-2. If connected, downloads new files every 10 seconds
-3. Only processes files from "finetica" folder in Google Drive
-4. Compares modification times to avoid duplicate downloads
-5. Updates local file timestamps to match Google Drive
+### 2. Connection Status Management
+1. **driveSessionService** manages connection state
+2. Checks token validity and sync status
+3. Returns connection state via API endpoints
+4. Auto sync service status is included in response
 
 ### 3. File Processing
-- **New Files**: Downloaded immediately
+- **New Files**: Downloaded immediately when sync runs
 - **Updated Files**: Re-downloaded if Drive version is newer
 - **Unchanged Files**: Skipped to save bandwidth
 - **Google Apps Files**: Exported to Office formats (.docx, .xlsx, .pptx)
+- **Error Handling**: Failed downloads logged but don't stop the process
 
 ## Error Handling
 
-### Common Errors
+### Common Backend Errors
 - **401 Unauthorized**: Session expired or not authenticated
 - **404 Not Found**: "finetica" folder doesn't exist in Google Drive
 - **403 Forbidden**: Insufficient permissions
 - **429 Rate Limited**: Too many requests to Google API
+- **500 Internal Server Error**: Service configuration issues
 
 ### Error Recovery
 - Sessions automatically cleared when expired
-- Users prompted to re-authenticate when needed
-- Failed downloads logged but don't stop the process
+- Invalid tokens cleared automatically
+- Failed downloads logged but don't stop sync process
+- Automatic retry mechanism for temporary failures
 
 ## Security Considerations
 
 ### Session Security
-- Sessions expire after 24 hours
-- Secure cookie settings for production (HTTPS)
+- Sessions expire after 30 days (one month)
+- Automatic token refresh using refresh tokens
 - Session secrets should be cryptographically strong
+- Secure cookie settings for production (HTTPS)
 
 ### File Access
 - Only files from "finetica" folder are accessible
-- Downloaded files stored in secure server directory
+- Downloaded files stored in secure server directory (`utils/googleDriveDownloads/`)
+- Auto sync service respects folder restrictions
 - No direct file serving to prevent unauthorized access
+
+### Token Management
+- Tokens stored securely via tokenStorage service
+- Automatic refresh when tokens expire
+- Invalid tokens are cleared automatically
+- OAuth2 flow handles secure authentication
 
 ## Monitoring and Logging
 
 ### Server Logs
 ```
-✅ Google authentication successful - session will last 24 hours
+🔄 Attempting to refresh expired access token...
+✅ Access token refreshed successfully
 📁 Found n files in "finetica" folder
 📥 New file found: document.pdf
 ✅ Downloaded: document.pdf
 ⏭️ File is up to date: spreadsheet.xlsx
+⚠️ Google Drive auto sync is already running
 ```
 
-### Client Logs
+### Auto Sync Logs
+- Cron job execution status
+- File sync results
+- Token refresh attempts
 - Connection status changes
-- Download success/failure
-- Authentication state transitions
+- Error handling and recovery
 
 ## Troubleshooting
 
-### Common Issues
+### Common Backend Issues
 
-1. **Authentication Fails**
+1. **Auto Sync Not Working**
+   - Check if GoogleDriveAutoSync service is running
+   - Verify tokenStorage has valid refresh tokens
+   - Ensure "finetica" folder exists in Google Drive
+   - Check cron job configuration
+   - Verify environment variables are set correctly
+
+2. **Authentication Issues**
    - Check CLIENT_ID and CLIENT_SECRET in .env
    - Verify redirect URI matches Google Console settings
    - Ensure Google Drive API is enabled
+   - Check OAuth2 client configuration
 
-2. **Files Not Downloading**
+3. **Files Not Downloading**
    - Verify "finetica" folder exists in Google Drive
    - Check file permissions in Google Drive
-   - Confirm session hasn't expired
-
-3. **Status Not Updating**
-   - Check network connectivity
-   - Verify server is running on correct port
-   - Check browser console for errors
+   - Confirm download directory exists (`utils/googleDriveDownloads/`)
+   - Check auto sync logs for errors
+   - Verify disk space availability
 
 ### Development Tips
 
-1. **Testing Authentication**
-   - Use incognito mode to test fresh auth flow
-   - Check server logs for authentication success/failure
-   - Verify session data in browser dev tools
-
-2. **File Sync Testing**
+1. **Testing Auto Sync**
+   - Monitor cron job execution in server logs
    - Add files to "finetica" folder in Google Drive
-   - Monitor server logs for download activity
-   - Check `server/googleDriveDownloads/` directory
+   - Check `server/utils/googleDriveDownloads/` directory
+   - Test connection status endpoint `/drive-connection`
+
+2. **Service Testing**
+   - Test driveSessionService methods individually
+   - Verify token refresh functionality
+   - Check auto sync service start/stop methods
+   - Test error handling scenarios
+
+3. **Connection Monitoring**
+   - Use `/drive-connection` endpoint to check status
+   - Monitor auto sync service logs
+   - Verify token storage functionality
+   - Check Google API quotas and limits
 
 ## Production Deployment
 
@@ -267,37 +366,116 @@ class GoogleDriveService {
 - Update CORS origins in server configuration
 - Use secure session settings (secure: true)
 - Set up proper SSL certificates
+- Configure proper logging levels
 
 ### Google Console Updates
 - Add production redirect URIs
 - Configure OAuth consent screen
 - Set up proper scopes and permissions
+- Monitor API usage and quotas
+
+### Server Configuration
+- Ensure adequate disk space for file downloads
+- Configure proper backup for downloaded files
+- Set up monitoring for sync service health
+- Configure log rotation and retention
 
 ## API Reference
 
-### Authentication Endpoints
+### Connection Status Endpoints
 
-#### `GET /auth/google`
-Initiates Google OAuth flow.
-
-**Response**: 302 redirect to Google consent screen
-
-#### `GET /auth/google/callback`
-Handles OAuth callback from Google.
-
-**Parameters**:
-- `code` (query) - Authorization code from Google
-
-**Response**: 302 redirect to client application
-
-#### `GET /auth/google/status`
-Checks current authentication status.
+#### `GET /drive-connection`
+Checks current Google Drive connection and auto sync status.
 
 **Response**:
 ```json
 {
-  "authenticated": true,
-  "sessionValid": true,
+  "connected": true,
+  "isRunning": true,
+  "hasToken": true
+}
+```
+
+**Error Response**:
+```json
+{
+  "connected": false,
+  "isRunning": false,
+  "hasToken": false
+}
+```
+
+### Drive Session Service Methods
+
+#### `getDriveConnectionStatus()`
+Returns the current connection status including token validity and auto sync status.
+
+**Returns**:
+```json
+{
+  "connected": boolean,
+  "isRunning": boolean,
+  "hasToken": boolean
+}
+```
+
+#### `validateAndRefreshSession(req)`
+Validates session tokens and automatically refreshes if needed.
+
+**Parameters**:
+- `req` - Express request object with session
+
+**Returns**:
+```json
+{
+  "isValid": true,
+  "tokens": {...},
+  "message": "Session valid"
+}
+```
+
+#### `downloadFineticaFiles(tokens, pageSize)`
+Downloads files from the "finetica" folder.
+
+**Parameters**:
+- `tokens` - Valid OAuth tokens
+- `pageSize` - Number of files to process (default: 10)
+
+**Returns**:
+```json
+{
+  "success": true,
+  "totalFiles": 5,
+  "downloadedCount": 2,
+  "skippedCount": 3,
+  "processedFiles": [...],
+  "folderName": "finetica",
+  "downloadPath": "/path/to/downloads"
+}
+```
+
+### Auto Sync Service Methods
+
+#### `getStatus()`
+Returns current auto sync service status.
+
+**Returns**:
+```json
+{
+  "isRunning": boolean,
+  "lastSyncTime": "timestamp",
+  "syncInterval": "cron expression"
+}
+```
+
+#### `start()`
+Starts the automatic sync process.
+
+#### `stop()`
+Stops the automatic sync process.
+
+#### `performSync()`
+Manually triggers a sync operation (used internally by cron job).
   "expiresAt": "2025-08-01T12:00:00.000Z",
   "message": "User is authenticated"
 }

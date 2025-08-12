@@ -1,64 +1,23 @@
-# Google Drive Integration Documentation
+# Google Drive Integration - Frontend Documentation
 
 ## Overview
 
-This documentation covers the Google Drive integration in the Finetica application, which allows users to authenticate with Google Drive and automatically sync files from a specific "finetica" folder.
+This documentation covers the frontend implementation of Google Drive integration in the Finetica application. It explains how the client-side components interact with the backend Google Drive services.
 
 ## Architecture
-
-The Google Drive integration consists of several components:
-
-### Backend Components
-- **Drive Connection Routes** (`/server/routes/googleDrive.js`)
-- **Drive Session Service** (`/server/services/driveSessionService.js`)
-- **Google Drive Auto Sync** (`/server/utils/driveDownloader/googleDriveAutoSync.js`)
-- **Token Storage Service** (`/server/services/tokenStorage.js`)
-- **Google Drive Configuration** (`/server/config/driveConfig.js`)
 
 ### Frontend Components
 - **Google Drive Service** (`/client/src/services/googleDriveService.js`) - *If implemented*
 - **Google Auth Button** (`/client/src/components/GoogleAuth/GoogleAuthButton.jsx`) - *If implemented*
 - **AppSidebar Integration** (`/client/src/components/AppSidebar.jsx`) - *If implemented*
 
-## Setup Instructions
+### Backend API Endpoints (Used by Frontend)
+- `GET /drive-connection` - Check Google Drive connection status
+- Backend services handle authentication and file sync automatically
 
-### 1. Google Cloud Console Setup
+## Setup Instructions - Frontend
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select an existing one
-3. Enable the **Google Drive API**
-4. Go to **Credentials** and create **OAuth 2.0 Client IDs**
-5. Set authorized redirect URIs:
-   - `http://localhost:4000/auth/google/callback`
-   - Add production URLs when deploying
-
-### 2. Environment Configuration
-
-Create or update the `.env` file in the `/server` directory:
-
-```bash
-# Database Configuration
-DB_HOST=localhost
-PORT=4000
-DB_NAME=finetica
-DB_USER=postgres
-DB_PASSWORD=your_password
-
-# Server Configuration
-SESSION_SECRET=your-secure-session-secret-key
-
-# JWT Configuration
-JWT_SECRET=your-jwt-secret
-JWT_EXPIRES_IN=24h
-
-# Google OAuth Configuration
-CLIENT_ID=your-google-client-id.apps.googleusercontent.com
-CLIENT_SECRET=your-google-client-secret
-API_KEY=your-google-api-key
-REDIRECT_URI=http://localhost:4000/auth/google/callback
-```
-
-### 3. Client Environment Configuration
+### Client Environment Configuration
 
 Create or update the `.env` file in the `/client` directory:
 
@@ -66,23 +25,9 @@ Create or update the `.env` file in the `/client` directory:
 VITE_API_BASE_URL=http://localhost:4000/api
 ```
 
-## File Structure
+## File Structure - Frontend
 
 ```
-server/
-├── config/
-│   └── driveConfig.js              # Google OAuth2 client configuration
-├── routes/
-│   └── googleDrive.js              # Drive connection status route
-├── services/
-│   ├── driveSessionService.js      # Main drive session management
-│   └── tokenStorage.js             # Token storage and validation
-├── utils/
-│   └── driveDownloader/
-│       ├── googleDriveAutoSync.js  # Automatic sync service
-│       └── driveHelper.js          # Drive utility functions
-└── googleDriveDownloads/           # Local storage for downloaded files
-
 client/
 ├── src/
 │   ├── services/
@@ -92,90 +37,14 @@ client/
 │       │   └── GoogleAuthButton.jsx # Authentication button component (if implemented)
 │       └── AppSidebar.jsx          # Main sidebar with status indicator (if implemented)
 └── documentation/
-    └── google-drive.md             # This documentation
+    └── google-drive.md             # This frontend documentation
 ```
-
-## Backend Implementation
-
-### Drive Connection Status (`googleDrive.js`)
-
-The main route file has been simplified to use the service layer:
-
-```javascript
-const express = require('express');
-const router = express.Router();
-const driveSessionService = require('../services/driveSessionService');
-
-router.get('/drive-connection', (_, res) => {
-    const connectionStatus = driveSessionService.getDriveConnectionStatus();
-    res.json(connectionStatus);
-});
-```
-
-#### Routes:
-- `GET /drive-connection` - Checks Google Drive connection status
-
-### Drive Session Service (`driveSessionService.js`)
-
-The main service handles all drive-related operations:
-
-#### Methods:
-- `getDriveConnectionStatus()` - Returns connection status including token validity and sync status
-- `validateAndRefreshSession(req)` - Validates and refreshes OAuth tokens
-- `downloadFineticaFiles(tokens, pageSize)` - Downloads files from finetica folder
-- `getFineticaFolderInfo(tokens)` - Gets information about the finetica folder
-
-#### Session Management:
-- Sessions expire after 30 days (one month)
-- Automatic token refresh using refresh tokens
-- Session creation time tracked in `req.session.createdAt`
-
-### Auto Sync Service (`googleDriveAutoSync.js`)
-
-#### Features:
-- **Automatic Sync**: Runs every minute using cron jobs
-- **Token Management**: Integrates with tokenStorage service
-- **Folder Restriction**: Only processes files from "finetica" folder
-- **Smart Sync**: Compares modification times to avoid unnecessary downloads
-- **File Type Support**: 
-  - Regular files (PDF, images, etc.) - direct download
-  - Google Apps files (Docs, Sheets, Slides) - exported to Office formats
-- **Local Storage**: Files saved to `server/utils/googleDriveDownloads/`
-
-#### Status Methods:
-- `getStatus()` - Returns current sync status
-- `start()` - Starts the auto sync process
-- `stop()` - Stops the auto sync process
-
-### Configuration (`config/driveConfig.js`)
-
-```javascript
-const { google } = require('googleapis');
-
-const oauth2Client = new google.auth.OAuth2(
-    process.env.CLIENT_ID,
-    process.env.CLIENT_SECRET,
-    process.env.REDIRECT_URI
-);
-
-function createDriveClient() {
-    return google.drive({
-        version: 'v3',
-        auth: oauth2Client,
-    });
-}
-```
-
-#### Required Environment Variables:
-- `CLIENT_ID` - Google OAuth2 client ID
-- `CLIENT_SECRET` - Google OAuth2 client secret
-- `REDIRECT_URI` - OAuth callback URL
 
 ## Frontend Implementation
 
 ### Google Drive Service (`googleDriveService.js`) - *If Implemented*
 
-The frontend service would typically include:
+The frontend service communicates with backend APIs to manage Google Drive integration:
 
 ```javascript
 class GoogleDriveService {
@@ -186,148 +55,429 @@ class GoogleDriveService {
 }
 ```
 
+#### Example Implementation:
+
+```javascript
+class GoogleDriveService {
+    constructor() {
+        this.baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
+    }
+
+    async checkConnection() {
+        try {
+            const response = await fetch(`${this.baseUrl}/drive-connection`);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Failed to check drive connection:', error);
+            return {
+                connected: false,
+                isRunning: false,
+                hasToken: false
+            };
+        }
+    }
+
+    isConnected(status) {
+        return status.connected && status.hasToken;
+    }
+
+    getStatusDisplay(status) {
+        if (!status.hasToken) return 'Not authenticated';
+        if (!status.isRunning) return 'Sync stopped';
+        if (status.connected) return 'Connected & syncing';
+        return 'Connection issues';
+    }
+}
+
+export default new GoogleDriveService();
+```
+
 ### Components - *If Implemented*
 
-#### GoogleAuthButton
-- Displays connection status from driveSessionService
-- Shows appropriate UI based on connection state
-- Integrates with auto sync status
+#### GoogleAuthButton Component
+
+A React component that displays Google Drive connection status and handles user interactions:
+
+```jsx
+import React, { useState, useEffect } from 'react';
+import googleDriveService from '../../services/googleDriveService';
+
+const GoogleAuthButton = () => {
+    const [connectionStatus, setConnectionStatus] = useState({
+        connected: false,
+        isRunning: false,
+        hasToken: false
+    });
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        checkConnectionStatus();
+        
+        // Poll status every 30 seconds
+        const interval = setInterval(checkConnectionStatus, 30000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const checkConnectionStatus = async () => {
+        setLoading(true);
+        const status = await googleDriveService.checkConnection();
+        setConnectionStatus(status);
+        setLoading(false);
+    };
+
+    const getStatusColor = () => {
+        if (!connectionStatus.hasToken) return 'text-gray-500';
+        if (!connectionStatus.isRunning) return 'text-yellow-500';
+        if (connectionStatus.connected) return 'text-green-500';
+        return 'text-red-500';
+    };
+
+    const getStatusIcon = () => {
+        if (loading) return '⏳';
+        if (!connectionStatus.hasToken) return '🔒';
+        if (!connectionStatus.isRunning) return '⏸️';
+        if (connectionStatus.connected) return '✅';
+        return '❌';
+    };
+
+    return (
+        <div className="google-drive-status">
+            <div className={`status-indicator ${getStatusColor()}`}>
+                <span className="icon">{getStatusIcon()}</span>
+                <span className="text">
+                    Google Drive: {googleDriveService.getStatusDisplay(connectionStatus)}
+                </span>
+            </div>
+            {!connectionStatus.hasToken && (
+                <button 
+                    onClick={() => window.open('/auth/google', '_blank')}
+                    className="auth-button"
+                >
+                    Connect Google Drive
+                </button>
+            )}
+        </div>
+    );
+};
+
+export default GoogleAuthButton;
+```
 
 #### AppSidebar Integration
-- **Auto Status Check**: Polls `/drive-connection` endpoint
-- **Auto Sync Status**: Shows current sync status
-- **Connection Indicator**: Visual feedback for drive connection state
 
-## Usage Flow
+Integration example for the main application sidebar:
 
-### 1. Auto Sync Process
-1. **GoogleDriveAutoSync** service runs every minute via cron job
-2. Checks token validity using **tokenStorage** service
-3. If valid tokens exist, connects to Google Drive
-4. Scans "finetica" folder for new/updated files
-5. Downloads files to `server/utils/googleDriveDownloads/`
-6. Updates local file timestamps to match Google Drive
+```jsx
+import React, { useState, useEffect } from 'react';
+import GoogleAuthButton from './GoogleAuth/GoogleAuthButton';
+import googleDriveService from '../services/googleDriveService';
 
-### 2. Connection Status Check
-1. Frontend can call `/drive-connection` endpoint
-2. **driveSessionService** checks token validity and sync status
-3. Returns connection state, sync status, and token validity
-4. Auto sync service status is included in response
+const AppSidebar = () => {
+    const [driveStatus, setDriveStatus] = useState(null);
 
-### 3. File Processing
-- **New Files**: Downloaded immediately when sync runs
-- **Updated Files**: Re-downloaded if Drive version is newer
-- **Unchanged Files**: Skipped to save bandwidth
-- **Google Apps Files**: Exported to Office formats (.docx, .xlsx, .pptx)
-- **Error Handling**: Failed downloads logged but don't stop the process
+    useEffect(() => {
+        // Check status on component mount
+        checkDriveStatus();
+        
+        // Set up periodic status checks
+        const interval = setInterval(checkDriveStatus, 60000); // Every minute
+        
+        // Check status when window regains focus (user returns from auth)
+        const handleFocus = () => checkDriveStatus();
+        window.addEventListener('focus', handleFocus);
+        
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('focus', handleFocus);
+        };
+    }, []);
 
-## Error Handling
+    const checkDriveStatus = async () => {
+        const status = await googleDriveService.checkConnection();
+        setDriveStatus(status);
+    };
 
-### Common Errors
-- **401 Unauthorized**: Session expired or not authenticated
-- **404 Not Found**: "finetica" folder doesn't exist in Google Drive
-- **403 Forbidden**: Insufficient permissions
-- **429 Rate Limited**: Too many requests to Google API
+    return (
+        <div className="app-sidebar">
+            {/* Other sidebar content */}
+            
+            <div className="drive-integration-section">
+                <h3>Google Drive Integration</h3>
+                <GoogleAuthButton />
+                
+                {driveStatus && (
+                    <div className="drive-status-details">
+                        <p>Status: {googleDriveService.getStatusDisplay(driveStatus)}</p>
+                        {driveStatus.connected && (
+                            <p className="sync-info">
+                                Auto-sync: {driveStatus.isRunning ? 'Active' : 'Inactive'}
+                            </p>
+                        )}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
 
-### Error Recovery
-- Sessions automatically cleared when expired
-- Users prompted to re-authenticate when needed
-- Failed downloads logged but don't stop the process
-
-## Security Considerations
-
-### Session Security
-- Sessions expire after 30 days (one month)
-- Automatic token refresh using refresh tokens
-- Session secrets should be cryptographically strong
-
-### File Access
-- Only files from "finetica" folder are accessible
-- Downloaded files stored in secure server directory (`utils/googleDriveDownloads/`)
-- Auto sync service respects folder restrictions
-
-### Token Management
-- Tokens stored securely via tokenStorage service
-- Automatic refresh when tokens expire
-- Invalid tokens are cleared automatically
-
-## Monitoring and Logging
-
-### Server Logs
-```
-🔄 Attempting to refresh expired access token...
-✅ Access token refreshed successfully
-📁 Found n files in "finetica" folder
-📥 New file found: document.pdf
-✅ Downloaded: document.pdf
-⏭️ File is up to date: spreadsheet.xlsx
-⚠️ Google Drive auto sync is already running
+export default AppSidebar;
 ```
 
-### Auto Sync Logs
-- Cron job execution status
-- File sync results
-- Token refresh attempts
-- Connection status changes
+## Frontend Usage Flow
 
-## Troubleshooting
+### 1. Component Initialization
+1. Components mount and initialize Google Drive service
+2. Automatic status check via `/drive-connection` endpoint
+3. UI updates based on connection status
+4. Periodic status polling begins
 
-### Common Issues
+### 2. User Authentication Flow
+1. User sees "Connect Google Drive" button when not authenticated
+2. Button opens authentication window (`/auth/google`)
+3. User completes OAuth flow in popup/new tab
+4. Frontend detects window focus return and checks status
+5. UI updates to show connected state
 
-1. **Auto Sync Not Working**
-   - Check if GoogleDriveAutoSync service is running
-   - Verify tokenStorage has valid refresh tokens
-   - Ensure "finetica" folder exists in Google Drive
-   - Check cron job configuration
+### 3. Status Monitoring
+1. Frontend polls `/drive-connection` endpoint periodically
+2. Updates UI indicators based on response:
+   - **Token Status**: Shows if user is authenticated
+   - **Sync Status**: Shows if auto-sync is running
+   - **Connection Status**: Shows overall health
+3. Handles error states gracefully
 
-2. **Connection Status Issues**
-   - Verify driveSessionService.getDriveConnectionStatus() response
-   - Check token validity in tokenStorage service
-   - Confirm auto sync service status
+### 4. User Experience
+- **Visual Indicators**: Icons and colors show current status
+- **Real-time Updates**: Status changes reflect immediately
+- **Error Handling**: Clear messages for connection issues
+- **Auto-retry**: Periodic checks recover from temporary issues
 
-3. **Files Not Downloading**
-   - Verify "finetica" folder exists in Google Drive
-   - Check file permissions in Google Drive
-   - Confirm download directory exists (`utils/googleDriveDownloads/`)
-   - Check auto sync logs for errors
+## Frontend Error Handling
+
+### API Error Responses
+Handle various error states from the backend:
+
+```javascript
+// Example error handling in service
+async checkConnection() {
+    try {
+        const response = await fetch(`${this.baseUrl}/drive-connection`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Drive connection check failed:', error);
+        
+        // Return safe default state
+        return {
+            connected: false,
+            isRunning: false,
+            hasToken: false,
+            error: error.message
+        };
+    }
+}
+```
+
+### Component Error States
+
+```jsx
+const GoogleAuthButton = () => {
+    const [error, setError] = useState(null);
+    const [connectionStatus, setConnectionStatus] = useState(null);
+
+    const checkConnectionStatus = async () => {
+        try {
+            const status = await googleDriveService.checkConnection();
+            
+            if (status.error) {
+                setError(status.error);
+            } else {
+                setError(null);
+            }
+            
+            setConnectionStatus(status);
+        } catch (err) {
+            setError('Failed to check connection status');
+            setConnectionStatus({
+                connected: false,
+                isRunning: false,
+                hasToken: false
+            });
+        }
+    };
+
+    return (
+        <div>
+            {error && (
+                <div className="error-message">
+                    {error}
+                </div>
+            )}
+            {/* Status display */}
+        </div>
+    );
+};
+```
+
+### Common Error Scenarios
+- **Network Errors**: Show retry options
+- **Authentication Errors**: Guide user to re-authenticate
+- **Server Errors**: Display friendly error messages
+- **Timeout Errors**: Implement automatic retry logic
+
+## Frontend Development
+
+### Testing Frontend Integration
+
+1. **Service Testing**
+   ```javascript
+   // Test the service independently
+   import googleDriveService from './services/googleDriveService';
+   
+   // Test connection check
+   const status = await googleDriveService.checkConnection();
+   console.log('Connection status:', status);
+   ```
+
+2. **Component Testing**
+   ```jsx
+   // Test components in isolation
+   import { render, screen } from '@testing-library/react';
+   import GoogleAuthButton from './GoogleAuthButton';
+   
+   test('displays connection status', () => {
+       render(<GoogleAuthButton />);
+       // Add assertions
+   });
+   ```
+
+3. **Integration Testing**
+   - Test full authentication flow
+   - Verify status updates work correctly
+   - Test error handling scenarios
 
 ### Development Tips
 
-1. **Testing Auto Sync**
-   - Monitor cron job execution in server logs
-   - Add files to "finetica" folder in Google Drive
-   - Check `server/utils/googleDriveDownloads/` directory
-   - Test connection status endpoint `/drive-connection`
+1. **Environment Setup**
+   - Ensure `VITE_API_BASE_URL` points to correct backend
+   - Test with both development and production backends
+   - Use browser dev tools to monitor API calls
 
-2. **Service Testing**
-   - Test driveSessionService methods individually
-   - Verify token refresh functionality
-   - Check auto sync service start/stop methods
+2. **Debugging**
+   - Monitor network tab for API calls to `/drive-connection`
+   - Check console for service errors
+   - Use React dev tools for component state
 
-3. **Connection Monitoring**
-   - Use `/drive-connection` endpoint to check status
-   - Monitor auto sync service logs
-   - Verify token storage functionality
+3. **Performance Considerations**
+   - Implement debouncing for frequent status checks
+   - Cache status responses when appropriate
+   - Use loading states for better UX
 
-## Production Deployment
+### Styling Examples
 
-### Environment Updates
-- Change `REDIRECT_URI` to production domain
-- Update CORS origins in server configuration
-- Use secure session settings (secure: true)
-- Set up proper SSL certificates
+```css
+/* Example CSS for Google Drive components */
+.google-drive-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    background-color: #f9fafb;
+}
 
-### Google Console Updates
-- Add production redirect URIs
-- Configure OAuth consent screen
-- Set up proper scopes and permissions
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
 
-## API Reference
+.status-indicator.text-green-500 {
+    color: #10b981;
+}
 
-### Connection Status Endpoints
+.status-indicator.text-red-500 {
+    color: #ef4444;
+}
+
+.status-indicator.text-yellow-500 {
+    color: #f59e0b;
+}
+
+.status-indicator.text-gray-500 {
+    color: #6b7280;
+}
+
+.auth-button {
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.auth-button:hover {
+    background-color: #3367d6;
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    padding: 0.25rem;
+    background-color: #fef2f2;
+    border-radius: 0.25rem;
+    border: 1px solid #fecaca;
+}
+```
+
+## Frontend API Reference
+
+### Google Drive Service Methods
+
+#### `checkConnection()`
+Checks current Google Drive connection status by calling the backend API.
+
+**Returns**: Promise resolving to:
+```json
+{
+  "connected": true,
+  "isRunning": true,
+  "hasToken": true
+}
+```
+
+#### `isConnected(status)`
+Helper method to determine if Google Drive is properly connected.
+
+**Parameters**:
+- `status` - Status object from `checkConnection()`
+
+**Returns**: `boolean`
+
+#### `getStatusDisplay(status)`
+Gets a human-readable status string for display in UI.
+
+**Parameters**:
+- `status` - Status object from `checkConnection()`
+
+**Returns**: `string` - One of:
+- "Not authenticated"
+- "Sync stopped" 
+- "Connected & syncing"
+- "Connection issues"
+
+### Backend API Endpoints (Used by Frontend)
 
 #### `GET /drive-connection`
-Checks current Google Drive connection and auto sync status.
+Primary endpoint for checking Google Drive status.
 
 **Response**:
 ```json
@@ -347,51 +497,35 @@ Checks current Google Drive connection and auto sync status.
 }
 ```
 
-### Drive Session Service Methods
+### Component Props and State
 
-#### `getDriveConnectionStatus()`
-Returns the current connection status including token validity and auto sync status.
+#### GoogleAuthButton Component
 
-#### `validateAndRefreshSession(req)`
-Validates session tokens and automatically refreshes if needed.
+**Props**: None (self-contained)
 
-**Returns**:
-```json
-{
-  "isValid": true,
-  "tokens": {...},
-  "message": "Session valid"
+**State**:
+```typescript
+interface ConnectionStatus {
+  connected: boolean;
+  isRunning: boolean; 
+  hasToken: boolean;
+  error?: string;
+}
+
+interface ComponentState {
+  connectionStatus: ConnectionStatus;
+  loading: boolean;
+  error: string | null;
 }
 ```
 
-#### `downloadFineticaFiles(tokens, pageSize)`
-Downloads files from the "finetica" folder.
+#### AppSidebar Integration
 
-**Parameters**:
-- `tokens` - Valid OAuth tokens
-- `pageSize` - Number of files to process (default: 10)
-
-**Returns**:
-```json
-{
-  "success": true,
-  "totalFiles": 5,
-  "downloadedCount": 2,
-  "skippedCount": 3,
-  "processedFiles": [...],
-  "folderName": "finetica",
-  "downloadPath": "/path/to/downloads"
+**Props**:
+```typescript
+interface AppSidebarProps {
+  // Other sidebar props
+  onDriveStatusChange?: (status: ConnectionStatus) => void;
 }
 ```
-
-### Auto Sync Service Methods
-
-#### `getStatus()`
-Returns current auto sync service status.
-
-#### `start()`
-Starts the automatic sync process.
-
-#### `stop()`
-Stops the automatic sync process.
 
