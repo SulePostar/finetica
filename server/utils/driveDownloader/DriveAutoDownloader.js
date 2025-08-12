@@ -1,4 +1,4 @@
-const { oauth2Client, createDriveClient } = require('../../config/googleClient');
+const { oauth2Client } = require('../../config/googleClient');
 const fs = require('fs');
 const path = require('path');
 
