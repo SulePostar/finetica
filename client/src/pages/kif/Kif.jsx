@@ -2,6 +2,7 @@ import { UploadButton } from '../../components/index';
 import { useBucketName } from '../../lib/bucketUtils';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
+import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import './Kif.styles.css';
@@ -10,12 +11,35 @@ const Kif = () => {
     const navigate = useNavigate();
     const bucketName = useBucketName();
 
+    const handleView = (id) => {
+        navigate(`/kif/${id}`);
+    };
+    //Placeholder functions for edit, delete, and download actions
+    const handleEdit = (id) => { };
+    const handleDelete = (id) => { };
+    const handleDownload = (id) => { };
+
     const columns = [
         { name: 'ID', selector: row => row.id, sortable: true },
         { name: 'Name', selector: row => row.name, sortable: true },
         { name: 'Quantity', selector: row => row.amount, sortable: true },
         { name: 'Price', selector: row => row.price, sortable: true },
         { name: 'Date', selector: row => row.date, sortable: true },
+        {
+            name: 'Actions',
+            cell: row => (
+                <ActionsDropdown
+                    row={row}
+                    onView={handleView}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    onDownload={handleDownload}
+                />
+            ),
+            ignoreRowClick: true,
+            allowOverflow: true,
+            button: true,
+        }
     ];
 
     const handleRowClick = (row) => {
