@@ -6,11 +6,9 @@ import makeCustomStyles from '../../Tables/DynamicTable.styles';
 import CIcon from '@coreui/icons-react';
 import { cilUser, cilPencil, cilTrash } from '@coreui/icons';
 
-// Import CSS
 import './UserDashboard.css';
 import { colors } from '../../../styles/colors';
 
-// Redux imports
 import {
   fetchUsers,
   updateUser,
@@ -29,10 +27,8 @@ import {
   selectChangingRole,
 } from '../../../redux/users/usersSlice';
 
-// Component imports
 import { SearchFilters, EditUserModal, DeleteUserModal, QuickChangeModal } from '../../index';
 
-// Utility imports
 import { filterUsers, getRoleName, getStatusBadge, isNewUser } from '../../../utils/formatters';
 import notify from '../../../utilis/toastHelper';
 
@@ -40,7 +36,6 @@ const UserDashboard = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.profile);
 
-  // Redux state
   const users = useSelector(selectUsers);
   const loading = useSelector(selectUsersLoading);
   const error = useSelector(selectUsersError);
@@ -50,7 +45,6 @@ const UserDashboard = () => {
   const changingStatus = useSelector(selectChangingStatus);
   const changingRole = useSelector(selectChangingRole);
 
-  // Local state
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
@@ -62,15 +56,12 @@ const UserDashboard = () => {
     newValue: null,
   });
 
-  // Fetch users on component mount
   useEffect(() => {
     dispatch(fetchUsers());
   }, [dispatch]);
 
-  // Clear messages after a delay
   useEffect(() => {
     if (error || success) {
-      // Show toast notifications
       if (error) {
         notify.onError(error);
       }
@@ -86,15 +77,12 @@ const UserDashboard = () => {
     }
   }, [error, success, dispatch]);
 
-  // Filtered users
   const filteredUsers = useMemo(() => {
     return filterUsers(users, searchTerm, filterRole);
   }, [users, searchTerm, filterRole]);
 
-  // Custom styles for the table
   const customStyles = useMemo(() => makeCustomStyles(), []);
 
-  // Event handlers
   const handleRefresh = useCallback(() => {
     dispatch(fetchUsers());
   }, [dispatch]);
@@ -151,7 +139,6 @@ const UserDashboard = () => {
     setShowQuickChangeModal(false);
   }, [dispatch, selectedUser, quickChangeData]);
 
-  // Define columns for DynamicTable
   const columns = useMemo(
     () => [
       {
@@ -260,10 +247,9 @@ const UserDashboard = () => {
     ]
   );
 
-  // Loading state
   if (loading) {
     return (
-      <div className="user-dashboard-loading">
+      <div className="user-dashboard-loading" data-testid="loading-spinner">
         <Spinner animation="border" variant="primary" />
       </div>
     );

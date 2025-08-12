@@ -1,95 +1,138 @@
-const { registerUser, loginUser } = require('../../services/auth.service');
+const {
+  getAllUsers,
+  updateUser,
+  getUserById,
+  deleteUser,
+  getMyProfile,
+  editMyProfile,
+} = require('../../controllers/user');
+const userService = require('../../services/users');
+const { UserResponseDTO } = require('../../dto/user/responses/UserResponseDTO');
 
-const { User, Role } = require('../../models');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const { HttpException } = require('../../exceptions/HttpException');
+jest.mock('../../services/users');
 
-jest.mock('../../models', () => ({
-  User: {
-    findOne: jest.fn(),
-    create: jest.fn(),
-  },
-  Role: {
-    findOne: jest.fn(),
-  },
-}));
-jest.mock('bcrypt');
-jest.mock('jsonwebtoken');
+const mockRequest = (params = {}, body = {}, user = null) => ({ params, body, user });
+const mockResponse = () => {
+  const res = {};
+  res.status = jest.fn().mockReturnValue(res);
+  res.json = jest.fn().mockReturnValue(res);
+  return res;
+};
 
-describe('registerUser', () => {
-  beforeEach(() => {
+describe('User Controller', () => {
+  afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should create a new user successfully', async () => {
-    const registerData = { name: 'Test User', email: 'test@example.com', password: 'password123' };
-    User.findOne.mockResolvedValue(null);
-    Role.findOne.mockResolvedValue({ id: 1, name: 'guest' });
-    User.create.mockResolvedValue({ id: 1, ...registerData });
+  describe('getAllUsers', () => {
+    test('should fetch all users and return them in DTO format', async () => {
+      const mockUsers = [{ id: 1, firstName: 'Test', lastName: 'User', role: { get: () => 'user' }, status: { get: () => 'approved' } }];
+      userService.getAllUsers.mockResolvedValue(mockUsers);
+      const req = mockRequest();
+      const res = mockResponse();
 
-    const result = await registerUser(registerData);
+      await getAllUsers(req, res);
 
-    expect(User.findOne).toHaveBeenCalledWith({ where: { email: registerData.email } });
-    expect(User.create).toHaveBeenCalledWith({
-      name: registerData.name,
-      email: registerData.email,
-      passHash: registerData.password,
-      roleId: 1,
-    });
-    expect(result).toBeDefined();
-    expect(result.email).toBe(registerData.email);
-  });
-
-  it('should throw an HttpException if the user already exists', async () => {
-    const registerData = { name: 'Test User', email: 'test@example.com', password: 'password123' };
-    User.findOne.mockResolvedValue({ id: 1, ...registerData });
-
-    await expect(registerUser(registerData)).rejects.toThrow(HttpException);
-    await expect(registerUser(registerData)).rejects.toMatchObject({
-      status: 400,
-      message: 'User with this email already exists',
+      expect(userService.getAllUsers).toHaveBeenCalledTimes(1);
+      expect(res.json).toHaveBeenCalledWith([new UserResponseDTO(mockUsers[0])]);
     });
   });
-});
 
-describe('loginUser', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+  describe('updateUser', () => {
+    test('should update a user successfully', async () => {
+      const updatedUser = { id: 1, firstName: 'Updated', lastName: 'User' };
+      userService.updateUserByAdmin.mockResolvedValue(updatedUser);
+      const req = mockRequest({ id: '1' }, { firstName: 'Updated' });
+      const res = mockResponse();
+
+      await updateUser(req, res);
+
+      expect(userService.updateUserByAdmin).toHaveBeenCalledWith('1', { firstName: 'Updated' });
+      expect(res.json).toHaveBeenCalledWith(new UserResponseDTO(updatedUser));
+    });
   });
 
-  it('should return an access token for a successful login', async () => {
-    const loginDto = { email: 'test@example.com', password: 'password123' };
-    const mockUser = {
-      id: 1,
-      email: 'test@example.com',
-      passHash: 'hashedpassword',
-      role: { name: 'guest' },
-    };
-    User.findOne.mockResolvedValue(mockUser);
-    bcrypt.compare.mockResolvedValue(true);
-    jwt.sign.mockReturnValue('fake.jwt.token');
+  describe('getUserById', () => {
+    test('should fetch a single user by ID and return it in DTO format', async () => {
+      const mockUser = { id: 1, firstName: 'Test', lastName: 'User' };
+      userService.getUserById.mockResolvedValue(mockUser);
+      const req = mockRequest({ id: '1' });
+      const res = mockResponse();
 
-    const token = await loginUser(loginDto);
+      await getUserById(req, res);
 
-    expect(bcrypt.compare).toHaveBeenCalledWith(loginDto.password, mockUser.passHash);
-    expect(jwt.sign).toHaveBeenCalled();
-    expect(token).toBe('fake.jwt.token');
+      expect(userService.getUserById).toHaveBeenCalledWith('1');
+      expect(res.json).toHaveBeenCalledWith(new UserResponseDTO(mockUser));
+    });
+
+    test('should return a 404 error if user is not found', async () => {
+      userService.getUserById.mockResolvedValue(null);
+      const req = mockRequest({ id: '999' });
+      const res = mockResponse();
+
+      await getUserById(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({ error: 'User not found' });
+    });
   });
 
-  it('should throw an HttpException for a non-existent user', async () => {
-    const loginDto = { email: 'nouser@example.com', password: 'password123' };
-    User.findOne.mockResolvedValue(null);
+  describe('deleteUser', () => {
+    test('should delete a user and return a success message', async () => {
+      userService.deleteUserByAdmin.mockResolvedValue();
+      const req = mockRequest({ id: '1' });
+      const res = mockResponse();
 
-    await expect(loginUser(loginDto)).rejects.toThrow(new HttpException(401, 'Bad credentials'));
+      await deleteUser(req, res);
+
+      expect(userService.deleteUserByAdmin).toHaveBeenCalledWith('1');
+      expect(res.json).toHaveBeenCalledWith({ message: 'User deleted successfully' });
+    });
   });
 
-  it('should throw an HttpException for an incorrect password', async () => {
-    const loginDto = { email: 'test@example.com', password: 'wrongpassword' };
-    const mockUser = { id: 1, email: 'test@example.com', passHash: 'hashedpassword' };
-    User.findOne.mockResolvedValue(mockUser);
-    bcrypt.compare.mockResolvedValue(false);
+  describe('getMyProfile', () => {
+    test('should get the profile for the authenticated user', async () => {
+      const mockProfile = { id: 123, firstName: 'Authenticated', lastName: 'User' };
+      userService.getUserById.mockResolvedValue(mockProfile);
+      const req = mockRequest({}, {}, { id: 123 });
+      const res = mockResponse();
+      const next = jest.fn();
 
-    await expect(loginUser(loginDto)).rejects.toThrow(new HttpException(401, 'Bad credentials'));
+      await getMyProfile(req, res, next);
+
+      expect(userService.getUserById).toHaveBeenCalledWith(123);
+      expect(res.json).toHaveBeenCalledWith(new UserResponseDTO(mockProfile));
+      expect(next).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('editMyProfile', () => {
+    test('should edit the profile for the authenticated user', async () => {
+      const updateData = { id: 123, firstName: 'NewFirstName' };
+      const updatedProfile = { id: 123, firstName: 'NewFirstName', lastName: 'User' };
+      userService.updateProfile.mockResolvedValue(updatedProfile);
+      const req = mockRequest({}, updateData);
+      const res = mockResponse();
+      const next = jest.fn();
+
+      await editMyProfile(req, res, next);
+
+      expect(userService.updateProfile).toHaveBeenCalledWith(123, { firstName: 'NewFirstName' });
+      expect(res.json).toHaveBeenCalledWith(new UserResponseDTO(updatedProfile));
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    test('should return a 400 error if the user ID is missing from the body', async () => {
+      const updateData = { firstName: 'NewFirstName' };
+      const req = mockRequest({}, updateData);
+      const res = mockResponse();
+      const next = jest.fn();
+
+      await editMyProfile(req, res, next);
+
+      expect(userService.updateProfile).not.toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ error: 'User ID is required in request body' });
+    });
   });
 });
