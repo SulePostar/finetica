@@ -7,7 +7,6 @@ const errorHandler = require('./middleware/errorHandler');
 const kifRouter = require('./routes/kif');
 const kufRouter = require('./routes/kuf');
 const vatRouter = require('./routes/vat');
-
 const googleDriveAutoSync = require('./services/googleDriveAutoSync');
 
 const app = express();
@@ -21,7 +20,7 @@ app.use(session({
     maxAge: 30 * 24 * 60 * 60 * 1000 // 1 month in milliseconds (30 days * 24 hours * 60 minutes * 60 seconds * 1000 ms)
   }
 }));
-// app.use(cors());
+
 app.use(cors({
   origin: ['http://localhost:3000'],
   credentials: true,
@@ -36,7 +35,7 @@ app.use('/api/files', require('./routes/uploadedFiles'));
 app.use('/api', kifRouter);
 app.use('/api', kufRouter);
 app.use('/api', vatRouter);
-app.use('/admin', require('./routes/googleDrive/driveAdmin'));
+app.use('/admin', require('./routes/driveAdmin'));
 
 app.use(errorHandler);
 

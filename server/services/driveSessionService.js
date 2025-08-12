@@ -125,12 +125,6 @@ class DriveSessionService {
             throw error;
         }
     }
-
-    /**
-     * Get basic information about the finetica folder and files
-     * @param {object} tokens - Google OAuth tokens
-     * @returns {object} - Folder information
-     */
     async getFineticaFolderInfo(tokens) {
         try {
             oauth2Client.setCredentials(tokens);
