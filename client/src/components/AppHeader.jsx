@@ -69,7 +69,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
           width: '100%',
           marginLeft: 0,
           zIndex: 1040,
-          backgroundColor: isDarkMode ? '#432e62df' : '#d8d3e4ff',
+          backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff',
           transition: 'none'
         }}
       >
@@ -184,8 +184,8 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
           display: 'flex',
           alignItems: 'center',
           padding: '0 1rem',
-          backgroundColor: 'var(--cui-body-bg)',
-          borderLeft: '1px solid var(--cui-border-color)'
+          backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff',
+          borderLeft: '#ffffff'
         }}
       >
         <CHeaderNav style={{ gap: '1rem' }}>
