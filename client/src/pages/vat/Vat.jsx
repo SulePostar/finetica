@@ -1,4 +1,3 @@
-import { CContainer, CRow, CCol } from '@coreui/react';
 import { UploadButton } from '../../components/index';
 import { useBucketName } from '../../lib/bucketUtils';
 import './Vat.styles.css';
@@ -6,6 +5,7 @@ import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useNavigate } from 'react-router-dom';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
+import { useSelector } from 'react-redux';
 
 const Vat = () => {
     const navigate = useNavigate();
@@ -43,25 +43,34 @@ const Vat = () => {
     ];
 
     const bucketName = useBucketName();
+    const sidebarShow = useSelector(state => state.ui.sidebarShow);
+    const sidebarWidth = 250;
 
     return (
         <DefaultLayout>
-            <div className="body flex-grow-1 px-3">
-                <CCol>
-                    <div className="d-flex justify-content-end align-items-center">
-                        <UploadButton
-                            bucketName={bucketName}
-                        />
-                    </div>
-                </CCol>
-                <CContainer className="h-100" fluid>
-                    <CRow>
-                        <CCol>
-                            <DynamicTable title="VAT Table" columns={columns} apiEndpoint="http://localhost:4000/api/vat-data" />
-
-                        </CCol>
-                    </CRow>
-                </CContainer>
+            <div
+                className="vat-table-outer"
+                style={{
+                    minHeight: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    transition: 'margin-left 0.3s',
+                    marginLeft: sidebarShow ? sidebarWidth : 0,
+                    padding: 0,
+                }}
+            >
+                <div className="w-100 d-flex justify-content-end align-items-center mb-3">
+                    <UploadButton bucketName={bucketName} />
+                </div>
+                <div className="w-100 d-flex justify-content-center align-items-center flex-grow-1">
+                    <DynamicTable
+                        title="VAT Table"
+                        columns={columns}
+                        apiEndpoint="http://localhost:4000/api/vat-data"
+                    />
+                </div>
             </div>
         </DefaultLayout>
     );
