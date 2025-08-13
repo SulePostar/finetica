@@ -9,7 +9,7 @@ const errorHandler = require('./middleware/errorHandler');
 const kifRouter = require('./routes/kif');
 const kufRouter = require('./routes/kuf');
 const vatRouter = require('./routes/vat');
-const googleDriveAutoSync = require('./utils/driveDownloader/googleDriveAutoSync');
+const googleDriveAutoSync = require('./tasks/googleDriveAutoSync');
 const googleDriveRouter = require('./routes/googleDrive');
 
 

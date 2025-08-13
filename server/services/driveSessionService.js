@@ -1,4 +1,4 @@
-const googleDriveAutoSync = require('../utils/driveDownloader/googleDriveAutoSync');
+const googleDriveAutoSync = require('../tasks/googleDriveAutoSync');
 const tokenStorage = require('./tokenStorage');
 
 class DriveSessionService {

@@ -10,7 +10,7 @@ class GoogleDriveAutoSync {
     constructor() {
         this.isRunning = false;
         this.syncInterval = '* * * * *'; // 1 MINUTA
-        this.downloadPath = path.join(__dirname, '../../googleDriveDownloads');
+        this.downloadPath = path.join(__dirname, './../googleDriveDownloads');
         this.lastSyncTime = null;
     }
 
