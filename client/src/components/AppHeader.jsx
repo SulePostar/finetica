@@ -51,7 +51,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
           width: '100%',
           marginLeft: 0,
           zIndex: 1040,
-          backgroundColor: isDarkMode ? '#432e62df' : '#d8d3e4ff',
+          backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff',
           transition: 'none'
         }}
       >
@@ -63,7 +63,8 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
             display: 'flex',
             alignItems: 'center',
             marginLeft: `${headerMargin}px`,
-            transition: 'margin-left 0.3s ease-in-out'
+            transition: 'margin-left 0.3s ease-in-out',
+            backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff'
           }}
         >
           <CHeaderToggler

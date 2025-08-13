@@ -67,3 +67,10 @@
   left: 0 !important;
   top: 0 !important;
 }
+.sidebar-logo img {
+  max-width: 100%;   
+  max-height: 40px;  
+  width: auto;    
+  height: auto; 
+  object-fit: contain;
+}
