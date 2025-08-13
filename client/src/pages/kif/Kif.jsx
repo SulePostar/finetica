@@ -4,7 +4,8 @@ import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSidebarWidth } from '../../hooks/useSidebarWidth';
+import '../../styles/TablePages.css';
 import './Kif.styles.css';
 
 const Kif = () => {
@@ -42,28 +43,21 @@ const Kif = () => {
     ];
 
     const bucketName = useBucketName();
-    const sidebarShow = useSelector(state => state.ui.sidebarShow);
-    const sidebarWidth = 250;
+    const sidebarWidth = useSidebarWidth();
 
     return (
         <DefaultLayout>
             <div
-                className="kif-table-outer"
+                className="table-page-outer kif-table-outer"
                 style={{
-                    minHeight: '100vh',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    transition: 'margin-left 0.3s',
-                    marginLeft: sidebarShow ? sidebarWidth : 0,
-                    padding: 0,
+                    marginLeft: sidebarWidth,
+                    width: `calc(100vw - ${sidebarWidth}px)`,
                 }}
             >
-                <div className="w-100 d-flex justify-content-end align-items-center mb-3">
+                <div className="table-header-controls">
                     <UploadButton bucketName={bucketName} />
                 </div>
-                <div className="w-100 d-flex justify-content-center align-items-center flex-grow-1">
+                <div className="table-content-wrapper">
                     <DynamicTable
                         title="KIF Table"
                         columns={columns}
