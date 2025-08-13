@@ -199,28 +199,14 @@
     align-self: stretch;
     justify-content: center;
   }
+}
 
-  /* Page-specific button styling in responsive mode */
-  .action-button.kif-button,
-  .action-button.kuf-button,
-  .action-button.vat-button {
-    align-self: stretch;
-    justify-content: center;
-  }
-
-  /* Legacy class support - for backward compatibility */
-  .kif-page-header .d-flex,
-  .kuf-page-header .d-flex,
-  .vat-page-header .d-flex {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start !important;
-  }
-
-  .kif-upload-button,
-  .kuf-upload-button,
-  .vat-upload-button {
-    align-self: stretch;
-    justify-content: center;
-  }
+.table-outer {
+  min-height: '100vh';
+  display: 'flex';
+  flex-direction: 'column';
+  justify-content: 'center';
+  align-items: 'center';
+  transition: 'margin-left 0.3s';
+  padding: 0;
 }
