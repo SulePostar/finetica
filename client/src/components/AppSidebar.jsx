@@ -14,7 +14,7 @@ const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
   const unfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
-  const userRole = useSelector((state) => state.user.profile.roleName);
+  const userRole = useSelector((state) => state.user.profile?.roleName || '');
   const [isHovered, setIsHovered] = useState(false);
   const filteredNav = navigation
     .map((item) => {
