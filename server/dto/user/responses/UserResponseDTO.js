@@ -5,6 +5,7 @@ class UserResponseDTO {
     this.firstName = user.firstName;
     this.lastName = user.lastName;
     this.fullName = `${user.firstName} ${user.lastName}`;
+    this.profileImage = user.profileImage;
     this.roleId = user.roleId;
     this.roleName = user.role.get('role');
     this.statusId = user.statusId;

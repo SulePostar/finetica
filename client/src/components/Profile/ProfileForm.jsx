@@ -19,35 +19,31 @@ import notify from '../../utilis/toastHelper';
 
 const ProfileForm = () => {
   const dispatch = useDispatch();
+  const profile = useSelector((state) => state.user.profile);
+
+  const [formData, setFormData] = useState(profile || {});
+  const [profilePhoto, setProfilePhoto] = useState(null);
+  const [isEditable, setIsEditable] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(
     document.documentElement.getAttribute('data-coreui-theme') === 'dark'
   );
 
-  useEffect(() => {
-    const handler = () => {
-      setIsDarkMode(document.documentElement.getAttribute('data-coreui-theme') === 'dark');
-    };
-    window.document.documentElement.addEventListener('ColorSchemeChange', handler);
-    return () => window.document.documentElement.removeEventListener('ColorSchemeChange', handler);
-  }, []);
-
   const styles = useMemo(() => profileFormStyles(isDarkMode), [isDarkMode]);
 
-  const [isEditable, setIsEditable] = useState(false);
-  const profile = useSelector((state) => state.user.profile);
-
-  const [formData, setFormData] = useState(profile);
   useEffect(() => {
-    setFormData(profile);
+    if (profile) setFormData(profile);
   }, [profile]);
 
-  const [profilePhoto, setProfilePhoto] = useState(null);
-  const [success, setSuccess] = useState('');
-  const [error, setError] = useState('');
+  useEffect(() => {
+    const handler = () =>
+      setIsDarkMode(document.documentElement.getAttribute('data-coreui-theme') === 'dark');
+    window.document.documentElement.addEventListener('ColorSchemeChange', handler);
+    return () =>
+      window.document.documentElement.removeEventListener('ColorSchemeChange', handler);
+  }, []);
 
   const handleChange = ({ target: { name, value } }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (error) setError('');
   };
 
   const handlePhotoSelect = useCallback((file) => {
@@ -74,28 +70,21 @@ const ProfileForm = () => {
         }
       }
 
-      const payload = {
-        ...formData,
-        profileImage: profileImageUrl,
-      };
+      const payload = { ...formData, profileImage: profileImageUrl };
 
       const res = await axios.put('http://localhost:4000/api/users/me', payload, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+        headers: { Authorization: `Bearer ${localStorage.getItem('jwt_token')}` },
       });
 
       dispatch(setUserProfile(res.data));
-      setSuccess('Profile updated!');
       notify.onSuccess('Profile updated successfully!');
-    } catch (err) {
-      setError('Failed to update profile.');
-      notify.onError('Failed to update profile. Please try again.');
-    } finally {
+      setProfilePhoto(null); // reset local selection
       setIsEditable(false);
+    } catch (err) {
+      console.error(err);
+      notify.onError('Failed to update profile. Please try again.');
     }
   };
-
 
   return (
     <div className="container py-4">
@@ -109,6 +98,12 @@ const ProfileForm = () => {
             <ProfilePhotoUpload
               onPhotoSelect={handlePhotoSelect}
               disabled={!isEditable}
+              currentPhoto={profile?.profileImage || null}
+              onRemove={() => {
+                notify.onSuccess('Profile photo removed successfully!');
+                setFormData((prev) => ({ ...prev, profileImage: null }));
+                setProfilePhoto(null);
+              }}
             />
           </div>
 
@@ -124,58 +119,70 @@ const ProfileForm = () => {
               </CButton>
             </div>
 
-            {[
-              { label: 'First name', name: 'firstName' },
-              { label: 'Last name', name: 'lastName' },
-              { label: 'Email', name: 'email', type: 'email' },
-            ].map(({ label, name, type = 'text' }) => (
-              <CInputGroup className="mb-3" key={name}>
-                <CInputGroupText style={styles.inputGroupText}>
-                  <CFormLabel style={styles.labelInInputGroupText}>{label}</CFormLabel>
-                </CInputGroupText>
-                <CFormInput
-                  type={type}
-                  name={name}
-                  placeholder={label}
-                  style={isEditable ? styles.formInput : styles.formInputDisabled}
-                  value={formData[name]}
-                  onChange={handleChange}
-                  disabled={!isEditable}
-                />
-              </CInputGroup>
-            ))}
+            <CInputGroup className="mb-3">
+              <CInputGroupText style={styles.inputGroupText}>
+                <CFormLabel style={styles.labelInInputGroupText}>First name</CFormLabel>
+              </CInputGroupText>
+              <CFormInput
+                type='text'
+                name='firstName'
+                placeholder='First name'
+                style={isEditable ? styles.formInput : styles.formInputDisabled}
+                value={formData.firstName || ''}
+                onChange={handleChange}
+                disabled={!isEditable}
+              />
+            </CInputGroup>
+
+            <CInputGroup className="mb-3">
+              <CInputGroupText style={styles.inputGroupText}>
+                <CFormLabel style={styles.labelInInputGroupText}>First name</CFormLabel>
+              </CInputGroupText>
+              <CFormInput
+                type='text'
+                name='lastName'
+                placeholder='Last name'
+                style={isEditable ? styles.formInput : styles.formInputDisabled}
+                value={formData.lastName || ''}
+                onChange={handleChange}
+                disabled={!isEditable}
+              />
+            </CInputGroup>
+
+            <CInputGroup className="mb-3">
+              <CInputGroupText style={styles.inputGroupText}>
+                <CFormLabel style={styles.labelInInputGroupText}>Email</CFormLabel>
+              </CInputGroupText>
+              <CFormInput
+                type='email'
+                name='email'
+                placeholder='Email'
+                style={isEditable ? styles.formInput : styles.formInputDisabled}
+                value={formData.email || ''}
+                onChange={handleChange}
+                disabled={!isEditable}
+              />
+            </CInputGroup>
 
             <CInputGroup className="mb-3">
               <CInputGroupText style={styles.inputGroupText}>
                 <CFormLabel style={styles.labelInInputGroupText}>Role</CFormLabel>
               </CInputGroupText>
-              <CFormInput
-                style={styles.formInputDisabled}
-                value={capitalizeFirst(formData.roleName)}
-                disabled
-              />
+              <CFormInput style={styles.formInputDisabled} value={capitalizeFirst(formData.roleName)} disabled />
             </CInputGroup>
 
             <CInputGroup className="mb-3">
               <CInputGroupText style={styles.inputGroupText}>
                 <CFormLabel style={styles.labelInInputGroupText}>Status</CFormLabel>
               </CInputGroupText>
-              <CFormInput
-                style={styles.formInputDisabled}
-                value={capitalizeFirst(formData.statusName)}
-                disabled
-              />
+              <CFormInput style={styles.formInputDisabled} value={capitalizeFirst(formData.statusName)} disabled />
             </CInputGroup>
 
             <CInputGroup className="mb-3">
               <CInputGroupText style={styles.inputGroupText}>
                 <CFormLabel style={styles.labelInInputGroupText}>Last login</CFormLabel>
               </CInputGroupText>
-              <CFormInput
-                style={styles.formInputDisabled}
-                value={formatDateTime(formData.lastLoginAt)}
-                disabled
-              />
+              <CFormInput style={styles.formInputDisabled} value={formatDateTime(formData.lastLoginAt)} disabled />
             </CInputGroup>
 
             {isEditable && (
