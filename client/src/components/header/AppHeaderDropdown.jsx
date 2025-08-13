@@ -44,11 +44,7 @@ const AppHeaderDropdown = ({ isDarkMode }) => {
           </CDropdownItem>
           <CDropdownDivider />
           <CDropdownItem
-            onClick={() => {
-              localStorage.removeItem('token');
-              localStorage.removeItem('user');
-              window.location.href = '/login';
-            }}
+            onClick={() => setShowModal(true)}
             style={{ cursor: 'pointer' }}
           >
             <CIcon icon={cilAccountLogout} className="me-2" />
@@ -56,6 +52,20 @@ const AppHeaderDropdown = ({ isDarkMode }) => {
           </CDropdownItem>
         </CDropdownMenu>
       </CDropdown>
+
+      <ConfirmationModal
+        visible={showModal}
+        onCancel={() => setShowModal(false)}
+        onConfirm={() => {
+          setShowModal(false);
+          handleLogout();
+        }}
+        title="Confirm Logout"
+        body="Are you sure you want to log out?"
+        cancelText="Cancel"
+        confirmText="Logout"
+        confirmColor="danger"
+      />
     </>
   );
 };
