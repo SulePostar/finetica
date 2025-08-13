@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { User, Role, UserStatus } = require('../models');
+const crypto = require('crypto');
+const { User, Role, UserStatus, RefreshToken } = require('../models');
 
 const AppError = require('../utils/errorHandler');
 const { USER_STATUS } = require('../utils/constants');
@@ -78,7 +79,7 @@ class AuthService {
 
     await user.update({ lastLoginAt: new Date() });
 
-    const token = this.#generateToken(user.id, user.role?.id, user.role?.role);
+    const { newAccessToken, newRefreshToken } = await this.#generateTokens(user);
 
     return {
       success: true,
@@ -100,7 +101,8 @@ class AuthService {
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,
         },
-        token,
+        token: newAccessToken,
+        refreshToken: newRefreshToken
       },
     };
   }
@@ -129,39 +131,47 @@ class AuthService {
     };
   }
 
-  #generateToken(userId, roleId = null, roleName = null) {
-    const payload = { userId };
+  async #generateTokens(user) {
+    const payload = { userId: user.id };
 
-    if (roleId && roleName) {
-      payload.roleId = roleId;
-      payload.roleName = roleName;
+    if (user.role?.id && user.role?.role) {
+      payload.roleId = user.role.id;
+      payload.roleName = user.role.role;
     }
 
-    return jwt.sign(payload, process.env.JWT_SECRET, {
+    const newAccessToken = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
-  }
+    const newRefreshToken = crypto.randomBytes(32).toString('base64url');
+    const newRefreshTokenHash = crypto.createHash('sha256').update(newRefreshToken).digest('hex');
 
-  async refreshToken(userId) {
-    const user = await User.findByPk(userId, {
-      include: [
-        {
-          model: Role,
-          as: 'role',
-          attributes: ['id', 'role'],
-        },
-      ],
+    await RefreshToken.create({
+      tokenHash: newRefreshTokenHash,
+      userId: user.id,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
 
-    if (!user || !user.is_active || user.statusId !== USER_STATUS.APPROVED) {
-      throw new AppError('Invalid user or account status', 403);
-    }
+    return { newAccessToken, newRefreshToken };
+  }
 
-    const token = this.#generateToken(userId, user.role?.id, user.role?.name);
+  async rotateTokens(token) {
+    if (!token) throw new AppError('Unauthorized', 401);
 
+    const refreshToken = await RefreshToken.findOne({
+      where: { tokenHash: crypto.createHash('sha256').update(token).digest('hex') },
+      include: [{ model: User, as: 'user' }],
+    });
+
+    if (!refreshToken || refreshToken.expiresAt < new Date()) throw new AppError('Unauthorized', 401);
+
+    const user = refreshToken.user;
+
+
+    await refreshToken.destroy();
+    const { newAccessToken, newRefreshToken } = await this.#generateTokens(user);
     return {
       success: true,
-      data: { token },
+      data: { token: newAccessToken, refreshToken: newRefreshToken },
     };
   }
 }
