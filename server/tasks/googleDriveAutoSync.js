@@ -2,10 +2,9 @@ const path = require('path');
 const {
     performSync,
     syncFiles,
-    start: helperStart,
-    getStatus: helperGetStatus
-} = require('./googleDriveHelper');
-const tokenStorage = require('../../services/tokenStorage');
+    start: helperStart
+} = require('../utils/driveDownloader/googleDriveHelper');
+const tokenStorage = require('../services/tokenStorage');
 
 class GoogleDriveAutoSync {
     constructor() {

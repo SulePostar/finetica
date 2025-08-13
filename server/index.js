@@ -12,6 +12,7 @@ const vatRouter = require('./routes/vat');
 const googleDriveAutoSync = require('./utils/driveDownloader/googleDriveAutoSync');
 const googleDriveRouter = require('./routes/googleDrive');
 
+
 const PORT = process.env.PORT;
 const SECRET = process.env.SESSION_SECRET;
 
@@ -53,5 +54,4 @@ googleDriveAutoSync.start();
 
 app.listen(PORT, () => {
   console.log(`🟢 Server is running at port: ${PORT}`);
-  console.log(`🔄 Google Drive auto sync service is active`);
 });
