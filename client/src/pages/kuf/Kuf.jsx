@@ -1,11 +1,12 @@
 import { UploadButton } from '../../components/index';
-import './Kuf.styles.css';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown'; // <-- Import the reusable dropdown
 import { useNavigate } from 'react-router-dom';
 import { useBucketName } from '../../lib/bucketUtils';
 import { useSelector } from 'react-redux';
+import '../../styles/shared/CommonStyles.css';
+import './Kuf.styles.css';
 
 const Kuf = () => {
     const navigate = useNavigate();
@@ -48,7 +49,7 @@ const Kuf = () => {
     return (
         <DefaultLayout>
             <div
-                className="kuf-table-outer"
+                className="table-outer"
                 style={{
                     minHeight: '100vh',
                     display: 'flex',

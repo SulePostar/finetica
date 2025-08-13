@@ -5,6 +5,7 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import '../../styles/shared/CommonStyles.css';
 import './Kif.styles.css';
 
 const Kif = () => {
@@ -48,7 +49,7 @@ const Kif = () => {
     return (
         <DefaultLayout>
             <div
-                className="kif-table-outer"
+                className="table-outer"
                 style={{
                     minHeight: '100vh',
                     display: 'flex',
