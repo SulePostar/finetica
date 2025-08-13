@@ -25,7 +25,7 @@ jest.mock('../../components/Tables/DynamicTable', () => ({
             <div data-testid="columns">{columns.length} columns</div>
             {columns.map((column, index) => (
                 <div key={index} data-testid={`column-result-${index}`}>
-                    {column.name}: {column.selector(mockRow)}
+                    {column.name}: {typeof column.selector === 'function' ? column.selector(mockRow) : 'N/A'}
                 </div>
             ))}
             <button
@@ -34,9 +34,26 @@ jest.mock('../../components/Tables/DynamicTable', () => ({
             >
                 Test Row Click
             </button>
+            {/* Render Actions column cell to test action handlers */}
+            {columns.find(col => col.name === 'Actions') && (
+                <div data-testid="actions-column">
+                    {columns.find(col => col.name === 'Actions').cell(mockRow)}
+                </div>
+            )}
         </div>
     );
 });
+
+jest.mock('../../components/Tables/Dropdown/ActionsDropdown', () => ({
+    row, onView, onEdit, onDelete, onDownload
+}) => (
+    <div data-testid="actions-dropdown">
+        <button data-testid="action-view" onClick={() => onView(row.id)}>View</button>
+        <button data-testid="action-edit" onClick={() => onEdit(row.id)}>Edit</button>
+        <button data-testid="action-delete" onClick={() => onDelete(row.id)}>Delete</button>
+        <button data-testid="action-download" onClick={() => onDownload(row.id)}>Download</button>
+    </div>
+));
 
 jest.mock('../../layout/DefaultLayout', () => ({ children }) => (
     <div data-testid="default-layout">{children}</div>
@@ -117,7 +134,7 @@ describe('KIF Page', () => {
 
             expect(screen.getByText('KIF Table')).toBeInTheDocument();
             expect(screen.getByTestId('api-endpoint')).toHaveTextContent('http://localhost:4000/api/kif-data');
-            expect(screen.getByTestId('columns')).toHaveTextContent('5 columns');
+            expect(screen.getByTestId('columns')).toHaveTextContent('6 columns');
 
             // Test that column selectors work correctly
             expect(screen.getByTestId('column-result-0')).toHaveTextContent('ID: 1');
@@ -161,7 +178,7 @@ describe('KIF Page', () => {
             renderKifPage();
 
             // The columns are passed to DynamicTable, we can verify through the mock
-            expect(screen.getByTestId('columns')).toHaveTextContent('5 columns');
+            expect(screen.getByTestId('columns')).toHaveTextContent('6 columns');
         });
 
         test('should have correct column definitions and selectors', () => {
@@ -180,7 +197,7 @@ describe('KIF Page', () => {
             // Since columns are defined inside the component, we'll test them indirectly
             // by ensuring the DynamicTable receives the correct structure
             expect(screen.getByTestId('dynamic-table')).toBeInTheDocument();
-            expect(screen.getByTestId('columns')).toHaveTextContent('5 columns');
+            expect(screen.getByTestId('columns')).toHaveTextContent('6 columns');
         });
 
         test('should create columns with correct properties', () => {
@@ -261,6 +278,29 @@ describe('KIF Page', () => {
                 expect(mockNavigate).toHaveBeenCalledWith('/kif/1');
                 expect(mockNavigate).toHaveBeenCalledTimes(1);
             });
+        });
+
+        test('should handle action dropdown interactions', async () => {
+            renderKifPage();
+
+            // Test view action
+            const viewButton = screen.getByTestId('action-view');
+            fireEvent.click(viewButton);
+            await waitFor(() => {
+                expect(mockNavigate).toHaveBeenCalledWith('/kif/1');
+            });
+
+            // Test edit action (placeholder function)
+            const editButton = screen.getByTestId('action-edit');
+            expect(() => fireEvent.click(editButton)).not.toThrow();
+
+            // Test delete action (placeholder function) 
+            const deleteButton = screen.getByTestId('action-delete');
+            expect(() => fireEvent.click(deleteButton)).not.toThrow();
+
+            // Test download action (placeholder function)
+            const downloadButton = screen.getByTestId('action-download');
+            expect(() => fireEvent.click(downloadButton)).not.toThrow();
         });
     });
 
