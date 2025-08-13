@@ -8,6 +8,8 @@ const kufRouter = require('./routes/kuf');
 const vatRouter = require('./routes/vat');
 const mailRoute = require("./routes/mailRoute");
 
+const { processEmailQueue } = require('./services/emailQueueService');
+
 
 const app = express();
 
@@ -30,4 +32,8 @@ connectToDatabase();
 
 app.listen(PORT, () => {
   console.log(`🟢 Server is running at port: ${PORT}`);
+
+  setInterval(() => {
+    processEmailQueue().catch(err => console.error('Error in email queue processor:', err));
+  }, 1000 * 60);
 });

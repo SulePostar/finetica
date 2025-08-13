@@ -12,6 +12,8 @@ const Vat = React.lazy(() => import('../pages/vat/Vat'));
 const Kuf = React.lazy(() => import('../pages/kuf/Kuf'));
 const ProfilePage = React.lazy(() => import('../pages/Profile/ProfilePage'));
 const GuestWrapper = React.lazy(() => import('../protectedRoutes/GuestWrapper'));
+const ForgotPasswordForm = React.lazy(() => import('../components/Login/ForgotPasswordForm'));
+const ResetPasswordForm = React.lazy(() => import('../components/Login/ResetPasswordForm'));
 
 export default function AppRoutes() {
   return (
@@ -36,6 +38,22 @@ export default function AppRoutes() {
           element={
             <GuestWrapper>
               <LoginPage />
+            </GuestWrapper>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <GuestWrapper>
+              <ForgotPasswordForm />
+            </GuestWrapper>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <GuestWrapper>
+              <ResetPasswordForm />
             </GuestWrapper>
           }
         />
