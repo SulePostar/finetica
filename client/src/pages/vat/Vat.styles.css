@@ -16,8 +16,9 @@
 
 /* VAT Page Styles */
 
-.kuf-table-outer {
+.vat-table-outer {
   box-sizing: border-box;
+  padding: 30px 20px;
 }
 
 .vat-page-header {
