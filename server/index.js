@@ -6,11 +6,13 @@ const errorHandler = require('./middleware/errorHandler');
 const kifRouter = require('./routes/kif');
 const kufRouter = require('./routes/kuf');
 const vatRouter = require('./routes/vat');
+const cookieParser = require('cookie-parser')
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 app.use('/api/auth', require('./routes/authentication'));
 app.use('/api/users', require('./routes/users'));
