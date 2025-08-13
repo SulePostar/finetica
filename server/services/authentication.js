@@ -133,9 +133,7 @@ class AuthService {
 
   async #generateTokens(user) {
     const payload = { userId: user.id };
-
-    if (user.role?.id && user.role?.role) {
-      payload.roleId = user.role.id;
+    if (user.role) {
       payload.roleName = user.role.role;
     }
 
