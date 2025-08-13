@@ -2,8 +2,7 @@ const path = require('path');
 const {
     performSync,
     syncFiles,
-    start: helperStart,
-    getStatus: helperGetStatus
+    start: helperStart
 } = require('./googleDriveHelper');
 const tokenStorage = require('../../services/tokenStorage');
 
