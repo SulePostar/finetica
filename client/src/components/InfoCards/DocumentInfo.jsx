@@ -7,7 +7,7 @@ import {
     DOCUMENT_FIELD_CONFIGS,
     formatValue
 } from '../../utilis/constants/InvoicesData';
-import '../../components/InfoCards/DocumentInfo.styles.css';
+import '../../components/InfoCards/DocumentInfo.css';
 
 /**
  * DocumentInfo Component
