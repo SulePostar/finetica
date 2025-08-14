@@ -50,16 +50,28 @@ const AppSidebar = ({ isDarkMode }) => {
     .map((item) => {
       const isAdmin = userRole === 'admin';
 
-
       if (item.component?.displayName === 'CNavGroup' && item.items) {
         if (item.adminOnly && !isAdmin) return null;
+
+        // ukloni sub-iteme kad je sidebar skraćen i nije hoverovan
+        if (unfoldable && !isHovered) {
+
+          return {
+            component: item.component,
+            name: item.name,
+            icon: item.icon,
+            adminOnly: item.adminOnly,
+
+            items: [],
+          };
+        }
+
         const filteredItems = item.items.filter(
           (child) => !child.adminOnly || isAdmin
         );
         if (filteredItems.length === 0) return null;
         return { ...item, items: filteredItems };
       }
-
 
       if (item.component?.displayName === 'CNavTitle') {
         if (item.adminOnly && !isAdmin) return null;
