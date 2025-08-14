@@ -8,8 +8,10 @@ const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
 const AdminDashboard = React.lazy(() => import('../pages/AdminDashboard/AdminDashboard'));
 const Kif = React.lazy(() => import('../pages/kif/Kif'));
+const InvoiceDetails = React.lazy(() => import('../pages/InvoiceDetails/InvoiceDetails'));
 const Vat = React.lazy(() => import('../pages/vat/Vat'));
 const Kuf = React.lazy(() => import('../pages/kuf/Kuf'));
+const Contracts = React.lazy(() => import('../pages/contract/Contract'));
 const ProfilePage = React.lazy(() => import('../pages/Profile/ProfilePage'));
 const GuestWrapper = React.lazy(() => import('../protectedRoutes/GuestWrapper'));
 const ForgotPasswordForm = React.lazy(() => import('../components/Login/ForgotPasswordForm'));
@@ -65,7 +67,7 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
-        {/* Protected admin routes */}
+
         <Route
           path="/admin/*"
           element={
@@ -79,6 +81,14 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <Kif />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/kif/:id"
+          element={
+            <ProtectedRoute>
+              <InvoiceDetails />
             </ProtectedRoute>
           }
         />
@@ -98,7 +108,14 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="/kuf/:id"
+          element={
+            <ProtectedRoute>
+              <InvoiceDetails />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/profile"
           element={
@@ -107,7 +124,19 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
+
+
+        <Route
+          path="/contracts"
+          element={
+            <ProtectedRoute>
+              <Contracts />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Fallback for unknown routes */}
+
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Suspense>

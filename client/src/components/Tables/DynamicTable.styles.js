@@ -1,7 +1,7 @@
 const makeCustomStyles = () => ({
   rows: {
     style: {
-      minHeight: '52px',
+      minHeight: '60px',
       width: '100%',
       fontFamily: "'Segoe UI', system-ui, sans-serif",
       fontSize: '0.95rem',
@@ -24,7 +24,7 @@ const makeCustomStyles = () => ({
 
   headCells: {
     style: {
-      padding: '14px 16px',
+      padding: '18px 20px',
       fontWeight: 700,
       fontSize: '1rem',
       whiteSpace: 'nowrap',
@@ -38,7 +38,7 @@ const makeCustomStyles = () => ({
 
   cells: {
     style: {
-      padding: '14px 16px',
+      padding: '18px 20px',
       fontSize: '0.95rem',
       fontFamily: "'Segoe UI', system-ui, sans-serif",
       color: 'var(--cui-body-color)',
@@ -49,7 +49,7 @@ const makeCustomStyles = () => ({
 
   pagination: {
     style: {
-      padding: '10px 20px',
+      padding: '16px 24px',
       fontFamily: "'Segoe UI', system-ui, sans-serif",
       backgroundColor: 'var(--cui-body-bg)',
       color: 'var(--cui-body-color)',
