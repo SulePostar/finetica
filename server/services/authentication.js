@@ -5,6 +5,7 @@ const { User, Role, UserStatus, RefreshToken } = require('../models');
 
 const AppError = require('../utils/errorHandler');
 const { USER_STATUS } = require('../utils/constants');
+const REFRESH_TOKEN_EXPIRES_IN_MS = process.env.REFRESH_TOKEN_EXPIRES_IN_DAYS * 24 * 60 * 60 * 1000;
 
 class AuthService {
   async register(registerData) {
@@ -146,7 +147,7 @@ class AuthService {
     await RefreshToken.create({
       tokenHash: newRefreshTokenHash,
       userId: user.id,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date(Date.now() + REFRESH_TOKEN_EXPIRES_IN_MS),
     });
 
     return { newAccessToken, newRefreshToken };
