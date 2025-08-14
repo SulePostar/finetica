@@ -139,4 +139,3 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 /server/services/downloads/
 /server/services/downloaded_uids.json
-client/vite.config.mjs
