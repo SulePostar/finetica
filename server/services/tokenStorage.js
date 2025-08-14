@@ -1,5 +1,4 @@
-const fs = require('fs');
-const path = require('path');
+const Logger = require('../utils/logger');
 
 class TokenStorage {
     constructor() {
@@ -12,7 +11,7 @@ class TokenStorage {
         try {
             return true;
         } catch (error) {
-            console.error('❌ Error logging tokens:', error.message);
+            Logger.info('❌ Error saving tokens:', error.message);
             return false;
         }
     }
@@ -24,7 +23,7 @@ class TokenStorage {
             const accessToken = process.env.GOOGLE_ACCESS_TOKEN;
 
             if (!refreshToken) {
-                console.log('⚠️ No GOOGLE_REFRESH_TOKEN found in environment variables');
+                Logger.warn('⚠️ No GOOGLE_REFRESH_TOKEN found in environment variables');
                 return null;
             }
 
@@ -35,7 +34,7 @@ class TokenStorage {
             };
             return tokens;
         } catch (error) {
-            console.error('❌ Error loading tokens from environment:', error.message);
+            Logger.error('❌ Error loading tokens from environment:', error.message);
             return null;
         }
     }
@@ -47,9 +46,7 @@ class TokenStorage {
 
     // Clear tokens (just log instruction)
     clearTokens() {
-        console.log('💡 To clear tokens, remove these from your .env file:');
-        console.log('GOOGLE_REFRESH_TOKEN');
-        console.log('GOOGLE_ACCESS_TOKEN');
+        Logger.warn('⚠️ Tokens cleared from environment variables');
     }
 }
 

@@ -1,5 +1,9 @@
 const fs = require('fs');
 const path = require('path');
+const mkdirp = require('mkdirp');
+const cron = require('node-cron');
+const tokenStorage = require('../../services/tokenStorage');
+const { createDriveClient, oauth2Client } = require('../../config/driveConfig');
 
 async function findFineticaFolderId(drive) {
     try {
@@ -10,8 +14,7 @@ async function findFineticaFolderId(drive) {
         });
 
         if (response.data.files.length > 0) {
-            const folderId = response.data.files[0].id;
-            console.log(`✅ Found "finetica" folder with ID: ${folderId}`);
+            const folderId = response.data.files[0].id; // WE CAN INSPECT ID OF FOLDER
             return folderId; // ako se pronadje fajl, ispise se u konzoli njegov id, obrisati conosle.log po potrebi 
         } else {
             console.log('⚠️ "finetica" folder not found in Google Drive');
@@ -45,8 +48,6 @@ async function downloadOrExportFile(drive, file, downloadPath) {
             } else {
                 console.log(`🔄 File has been updated on Drive, re-downloading: ${fileName}`);
             }
-        } else {
-            console.log(`📥 New file found: ${fileName}`);
         }
 
         const fileExistedBefore = fs.existsSync(destPath);
@@ -55,8 +56,6 @@ async function downloadOrExportFile(drive, file, downloadPath) {
         // Set the local file's modification time to match the remote file
         const remoteModifiedTime = new Date(file.modifiedTime);
         fs.utimesSync(destPath, remoteModifiedTime, remoteModifiedTime);
-
-        console.log(`✅ Exported: ${fileName}`);
         return { downloaded: true, type: 'exported', reason: fileExistedBefore ? 'Updated' : 'New' };
     } else {
         // For regular files, download directly
@@ -73,8 +72,6 @@ async function downloadOrExportFile(drive, file, downloadPath) {
             } else {
                 console.log(`🔄 File has been updated on Drive, re-downloading: ${fileName}`);
             }
-        } else {
-            console.log(`📥 New file found: ${fileName}`);
         }
 
         const fileExistedBefore = fs.existsSync(destPath);
@@ -162,11 +159,133 @@ async function downloadRegularFile(drive, file, destPath) {
             .catch(reject);
     });
 }
+async function start() {
+    if (this.isRunning) {
+        console.log('⚠️ Background sync service is already running');
+        return;
+    }
 
+    // Ensure download directory exists
+    try {
+        mkdirp.sync(this.downloadPath);
+    } catch (err) {
+        console.log('❌ Failed to create download directory:', err);
+        return;
+    }
+    try {
+        await this.performSync();
+    } catch (err) {
+        console.log('❌ Initial sync failed:', err);
+    }
+
+    // Schedule periodic sync
+    this.cronJob = cron.schedule(this.syncInterval, async () => {
+        await this.performSync();
+    }, {
+        scheduled: false,
+        timezone: "Europe/Sarajevo"
+    });
+
+    this.cronJob.start();
+    this.isRunning = true;
+}
+async function stop() {
+    if (this.cronJob) {
+        this.cronJob.stop();
+        this.isRunning = false;
+        console.log('🛑 Google Drive auto sync stopped');
+    }
+}
+async function syncFiles(drive) {
+    try {
+        // Find the "finetica" folder
+        const fineticaFolderId = await findFineticaFolderId(drive);
+        if (!fineticaFolderId) {
+            console.log('⚠️ "finetica" folder not found in Google Drive');
+            return;
+        }
+
+        // List files from the "finetica" folder
+        const response = await drive.files.list({
+            pageSize: 50,
+            fields: 'files(id, name, modifiedTime, mimeType, size)',
+            q: `'${fineticaFolderId}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed=false`,
+            orderBy: 'modifiedTime desc'
+        });
+
+        const files = response.data.files;
+
+        let downloadedCount = 0;
+        let skippedCount = 0;
+
+        for (const file of files) {
+            try {
+                const result = await downloadOrExportFile(drive, file, this.downloadPath);
+                if (result.downloaded) {
+                    downloadedCount++;
+                } else {
+                    skippedCount++;
+                }
+            } catch (err) {
+                console.error(`❌ Failed to process ${file.name}:`, err.message);
+            }
+        }
+    } catch (error) {
+        console.error('❌ Error syncing files:', error.message);
+    }
+}
+async function getStatus() {
+    return {
+        isRunning: this.isRunning,
+        lastSync: this.lastSyncTime,
+        syncInterval: 'Every minute',
+        hasRefreshToken: tokenStorage.hasValidRefreshToken(),
+        downloadPath: this.downloadPath
+    };
+}
+async function performSync() {
+    try {
+
+        // Load tokens from environment variables
+        const tokens = tokenStorage.loadTokens();
+        if (!tokens || !tokens.refresh_token) {
+            console.log('⚠️ No refresh token available. Skipping sync.');
+            return;
+        }
+
+        // Set up OAuth client with tokens from environment
+        oauth2Client.setCredentials(tokens);
+
+        // Try to refresh access token if needed
+        try {
+            const { credentials } = await oauth2Client.refreshAccessToken();
+
+            // Use refreshed credentials for this session only (no file storage)
+            oauth2Client.setCredentials(credentials);
+        } catch (refreshError) {
+            console.error('❌ Failed to refresh access token:', refreshError.message);
+            return;
+        }
+
+        // Create Drive client and sync files
+        const drive = createDriveClient();
+        await this.syncFiles(drive);
+
+        this.lastSyncTime = new Date().toISOString();
+
+    } catch (error) {
+        console.error('❌ Google Drive sync failed:', error.message);
+    }
+}
 module.exports = {
     findFineticaFolderId,
     downloadOrExportFile,
     getExtensionForGoogleAppsFile,
     exportGoogleAppsFile,
-    downloadRegularFile
+    downloadRegularFile,
+    start,
+    stop,
+    getStatus,
+    syncFiles,
+    performSync
 };
