@@ -1,19 +1,36 @@
-.contract-table-wrapper {
-  width: 100vw;
-  max-width: 100%;
-  overflow-x: auto;
-  padding-top: 2rem;
-  padding-left: 13rem;
+.status-badge {
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
-.contract-table-wrapper .rdt_Table,
-.contract-table-wrapper table {
-  font-size: 0.5rem;
-  width: 2200px !important;
+.status-badge.active {
+  background-color: #d1fae5;
+  color: #065f46;
 }
 
+.status-badge.inactive {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+[data-coreui-theme='dark'] .status-badge.active {
+  background-color: #065f46;
+  color: #d1fae5;
+}
+
+[data-coreui-theme='dark'] .status-badge.inactive {
+  background-color: #991b1b;
+  color: #fee2e2;
+}
 
 @media (max-width: 900px) {
+  .contract-table-responsive {
+    margin: 1rem;
+    height: 60vh;
+  }
+  
   .contract-table-responsive .rdt_Table,
   .contract-table-responsive table {
     min-width: 900px;
@@ -22,6 +39,11 @@
 }
 
 @media (max-width: 600px) {
+  .contract-table-responsive {
+    margin: 0.5rem;
+    height: 50vh;
+  }
+  
   .contract-table-responsive .rdt_Table,
   .contract-table-responsive table {
     min-width: 600px;

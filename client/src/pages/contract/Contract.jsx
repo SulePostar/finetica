@@ -105,6 +105,7 @@ const Contract = () => {
                 style={{
                     marginLeft: sidebarWidth,
                     width: `calc(100vw - ${sidebarWidth}px)`,
+                    padding: '2rem'
                 }}
             >
                 <div className="contract-table-responsive">
