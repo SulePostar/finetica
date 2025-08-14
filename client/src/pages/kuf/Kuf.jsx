@@ -1,5 +1,5 @@
+import { useSelector } from 'react-redux';
 import { UploadButton } from '../../components/index';
-import './Kuf.styles.css';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown'; // <-- Import the reusable dropdown
@@ -7,9 +7,12 @@ import { useNavigate } from 'react-router-dom';
 import { useBucketName } from '../../lib/bucketUtils';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import '../../styles/TablePages.css';
+import './Kuf.styles.css';
 
 const Kuf = () => {
     const navigate = useNavigate();
+    const bucketName = useBucketName();
+    const sidebarWidth = useSidebarWidth();
 
     const handleView = (id) => {
         navigate(`/kuf/${id}`);
@@ -42,8 +45,11 @@ const Kuf = () => {
         }
     ];
 
-    const bucketName = useBucketName();
-    const sidebarWidth = useSidebarWidth();
+    const handleRowClick = (row) => {
+        console.log('Row clicked:', row);
+        console.log('Navigating to:', `/kuf/${row.id}`);
+        navigate(`/kuf/${row.id}`);
+    };
 
     return (
         <DefaultLayout>
@@ -62,6 +68,7 @@ const Kuf = () => {
                         title="KUF Table"
                         columns={columns}
                         apiEndpoint="http://localhost:4000/api/kuf-data"
+                        onRowClick={handleRowClick}
                     />
                 </div>
             </div>

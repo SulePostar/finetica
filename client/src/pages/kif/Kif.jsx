@@ -10,6 +10,8 @@ import './Kif.styles.css';
 
 const Kif = () => {
     const navigate = useNavigate();
+    const bucketName = useBucketName();
+    const sidebarWidth = useSidebarWidth();
 
     const handleView = (id) => {
         navigate(`/kif/${id}`);
@@ -42,8 +44,13 @@ const Kif = () => {
         }
     ];
 
-    const bucketName = useBucketName();
-    const sidebarWidth = useSidebarWidth();
+
+    const handleRowClick = (row) => {
+        console.log('Row clicked:', row);
+        console.log('Navigating to:', `/kif/${row.id}`);
+        navigate(`/kif/${row.id}`);
+    };
+
 
     return (
         <DefaultLayout>
@@ -62,6 +69,7 @@ const Kif = () => {
                         title="KIF Table"
                         columns={columns}
                         apiEndpoint="http://localhost:4000/api/kif-data"
+                        onRowClick={handleRowClick}
                     />
                 </div>
             </div>

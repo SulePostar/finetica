@@ -1,6 +1,3 @@
-/**
- * Logger utility class with timestamped logging
- */
 class Logger {
     static info(msg) {
         console.log(`[${new Date().toISOString()}] ℹ️  ${msg}`);
