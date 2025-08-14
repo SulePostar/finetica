@@ -9,6 +9,8 @@ import {
   CSidebarToggler,
   CBadge,
 } from '@coreui/react';
+import CIcon from '@coreui/icons-react';
+import { cilCloudDownload } from '@coreui/icons';
 
 import navigation from '../_nav';
 import { AppSidebarNav } from './AppSidebarNav';
@@ -123,39 +125,73 @@ const AppSidebar = ({ isDarkMode }) => {
         <AppSidebarNav items={filteredNav} />
 
         {/* Google Drive Status */}
-        <div
-          className="border-top d-none d-lg-flex justify-content-between align-items-center px-3 py-2"
-          style={{
-            backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
-          }}
-        >
+        {unfoldable && !isHovered ? (
+          // collapsed sidebar - pokaže samo ikonu sa obojenom pozadinom
           <div
-            className="fw-semibold small"
+            className="border-top d-none d-lg-flex justify-content-center align-items-center p-3"
             style={{
-              color: isDarkMode ? '#ffffff' : '#212529',
+              backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
             }}
           >
-            Google Drive
+            <div
+              className="d-flex align-items-center justify-content-center"
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '6px',
+                backgroundColor: driveConnected
+                  ? colors.success.background
+                  : colors.error.background,
+                transition: 'background-color 0.3s ease',
+              }}
+            >
+              <CIcon
+                icon={cilCloudDownload}
+                style={{
+                  color: driveConnected
+                    ? colors.success.text
+                    : colors.error.text,
+                  fontSize: '16px',
+                }}
+              />
+            </div>
           </div>
-
-          <CBadge
-            size="sm"
+        ) : (
+          // Expanded sidebar - show text and badge
+          <div
+            className="border-top d-none d-lg-flex justify-content-between align-items-center px-3 py-2"
             style={{
-              backgroundColor: driveConnected
-                ? colors.success.background
-                : isDarkMode
-                  ? colors.white
-                  : colors.textPrimary,
-              color: driveConnected
-                ? colors.success.text
-                : isDarkMode
-                  ? colors.error.text
-                  : colors.textPrimary,
+              backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
             }}
           >
-            {driveConnected ? 'Connected' : 'Disconnected'}
-          </CBadge>
-        </div>
+            <div
+              className="fw-semibold small"
+              style={{
+                color: isDarkMode ? '#ffffff' : '#212529',
+              }}
+            >
+              Google Drive
+            </div>
+
+            <CBadge
+              size="sm"
+              style={{
+                backgroundColor: driveConnected
+                  ? colors.success.background
+                  : isDarkMode
+                    ? colors.white
+                    : colors.textPrimary,
+                color: driveConnected
+                  ? colors.success.text
+                  : isDarkMode
+                    ? colors.error.text
+                    : colors.textPrimary,
+              }}
+            >
+              {driveConnected ? 'Connected' : 'Disconnected'}
+            </CBadge>
+          </div>
+        )}
 
         {/* Footer */}
         <CSidebarFooter className="border-top d-none d-lg-flex justify-content-center align-items-center p-3">
