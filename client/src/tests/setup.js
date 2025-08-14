@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom';
 import { TextEncoder, TextDecoder } from 'util';
 
+<<<<<<< HEAD
 // =============================================================================
 // ENVIRONMENT POLYFILLS
 // =============================================================================
@@ -13,6 +14,11 @@ global.TextDecoder = TextDecoder;
 // =============================================================================
 
 // Mock window.matchMedia for responsive design tests
+=======
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
+>>>>>>> 27262a2684405e79491c610fca588e4217075cb5
 Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: jest.fn().mockImplementation(query => ({
@@ -25,7 +31,10 @@ Object.defineProperty(window, 'matchMedia', {
     })),
 });
 
+<<<<<<< HEAD
 // Mock IntersectionObserver for component visibility tests
+=======
+>>>>>>> 27262a2684405e79491c610fca588e4217075cb5
 global.IntersectionObserver = class IntersectionObserver {
     constructor() { }
     disconnect() { }
@@ -33,6 +42,7 @@ global.IntersectionObserver = class IntersectionObserver {
     unobserve() { }
 };
 
+<<<<<<< HEAD
 // Mock ResizeObserver for component resize tests
 global.ResizeObserver = class ResizeObserver {
     constructor(callback) { }
@@ -131,3 +141,18 @@ jest.mock('@supabase/supabase-js', () => ({
 
 // Export mock state for tests that need to manipulate it
 export { mockState };
+=======
+jest.mock('../services/api', () => ({
+    get: jest.fn(),
+    post: jest.fn(),
+    patch: jest.fn(),
+    delete: jest.fn(),
+}));
+
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useNavigate: jest.fn(() => jest.fn()),
+    useLocation: jest.fn(() => ({ pathname: '/test' })),
+    useParams: jest.fn(() => ({})),
+}));
+>>>>>>> 27262a2684405e79491c610fca588e4217075cb5
