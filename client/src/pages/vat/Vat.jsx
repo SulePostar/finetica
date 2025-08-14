@@ -4,12 +4,15 @@ import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useNavigate } from 'react-router-dom';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
-import { useSelector } from 'react-redux';
+import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import '../../styles/shared/CommonStyles.css';
 import './Vat.styles.css';
+import '../../styles/TablePages.css';
 
 const Vat = () => {
     const navigate = useNavigate();
+    const bucketName = useBucketName();
+    const sidebarWidth = useSidebarWidth();
 
     const handleView = (row) => {
         navigate(`/vat/${row.id}`);
@@ -43,26 +46,31 @@ const Vat = () => {
         }
     ];
 
-    const bucketName = useBucketName();
-    const sidebarShow = useSelector(state => state.ui.sidebarShow);
-    const sidebarWidth = 250;
+    const handleRowClick = (row) => {
+        console.log('Row clicked:', row);
+        console.log('Navigating to:', `/vat/${row.id}`);
+        navigate(`/vat/${row.id}`);
+    };
+
 
     return (
         <DefaultLayout>
             <div
-                className="table-outer"
+                className="table-page-outer"
                 style={{
-                    marginLeft: sidebarShow ? sidebarWidth : 0
+                    marginLeft: sidebarWidth,
+                    width: `calc(100vw - ${sidebarWidth}px)`,
                 }}
             >
-                <div className="w-100 d-flex justify-content-end align-items-center mb-3">
+                <div className="table-header-controls">
                     <UploadButton bucketName={bucketName} />
                 </div>
-                <div className="w-100 d-flex justify-content-center align-items-center flex-grow-1">
+                <div className="table-content-wrapper">
                     <DynamicTable
                         title="VAT Table"
                         columns={columns}
                         apiEndpoint="http://localhost:4000/api/vat-data"
+                        onRowClick={handleRowClick}
                     />
                 </div>
             </div>
