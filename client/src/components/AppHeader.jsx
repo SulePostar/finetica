@@ -43,7 +43,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
     <>
       {/* Main Header with Left Controls */}
       <CHeader
-        position="sticky"
+        position="fixed"  // Promjena sa 'sticky' na 'fixed'
         className={`p-0 header ${isDarkMode ? 'header-dark' : 'header-light'}`}
         data-coreui-theme={isDarkMode ? 'dark' : 'light'}
         ref={headerRef}
@@ -55,21 +55,24 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
           transition: 'none',
           height: '64px',
           minHeight: '64px',
-          position: 'relative',
-          borderBottom: 'none'
+          position: 'fixed',
+          top: 0,
+          left: 0,
+
         }}
       >
         <CContainer
           fluid
           className="px-4"
           style={{
-            height: '64px', // Eksplicitna visina container-a
+            height: '64px',
             minHeight: '64px',
             display: 'flex',
             alignItems: 'center',
             marginLeft: `${headerMargin}px`,
             transition: 'margin-left 0.3s ease-in-out',
-            backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff'
+            backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff',
+            width: '100%'
           }}
         >
           <CHeaderToggler
@@ -102,10 +105,10 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
           {/* Spacer to push content to the right */}
           <div style={{ flexGrow: 1 }}></div>
         </CContainer>
-      </CHeader>
+      </CHeader >
 
       {/* Fixed Right Navigation */}
-      <div
+      < div
         className="fixed-header-nav"
         style={{
           position: 'fixed',
@@ -116,8 +119,10 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
           display: 'flex',
           alignItems: 'center',
           padding: '0 1rem',
+          backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff',
 
-        }}
+        }
+        }
       >
         <CHeaderNav style={{ gap: '1rem' }}>
           <CDropdown variant="nav-item" placement="bottom-end">
@@ -166,7 +171,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
 
           <AppHeaderDropdown isDarkMode={isDarkMode} />
         </CHeaderNav>
-      </div>
+      </div >
     </>
   );
 };

@@ -1,4 +1,3 @@
-/* Osnovni sidebar stilovi */
 .sidebar {
   position: fixed !important;
   top: 0 !important;
@@ -29,7 +28,7 @@
   z-index: 1050 !important;
 }
 
-/* Navigacija u unfoldable sidebar-u */
+
 .sidebar-unfoldable .sidebar-nav .nav-title,
 .sidebar-unfoldable .sidebar-nav .nav-link-text {
   opacity: 0;
@@ -53,7 +52,7 @@
   padding-left: 1rem !important;
 }
 
-/* Logo stilovi */
+
 .sidebar-logo {
   display: flex !important;
   align-items: center !important;
@@ -72,20 +71,20 @@
   transition: all 0.3s ease-in-out !important;
 }
 
-/* Logo u unfoldable sidebar-u */
+
 .sidebar-unfoldable .sidebar-logo img {
   max-width: 32px !important;
-  max-height: 32px !important;
+  height: 30px !important;
 }
 
 .sidebar-unfoldable:hover .sidebar-logo img {
   max-width: 90% !important;
-  max-height: 37px !important;
+  max-height: 30px !important;
 }
 
-/* Header stilovi */
+
 .sidebar .sidebar-header {
-  min-height: 58px !important;
+  height: 58px !important;
   padding: 8px 16px !important;
   display: flex !important;
   align-items: center !important;
@@ -106,19 +105,19 @@
 .sidebar[data-coreui-theme="dark"],
 .sidebar.sidebar-dark,
 .sidebar[data-bs-theme="dark"] {
-  border-right: 1px solid #fff !important;
+  border-right: 1px solid #432e62df !important;
 }
 
 .sidebar[data-coreui-theme="dark"] .border-bottom,
 .sidebar.sidebar-dark .border-bottom,
 .sidebar[data-bs-theme="dark"] .border-bottom {
-  border-bottom-color: #fff !important;
+  border-bottom-color: #432e62df !important;
 }
 
 .sidebar[data-coreui-theme="dark"] .border-top,
 .sidebar.sidebar-dark .border-top,
 .sidebar[data-bs-theme="dark"] .border-top {
-  border-top-color: #fff !important;
+  border-top-color: #432e62df !important;
 }
 
 /* Svijetla tema */
@@ -126,19 +125,19 @@
 .sidebar.sidebar-light,
 .sidebar[data-bs-theme="light"],
 .sidebar:not([data-coreui-theme="dark"]):not(.sidebar-dark):not([data-bs-theme="dark"]) {
-  border-right: 1px solid #000 !important;
+  border-right: 1px solid #bfaee5ff !important;
 }
 
 .sidebar[data-coreui-theme="light"] .border-bottom,
 .sidebar.sidebar-light .border-bottom,
 .sidebar[data-bs-theme="light"] .border-bottom,
 .sidebar:not([data-coreui-theme="dark"]):not(.sidebar-dark):not([data-bs-theme="dark"]) .border-bottom {
-  border-bottom-color: #000 !important;
+  border-bottom-color: #bfaee5ff !important;
 }
 
 .sidebar[data-coreui-theme="light"] .border-top,
 .sidebar.sidebar-light .border-top,
 .sidebar[data-bs-theme="light"] .border-top,
 .sidebar:not([data-coreui-theme="dark"]):not(.sidebar-dark):not([data-bs-theme="dark"]) .border-top {
-  border-top-color: #000 !important;
+  border-top-color: #bfaee5ff !important;
 }
