@@ -1,18 +1,65 @@
-/* Header Toggle Button - Always Visible */
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #000000;
+  z-index: 9999;
+}
+
+.header[data-coreui-theme="dark"]::after,
+.header.header-dark::after,
+.header[data-bs-theme="dark"]::after {
+  background-color: #ffffff;
+}
+
+
+.header {
+  border-bottom: 1px solid #000000 !important;
+  position: relative;
+}
+
+.header[data-coreui-theme="dark"],
+.header.header-dark,
+.header[data-bs-theme="dark"] {
+  border-bottom: 1px solid #ffffff !important;
+}
+
+.header[data-coreui-theme="dark"],
+.header.header-dark,
+.header[data-bs-theme="dark"],
+.header[data-coreui-theme="dark"].header,
+.header.header-dark.header,
+.header[data-bs-theme="dark"].header {
+  border-bottom: 1px solid #ffffff !important;
+}
+
+.header[data-coreui-theme="light"],
+.header.header-light,
+.header[data-bs-theme="light"],
+.header:not([data-coreui-theme="dark"]):not(.header-dark):not([data-bs-theme="dark"]),
+.header[data-coreui-theme="light"].header,
+.header.header-light.header,
+.header[data-bs-theme="light"].header,
+.header:not([data-coreui-theme="dark"]):not(.header-dark):not([data-bs-theme="dark"]).header {
+  border-bottom: 1px solid #000000 !important;
+}
+
+
 .header-toggler {
   position: relative;
   z-index: 1060;
   transition: all 0.3s ease-in-out;
 }
 
-/* Ensure toggle button stays visible when sidebar is hidden */
 .ms-n3 {
   position: relative;
   z-index: 1060;
   transition: all 0.3s ease-in-out;
 }
 
-/* Header responsive behavior */
 .header-container {
   position: fixed !important;
   top: 0;
@@ -20,7 +67,6 @@
   transition: all 0.3s ease-in-out;
 }
 
-/* Header positioning adjustments */
 .header-follows-sidebar {
   position: fixed !important;
   top: 0;
@@ -28,7 +74,6 @@
   transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
 }
 
-/* Sidebar Animation Support */
 .sidebar-hidden {
   transform: translateX(-100%);
   transition: transform 0.3s ease-in-out;
@@ -49,7 +94,6 @@
   transition: width 0.3s ease-in-out;
 }
 
-/* Main content adjustment when sidebar changes */
 .main-content-expanded {
   margin-left: 0 !important;
   transition: margin-left 0.3s ease-in-out;
@@ -65,7 +109,6 @@
   transition: margin-left 0.3s ease-in-out;
 }
 
-/* Fixed Right Navigation */
 .fixed-header-nav {
   position: fixed;
   top: 0;
@@ -76,28 +119,29 @@
   align-items: center;
   padding: 0 1rem;
   transition: background-color 0.3s ease;
-  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+  border-left: 1px solid var(--cui-border-color);
+  border-bottom: 1px solid var(--cui-border-color);
 }
 
-/* Ensure fixed nav adapts to theme changes */
-[data-coreui-theme='dark'] .fixed-header-nav {
+
+[data-coreui-theme="dark"] .fixed-header-nav {
   background-color: var(--cui-dark);
-  border-color: var(--cui-border-color-translucent);
+  border-left: 1px solid #ffffff;
+  border-bottom: 1px solid #ffffff;
 }
 
-[data-coreui-theme='light'] .fixed-header-nav {
+[data-coreui-theme="light"] .fixed-header-nav {
   background-color: var(--cui-light);
-  border-color: var(--cui-border-color);
+  border-left: 1px solid #000000;
+  border-bottom: 1px solid #000000;
 }
 
-/* Responsive adjustments for smaller screens */
 @media (max-width: 768px) {
   .fixed-header-nav {
     display: none;
   }
 }
 
-/* Ensure dropdowns appear correctly */
 .fixed-header-nav .dropdown-menu {
   right: 0;
   left: auto;

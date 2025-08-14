@@ -32,7 +32,6 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
     return () => document.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Calculate header margin based on sidebar state
   const getHeaderMargin = () => {
     if (!sidebarShow) return 0;
     return sidebarUnfoldable ? 56 : 240;
@@ -45,20 +44,26 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
       {/* Main Header with Left Controls */}
       <CHeader
         position="sticky"
-        className="p-0"
+        className={`p-0 header ${isDarkMode ? 'header-dark' : 'header-light'}`}
+        data-coreui-theme={isDarkMode ? 'dark' : 'light'}
         ref={headerRef}
         style={{
           width: '100%',
           marginLeft: 0,
           zIndex: 1040,
           backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff',
-          transition: 'none'
+          transition: 'none',
+          height: '64px',
+          minHeight: '64px',
+          position: 'relative',
+          borderBottom: 'none'
         }}
       >
         <CContainer
           fluid
           className="px-4"
           style={{
+            height: '64px', // Eksplicitna visina container-a
             minHeight: '64px',
             display: 'flex',
             alignItems: 'center',
@@ -111,8 +116,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
           display: 'flex',
           alignItems: 'center',
           padding: '0 1rem',
-          backgroundColor: 'var(--cui-body-bg)',
-          borderLeft: '1px solid var(--cui-border-color)'
+
         }}
       >
         <CHeaderNav style={{ gap: '1rem' }}>

@@ -1,4 +1,4 @@
-/* Force sidebar to start at top-left corner with smooth transitions */
+/* Osnovni sidebar stilovi */
 .sidebar {
   position: fixed !important;
   top: 0 !important;
@@ -7,19 +7,17 @@
   transition: transform 0.3s ease-in-out !important;
 }
 
-/* Hidden sidebar slides out to the left */
 .sidebar:not(.show) {
   transform: translateX(-100%) !important;
 }
 
-/* Visible sidebar stays in place */
 .sidebar.show {
   transform: translateX(0) !important;
 }
 
-/* Sidebar Hover Expansion in Icon Mode */
+/* Unfoldable sidebar */
 .sidebar-unfoldable {
-  transition: width 0.3s ease-in-out, transform 0.3s ease-in-out !important;
+  transition: width 0.3s ease-in-out !important;
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
@@ -31,7 +29,7 @@
   z-index: 1050 !important;
 }
 
-/* Ensure sidebar content is hidden when collapsed */
+/* Navigacija u unfoldable sidebar-u */
 .sidebar-unfoldable .sidebar-nav .nav-title,
 .sidebar-unfoldable .sidebar-nav .nav-link-text {
   opacity: 0;
@@ -45,7 +43,6 @@
   transition: opacity 0.2s ease-in-out 0.1s;
 }
 
-/* Sidebar nav item styling for better hover experience */
 .sidebar-unfoldable .nav-item {
   white-space: nowrap;
   overflow: hidden;
@@ -56,21 +53,92 @@
   padding-left: 1rem !important;
 }
 
-/* Ensure proper z-index layering */
-.sidebar-hover-expanded {
-  z-index: 1050 !important;
+/* Logo stilovi */
+.sidebar-logo {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 50px !important;
+  min-height: 50px !important;
 }
 
-/* Prevent sidebar from affecting layout when hovering */
-.sidebar-unfoldable:hover {
-  position: fixed !important;
-  left: 0 !important;
-  top: 0 !important;
-}
 .sidebar-logo img {
-  max-width: 100%;   
-  max-height: 40px;  
-  width: auto;    
-  height: auto; 
-  object-fit: contain;
+  max-width: 90% !important;
+  max-height: 37px !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain !important;
+  transition: all 0.3s ease-in-out !important;
+}
+
+/* Logo u unfoldable sidebar-u */
+.sidebar-unfoldable .sidebar-logo img {
+  max-width: 32px !important;
+  max-height: 32px !important;
+}
+
+.sidebar-unfoldable:hover .sidebar-logo img {
+  max-width: 90% !important;
+  max-height: 37px !important;
+}
+
+/* Header stilovi */
+.sidebar .sidebar-header {
+  min-height: 58px !important;
+  padding: 8px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.sidebar-unfoldable .sidebar-header {
+  justify-content: center !important;
+  padding: 8px 0 !important;
+}
+
+.sidebar-unfoldable:hover .sidebar-header {
+  justify-content: space-between !important;
+  padding: 8px 16px !important;
+}
+
+/* Tamna tema */
+.sidebar[data-coreui-theme="dark"],
+.sidebar.sidebar-dark,
+.sidebar[data-bs-theme="dark"] {
+  border-right: 1px solid #fff !important;
+}
+
+.sidebar[data-coreui-theme="dark"] .border-bottom,
+.sidebar.sidebar-dark .border-bottom,
+.sidebar[data-bs-theme="dark"] .border-bottom {
+  border-bottom-color: #fff !important;
+}
+
+.sidebar[data-coreui-theme="dark"] .border-top,
+.sidebar.sidebar-dark .border-top,
+.sidebar[data-bs-theme="dark"] .border-top {
+  border-top-color: #fff !important;
+}
+
+/* Svijetla tema */
+.sidebar[data-coreui-theme="light"],
+.sidebar.sidebar-light,
+.sidebar[data-bs-theme="light"],
+.sidebar:not([data-coreui-theme="dark"]):not(.sidebar-dark):not([data-bs-theme="dark"]) {
+  border-right: 1px solid #000 !important;
+}
+
+.sidebar[data-coreui-theme="light"] .border-bottom,
+.sidebar.sidebar-light .border-bottom,
+.sidebar[data-bs-theme="light"] .border-bottom,
+.sidebar:not([data-coreui-theme="dark"]):not(.sidebar-dark):not([data-bs-theme="dark"]) .border-bottom {
+  border-bottom-color: #000 !important;
+}
+
+.sidebar[data-coreui-theme="light"] .border-top,
+.sidebar.sidebar-light .border-top,
+.sidebar[data-bs-theme="light"] .border-top,
+.sidebar:not([data-coreui-theme="dark"]):not(.sidebar-dark):not([data-bs-theme="dark"]) .border-top {
+  border-top-color: #000 !important;
 }

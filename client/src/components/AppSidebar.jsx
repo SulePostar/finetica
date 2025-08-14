@@ -57,7 +57,7 @@ const AppSidebar = ({ isDarkMode }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <CSidebarHeader className="border-bottom d-flex align-items-center justify-content-between px-3">
+      <CSidebarHeader className="border-bottom d-flex align-items-center justify-content-between px-3 sidebar-header">
         {/* Logo */}
         <div className="sidebar-logo">
           <img
@@ -65,9 +65,6 @@ const AppSidebar = ({ isDarkMode }) => {
             alt="Logo"
           />
         </div>
-
-
-
 
         <CCloseButton
           className="d-lg-none"
