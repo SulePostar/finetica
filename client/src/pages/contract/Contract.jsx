@@ -3,10 +3,12 @@ import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
 import { useNavigate } from 'react-router-dom';
+import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import './Contract.css';
 
 const Contract = () => {
     const navigate = useNavigate();
+    const sidebarWidth = useSidebarWidth();
 
     const handleView = (id) => {
         navigate(`/contract/${id}`);
@@ -98,13 +100,20 @@ const Contract = () => {
 
     return (
         <DefaultLayout>
-            <div className="body flex-grow-1 px-3 mt-5">
-                <div className="contract-table-wrapper pt-5">
-                  <DynamicTable
-                      title="Contracts"
-                      columns={columns}
-                      apiEndpoint="http://localhost:4000/api/contracts"
-                  />
+            <div
+                className="table-page-outer contract-table-outer"
+                style={{
+                    marginLeft: sidebarWidth,
+                    width: `calc(100vw - ${sidebarWidth}px)`,
+                    padding: '2rem'
+                }}
+            >
+                <div className="contract-table-responsive">
+                    <DynamicTable
+                        title="Contracts"
+                        columns={columns}
+                        apiEndpoint="http://localhost:4000/api/contracts"
+                    />
                 </div>
             </div>
         </DefaultLayout>
