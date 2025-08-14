@@ -66,7 +66,7 @@ const Kif = () => {
                 </div>
                 <div className="table-content-wrapper">
                     <DynamicTable
-                        title="KIF Table"
+                        title="KIF"
                         columns={columns}
                         apiEndpoint="http://localhost:4000/api/kif-data"
                         onRowClick={handleRowClick}
