@@ -59,23 +59,23 @@ const AppSidebar = ({ isDarkMode }) => {
   const filteredNav = navigation
     .map((item) => {
       const isAdmin = userRole === 'admin';
-      // CNavGroup (ima children/items)
+
+
       if (item.component?.displayName === 'CNavGroup' && item.items) {
         if (item.adminOnly && !isAdmin) return null;
-
         const filteredItems = item.items.filter(
           (child) => !child.adminOnly || isAdmin
         );
-
         if (filteredItems.length === 0) return null;
         return { ...item, items: filteredItems };
       }
-      // CNavTitle (nema items)
+
+
       if (item.component?.displayName === 'CNavTitle') {
         if (item.adminOnly && !isAdmin) return null;
         return item;
       }
-      // Obični CNavItem
+
       if (item.adminOnly && !isAdmin) return null;
       return item;
     })
@@ -97,6 +97,19 @@ const AppSidebar = ({ isDarkMode }) => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
+        {/* Logo */}
+        <div className="sidebar-logo">
+          <img
+            src={isDarkMode ? '/SymphonyLogoDarkTheme.jpeg' : '/SymphonyLogoLightTheme.jpeg'}
+            alt="Logo"
+          />
+        </div>
+
+        <CCloseButton
+          className="d-lg-none"
+          dark={isDarkMode}
+          onClick={() => dispatch({ type: 'set', sidebarShow: false })}
+        />
         <CSidebarHeader className="border-bottom">
           <CCloseButton
             className="d-lg-none"
@@ -177,4 +190,6 @@ const AppSidebar = ({ isDarkMode }) => {
     </>
   );
 };
+
+
 export default React.memo(AppSidebar);
