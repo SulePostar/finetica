@@ -47,13 +47,15 @@ const Contract = () => {
             name: 'Start Date',
             selector: row => row.start_date,
             sortable: true,
-            width: '150px'
+            width: '150px',
+            cell: row => new Date(row.start_date).toLocaleDateString()
         },
         { 
             name: 'End Date',
             selector: row => row.end_date,
-            sortable: true ,
-            width: '145px'
+            sortable: true,
+            width: '145px',
+            cell: row => new Date(row.end_date).toLocaleDateString()
         },
         { 
             name: 'Status',
@@ -67,7 +69,7 @@ const Contract = () => {
             width: '120px'
         },
         { 
-            name: 'Payment terms',
+            name: 'Payment Terms',
             selector: row => row.payment_terms,
             sortable: true,
             width: '190px'
@@ -82,17 +84,19 @@ const Contract = () => {
             name: 'Amount',
             selector: row => row.amount,
             sortable: true,
-            right: true,
-            width: '140px'
+            width: '140px',
+            style: { textAlign: 'right' }
         },
         { 
             name: 'Signed At',
             selector: row => row.signed_at,
             sortable: true,
-            width: '150px'
+            width: '150px',
+            cell: row => new Date(row.signed_at).toLocaleDateString()
         },
         {
             name: 'Actions',
+            width: '120px',
             cell: row => (
                 <ActionsDropdown
                     row={row}
@@ -102,9 +106,7 @@ const Contract = () => {
                     onDownload={handleDownload}
                 />
             ),
-            ignoreRowClick: true,
-            allowOverflow: true,
-            button: true,
+            ignoreRowClick: true
         }
     ];
 
