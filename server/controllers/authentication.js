@@ -1,5 +1,7 @@
 const authService = require('../services/authentication');
 
+const REFRESH_TOKEN_MAX_AGE = process.env.REFRESH_TOKEN_EXPIRES_IN_DAYS * 24 * 60 * 60 * 1000;
+
 const login = async (req, res, next) => {
   try {
     const result = await authService.login(req.body);
@@ -41,7 +43,7 @@ const attachCookiesToResponse = (res, refreshToken) => {
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: REFRESH_TOKEN_MAX_AGE,
     path: '/api/auth',
     sameSite: 'strict'
   });
