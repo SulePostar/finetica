@@ -3,7 +3,7 @@ import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
 import { useNavigate } from 'react-router-dom';
-import './Contract.styles.css';
+import './Contract.css';
 
 const Contract = () => {
     const navigate = useNavigate();
