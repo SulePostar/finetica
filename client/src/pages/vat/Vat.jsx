@@ -1,15 +1,18 @@
 import { UploadButton } from '../../components/index';
 import { useBucketName } from '../../lib/bucketUtils';
-import './Vat.styles.css';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useNavigate } from 'react-router-dom';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
+import '../../styles/shared/CommonStyles.css';
+import './Vat.styles.css';
 import '../../styles/TablePages.css';
 
 const Vat = () => {
     const navigate = useNavigate();
+    const bucketName = useBucketName();
+    const sidebarWidth = useSidebarWidth();
 
     const handleView = (row) => {
         navigate(`/vat/${row.id}`);
@@ -43,13 +46,17 @@ const Vat = () => {
         }
     ];
 
-    const bucketName = useBucketName();
-    const sidebarWidth = useSidebarWidth();
+    const handleRowClick = (row) => {
+        console.log('Row clicked:', row);
+        console.log('Navigating to:', `/vat/${row.id}`);
+        navigate(`/vat/${row.id}`);
+    };
+
 
     return (
         <DefaultLayout>
             <div
-                className="table-page-outer vat-table-outer"
+                className="table-page-outer"
                 style={{
                     marginLeft: sidebarWidth,
                     width: `calc(100vw - ${sidebarWidth}px)`,
@@ -63,6 +70,7 @@ const Vat = () => {
                         title="VAT Table"
                         columns={columns}
                         apiEndpoint="http://localhost:4000/api/vat-data"
+                        onRowClick={handleRowClick}
                     />
                 </div>
             </div>
