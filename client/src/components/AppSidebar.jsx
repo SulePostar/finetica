@@ -59,21 +59,23 @@ const AppSidebar = ({ isDarkMode }) => {
   const filteredNav = navigation
     .map((item) => {
       const isAdmin = userRole === 'admin';
-
+      // CNavGroup (ima children/items)
       if (item.component?.displayName === 'CNavGroup' && item.items) {
         if (item.adminOnly && !isAdmin) return null;
+
         const filteredItems = item.items.filter(
           (child) => !child.adminOnly || isAdmin
         );
+
         if (filteredItems.length === 0) return null;
         return { ...item, items: filteredItems };
       }
-
+      // CNavTitle (nema items)
       if (item.component?.displayName === 'CNavTitle') {
         if (item.adminOnly && !isAdmin) return null;
         return item;
       }
-
+      // Obični CNavItem
       if (item.adminOnly && !isAdmin) return null;
       return item;
     })
@@ -90,7 +92,7 @@ const AppSidebar = ({ isDarkMode }) => {
         style={{
           zIndex: unfoldable && isHovered ? 1060 : 1050,
           transition: 'z-index 0.1s ease',
-          backgroundColor: isDarkMode ? '#432e62df' : '#d8d3e4ff',
+          backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff',
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -175,5 +177,4 @@ const AppSidebar = ({ isDarkMode }) => {
     </>
   );
 };
-
 export default React.memo(AppSidebar);
