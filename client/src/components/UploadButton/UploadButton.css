@@ -1,11 +1,12 @@
 .upload-button {
-  font-size: 0.75rem;
-  padding: 0.25rem 0.5rem;
-  background-color: #8367deff;
-  color: white;
+  font-size: 0.75rem !important;
+  padding: 0.25rem 0.5rem !important;
+  background-color: #8367deff !important;
+  color: white !important;
+  border: none !important;
   transition: all 0.2s ease-in-out;
   margin-top: 70px;
-  margin-right: 20px;
+  margin-right: 10px;
 }
 
 .upload-button:hover {

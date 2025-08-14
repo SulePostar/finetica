@@ -1,4 +1,3 @@
-import { CContainer, CRow, CCol } from '@coreui/react';
 import { UploadButton } from '../../components/index';
 import { useBucketName } from '../../lib/bucketUtils';
 import './Vat.styles.css';
@@ -6,6 +5,8 @@ import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useNavigate } from 'react-router-dom';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
+import { useSidebarWidth } from '../../hooks/useSidebarWidth';
+import '../../styles/TablePages.css';
 
 const Vat = () => {
     const navigate = useNavigate();
@@ -43,25 +44,27 @@ const Vat = () => {
     ];
 
     const bucketName = useBucketName();
+    const sidebarWidth = useSidebarWidth();
 
     return (
         <DefaultLayout>
-            <div className="body flex-grow-1 px-3">
-                <CCol>
-                    <div className="d-flex justify-content-end align-items-center">
-                        <UploadButton
-                            bucketName={bucketName}
-                        />
-                    </div>
-                </CCol>
-                <CContainer className="h-100" fluid>
-                    <CRow>
-                        <CCol>
-                            <DynamicTable title="VAT Table" columns={columns} apiEndpoint="http://localhost:4000/api/vat-data" />
-
-                        </CCol>
-                    </CRow>
-                </CContainer>
+            <div
+                className="table-page-outer vat-table-outer"
+                style={{
+                    marginLeft: sidebarWidth,
+                    width: `calc(100vw - ${sidebarWidth}px)`,
+                }}
+            >
+                <div className="table-header-controls">
+                    <UploadButton bucketName={bucketName} />
+                </div>
+                <div className="table-content-wrapper">
+                    <DynamicTable
+                        title="VAT Table"
+                        columns={columns}
+                        apiEndpoint="http://localhost:4000/api/vat-data"
+                    />
+                </div>
             </div>
         </DefaultLayout>
     );
