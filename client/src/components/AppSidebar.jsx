@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 
 import {
   CCloseButton,
@@ -13,28 +12,19 @@ import {
 
 import navigation from '../_nav';
 import { AppSidebarNav } from './AppSidebarNav';
-import { logout } from './../redux/auth/authSlice';
-import ConfirmationModal from './Modals/ConfirmationModal';
 import './AppSidebar.css';
 import { colors } from '../styles/colors';
-import { setShowModal, setDriveConnected } from '../redux/sidebar/sidebarSlice';
+import { setDriveConnected } from '../redux/sidebar/sidebarSlice';
 
 const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const unfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
   const userRole = useSelector((state) => state.user.profile.roleName);
 
-  const showModal = useSelector((state) => state.sidebar.showModal);
   const driveConnected = useSelector((state) => state.sidebar.driveConnected);
   const [isHovered, setIsHovered] = useState(false);
-
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate('/login');
-  };
 
   const checkDriveConnection = async () => {
     try {
@@ -157,36 +147,13 @@ const AppSidebar = ({ isDarkMode }) => {
 
         {/* Footer */}
         <CSidebarFooter className="border-top d-none d-lg-flex justify-content-center align-items-center p-3">
-          <div
-            className="d-flex align-items-center gap-2"
-            style={{ cursor: 'pointer' }}
-            onClick={() => dispatch(setShowModal(true))}
-          >
-            <CSidebarToggler
-              onClick={() =>
-                dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })
-              }
-            />
-            <span
-              className="small"
-              style={{ color: isDarkMode ? colors.white : colors.textPrimary }}
-            >
-              Logout
-            </span>
-          </div>
+          <CSidebarToggler
+            onClick={() =>
+              dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })
+            }
+          />
         </CSidebarFooter>
       </CSidebar>
-
-      <ConfirmationModal
-        visible={showModal}
-        onCancel={() => dispatch(setShowModal(false))}
-        onConfirm={handleLogout}
-        title="Confirm Logout"
-        body="Are you sure you want to log out?"
-        cancelText="Cancel"
-        confirmText="Logout"
-        confirmColor="danger"
-      />
     </>
   );
 };
