@@ -21,7 +21,7 @@
   top: 0;
   z-index: 1020;
   background: var(--cui-body-bg, #fff);
-  border-bottom: 1px solid var(--cui-border-color, #d8dbe0);
+  /* border-bottom: 1px solid var(--cui-border-color, #d8dbe0); */
 }
 
 .page-content {
@@ -37,12 +37,12 @@
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .sidebar-container {
-    background: var(--cui-sidebar-bg-dark, #2f3349);
-    border-right-color: var(--cui-border-color-dark, #495057);
+    /*background: var(--cui-sidebar-bg-dark, #2f3349);*/
+    /* border-right-color: var(--cui-border-color-dark, #495057); */
   }
 
   .header-container {
-    background: var(--cui-body-bg-dark, #212529);
-    border-bottom-color: var(--cui-border-color-dark, #495057);
+   /* background: var(--cui-body-bg-dark, #212529);*/
+    /* border-bottom-color: var(--cui-border-color-dark, #495057); */
   }
 }
