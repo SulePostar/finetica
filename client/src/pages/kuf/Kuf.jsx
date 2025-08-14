@@ -1,10 +1,10 @@
-import { useSelector } from 'react-redux';
 import { UploadButton } from '../../components/index';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown'; // <-- Import the reusable dropdown
 import { useNavigate } from 'react-router-dom';
 import { useBucketName } from '../../lib/bucketUtils';
+import '../../styles/shared/CommonStyles.css';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import '../../styles/TablePages.css';
 import './Kuf.styles.css';
@@ -54,7 +54,7 @@ const Kuf = () => {
     return (
         <DefaultLayout>
             <div
-                className="table-page-outer kuf-table-outer"
+                className="table-page-outer"
                 style={{
                     marginLeft: sidebarWidth,
                     width: `calc(100vw - ${sidebarWidth}px)`,
