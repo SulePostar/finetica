@@ -4,6 +4,7 @@ import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
 import { useNavigate } from 'react-router-dom';
+import '../../styles/shared/CommonStyles.css';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import '../../styles/TablePages.css';
 import './Kif.styles.css';
@@ -55,7 +56,7 @@ const Kif = () => {
     return (
         <DefaultLayout>
             <div
-                className="table-page-outer kif-table-outer"
+                className="table-page-outer"
                 style={{
                     marginLeft: sidebarWidth,
                     width: `calc(100vw - ${sidebarWidth}px)`,

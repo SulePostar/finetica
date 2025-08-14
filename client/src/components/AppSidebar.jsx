@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 
 import {
   CCloseButton,
@@ -10,31 +9,24 @@ import {
   CSidebarToggler,
   CBadge,
 } from '@coreui/react';
+import CIcon from '@coreui/icons-react';
+import { cilCloudDownload } from '@coreui/icons';
 
 import navigation from '../_nav';
 import { AppSidebarNav } from './AppSidebarNav';
-import { logout } from './../redux/auth/authSlice';
-import ConfirmationModal from './Modals/ConfirmationModal';
 import './AppSidebar.css';
 import { colors } from '../styles/colors';
-import { setShowModal, setDriveConnected } from '../redux/sidebar/sidebarSlice';
+import { setDriveConnected } from '../redux/sidebar/sidebarSlice';
 
 const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const unfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
   const userRole = useSelector((state) => state.user.profile.roleName);
 
-  const showModal = useSelector((state) => state.sidebar.showModal);
   const driveConnected = useSelector((state) => state.sidebar.driveConnected);
   const [isHovered, setIsHovered] = useState(false);
-
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate('/login');
-  };
 
   const checkDriveConnection = async () => {
     try {
@@ -60,16 +52,28 @@ const AppSidebar = ({ isDarkMode }) => {
     .map((item) => {
       const isAdmin = userRole === 'admin';
 
-
       if (item.component?.displayName === 'CNavGroup' && item.items) {
         if (item.adminOnly && !isAdmin) return null;
+
+        // ukloni sub-iteme kad je sidebar skraćen i nije hoverovan
+        if (unfoldable && !isHovered) {
+
+          return {
+            component: item.component,
+            name: item.name,
+            icon: item.icon,
+            adminOnly: item.adminOnly,
+
+            items: [],
+          };
+        }
+
         const filteredItems = item.items.filter(
           (child) => !child.adminOnly || isAdmin
         );
         if (filteredItems.length === 0) return null;
         return { ...item, items: filteredItems };
       }
-
 
       if (item.component?.displayName === 'CNavTitle') {
         if (item.adminOnly && !isAdmin) return null;
@@ -121,72 +125,83 @@ const AppSidebar = ({ isDarkMode }) => {
         <AppSidebarNav items={filteredNav} />
 
         {/* Google Drive Status */}
-        <div
-          className="border-top d-none d-lg-flex justify-content-between align-items-center px-3 py-2"
-          style={{
-            backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
-          }}
-        >
+        {unfoldable && !isHovered ? (
+          // collapsed sidebar - pokaže samo ikonu sa obojenom pozadinom
           <div
-            className="fw-semibold small"
+            className="border-top d-none d-lg-flex justify-content-center align-items-center p-3"
             style={{
-              color: isDarkMode ? '#ffffff' : '#212529',
+              backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
             }}
           >
-            Google Drive
+            <div
+              className="d-flex align-items-center justify-content-center"
+              style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '6px',
+                backgroundColor: driveConnected
+                  ? colors.success.background
+                  : colors.error.background,
+                transition: 'background-color 0.3s ease',
+              }}
+            >
+              <CIcon
+                icon={cilCloudDownload}
+                style={{
+                  color: driveConnected
+                    ? colors.success.text
+                    : colors.error.text,
+                  fontSize: '16px',
+                }}
+              />
+            </div>
           </div>
-
-          <CBadge
-            size="sm"
+        ) : (
+          // Expanded sidebar - show text and badge
+          <div
+            className="border-top d-none d-lg-flex justify-content-between align-items-center px-3 py-2"
             style={{
-              backgroundColor: driveConnected
-                ? colors.success.background
-                : isDarkMode
-                  ? colors.white
-                  : colors.textPrimary,
-              color: driveConnected
-                ? colors.success.text
-                : isDarkMode
-                  ? colors.error.text
-                  : colors.textPrimary,
+              backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
             }}
           >
-            {driveConnected ? 'Connected' : 'Disconnected'}
-          </CBadge>
-        </div>
+            <div
+              className="fw-semibold small"
+              style={{
+                color: isDarkMode ? '#ffffff' : '#212529',
+              }}
+            >
+              Google Drive
+            </div>
+
+            <CBadge
+              size="sm"
+              style={{
+                backgroundColor: driveConnected
+                  ? colors.success.background
+                  : isDarkMode
+                    ? colors.white
+                    : colors.textPrimary,
+                color: driveConnected
+                  ? colors.success.text
+                  : isDarkMode
+                    ? colors.error.text
+                    : colors.textPrimary,
+              }}
+            >
+              {driveConnected ? 'Connected' : 'Disconnected'}
+            </CBadge>
+          </div>
+        )}
 
         {/* Footer */}
         <CSidebarFooter className="border-top d-none d-lg-flex justify-content-center align-items-center p-3">
-          <div
-            className="d-flex align-items-center gap-2"
-            style={{ cursor: 'pointer' }}
-            onClick={() => dispatch(setShowModal(true))}
-          >
-            <CSidebarToggler
-              onClick={() =>
-                dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })
-              }
-            />
-            <span
-              className="small"
-              style={{ color: isDarkMode ? colors.white : colors.textPrimary }}
-            >
-              Logout
-            </span>
-          </div>
+          <CSidebarToggler
+            onClick={() =>
+              dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })
+            }
+          />
         </CSidebarFooter>
       </CSidebar>
-
-      <ConfirmationModal
-        visible={showModal}
-        onCancel={() => dispatch(setShowModal(false))}
-        onConfirm={handleLogout}
-        title="Confirm Logout"
-        body="Are you sure you want to log out?"
-        cancelText="Cancel"
-        confirmText="Logout"
-        confirmColor="danger"
-      />
     </>
   );
 };
