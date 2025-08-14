@@ -92,11 +92,24 @@ const AppSidebar = ({ isDarkMode }) => {
         style={{
           zIndex: unfoldable && isHovered ? 1060 : 1050,
           transition: 'z-index 0.1s ease',
-          backgroundColor: isDarkMode ? '#432e62df' : '#d8d3e4ff',
+          backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff',
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
+        {/* Logo */}
+        <div className="sidebar-logo">
+          <img
+            src={isDarkMode ? '/SymphonyLogoDarkTheme.jpeg' : '/SymphonyLogoLightTheme.jpeg'}
+            alt="Logo"
+          />
+        </div>
+
+        <CCloseButton
+          className="d-lg-none"
+          dark={isDarkMode}
+          onClick={() => dispatch({ type: 'set', sidebarShow: false })}
+        />
         <CSidebarHeader className="border-bottom">
           <CCloseButton
             className="d-lg-none"
@@ -177,5 +190,6 @@ const AppSidebar = ({ isDarkMode }) => {
     </>
   );
 };
+
 
 export default React.memo(AppSidebar);
