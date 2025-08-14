@@ -15,7 +15,7 @@ const DynamicTable = ({ title, columns, apiEndpoint, onRowClick }) => {
     const customStyles = useMemo(() => makeCustomStyles(), []);
 
     const containerStyle = {
-        maxWidth: '1000px',
+        maxWidth: '1400px',
         margin: '0 auto',
         width: '100%',
     };
@@ -60,7 +60,7 @@ const DynamicTable = ({ title, columns, apiEndpoint, onRowClick }) => {
 
     return (
         <div style={containerStyle}><Card className="my-4 shadow-sm border-0 bg-light dark:bg-dark">
-            <Card.Body>
+            <Card.Body className="p-4">
                 <Card.Title style={titleStyle}>{title}</Card.Title>
                 <DataTable
                     columns={columns}

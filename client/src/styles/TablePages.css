@@ -1,0 +1,46 @@
+/* Shared styles for table pages (KIF, KUF, VAT) */
+.table-page-outer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+  padding: 40px 30px;
+  box-sizing: border-box;
+  will-change: margin-left, width; /* Optimize for animations */
+}
+
+.table-content-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  transition: all 0.3s ease-in-out;
+  will-change: transform; /* Optimize for animations */
+}
+
+.table-header-controls {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+/* Ensure smooth transitions during sidebar state changes */
+@media (prefers-reduced-motion: no-preference) {
+  .table-page-outer,
+  .table-content-wrapper {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Optimize for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .table-page-outer,
+  .table-content-wrapper {
+    transition: none;
+  }
+}
