@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { loginSuccess, logout } from '../redux/auth/authSlice';
+import { store } from '../store';
 // Create axios instance with base configuration
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -6,6 +8,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true
 });
 // Request interceptor to add auth token
 api.interceptors.request.use(
@@ -21,23 +24,69 @@ api.interceptors.request.use(
   }
 );
 // Response interceptor to handle errors globally
+
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
+
 api.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
-    // Handle 401 Unauthorized errors
-    if (error.response?.status === 401) {
-      localStorage.removeItem('jwt_token');
-      localStorage.removeItem('user');
-      // Redirect to login page
-      if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
+  async (error) => {
+    const originalRequest = error.config;
+
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(token => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return api(originalRequest);
+          })
+          .catch(err => {
+            return Promise.reject(err);
+          });
       }
-    }
-    // Handle network errors
-    if (!error.response) {
-      console.error('Network error:', error.message);
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const { data } = await api.post('/auth/refresh');
+        const newAccessToken = data.token;
+        store.dispatch(loginSuccess({ token: newAccessToken }));
+        api.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+        processQueue(null, newAccessToken);
+        return api(originalRequest);
+      }
+      catch (refreshError) {
+        processQueue(refreshError, null);
+        store.dispatch(logout());
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
+        return Promise.reject(refreshError);
+      }
+      finally {
+        isRefreshing = false;
+      }
+
     }
     return Promise.reject(error);
   }
