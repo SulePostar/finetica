@@ -16,6 +16,8 @@ import { setUserProfile } from '../../redux/user/userSlice';
 import ProfilePhotoUpload from '../Register/ProfilePhotoUpload/ProfilePhotoUpload';
 import FileUploadService from '../../services/fileUploadService';
 import notify from '../../utilis/toastHelper';
+import { colors } from '../../styles/colors';
+
 
 const ProfileForm = () => {
   const dispatch = useDispatch();
@@ -28,7 +30,38 @@ const ProfileForm = () => {
     document.documentElement.getAttribute('data-coreui-theme') === 'dark'
   );
 
-  const styles = useMemo(() => profileFormStyles(isDarkMode), [isDarkMode]);
+  const computeSidebarVisible = () => {
+    const bodyHas = document.body.classList.contains('sidebar-show'); // CoreUI class
+    const sidebarEl = document.querySelector('.sidebar, .c-sidebar');
+    const elHas = sidebarEl ? sidebarEl.classList.contains('show') : false; // extra safety
+    return bodyHas || elHas;
+  };
+
+  const [sidebarVisible, setSidebarVisible] = useState(computeSidebarVisible());
+
+  useEffect(() => {
+    const update = () => setSidebarVisible(computeSidebarVisible());
+    update();
+
+    const observer = new MutationObserver(update);
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+    const sidebarEl = document.querySelector('.sidebar, .c-sidebar');
+    if (sidebarEl) {
+      observer.observe(sidebarEl, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+
+  const styles = useMemo(
+    () => profileFormStyles(isDarkMode, sidebarVisible),
+    [isDarkMode, sidebarVisible]
+  );
+
+  const [editHover, setEditHover] = useState(false);
+  const [submitHover, setSubmitHover] = useState(false);
 
   useEffect(() => {
     if (profile) setFormData(profile);
@@ -113,7 +146,17 @@ const ProfileForm = () => {
                 type="button"
                 size="sm"
                 onClick={() => setIsEditable((prev) => !prev)}
-                style={styles.editToggle}
+                style={{
+                  ...styles.editToggle,
+                  backgroundColor: editHover ? colors.primary : 'transparent',
+                  color: editHover
+                    ? colors.white
+                    : isDarkMode
+                      ? colors.white
+                      : colors.primary,
+                }}
+                onMouseEnter={() => setEditHover(true)}
+                onMouseLeave={() => setEditHover(false)}
               >
                 {isEditable ? 'Cancel' : 'Edit Profile'}
               </CButton>
@@ -136,7 +179,7 @@ const ProfileForm = () => {
 
             <CInputGroup className="mb-3">
               <CInputGroupText style={styles.inputGroupText}>
-                <CFormLabel style={styles.labelInInputGroupText}>First name</CFormLabel>
+                <CFormLabel style={styles.labelInInputGroupText}>Last name</CFormLabel>
               </CInputGroupText>
               <CFormInput
                 type='text'
@@ -187,15 +230,27 @@ const ProfileForm = () => {
 
             {isEditable && (
               <div className="d-flex justify-content-center mt-4">
-                <CButton type="submit" style={styles.button}>
+                <CButton type="submit"
+                  style={{
+                    ...styles.button,
+                    backgroundColor: submitHover ? colors.primary : 'transparent',
+                    color: submitHover
+                      ? colors.white
+                      : isDarkMode
+                        ? colors.white
+                        : colors.primary,
+                  }}
+                  onMouseEnter={() => setSubmitHover(true)}
+                  onMouseLeave={() => setSubmitHover(false)}
+                >
                   Submit Changes
                 </CButton>
               </div>
             )}
           </CForm>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 };
 

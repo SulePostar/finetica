@@ -73,9 +73,6 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
                         </div>
                     )}
                 </div>
-
-                <div className="profile-photo-text">Upload a photo</div>
-                <div className="profile-photo-subtext">(Optional)</div>
             </div>
 
             <CModal visible={showModal} onClose={handleCloseModal} alignment="center">

@@ -1,14 +1,16 @@
 import { cilCursor } from '@coreui/icons';
 import { colors } from '../../styles/colors';
 
-export const profileFormStyles = (isDarkMode) => ({
+export const profileFormStyles = (isDarkMode, sidebarVisible) => ({
   formContainerCard: {
     marginTop: '64px',
+    transform: sidebarVisible ? 'translateX(127px)' : 'translateX(0)',
+    transition: 'transform 0.3s ease-in-out',
     position: 'relative',
     width: '100%',
     maxWidth: '600px',
     padding: '20px',
-    backgroundColor: isDarkMode ? '#20252fff' : '#FFFFFF',
+    backgroundColor: isDarkMode ? '#303746ff' : '#FFFFFF',
     borderRadius: '16px',
     boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
   },
@@ -21,9 +23,8 @@ export const profileFormStyles = (isDarkMode) => ({
   },
 
   editToggle: {
-    backgroundColor: colors.primary,
-    color: colors.white,
-    border: 'none',
+    color: isDarkMode ? colors.white : colors.primary,
+    border: `1px solid ${colors.primary}`,
     padding: '8px 16px',
     fontSize: '14px',
     fontWeight: 600,
@@ -66,13 +67,12 @@ export const profileFormStyles = (isDarkMode) => ({
   },
 
   button: {
-    backgroundColor: colors.primary,
+    border: `1px solid ${colors.primary}`,
     borderRadius: '12px',
     padding: '16px 24px',
     fontWeight: 600,
     fontSize: '18px',
-    color: colors.white,
-    border: 'none',
+    color: isDarkMode ? colors.white : colors.primary,
     transition: 'all 0.2s ease',
   },
 });
