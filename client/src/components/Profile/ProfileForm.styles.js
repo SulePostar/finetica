@@ -2,6 +2,7 @@ import { cilCursor } from '@coreui/icons';
 import { colors } from '../../styles/colors';
 
 export const profileFormStyles = (isDarkMode, sidebarVisible) => ({
+  // Some styles from formContainerCard are not applied because of usage of Card element with className
   formContainerCard: {
     marginTop: '64px',
     transform: sidebarVisible ? 'translateX(127px)' : 'translateX(0)',
@@ -10,13 +11,13 @@ export const profileFormStyles = (isDarkMode, sidebarVisible) => ({
     width: '100%',
     maxWidth: '600px',
     padding: '20px',
-    backgroundColor: isDarkMode ? '#303746ff' : '#FFFFFF',
+    backgroundColor: isDarkMode ? '#303746ff' : colors.primary,
     borderRadius: '16px',
     boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
   },
 
   title: {
-    color: isDarkMode ? '#ffffff' : colors.primary,
+    color: colors.primary,
     fontSize: '36px',
     fontWeight: 600,
     margin: 0,
@@ -48,6 +49,7 @@ export const profileFormStyles = (isDarkMode, sidebarVisible) => ({
 
   formInputDisabled: {
     backgroundColor: isDarkMode ? '#d4d4d4ff' : '#e7e7e7ff',
+    cursor: 'not-allowed',
   },
 
   labelInInputGroupText: {

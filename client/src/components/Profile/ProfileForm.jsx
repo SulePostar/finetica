@@ -9,6 +9,7 @@ import {
   CButton,
   CFormLabel,
 } from '@coreui/react';
+import { Card } from 'react-bootstrap';
 import { profileFormStyles } from './ProfileForm.styles';
 import { formatDateTime } from '../../helpers/formatDate.js';
 import { capitalizeFirst } from '../../helpers/capitalizeFirstLetter.js';
@@ -122,7 +123,7 @@ const ProfileForm = () => {
   return (
     <div className="container py-4">
       <div className="row justify-content-center">
-        <div className="col-12 col-md-10 col-lg-8 col-xl-6" style={styles.formContainerCard}>
+        <Card className="shadow-sm border-0 bg-light dark:bg-dark" style={styles.formContainerCard}>
           <div className="d-flex justify-content-center align-items-center mb-4">
             <h2 style={styles.title}>User Profile</h2>
           </div>
@@ -248,7 +249,7 @@ const ProfileForm = () => {
               </div>
             )}
           </CForm>
-        </div>
+        </Card>
       </div >
     </div >
   );
