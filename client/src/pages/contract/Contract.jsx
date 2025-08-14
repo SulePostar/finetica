@@ -22,12 +22,14 @@ const Contract = () => {
         { 
             name: 'Partner ID',
             selector: row => row.partner_id,
-            sortable: true 
+            sortable: true,
+            width: '140px'
         },
         { 
             name: 'Contract Number',
             selector: row => row.contract_number,
-            sortable: true 
+            sortable: true,
+            width: '200px'
         },
         { 
             name: 'Type',
@@ -38,17 +40,20 @@ const Contract = () => {
             name: 'Description',
             selector: row => row.description,
             sortable: true,
-            wrap: true 
+            wrap: true,
+            width: '200px'
         },
         { 
             name: 'Start Date',
             selector: row => row.start_date,
-            sortable: true 
+            sortable: true,
+            width: '150px'
         },
         { 
             name: 'End Date',
             selector: row => row.end_date,
-            sortable: true 
+            sortable: true ,
+            width: '145px'
         },
         { 
             name: 'Status',
@@ -58,28 +63,33 @@ const Contract = () => {
                 <span className={`status-badge ${row.is_active ? 'active' : 'inactive'}`}>
                     {row.is_active ? 'Active' : 'Inactive'}
                 </span>
-            )
+            ),
+            width: '120px'
         },
         { 
-            name: 'Payment Terms',
+            name: 'Payment terms',
             selector: row => row.payment_terms,
-            sortable: true 
+            sortable: true,
+            width: '190px'
         },
         { 
             name: 'Currency',
             selector: row => row.currency,
-            sortable: true 
+            sortable: true,
+            width: '135px'
         },
         { 
             name: 'Amount',
             selector: row => row.amount,
             sortable: true,
-            right: true 
+            right: true,
+            width: '140px'
         },
         { 
             name: 'Signed At',
             selector: row => row.signed_at,
-            sortable: true 
+            sortable: true,
+            width: '150px'
         },
         {
             name: 'Actions',
