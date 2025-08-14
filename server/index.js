@@ -9,9 +9,9 @@ const errorHandler = require('./middleware/errorHandler');
 const kifRouter = require('./routes/kif');
 const kufRouter = require('./routes/kuf');
 const vatRouter = require('./routes/vat');
-const googleDriveAutoSync = require('./tasks/googleDriveAutoSync');
-const googleDriveRouter = require('./routes/googleDrive');
-
+const contractRouter = require('./routes/contract'); // 👈 tvoje
+const googleDriveAutoSync = require('./tasks/googleDriveAutoSync'); // 👈 master
+const googleDriveRouter = require('./routes/googleDrive'); // 👈 master
 
 const PORT = process.env.PORT;
 const SECRET = process.env.SESSION_SECRET;
@@ -37,20 +37,22 @@ app.use(cors({
 
 app.use(express.json());
 
+// Routes
 app.use('/api/auth', require('./routes/authentication'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/files', require('./routes/uploadedFiles'));
 app.use('/api', kifRouter);
 app.use('/api', kufRouter);
 app.use('/api', vatRouter);
-app.use('/drive', googleDriveRouter);
+app.use('/api/contracts', contractRouter); 
+app.use('/drive', googleDriveRouter); 
 
 app.use(errorHandler);
 
 connectToDatabase();
 
 // Start Google Drive auto sync service
-googleDriveAutoSync.start();
+googleDriveAutoSync.start(); 
 
 app.listen(PORT, () => {
   console.log(`🟢 Server is running at port: ${PORT}`);

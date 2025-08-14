@@ -1,0 +1,30 @@
+.contract-table-wrapper {
+  width: 100vw;
+  max-width: 100%;
+  overflow-x: auto;
+  padding-top: 2rem;
+  padding-left: 13rem;
+}
+
+.contract-table-wrapper .rdt_Table,
+.contract-table-wrapper table {
+  font-size: 0.5rem;
+  width: 2200px !important;
+}
+
+
+@media (max-width: 900px) {
+  .contract-table-responsive .rdt_Table,
+  .contract-table-responsive table {
+    min-width: 900px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .contract-table-responsive .rdt_Table,
+  .contract-table-responsive table {
+    min-width: 600px;
+    font-size: 0.78rem;
+  }
+}
