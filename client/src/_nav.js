@@ -1,5 +1,5 @@
 import { CNavItem, CNavTitle, CNavGroup } from '@coreui/react';
-import { cilHome, cilListNumbered, cilList, cilCalculator, cilSpeedometer } from '@coreui/icons';
+import { cilHome, cilListNumbered, cilList, cilCalculator, cilSpeedometer, cilDescription } from '@coreui/icons';
 
 const _nav = [
   {
@@ -11,6 +11,12 @@ const _nav = [
   {
     component: CNavTitle,
     name: 'Components',
+  },
+  {
+    component: CNavItem,
+    name: 'Contracts',
+    to: '/contracts',
+    icon: cilDescription,
   },
   {
     component: CNavItem,

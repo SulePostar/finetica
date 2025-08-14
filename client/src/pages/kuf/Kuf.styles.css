@@ -15,6 +15,10 @@
 }
 
 /* KUF Page Styles */
+.kuf-table-outer {
+  box-sizing: border-box;
+  padding: 30px 20px;
+}
 
 .kuf-page-header {
   margin-bottom: 2rem;

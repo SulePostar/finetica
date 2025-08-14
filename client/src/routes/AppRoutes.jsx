@@ -7,7 +7,8 @@ const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
 const AdminUserDahsboard = React.lazy(() => import('../pages/Admin/AdminUserDahsboard'));
 const AdminRoleStatusDashboard = React.lazy(() => import('../pages/Admin/AdminRoleStatusDashboard'));
-const Kif = React.lazy(() => import('../pages/Kif/Kif'));
+const Kif = React.lazy(() => import('../pages/kif/Kif'));
+const InvoiceDetails = React.lazy(() => import('../pages/InvoiceDetails/InvoiceDetails'));
 const Vat = React.lazy(() => import('../pages/vat/Vat'));
 const Kuf = React.lazy(() => import('../pages/kuf/Kuf'));
 const ProfilePage = React.lazy(() => import('../pages/Profile/ProfilePage'));
@@ -72,6 +73,14 @@ export default function AppRoutes() {
           }
         />
         <Route
+          path="/kif/:id"
+          element={
+            <ProtectedRoute>
+              <InvoiceDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/vat"
           element={
             <ProtectedRoute>
@@ -87,7 +96,14 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="/kuf/:id"
+          element={
+            <ProtectedRoute>
+              <InvoiceDetails />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/profile"
           element={
@@ -96,7 +112,7 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
-        {/* Fallback for unknown routes */}
+
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Suspense>

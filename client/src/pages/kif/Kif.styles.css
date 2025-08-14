@@ -16,6 +16,10 @@
 
 /* KIF Page Styles */
 
+.kif-table-outer {
+  box-sizing: border-box;
+  padding: 30px 20px;
+}
 .kif-page-header {
   margin-bottom: 2rem;
 }

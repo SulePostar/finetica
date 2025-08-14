@@ -7,6 +7,7 @@ import userReducer from './redux/user/userSlice';
 import authReducer from './redux/auth/authSlice';
 import rolesReducer from './redux/roles/rolesSlice';
 import statusesReducer from './redux/statuses/statusesSlice';
+import sidebarReducer from './redux/sidebar/sideBarSlice';
 
 // Simple UI state reducer
 const initialUIState = {
@@ -36,6 +37,7 @@ const rootReducer = combineReducers({
   users: usersReducer,
   roles: rolesReducer,
   statuses: statusesReducer,
+  sidebar: sidebarReducer,
 });
 
 // Konfiguracija za redux-persist
