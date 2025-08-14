@@ -172,10 +172,10 @@ const FileUploadModal = ({ visible, onClose, bucketName }) => {
                                 <div className="text-center">
                                     <CIcon icon={cilFile} size="2xl" className="text-success mb-2" />
                                     <div className="fw-bold text-success">{selectedFile.name}</div>
-                                    <div className="text-muted small">
+                                    <div className="text small">
                                         {formatFileSize(selectedFile.size)} • {selectedFile.type || 'Unknown type'}
                                     </div>
-                                    <div className="text-muted small mt-2">
+                                    <div className="text small mt-2">
                                         Click to select a different file
                                     </div>
                                 </div>
@@ -183,7 +183,7 @@ const FileUploadModal = ({ visible, onClose, bucketName }) => {
                                 <div className="text-center">
                                     <CIcon icon={cilCloudUpload} size="2xl" className="text-upload-primary mb-2" />
                                     <div className="fw-bold text-upload-primary">Drop your file here</div>
-                                    <div className="text-muted">or click to browse</div>
+                                    <div className="text-upload-primary">or click to browse</div>
                                 </div>
                             )}
                         </div>
@@ -202,7 +202,7 @@ const FileUploadModal = ({ visible, onClose, bucketName }) => {
                             placeholder="Enter custom file name or leave blank to use original"
                             disabled={uploading}
                         />
-                        <small className="text-muted">
+                        <small className="text">
                             Leave empty to use the original file name: <strong>{selectedFile?.name}</strong>
                         </small>
                     </div>
