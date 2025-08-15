@@ -13,6 +13,7 @@ const mailRoute = require("./routes/mailRoute");
 
 const { processEmailQueue } = require('./services/emailQueueService');
 
+const cookieParser = require('cookie-parser')
 const contractRouter = require('./routes/contract'); // 👈 tvoje
 const googleDriveAutoSync = require('./tasks/googleDriveAutoSync'); // 👈 master
 const googleDriveRouter = require('./routes/googleDrive'); // 👈 master
@@ -22,6 +23,12 @@ const SECRET = process.env.SESSION_SECRET;
 
 const app = express();
 
+const corsOptions = {
+  origin: process.env.CLIENT_URL,
+  credentials: true,
+  methods: 'GET,POST,PUT,DELETE,OPTIONS',
+};
+app.use(cors(corsOptions));
 app.use(session({
   secret: SECRET,
   resave: false,
@@ -32,14 +39,8 @@ app.use(session({
   }
 }));
 
-app.use(cors({
-  origin: ['http://localhost:3000'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
 app.use(express.json());
+app.use(cookieParser());
 
 // Routes
 app.use('/api/auth', require('./routes/authentication'));
