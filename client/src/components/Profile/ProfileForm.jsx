@@ -10,7 +10,6 @@ import {
   CFormLabel,
 } from '@coreui/react';
 import { Card } from 'react-bootstrap';
-import { profileFormStyles } from './ProfileForm.styles';
 import { formatDateTime } from '../../helpers/formatDate.js';
 import { capitalizeFirst } from '../../helpers/capitalizeFirstLetter.js';
 import { setUserProfile } from '../../redux/user/userSlice';
@@ -18,47 +17,19 @@ import ProfilePhotoUpload from '../Register/ProfilePhotoUpload/ProfilePhotoUploa
 import FileUploadService from '../../services/fileUploadService';
 import notify from '../../utilis/toastHelper';
 import { colors } from '../../styles/colors';
-
+import './ProfileForm.css'
+import { useSidebarWidth } from '../../hooks/useSidebarWidth'; // <-- NEW
 
 const ProfileForm = () => {
   const dispatch = useDispatch();
   const profile = useSelector((state) => state.user.profile);
+  const sidebarWidth = useSidebarWidth(); // <-- NEW
 
   const [formData, setFormData] = useState(profile || {});
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [isEditable, setIsEditable] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(
     document.documentElement.getAttribute('data-coreui-theme') === 'dark'
-  );
-
-  const computeSidebarVisible = () => {
-    const bodyHas = document.body.classList.contains('sidebar-show'); // CoreUI class
-    const sidebarEl = document.querySelector('.sidebar, .c-sidebar');
-    const elHas = sidebarEl ? sidebarEl.classList.contains('show') : false; // extra safety
-    return bodyHas || elHas;
-  };
-
-  const [sidebarVisible, setSidebarVisible] = useState(computeSidebarVisible());
-
-  useEffect(() => {
-    const update = () => setSidebarVisible(computeSidebarVisible());
-    update();
-
-    const observer = new MutationObserver(update);
-    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-
-    const sidebarEl = document.querySelector('.sidebar, .c-sidebar');
-    if (sidebarEl) {
-      observer.observe(sidebarEl, { attributes: true, attributeFilter: ['class'] });
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-
-  const styles = useMemo(
-    () => profileFormStyles(isDarkMode, sidebarVisible),
-    [isDarkMode, sidebarVisible]
   );
 
   const [editHover, setEditHover] = useState(false);
@@ -112,7 +83,7 @@ const ProfileForm = () => {
 
       dispatch(setUserProfile(res.data));
       notify.onSuccess('Profile updated successfully!');
-      setProfilePhoto(null); // reset local selection
+      setProfilePhoto(null);
       setIsEditable(false);
     } catch (err) {
       console.error(err);
@@ -123,9 +94,16 @@ const ProfileForm = () => {
   return (
     <div className="container py-4">
       <div className="row justify-content-center">
-        <Card className="shadow-sm border-0 bg-light dark:bg-dark" style={styles.formContainerCard}>
+        <Card className="shadow-sm border-0 bg-light dark:bg-dark form-container-card"
+          data-theme={isDarkMode ? 'dark' : 'light'}
+          style={{
+            marginLeft: sidebarWidth,
+            width: `calc(100% - ${sidebarWidth}px)`,
+            transition: 'margin-left 0.3s ease, width 0.3s ease',
+          }}
+        >
           <div className="d-flex justify-content-center align-items-center mb-4">
-            <h2 style={styles.title}>User Profile</h2>
+            <h2 className='form-title'>User Profile</h2>
           </div>
 
           <div className="text-center mb-4">
@@ -144,11 +122,11 @@ const ProfileForm = () => {
           <CForm onSubmit={handleSubmit}>
             <div className="d-flex justify-content-end mb-3">
               <CButton
+                className="edit-toggle"
                 type="button"
                 size="sm"
                 onClick={() => setIsEditable((prev) => !prev)}
                 style={{
-                  ...styles.editToggle,
                   backgroundColor: editHover ? colors.primary : 'transparent',
                   color: editHover
                     ? colors.white
@@ -164,14 +142,14 @@ const ProfileForm = () => {
             </div>
 
             <CInputGroup className="mb-3">
-              <CInputGroupText style={styles.inputGroupText}>
-                <CFormLabel style={styles.labelInInputGroupText}>First name</CFormLabel>
+              <CInputGroupText className="input-group-text">
+                <CFormLabel className="label-in-input-group-text">First name</CFormLabel>
               </CInputGroupText>
               <CFormInput
                 type='text'
                 name='firstName'
                 placeholder='First name'
-                style={isEditable ? styles.formInput : styles.formInputDisabled}
+                className={isEditable ? "form-input" : "form-input-disabled"}
                 value={formData.firstName || ''}
                 onChange={handleChange}
                 disabled={!isEditable}
@@ -179,14 +157,14 @@ const ProfileForm = () => {
             </CInputGroup>
 
             <CInputGroup className="mb-3">
-              <CInputGroupText style={styles.inputGroupText}>
-                <CFormLabel style={styles.labelInInputGroupText}>Last name</CFormLabel>
+              <CInputGroupText className="input-group-text">
+                <CFormLabel className="label-in-input-group-text">Last name</CFormLabel>
               </CInputGroupText>
               <CFormInput
                 type='text'
                 name='lastName'
                 placeholder='Last name'
-                style={isEditable ? styles.formInput : styles.formInputDisabled}
+                className={isEditable ? "form-input" : "form-input-disabled"}
                 value={formData.lastName || ''}
                 onChange={handleChange}
                 disabled={!isEditable}
@@ -194,14 +172,14 @@ const ProfileForm = () => {
             </CInputGroup>
 
             <CInputGroup className="mb-3">
-              <CInputGroupText style={styles.inputGroupText}>
-                <CFormLabel style={styles.labelInInputGroupText}>Email</CFormLabel>
+              <CInputGroupText className="input-group-text">
+                <CFormLabel className="label-in-input-group-text">Email</CFormLabel>
               </CInputGroupText>
               <CFormInput
                 type='email'
                 name='email'
                 placeholder='Email'
-                style={isEditable ? styles.formInput : styles.formInputDisabled}
+                className={isEditable ? "form-input" : "form-input-disabled"}
                 value={formData.email || ''}
                 onChange={handleChange}
                 disabled={!isEditable}
@@ -209,31 +187,30 @@ const ProfileForm = () => {
             </CInputGroup>
 
             <CInputGroup className="mb-3">
-              <CInputGroupText style={styles.inputGroupText}>
-                <CFormLabel style={styles.labelInInputGroupText}>Role</CFormLabel>
+              <CInputGroupText className="input-group-text">
+                <CFormLabel className="label-in-input-group-text">Role</CFormLabel>
               </CInputGroupText>
-              <CFormInput style={styles.formInputDisabled} value={capitalizeFirst(formData.roleName)} disabled />
+              <CFormInput className="form-input-disabled" value={capitalizeFirst(formData.roleName)} disabled />
             </CInputGroup>
 
             <CInputGroup className="mb-3">
-              <CInputGroupText style={styles.inputGroupText}>
-                <CFormLabel style={styles.labelInInputGroupText}>Status</CFormLabel>
+              <CInputGroupText className="input-group-text">
+                <CFormLabel className="label-in-input-group-text">Status</CFormLabel>
               </CInputGroupText>
-              <CFormInput style={styles.formInputDisabled} value={capitalizeFirst(formData.statusName)} disabled />
+              <CFormInput className="form-input-disabled" value={capitalizeFirst(formData.statusName)} disabled />
             </CInputGroup>
 
             <CInputGroup className="mb-3">
-              <CInputGroupText style={styles.inputGroupText}>
-                <CFormLabel style={styles.labelInInputGroupText}>Last login</CFormLabel>
+              <CInputGroupText className="input-group-text">
+                <CFormLabel className="label-in-input-group-text">Last login</CFormLabel>
               </CInputGroupText>
-              <CFormInput style={styles.formInputDisabled} value={formatDateTime(formData.lastLoginAt)} disabled />
+              <CFormInput className="form-input-disabled" value={formatDateTime(formData.lastLoginAt)} disabled />
             </CInputGroup>
 
             {isEditable && (
               <div className="d-flex justify-content-center mt-4">
-                <CButton type="submit"
+                <CButton type="submit" className="profile-button"
                   style={{
-                    ...styles.button,
                     backgroundColor: submitHover ? colors.primary : 'transparent',
                     color: submitHover
                       ? colors.white

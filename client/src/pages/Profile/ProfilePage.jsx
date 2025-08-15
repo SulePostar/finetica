@@ -8,20 +8,9 @@ const Profile = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
   return (
-    // <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-    //   <AppHeader />
-    //   <div style={{ display: 'flex', flex: 1 }}>
-    //     {isSidebarVisible && <AppSidebar />}
-    //     <main style={mainContentStyle}>
-    //       <ProfileForm />
-    //     </main>
-    //   </div>
-    // </div>
-
     <DefaultLayout>
       <ProfileForm />
     </DefaultLayout>
-
   );
 };
 
