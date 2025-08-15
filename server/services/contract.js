@@ -1,3 +1,6 @@
+const db = require('../models');
+const AppError = require('../utils/errorHandler');
+
 const generateMockContracts = (total = 25) => {
     const contractTypes = ['Service', 'License', 'Supply', 'Consulting'];
     const paymentTerms = ['Net 30', 'Net 60', 'Advance', 'Upon Delivery'];
@@ -11,7 +14,7 @@ const generateMockContracts = (total = 25) => {
         description: `${contractTypes[i % contractTypes.length]} contract #${i + 1}`,
         start_date: `2025-01-${((i % 28) + 1).toString().padStart(2, '0')}`,
         end_date: `2025-12-${((i % 28) + 1).toString().padStart(2, '0')}`,
-        is_active: i % 3 !== 0, 
+        is_active: i % 3 !== 0,
         payment_terms: paymentTerms[i % paymentTerms.length],
         currency: currencies[i % currencies.length],
         amount: parseFloat((Math.random() * 100000 + 1000).toFixed(2)),
@@ -39,6 +42,41 @@ const getPaginatedContractData = ({ page = 1, perPage = 10, sortField, sortOrder
     return { data: pagedData, total };
 };
 
+/**
+ * Create a new contract in the database
+ * @param {Object} contractData - The contract data
+ * @returns {Promise<Object>} - The created contract
+ */
+const createContract = async (contractData) => {
+    try {
+        // Get the Contract model
+        const Contract = db.Contract;
+
+        // Map the request data to database model fields
+        const mappedData = {
+            partnerId: contractData.partnerId,
+            contractNumber: contractData.contractNumber,
+            contractType: contractData.contractType,
+            description: contractData.description,
+            startDate: contractData.startDate,
+            endDate: contractData.endDate,
+            isActive: contractData.isActive !== undefined ? contractData.isActive : true,
+            paymentTerms: contractData.paymentTerms,
+            currency: contractData.currency,
+            amount: contractData.amount,
+            signedAt: contractData.signedAt
+        };
+
+        // Create the contract in the database
+        const contract = await Contract.create(mappedData);
+
+        return contract;
+    } catch (error) {
+        throw new AppError(`Failed to create contract: ${error.message}`, 500);
+    }
+};
+
 module.exports = {
     getPaginatedContractData,
+    createContract,
 };
