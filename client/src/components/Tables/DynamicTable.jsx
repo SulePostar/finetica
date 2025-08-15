@@ -2,8 +2,9 @@ import { useEffect, useState, useMemo } from 'react';
 import { Card, Spinner } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import makeCustomStyles from './DynamicTable.styles';
+import './DynamicTable.css';
 
-const DynamicTable = ({ title, columns, apiEndpoint, onRowClick }) => {
+const DynamicTable = ({ title, columns, apiEndpoint, onRowClick, uploadButton }) => {
     const [data, setData] = useState([]);
     const [totalRows, setTotalRows] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -22,7 +23,7 @@ const DynamicTable = ({ title, columns, apiEndpoint, onRowClick }) => {
 
     const titleStyle = useMemo(
         () => ({
-            marginBottom: '20px',
+            marginBottom: '0px',
             fontSize: '28px',
             fontWeight: 700,
             color: 'var(--cui-primary)',
@@ -61,7 +62,14 @@ const DynamicTable = ({ title, columns, apiEndpoint, onRowClick }) => {
     return (
         <div style={containerStyle}><Card className="my-4 shadow-sm border-0 bg-light dark:bg-dark">
             <Card.Body className="p-4">
-                <Card.Title style={titleStyle}>{title}</Card.Title>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                    <Card.Title style={titleStyle}>{title}</Card.Title>
+                    {uploadButton && (
+                        <div className="table-upload-button">
+                            {uploadButton}
+                        </div>
+                    )}
+                </div>
                 <DataTable
                     columns={columns}
                     data={data}

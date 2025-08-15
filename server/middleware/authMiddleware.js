@@ -14,7 +14,7 @@ module.exports = function authorizeAdmin(req, res, next) {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
 
-    if (req.user.roleId === 1) {
+    if (req.user.roleName === 'admin') {
       return next();
     } else {
       return res.status(403).json({ message: 'Access denied! Admin only!' });

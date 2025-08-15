@@ -1,4 +1,4 @@
-import { UploadButton } from '../../components/index';
+import CompactUploadButton from '../../components/UploadButton/CompactUploadButton';
 import { useBucketName } from '../../lib/bucketUtils';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
@@ -62,15 +62,13 @@ const Vat = () => {
                     width: `calc(100vw - ${sidebarWidth}px)`,
                 }}
             >
-                <div className="table-header-controls">
-                    <UploadButton bucketName={bucketName} />
-                </div>
                 <div className="table-content-wrapper">
                     <DynamicTable
                         title="VAT"
                         columns={columns}
                         apiEndpoint="http://localhost:4000/api/vat-data"
                         onRowClick={handleRowClick}
+                        uploadButton={<CompactUploadButton bucketName={bucketName} />}
                     />
                 </div>
             </div>

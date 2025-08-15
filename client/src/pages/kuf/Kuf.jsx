@@ -1,4 +1,4 @@
-import { UploadButton } from '../../components/index';
+import CompactUploadButton from '../../components/UploadButton/CompactUploadButton';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown'; // <-- Import the reusable dropdown
@@ -60,15 +60,13 @@ const Kuf = () => {
                     width: `calc(100vw - ${sidebarWidth}px)`,
                 }}
             >
-                <div className="table-header-controls">
-                    <UploadButton bucketName={bucketName} />
-                </div>
                 <div className="table-content-wrapper">
                     <DynamicTable
                         title="KUF"
                         columns={columns}
                         apiEndpoint="http://localhost:4000/api/kuf-data"
                         onRowClick={handleRowClick}
+                        uploadButton={<CompactUploadButton bucketName={bucketName} />}
                     />
                 </div>
             </div>
