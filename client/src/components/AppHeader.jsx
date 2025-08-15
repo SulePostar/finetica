@@ -26,13 +26,14 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const sidebarUnfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
   const isKufDetailPage = location.pathname.startsWith('/kuf/') && location.pathname !== '/kuf';
   const isKifDetailPage = location.pathname.startsWith('/kif/') && location.pathname !== '/kif';
-  const isInvoiceDetailPage = isKufDetailPage || isKifDetailPage;
+  const isContractDetailPage = location.pathname.startsWith('/contracts/') && location.pathname !== '/contracts';
+  const isDetailPage = isKufDetailPage || isKifDetailPage || isContractDetailPage;
 
   useEffect(() => {
-    if (isInvoiceDetailPage && sidebarShow) {
+    if (isDetailPage && sidebarShow) {
       dispatch({ type: 'set', sidebarShow: false });
     }
-  }, [isInvoiceDetailPage, sidebarShow, dispatch]);
+  }, [isDetailPage, sidebarShow, dispatch]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -141,6 +142,34 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
             >
               <CIcon icon={cilArrowLeft} className="me-2" />
               Back to KIF
+            </CButton>
+          ) : isContractDetailPage ? (
+            <CButton
+              variant="outline"
+              onClick={() => navigate('/contracts')}
+              className="ms-n3"
+              style={{
+                border: '1px solid var(--cui-border-color)',
+                borderRadius: '6px',
+                padding: '8px 12px',
+                backgroundColor: 'transparent',
+                color: 'var(--cui-body-color)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.2s ease',
+                fontSize: '0.875rem'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'var(--cui-light)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = 'transparent';
+              }}
+            >
+              <CIcon icon={cilArrowLeft} className="me-2" />
+              Back to Contracts
             </CButton>
           ) : (
             <CHeaderToggler

@@ -12,11 +12,11 @@ import '../../components/InfoCards/DocumentInfo.css';
 /**
  * DocumentInfo Component
  * 
- * A reusable component for displaying document information for both KUF (Purchase Invoices) 
- * and KIF (Sales Invoices) based on the database schema.
+ * A reusable component for displaying document information for KUF (Purchase Invoices), 
+ * KIF (Sales Invoices), and Contracts based on the database schema.
  * 
  * @param {Object} data - The document data object
- * @param {string} type - The document type: 'kuf' for purchase invoices, 'kif' for sales invoices
+ * @param {string} type - The document type: 'kuf' for purchase invoices, 'kif' for sales invoices, 'contract' for contracts
  * @param {boolean} loading - Loading state
  * @param {Error} error - Error state
  */
@@ -50,7 +50,7 @@ const DocumentInfo = ({ data, type = 'kuf', loading = false, error = null }) => 
                 <CCardHeader>
                     <CCardTitle className="mb-0">
                         <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
-                        Document Information
+                        {type === 'contract' ? 'Contract Information' : 'Document Information'}
                     </CCardTitle>
                 </CCardHeader>
                 <CCardBody>
@@ -71,7 +71,7 @@ const DocumentInfo = ({ data, type = 'kuf', loading = false, error = null }) => 
                 <CCardHeader>
                     <CCardTitle className="mb-0 text-danger">
                         <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
-                        Document Information
+                        {type === 'contract' ? 'Contract Information' : 'Document Information'}
                     </CCardTitle>
                 </CCardHeader>
                 <CCardBody>
@@ -93,7 +93,7 @@ const DocumentInfo = ({ data, type = 'kuf', loading = false, error = null }) => 
                 <CCardHeader>
                     <CCardTitle className="mb-0">
                         <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
-                        Document Information
+                        {type === 'contract' ? 'Contract Information' : 'Document Information'}
                     </CCardTitle>
                 </CCardHeader>
                 <CCardBody>
@@ -113,7 +113,7 @@ const DocumentInfo = ({ data, type = 'kuf', loading = false, error = null }) => 
             <CCardHeader>
                 <CCardTitle className="mb-0">
                     <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
-                    Document Information
+                    {type === 'contract' ? 'Contract Information' : 'Document Information'}
                 </CCardTitle>
             </CCardHeader>
             <CCardBody>
@@ -145,7 +145,7 @@ const DocumentInfo = ({ data, type = 'kuf', loading = false, error = null }) => 
 };
 
 DocumentInfo.propTypes = {
-    type: PropTypes.oneOf(['kuf', 'kif']),
+    type: PropTypes.oneOf(['kuf', 'kif', 'contract']),
     loading: PropTypes.bool,
     error: PropTypes.instanceOf(Error)
 };

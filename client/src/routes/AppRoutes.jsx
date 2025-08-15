@@ -116,6 +116,14 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/contracts/:id"
+          element={
+            <ProtectedRoute>
+              <InvoiceDetails />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Fallback for unknown routes */}
 

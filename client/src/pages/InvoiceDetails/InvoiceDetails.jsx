@@ -11,7 +11,7 @@ import CIcon from '@coreui/icons-react';
 import { cilFile } from '@coreui/icons';
 import { useParams, useLocation } from 'react-router-dom';
 import DocumentInfo from '../../components/InfoCards/DocumentInfo';
-import { createMockKifData, createMockKufData } from '../../utilis/constants/InvoicesData';
+import { createMockKifData, createMockKufData, createMockContractData } from '../../utilis/constants/InvoicesData';
 import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
 import DefaultLayout from '../../layout/DefaultLayout';
 
@@ -20,12 +20,30 @@ const InvoiceDetails = () => {
     const location = useLocation();
 
     // Determine document type based on URL path
-    const documentType = location.pathname.includes('/kif/') ? 'kif' : 'kuf';
+    const getDocumentType = () => {
+        if (location.pathname.includes('/kif/')) return 'kif';
+        if (location.pathname.includes('/kuf/')) return 'kuf';
+        if (location.pathname.includes('/contracts/')) return 'contract';
+        return 'kuf'; // default fallback
+    };
+
+    const documentType = getDocumentType();
 
     // Get appropriate mock data based on document type
-    const mockData = documentType === 'kif'
-        ? createMockKifData(id)
-        : createMockKufData(id);
+    const getMockData = () => {
+        switch (documentType) {
+            case 'kif':
+                return createMockKifData(id);
+            case 'kuf':
+                return createMockKufData(id);
+            case 'contract':
+                return createMockContractData(id);
+            default:
+                return createMockKufData(id);
+        }
+    };
+
+    const mockData = getMockData();
 
     // For now hardcoded, this will come from an API call
     const mockPdfUrl = 'https://pdfobject.com/pdf/sample.pdf';
@@ -44,7 +62,7 @@ const InvoiceDetails = () => {
                                 <CCardHeader>
                                     <CCardTitle className="mb-0">
                                         <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
-                                        Document Viewer
+                                        {documentType === 'contract' ? 'Contract Viewer' : 'Document Viewer'}
                                     </CCardTitle>
                                 </CCardHeader>
                                 <CCardBody>

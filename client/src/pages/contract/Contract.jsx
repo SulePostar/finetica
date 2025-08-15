@@ -11,46 +11,52 @@ const Contract = () => {
     const sidebarWidth = useSidebarWidth();
 
     const handleView = (id) => {
-        navigate(`/contract/${id}`);
+        navigate(`/contracts/${id}`);
     };
 
     const handleEdit = (id) => { };
     const handleDelete = (id) => { };
     const handleDownload = (id) => { };
 
+    const handleRowClick = (row) => {
+        console.log('Row clicked:', row);
+        console.log('Navigating to:', `/contracts/${row.id}`);
+        navigate(`/contracts/${row.id}`);
+    };
+
     const columns = [
-        { 
+        {
             name: 'Partner ID',
             selector: row => row.partner_id,
-            sortable: true 
+            sortable: true
         },
-        { 
+        {
             name: 'Contract Number',
             selector: row => row.contract_number,
-            sortable: true 
+            sortable: true
         },
-        { 
+        {
             name: 'Type',
             selector: row => row.contract_type,
-            sortable: true 
+            sortable: true
         },
-        { 
+        {
             name: 'Description',
             selector: row => row.description,
             sortable: true,
-            wrap: true 
+            wrap: true
         },
-        { 
+        {
             name: 'Start Date',
             selector: row => row.start_date,
-            sortable: true 
+            sortable: true
         },
-        { 
+        {
             name: 'End Date',
             selector: row => row.end_date,
-            sortable: true 
+            sortable: true
         },
-        { 
+        {
             name: 'Status',
             selector: row => row.is_active,
             sortable: true,
@@ -60,26 +66,26 @@ const Contract = () => {
                 </span>
             )
         },
-        { 
+        {
             name: 'Payment Terms',
             selector: row => row.payment_terms,
-            sortable: true 
+            sortable: true
         },
-        { 
+        {
             name: 'Currency',
             selector: row => row.currency,
-            sortable: true 
+            sortable: true
         },
-        { 
+        {
             name: 'Amount',
             selector: row => row.amount,
             sortable: true,
-            right: true 
+            right: true
         },
-        { 
+        {
             name: 'Signed At',
             selector: row => row.signed_at,
-            sortable: true 
+            sortable: true
         },
         {
             name: 'Actions',
@@ -113,6 +119,7 @@ const Contract = () => {
                         title="Contracts"
                         columns={columns}
                         apiEndpoint="http://localhost:4000/api/contracts"
+                        onRowClick={handleRowClick}
                     />
                 </div>
             </div>
