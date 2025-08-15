@@ -15,9 +15,9 @@ const generateMockContracts = (total = 25) => {
         payment_terms: paymentTerms[i % paymentTerms.length],
         currency: currencies[i % currencies.length],
         amount: parseFloat((Math.random() * 100000 + 1000).toFixed(2)),
-        signed_at: `2025-01-${((i % 28) + 1).toString().padStart(2, '0')}T10:00:00Z`,
-        created_at: `2024-12-${((i % 28) + 1).toString().padStart(2, '0')}T09:00:00Z`,
-        updated_at: `2025-01-${((i % 28) + 1).toString().padStart(2, '0')}T11:00:00Z`,
+        signed_at: `2025-01-${((i % 28) + 1).toString().padStart(2, '0')}`,
+        created_at: `2024-12-${((i % 28) + 1).toString().padStart(2, '0')}`,
+        updated_at: `2025-01-${((i % 28) + 1).toString().padStart(2, '0')}`,
     }));
 };
 
