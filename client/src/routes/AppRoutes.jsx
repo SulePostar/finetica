@@ -75,7 +75,7 @@ export default function AppRoutes() {
           }
         />
         <Route
-          path='/vat'
+          path="/vat"
           element={
             <ProtectedRoute>
               <Vat />
@@ -83,7 +83,15 @@ export default function AppRoutes() {
           }
         />
         <Route
-          path='/kuf'
+          path="/vat/:id"
+          element={
+            <ProtectedRoute>
+              <InvoiceDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/kuf"
           element={
             <ProtectedRoute>
               <Kuf />
@@ -106,7 +114,6 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
 
         <Route
           path="/contracts"
