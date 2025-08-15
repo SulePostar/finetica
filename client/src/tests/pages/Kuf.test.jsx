@@ -361,7 +361,7 @@ describe('Kuf Component', () => {
             const outerDiv = container.querySelector('.table-page-outer');
             expect(outerDiv).toBeInTheDocument();
             expect(outerDiv).toHaveClass('table-page-outer');
-            
+
             // The styles are applied via CSS classes, so just check the classes exist
             expect(outerDiv).toHaveStyle('margin-left: 0px'); // This should be applied via the hook
         });
