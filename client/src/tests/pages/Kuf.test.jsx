@@ -70,7 +70,14 @@ jest.mock('../../lib/bucketUtils', () => ({
     useBucketName: jest.fn(() => 'test-bucket-name')
 }));
 
-// Mock CSS import
+// Mock the sidebar width hook  
+jest.mock('../../hooks/useSidebarWidth', () => ({
+    useSidebarWidth: jest.fn(() => 0),
+}));
+
+// Mock CSS imports
+jest.mock('../../styles/shared/CommonStyles.css', () => ({}));
+jest.mock('../../styles/TablePages.css', () => ({}));
 jest.mock('./Kuf.styles.css', () => ({}));
 
 // Mock console.log to test navigation logging
@@ -87,6 +94,10 @@ describe('Kuf Component', () => {
         // Reset the navigate mock
         const { useNavigate } = require('react-router-dom');
         useNavigate.mockReturnValue(mockNavigate);
+
+        // Reset sidebar width mock to default
+        const { useSidebarWidth } = require('../../hooks/useSidebarWidth');
+        useSidebarWidth.mockReturnValue(0);
     });
 
     afterEach(() => {
@@ -111,14 +122,12 @@ describe('Kuf Component', () => {
         test('renders with correct CSS classes and structure', () => {
             const { container } = renderWithProviders(<Kuf />);
 
-            const outerDiv = container.querySelector('.kuf-table-outer');
+            const outerDiv = container.querySelector('.table-page-outer');
             expect(outerDiv).toBeInTheDocument();
 
-            // Check for Bootstrap classes
-            expect(container.querySelector('.w-100')).toBeInTheDocument();
-            expect(container.querySelector('.d-flex')).toBeInTheDocument();
-            expect(container.querySelector('.justify-content-end')).toBeInTheDocument();
-            expect(container.querySelector('.justify-content-center')).toBeInTheDocument();
+            // Check for table header controls and content wrapper
+            expect(container.querySelector('.table-header-controls')).toBeInTheDocument();
+            expect(container.querySelector('.table-content-wrapper')).toBeInTheDocument();
         });
     });
 
@@ -296,6 +305,9 @@ describe('Kuf Component', () => {
 
     describe('Sidebar Integration and Responsive Layout', () => {
         test('applies correct margin when sidebar is shown', () => {
+            const { useSidebarWidth } = require('../../hooks/useSidebarWidth');
+            useSidebarWidth.mockReturnValue(250);
+
             const initialState = {
                 ...mockState,
                 ui: { sidebarShow: true }
@@ -303,14 +315,16 @@ describe('Kuf Component', () => {
 
             const { container } = renderWithProviders(<Kuf />, { initialState });
 
-            const outerDiv = container.querySelector('.kuf-table-outer');
+            const outerDiv = container.querySelector('.table-page-outer');
             expect(outerDiv).toHaveStyle({
-                marginLeft: '250px',
-                transition: 'margin-left 0.3s'
+                marginLeft: '250px'
             });
         });
 
         test('applies no margin when sidebar is hidden', () => {
+            const { useSidebarWidth } = require('../../hooks/useSidebarWidth');
+            useSidebarWidth.mockReturnValue(0);
+
             const initialState = {
                 ...mockState,
                 ui: { sidebarShow: false }
@@ -318,14 +332,16 @@ describe('Kuf Component', () => {
 
             const { container } = renderWithProviders(<Kuf />, { initialState });
 
-            const outerDiv = container.querySelector('.kuf-table-outer');
+            const outerDiv = container.querySelector('.table-page-outer');
             expect(outerDiv).toHaveStyle({
-                marginLeft: '0px',
-                transition: 'margin-left 0.3s'
+                marginLeft: '0px'
             });
         });
 
         test('handles undefined sidebar state gracefully', () => {
+            const { useSidebarWidth } = require('../../hooks/useSidebarWidth');
+            useSidebarWidth.mockReturnValue(0);
+
             const initialState = {
                 ...mockState,
                 ui: {}
@@ -333,7 +349,7 @@ describe('Kuf Component', () => {
 
             const { container } = renderWithProviders(<Kuf />, { initialState });
 
-            const outerDiv = container.querySelector('.kuf-table-outer');
+            const outerDiv = container.querySelector('.table-page-outer');
             expect(outerDiv).toHaveStyle({
                 marginLeft: '0px'
             });
@@ -342,15 +358,12 @@ describe('Kuf Component', () => {
         test('applies all layout styles correctly', () => {
             const { container } = renderWithProviders(<Kuf />);
 
-            const outerDiv = container.querySelector('.kuf-table-outer');
-            expect(outerDiv).toHaveStyle({
-                minHeight: '100vh',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '0'
-            });
+            const outerDiv = container.querySelector('.table-page-outer');
+            expect(outerDiv).toBeInTheDocument();
+            expect(outerDiv).toHaveClass('table-page-outer');
+            
+            // The styles are applied via CSS classes, so just check the classes exist
+            expect(outerDiv).toHaveStyle('margin-left: 0px'); // This should be applied via the hook
         });
     });
 
@@ -391,6 +404,9 @@ describe('Kuf Component', () => {
 
     describe('Component Lifecycle and Re-renders', () => {
         test('re-renders correctly when state changes', () => {
+            const { useSidebarWidth } = require('../../hooks/useSidebarWidth');
+            useSidebarWidth.mockReturnValue(0);
+
             const initialState = {
                 ...mockState,
                 ui: { sidebarShow: false }
@@ -398,7 +414,7 @@ describe('Kuf Component', () => {
 
             const { rerender, container } = renderWithProviders(<Kuf />, { initialState });
 
-            let outerDiv = container.querySelector('.kuf-table-outer');
+            let outerDiv = container.querySelector('.table-page-outer');
             expect(outerDiv).toHaveStyle({ marginLeft: '0px' });
 
             // Change state and re-render
@@ -407,13 +423,16 @@ describe('Kuf Component', () => {
                 ui: { sidebarShow: true }
             };
 
+            // Mock the sidebar width for shown state
+            useSidebarWidth.mockReturnValue(250);
+
             // Mock the selector for the new state
             const { useSelector } = require('react-redux');
             useSelector.mockImplementation((selector) => selector(newState));
 
             rerender(<Kuf />);
 
-            outerDiv = container.querySelector('.kuf-table-outer');
+            outerDiv = container.querySelector('.table-page-outer');
             expect(outerDiv).toHaveStyle({ marginLeft: '250px' });
         });
 
@@ -465,8 +484,10 @@ describe('Kuf Component', () => {
         test('integrates correctly with react-redux', () => {
             renderWithProviders(<Kuf />);
 
-            const { useSelector } = require('react-redux');
-            expect(useSelector).toHaveBeenCalled();
+            // Component should render without issues with Redux state
+            expect(screen.getByTestId('default-layout')).toBeInTheDocument();
+            expect(screen.getByTestId('upload-button')).toBeInTheDocument();
+            expect(screen.getByTestId('dynamic-table')).toBeInTheDocument();
         });
 
         test('integrates correctly with custom hooks', () => {
@@ -481,20 +502,16 @@ describe('Kuf Component', () => {
         test('applies correct responsive layout classes', () => {
             const { container } = renderWithProviders(<Kuf />);
 
-            // Check for Bootstrap utility classes
-            expect(container.querySelector('.w-100')).toBeInTheDocument();
-            expect(container.querySelector('.d-flex')).toBeInTheDocument();
-            expect(container.querySelector('.justify-content-end')).toBeInTheDocument();
-            expect(container.querySelector('.align-items-center')).toBeInTheDocument();
-            expect(container.querySelector('.mb-3')).toBeInTheDocument();
-            expect(container.querySelector('.justify-content-center')).toBeInTheDocument();
-            expect(container.querySelector('.flex-grow-1')).toBeInTheDocument();
+            // Check for the new common structure
+            expect(container.querySelector('.table-page-outer')).toBeInTheDocument();
+            expect(container.querySelector('.table-header-controls')).toBeInTheDocument();
+            expect(container.querySelector('.table-content-wrapper')).toBeInTheDocument();
         });
 
         test('applies custom CSS class', () => {
             const { container } = renderWithProviders(<Kuf />);
 
-            const outerDiv = container.querySelector('.kuf-table-outer');
+            const outerDiv = container.querySelector('.table-page-outer');
             expect(outerDiv).toBeInTheDocument();
         });
     });
