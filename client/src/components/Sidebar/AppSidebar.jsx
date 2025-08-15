@@ -47,6 +47,13 @@ const AppSidebar = ({ isDarkMode }) => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (window.innerWidth < 992) {
+      dispatch({ type: 'set', sidebarShow: false });
+    }
+  }, [dispatch]);
+
+
   const filteredNav = navigation
     .map((item) => {
       const isAdmin = userRole === 'admin';
@@ -145,7 +152,7 @@ const AppSidebar = ({ isDarkMode }) => {
         ) : (
           // Expanded sidebar - show text and badge
           <div
-            className="border-top d-none d-lg-flex justify-content-between align-items-center px-3 py-2"
+            className="border-top d-flex justify-content-between align-items-center px-3 py-2 drive-status"
             style={{
               backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
             }}
@@ -161,15 +168,13 @@ const AppSidebar = ({ isDarkMode }) => {
             <DriveStatusBadge driveConnected={driveConnected} isDarkMode={isDarkMode} />
           </div>
         )}
-
         {/* Footer */}
-        <CSidebarFooter className="border-top d-none d-lg-flex justify-content-center align-items-center p-3">
+        <CSidebarFooter className="border-top d-flex justify-content-center align-items-center p-3 drive-status1">
           <CSidebarToggler
-            onClick={() =>
-              dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })
-            }
+            onClick={() => dispatch({ type: 'set', sidebarUnfoldable: !unfoldable })}
           />
         </CSidebarFooter>
+
       </CSidebar>
     </>
   );

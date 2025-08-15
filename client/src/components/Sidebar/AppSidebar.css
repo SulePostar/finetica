@@ -181,3 +181,29 @@
   background-color: #6c757d; /* textPrimary grey */
   color: #ffffff;
 }
+/* Keep Drive section visible and responsive */
+.drive-status {
+  width: 100%;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+@media (max-width: 991px) { 
+  .drive-status {
+    justify-content: center !important;
+    padding: 8px !important;
+  }
+  .drive-status .fw-semibold.small {
+    margin-bottom: 1px;
+    margin-right: 6px;
+  }
+}
+
+@media (max-width: 320px){
+.sidebar .some-overlaying-element {
+  pointer-events: none !important;
+}
+}
+
+
+
