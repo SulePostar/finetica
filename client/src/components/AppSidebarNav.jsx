@@ -32,7 +32,7 @@ export const AppSidebarNav = ({ items }) => {
   );
 
   const renderNavItem = (item, index, indent = false) => {
-    const { component: Component, name, badge, icon, ...rest } = item;
+    const { component: Component, name, badge, icon, adminOnly, ...rest } = item;
 
     return (
       <Component as="div" key={index}>
