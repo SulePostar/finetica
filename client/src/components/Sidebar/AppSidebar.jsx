@@ -2,21 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
-  CCloseButton,
   CSidebar,
   CSidebarFooter,
-  CSidebarHeader,
   CSidebarToggler,
   CBadge,
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilCloudDownload } from '@coreui/icons';
 
-import navigation from '../_nav';
+import navigation from '../../_nav';
 import { AppSidebarNav } from './AppSidebarNav';
 import './AppSidebar.css';
-import { colors } from '../styles/colors';
-import { setDriveConnected } from '../redux/sidebar/sidebarSlice';
+import { colors } from '../../styles/colors';
+import { setDriveConnected } from '../../redux/sidebar/sidebarSlice';
+import DriveStatusBadge from './DriveStatusBadge';
 
 const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
@@ -109,19 +108,6 @@ const AppSidebar = ({ isDarkMode }) => {
           />
         </div>
 
-        <CCloseButton
-          className="d-lg-none"
-          dark={isDarkMode}
-          onClick={() => dispatch({ type: 'set', sidebarShow: false })}
-        />
-        <CSidebarHeader className="border-bottom">
-          <CCloseButton
-            className="d-lg-none"
-            dark={isDarkMode}
-            onClick={() => dispatch({ type: 'set', sidebarShow: false })}
-          />
-        </CSidebarHeader>
-
         <AppSidebarNav items={filteredNav} />
 
         {/* Google Drive Status */}
@@ -172,24 +158,7 @@ const AppSidebar = ({ isDarkMode }) => {
             >
               Google Drive
             </div>
-
-            <CBadge
-              size="sm"
-              style={{
-                backgroundColor: driveConnected
-                  ? colors.success.background
-                  : isDarkMode
-                    ? colors.white
-                    : colors.textPrimary,
-                color: driveConnected
-                  ? colors.success.text
-                  : isDarkMode
-                    ? colors.error.text
-                    : colors.textPrimary,
-              }}
-            >
-              {driveConnected ? 'Connected' : 'Disconnected'}
-            </CBadge>
+            <DriveStatusBadge driveConnected={driveConnected} isDarkMode={isDarkMode} />
           </div>
         )}
 

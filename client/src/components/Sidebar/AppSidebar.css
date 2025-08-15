@@ -152,3 +152,32 @@
 .sidebar-unfoldable:hover .nav-group-items .nav-link {
   padding-left: 3.5rem !important;
 }
+
+
+/* DriveStatuBadge  */
+
+/* Google Drive connection badge */
+.drive-badge {
+  padding: 4px 8px;
+  font-weight: 500;
+  border-radius: 4px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Connected */
+.drive-badge.connected {
+  background-color: #d4edda; /* success background */
+  color: #155724; /* success text */
+}
+
+/* Disconnected - dark mode */
+.drive-badge.disconnected-dark {
+  background-color: #ffffff;
+  color: #f44336; /* error red */
+}
+
+/* Disconnected - light mode */
+.drive-badge.disconnected-light {
+  background-color: #6c757d; /* textPrimary grey */
+  color: #ffffff;
+}
