@@ -63,6 +63,16 @@ jest.mock('../../lib/bucketUtils', () => ({
     useBucketName: () => 'test-bucket',
 }));
 
+// Mock the sidebar width hook
+jest.mock('../../hooks/useSidebarWidth', () => ({
+    useSidebarWidth: jest.fn(() => 0),
+}));
+
+// Mock CSS imports
+jest.mock('../../styles/shared/CommonStyles.css', () => ({}));
+jest.mock('../../styles/TablePages.css', () => ({}));
+jest.mock('./Kif.styles.css', () => ({}));
+
 // Mock navigate function
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -75,6 +85,10 @@ describe('KIF Page', () => {
         jest.clearAllMocks();
         // Reset navigate mock
         mockNavigate.mockReset();
+
+        // Reset sidebar width mock to default
+        const { useSidebarWidth } = require('../../hooks/useSidebarWidth');
+        useSidebarWidth.mockReturnValue(0);
 
         // Reset useSelector mock to default state
         const { useSelector } = require('react-redux');
@@ -145,13 +159,21 @@ describe('KIF Page', () => {
         });
 
         test('should apply correct layout styles when sidebar is hidden', () => {
+            // Mock the sidebar width to return 0 for hidden sidebar
+            const { useSidebarWidth } = require('../../hooks/useSidebarWidth');
+            useSidebarWidth.mockReturnValue(0);
+
             renderKifPage({}, { sidebarShow: false });
 
-            const container = document.querySelector('.kif-table-outer');
+            const container = document.querySelector('.table-page-outer');
             expect(container).toHaveStyle('margin-left: 0px');
         });
 
         test('should apply correct layout styles when sidebar is shown', () => {
+            // Mock the sidebar width to return 250 for shown sidebar
+            const { useSidebarWidth } = require('../../hooks/useSidebarWidth');
+            useSidebarWidth.mockReturnValue(250);
+
             // Mock useSelector to return sidebarShow: true
             const { useSelector } = require('react-redux');
             useSelector.mockImplementation((selector) => {
@@ -168,7 +190,7 @@ describe('KIF Page', () => {
                 </BrowserRouter>
             );
 
-            const container = document.querySelector('.kif-table-outer');
+            const container = document.querySelector('.table-page-outer');
             expect(container).toHaveStyle('margin-left: 250px');
         });
     });
@@ -306,6 +328,10 @@ describe('KIF Page', () => {
 
     describe('Component Integration', () => {
         test('should integrate with Redux store correctly', () => {
+            // Mock the sidebar width to return 250 for shown sidebar
+            const { useSidebarWidth } = require('../../hooks/useSidebarWidth');
+            useSidebarWidth.mockReturnValue(250);
+
             // Mock useSelector to return sidebarShow: true
             const { useSelector } = require('react-redux');
             useSelector.mockImplementation((selector) => {
@@ -322,7 +348,7 @@ describe('KIF Page', () => {
                 </BrowserRouter>
             );
 
-            const container = document.querySelector('.kif-table-outer');
+            const container = document.querySelector('.table-page-outer');
             expect(container).toHaveStyle('margin-left: 250px');
         });
 
@@ -338,29 +364,24 @@ describe('KIF Page', () => {
         test('should have correct CSS classes and structure', () => {
             renderKifPage();
 
-            const outerContainer = document.querySelector('.kif-table-outer');
+            const outerContainer = document.querySelector('.table-page-outer');
             expect(outerContainer).toBeInTheDocument();
-            expect(outerContainer).toHaveClass('kif-table-outer');
+            expect(outerContainer).toHaveClass('table-page-outer');
 
-            // Check for flex layout
-            expect(outerContainer).toHaveStyle({
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '100vh',
-            });
+            // The styles are applied via CSS classes, so just check the classes exist
+            expect(outerContainer).toHaveStyle('margin-left: 0px'); // This should be applied via the hook
         });
 
         test('should have responsive design elements', () => {
             renderKifPage();
 
-            // Check for Bootstrap utility classes
-            const uploadButtonContainer = document.querySelector('.w-100.d-flex.justify-content-end');
-            expect(uploadButtonContainer).toBeInTheDocument();
+            // Check for table header controls
+            const headerControls = document.querySelector('.table-header-controls');
+            expect(headerControls).toBeInTheDocument();
 
-            const tableContainer = document.querySelector('.w-100.d-flex.justify-content-center');
-            expect(tableContainer).toBeInTheDocument();
+            // Check for table content wrapper
+            const contentWrapper = document.querySelector('.table-content-wrapper');
+            expect(contentWrapper).toBeInTheDocument();
         });
     });
 
