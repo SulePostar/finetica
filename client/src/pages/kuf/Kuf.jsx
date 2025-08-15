@@ -65,7 +65,7 @@ const Kuf = () => {
                 </div>
                 <div className="table-content-wrapper">
                     <DynamicTable
-                        title="KUF Table"
+                        title="KUF"
                         columns={columns}
                         apiEndpoint="http://localhost:4000/api/kuf-data"
                         onRowClick={handleRowClick}

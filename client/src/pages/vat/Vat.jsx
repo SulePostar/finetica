@@ -67,7 +67,7 @@ const Vat = () => {
                 </div>
                 <div className="table-content-wrapper">
                     <DynamicTable
-                        title="VAT Table"
+                        title="VAT"
                         columns={columns}
                         apiEndpoint="http://localhost:4000/api/vat-data"
                         onRowClick={handleRowClick}
