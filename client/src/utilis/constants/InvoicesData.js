@@ -40,6 +40,15 @@ export const DOCUMENT_FIELD_CONFIGS = {
     { label: 'Created', key: 'created_at' },
     { label: 'Updated', key: 'updated_at' },
   ],
+  vat: [
+    { label: 'ID', key: 'id' },
+    { label: 'Product Name', key: 'name' },
+    { label: 'Amount', key: 'amount' },
+    { label: 'Price', key: 'price' },
+    { label: 'Date', key: 'date' },
+    { label: 'Document Number', key: 'documentNumber' },
+    { label: 'Total Price', key: 'totalPrice' },
+  ],
 };
 
 /**
@@ -135,7 +144,9 @@ export const createMockKifData = (id = '1') => ({
 export const createMockVatData = (id = '1') => ({
   id,
   name: 'Product A',
-  amount: 10,
-  price: 25.5,
+  amount: '10',
+  price: '25.5',
   date: '2025-08-10',
+  documentNumber: `VAT-${id}`,
+  totalPrice: `${25.5 * 10}`,
 });
