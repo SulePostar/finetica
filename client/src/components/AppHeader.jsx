@@ -1,6 +1,7 @@
-import { cilContrast, cilMenu, cilMoon, cilSun, cilArrowLeft } from '@coreui/icons';
+import { cilArrowLeft, cilContrast, cilMenu, cilMoon, cilSun } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import {
+  CButton,
   CContainer,
   CDropdown,
   CDropdownItem,
@@ -9,13 +10,26 @@ import {
   CHeader,
   CHeaderNav,
   CHeaderToggler,
-  CButton,
 } from '@coreui/react';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
 import './AppHeader.css';
+import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
+
+//Returns route and label for a detail page, or null if not a detail page
+const getDetailPageConfig = (pathname) => {
+  if (pathname.startsWith('/kuf/') && pathname !== '/kuf') {
+    return { route: '/kuf', label: 'KUF' };
+  }
+  if (pathname.startsWith('/kif/') && pathname !== '/kif') {
+    return { route: '/kif', label: 'KIF' };
+  }
+  if (pathname.startsWith('/vat/') && pathname !== '/vat') {
+    return { route: '/vat', label: 'VAT' };
+  }
+  return null;
+};
 
 const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const headerRef = useRef();
@@ -24,15 +38,14 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const location = useLocation();
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
   const sidebarUnfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
-  const isKufDetailPage = location.pathname.startsWith('/kuf/') && location.pathname !== '/kuf';
-  const isKifDetailPage = location.pathname.startsWith('/kif/') && location.pathname !== '/kif';
-  const isInvoiceDetailPage = isKufDetailPage || isKifDetailPage;
+
+  const detailPage = getDetailPageConfig(location.pathname);
 
   useEffect(() => {
-    if (isInvoiceDetailPage && sidebarShow) {
+    if (detailPage && sidebarShow) {
       dispatch({ type: 'set', sidebarShow: false });
     }
-  }, [isInvoiceDetailPage, sidebarShow, dispatch]);
+  }, [detailPage, sidebarShow, dispatch]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -69,7 +82,6 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
           position: 'fixed',
           top: 0,
           left: 0,
-
         }}
       >
         <CContainer
@@ -83,13 +95,13 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
             marginLeft: `${headerMargin}px`,
             transition: 'margin-left 0.3s ease-in-out',
             backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff',
-            width: '100%'
+            width: '100%',
           }}
         >
-          {isKufDetailPage ? (
+          {detailPage ? (
             <CButton
               variant="outline"
-              onClick={() => navigate('/kuf')}
+              onClick={() => navigate(detailPage.route)}
               className="ms-n3"
               style={{
                 border: '1px solid var(--cui-border-color)',
@@ -102,45 +114,19 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 transition: 'all 0.2s ease',
-                fontSize: '0.875rem'
+                fontSize: '0.875rem',
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'var(--cui-light)';
+                e.target.style.backgroundColor = isDarkMode
+                  ? 'rgba(255, 255, 255, 0.1)'
+                  : 'var(--cui-light)';
               }}
               onMouseLeave={(e) => {
                 e.target.style.backgroundColor = 'transparent';
               }}
             >
               <CIcon icon={cilArrowLeft} className="me-2" />
-              Back to KUF
-            </CButton>
-          ) : isKifDetailPage ? (
-            <CButton
-              variant="outline"
-              onClick={() => navigate('/kif')}
-              className="ms-n3"
-              style={{
-                border: '1px solid var(--cui-border-color)',
-                borderRadius: '6px',
-                padding: '8px 12px',
-                backgroundColor: 'transparent',
-                color: 'var(--cui-body-color)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.2s ease',
-                fontSize: '0.875rem'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'var(--cui-light)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = 'transparent';
-              }}
-            >
-              <CIcon icon={cilArrowLeft} className="me-2" />
-              Back to KIF
+              Back to {detailPage.label}
             </CButton>
           ) : (
             <CHeaderToggler
@@ -156,25 +142,31 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                transition: 'background-color 0.2s ease'
+                transition: 'background-color 0.2s ease',
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                e.target.style.backgroundColor = isDarkMode
+                  ? 'rgba(255, 255, 255, 0.1)'
+                  : 'rgba(0, 0, 0, 0.1)';
               }}
               onMouseLeave={(e) => {
                 e.target.style.backgroundColor = 'transparent';
               }}
             >
-              <CIcon icon={cilMenu} size="lg" style={{ color: isDarkMode ? '#FFFFFF' : '#000000' }} />
+              <CIcon
+                icon={cilMenu}
+                size="lg"
+                style={{ color: isDarkMode ? '#FFFFFF' : '#000000' }}
+              />
             </CHeaderToggler>
           )}
           <CHeaderNav className="d-none d-md-flex" />
           <div style={{ flexGrow: 1 }}></div>
         </CContainer>
-      </CHeader >
+      </CHeader>
 
       {/* Fixed Right Navigation */}
-      < div
+      <div
         className="fixed-header-nav"
         style={{
           position: 'fixed',
@@ -186,9 +178,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
           alignItems: 'center',
           padding: '0 1rem',
           backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff',
-
-        }
-        }
+        }}
       >
         <CHeaderNav style={{ gap: '1rem' }}>
           <CDropdown variant="nav-item" placement="bottom-end">
@@ -235,8 +225,9 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
           </CDropdown>
           <AppHeaderDropdown isDarkMode={isDarkMode} />
         </CHeaderNav>
-      </div >
+      </div>
     </>
   );
 };
+
 export default AppHeader;
