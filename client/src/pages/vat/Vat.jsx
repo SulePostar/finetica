@@ -1,4 +1,4 @@
-import CompactUploadButton from '../../components/UploadButton/CompactUploadButton';
+import UploadButton from '../../components/UploadButton/UploadButton';
 import { useBucketName } from '../../lib/bucketUtils';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
@@ -68,7 +68,7 @@ const Vat = () => {
                         columns={columns}
                         apiEndpoint="http://localhost:4000/api/vat-data"
                         onRowClick={handleRowClick}
-                        uploadButton={<CompactUploadButton bucketName={bucketName} />}
+                        uploadButton={<UploadButton bucketName={bucketName} />}
                     />
                 </div>
             </div>

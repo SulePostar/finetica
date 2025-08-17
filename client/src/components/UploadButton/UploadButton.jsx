@@ -3,9 +3,9 @@ import { CButton } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilCloudUpload } from '@coreui/icons';
 import { FileUploadModal } from '../Modals';
-import './CompactUploadButton.css';
+import './UploadButton.css';
 
-const CompactUploadButton = ({
+const UploadButton = ({
     bucketName,
     className = '',
     onUploadSuccess,
@@ -61,4 +61,4 @@ const CompactUploadButton = ({
     );
 };
 
-export default CompactUploadButton;
+export default UploadButton;
