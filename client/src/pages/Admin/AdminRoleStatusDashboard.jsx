@@ -1,18 +1,24 @@
-import React from 'react';
-import { AppHeader, AppSidebar } from '../../components/index';
-import RoleStatusDashboard from '../../components/Admin/Role and Status dashboard/RoleStatusDashboard';
-import DefaultLayout from '../../layout/DefaultLayout';
+import React from "react";
+import RoleStatusDashboard from "../../components/Admin/Role and Status dashboard/RoleStatusDashboard";
+import DefaultLayout from "../../layout/DefaultLayout";
+import { useSidebarWidth } from "../../hooks/useSidebarWidth";
 
 const AdminRoleStatusDashboard = () => {
-    return (
-        <>
-            <DefaultLayout>
-                <div className="body flex-grow-1 px-3">
-                    <RoleStatusDashboard />
-                </div>
-            </DefaultLayout>
-        </>
-    );
+  const sidebarWidth = useSidebarWidth();
+
+  return (
+    <DefaultLayout>
+      <div
+        className="role-status-dashboard-page"
+        style={{
+          marginLeft: sidebarWidth,
+          width: `calc(100vw - ${sidebarWidth}px)`,
+        }}
+      >
+        <RoleStatusDashboard />
+      </div>
+    </DefaultLayout>
+  );
 };
 
 export default AdminRoleStatusDashboard;
