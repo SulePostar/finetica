@@ -13,6 +13,7 @@ const AdminUserDashboard = () => {
         style={{
           marginLeft: sidebarWidth,
           width: `calc(100vw - ${sidebarWidth}px)`,
+          transition: 'margin-left 0.3s ease, width 0.3s ease',
         }}
       >
         <UserDashboard />
