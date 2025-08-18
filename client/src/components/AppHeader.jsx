@@ -202,23 +202,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
         </CContainer>
       </CHeader >
 
-      {/* Fixed Right Navigation */}
-      < div
-        className="fixed-header-nav"
-        style={{
-          position: 'fixed',
-          top: 0,
-          right: 0,
-          zIndex: 1060,
-          height: '64px',
-          display: 'flex',
-          alignItems: 'center',
-          padding: '0 1rem',
-          backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff',
-
-        }
-        }
-      >
+      <div className="fixed-header-nav">
         <CHeaderNav style={{ gap: '1rem' }}>
           <CDropdown variant="nav-item" placement="bottom-end">
             <CDropdownToggle caret={false} className="bg-transparent border-0">

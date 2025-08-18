@@ -81,12 +81,12 @@
 
 /* Ensure fixed nav adapts to theme changes */
 [data-coreui-theme='dark'] .fixed-header-nav {
-  background-color: var(--cui-dark);
+  background-color: #432e62df;
   border-color: var(--cui-border-color-translucent);
 }
 
 [data-coreui-theme='light'] .fixed-header-nav {
-  background-color: var(--cui-light);
+  background-color: #bfaee5ff;
   border-color: var(--cui-border-color);
 }
 
