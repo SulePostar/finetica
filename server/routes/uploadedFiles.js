@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const uploadedFilesController = require('../controllers/uploadedFiles');
-const authorizeAdmin = require('../middleware/authMiddleware');
 const {
   profileImageUpload,
   fileUpload,
   handleUploadErrors,
 } = require('../middleware/uploadMiddleware');
+const hasRole = require('../middleware/hasRole');
+const isAuthenticated = require('../middleware/isAuthenticated');
 
 // Upload routes
 router.post(
@@ -16,21 +17,22 @@ router.post(
 );
 router.post(
   '/upload',
-  authorizeAdmin,
+  isAuthenticated,
+  hasRole(['admin']),
   fileUpload.single('file'),
   uploadedFilesController.uploadFile
 );
-router.delete('/storage/:id', authorizeAdmin, uploadedFilesController.deleteFileFromStorage);
+router.delete('/storage/:id', isAuthenticated, hasRole(['admin']), uploadedFilesController.deleteFileFromStorage);
 
 // File management routes
-router.get('/stats', authorizeAdmin, uploadedFilesController.getFileStats);
+router.get('/stats', isAuthenticated, hasRole(['admin']), uploadedFilesController.getFileStats);
 router.get('/my-files', uploadedFilesController.getMyFiles);
-router.get('/', authorizeAdmin, uploadedFilesController.getFiles);
+router.get('/', isAuthenticated, hasRole(['admin']), uploadedFilesController.getFiles);
 router.get('/:id', uploadedFilesController.getFile);
-router.post('/', authorizeAdmin, uploadedFilesController.createFile);
-router.put('/:id', authorizeAdmin, uploadedFilesController.updateFile);
-router.delete('/:id', authorizeAdmin, uploadedFilesController.deleteFile);
-router.delete('/:id/permanent', authorizeAdmin, uploadedFilesController.permanentDeleteFile);
+router.post('/', isAuthenticated, hasRole(['admin']), uploadedFilesController.createFile);
+router.put('/:id', isAuthenticated, hasRole(['admin']), uploadedFilesController.updateFile);
+router.delete('/:id', isAuthenticated, hasRole(['admin']), uploadedFilesController.deleteFile);
+router.delete('/:id/permanent', isAuthenticated, hasRole(['admin']), uploadedFilesController.permanentDeleteFile);
 
 // Error handling
 router.use(handleUploadErrors);
