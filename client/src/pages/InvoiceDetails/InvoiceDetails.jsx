@@ -1,3 +1,8 @@
+import { useParams, useLocation } from 'react-router-dom';
+import DocumentInfo from '../../components/InfoCards/DocumentInfo/DocumentInfo';
+import { createMockKifData, createMockKufData, createMockContractData } from '../../utilis/constants/InvoicesData';
+import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
+import DefaultLayout from '../../layout/DefaultLayout';
 import {
     CContainer,
     CRow,
@@ -9,40 +14,32 @@ import {
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilFile } from '@coreui/icons';
-import { useParams, useLocation } from 'react-router-dom';
-import DocumentInfo from '../../components/InfoCards/DocumentInfo';
-import { createMockKifData, createMockKufData, createMockContractData } from '../../utilis/constants/InvoicesData';
-import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
-import DefaultLayout from '../../layout/DefaultLayout';
 
 const InvoiceDetails = () => {
     const { id } = useParams();
     const location = useLocation();
 
-    // Determine document type based on URL path
+    // determine type
     const getDocumentType = () => {
         if (location.pathname.includes('/kif/')) return 'kif';
         if (location.pathname.includes('/kuf/')) return 'kuf';
         if (location.pathname.includes('/contracts/')) return 'contract';
     };
-
     const documentType = getDocumentType();
 
-    // Get appropriate mock data based on document type
+    // determine mode (view or approve)
+    const isApproveMode = location.pathname.includes('/approve');
+
+    // mock data
     const getMockData = () => {
         switch (documentType) {
-            case 'kif':
-                return createMockKifData(id);
-            case 'kuf':
-                return createMockKufData(id);
-            case 'contract':
-                return createMockContractData(id);
+            case 'kif': return createMockKifData(id);
+            case 'kuf': return createMockKufData(id);
+            case 'contract': return createMockContractData(id);
+            default: return null;
         }
     };
-
     const mockData = getMockData();
-
-    // For now hardcoded, this will come from an API call
     const mockPdfUrl = 'https://pdfobject.com/pdf/sample.pdf';
 
     return (
@@ -51,7 +48,18 @@ const InvoiceDetails = () => {
                 <CContainer fluid className="details-container">
                     <CRow className="justify-content-center">
                         <CCol lg={4} className="mb-4">
-                            <DocumentInfo data={mockData} type={documentType} />
+                            <DocumentInfo
+                                data={mockData}
+                                type={documentType}
+                                actions={
+                                    isApproveMode && (
+                                        <>
+                                            <button className="btn btn-success">Approve</button>
+                                            <button className="btn btn-secondary">Reject</button>
+                                        </>
+                                    )
+                                }
+                            />
                         </CCol>
 
                         <CCol lg={8} className="mb-4">
@@ -59,7 +67,11 @@ const InvoiceDetails = () => {
                                 <CCardHeader>
                                     <CCardTitle className="mb-0">
                                         <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
-                                        {documentType === 'contract' ? 'Contract Viewer' : 'Document Viewer'}
+                                        {isApproveMode
+                                            ? 'Approval Viewer'
+                                            : documentType === 'contract'
+                                                ? 'Contract Viewer'
+                                                : 'Document Viewer'}
                                     </CCardTitle>
                                 </CCardHeader>
                                 <CCardBody>

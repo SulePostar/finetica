@@ -1,11 +1,10 @@
 import { useMemo } from 'react';
-import PropTypes from 'prop-types';
 import {
     DOCUMENT_FIELD_CONFIGS,
     formatValue
-} from '../../utilis/constants/InvoicesData';
-import DocInfoCard from './DocInfoCard';
-import '../../components/InfoCards/DocumentInfo.css';
+} from '../../../utilis/constants/InvoicesData';
+import DocInfoCard from '../DocInfoCard/DocInfoCard';
+import '../DocumentInfo/DocumentInfo.css';
 
 /**
  * DocumentInfo Component

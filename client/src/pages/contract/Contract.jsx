@@ -1,4 +1,3 @@
-import React from 'react';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
@@ -14,13 +13,12 @@ const Contract = () => {
         navigate(`/contracts/${id}`);
     };
 
-    const handleEdit = (id) => { };
-    const handleDelete = (id) => { };
+    const handleApprove = (id) => {
+        navigate(`/contracts/${id}/approve`);
+    };
     const handleDownload = (id) => { };
 
     const handleRowClick = (row) => {
-        console.log('Row clicked:', row);
-        console.log('Navigating to:', `/contracts/${row.id}`);
         navigate(`/contracts/${row.id}`);
     };
 
@@ -100,6 +98,7 @@ const Contract = () => {
             width: '150px',
             cell: row => new Date(row.signed_at).toLocaleDateString()
         },
+        { name: 'Status', selector: row => row.status, sortable: true, width: '140px' },
         {
             name: 'Actions',
             width: '120px',
@@ -107,15 +106,13 @@ const Contract = () => {
                 <ActionsDropdown
                     row={row}
                     onView={handleView}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
+                    onApprove={() => handleApprove(row.id)}
                     onDownload={handleDownload}
                 />
             ),
             ignoreRowClick: true
         }
     ];
-
     return (
         <DefaultLayout>
             <div
