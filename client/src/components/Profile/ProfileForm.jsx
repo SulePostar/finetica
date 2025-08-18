@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import {
@@ -7,179 +7,228 @@ import {
   CInputGroupText,
   CFormInput,
   CButton,
-  CAlert,
-  CAvatar,
   CFormLabel,
 } from '@coreui/react';
-import { profileFormStyles } from './ProfileForm.styles';
+import { Card } from 'react-bootstrap';
 import { formatDateTime } from '../../helpers/formatDate.js';
 import { capitalizeFirst } from '../../helpers/capitalizeFirstLetter.js';
-import ConfirmationModal from '../Modals/ConfirmationModal';
 import { setUserProfile } from '../../redux/user/userSlice';
+import ProfilePhotoUpload from '../Register/ProfilePhotoUpload/ProfilePhotoUpload';
+import FileUploadService from '../../services/fileUploadService';
+import notify from '../../utilis/toastHelper';
+import { colors } from '../../styles/colors';
+import './ProfileForm.css'
+import { useSidebarWidth } from '../../hooks/useSidebarWidth'; // <-- NEW
 
 const ProfileForm = () => {
   const dispatch = useDispatch();
+  const profile = useSelector((state) => state.user.profile);
+  const sidebarWidth = useSidebarWidth(); // <-- NEW
+
+  const [formData, setFormData] = useState(profile || {});
+  const [profilePhoto, setProfilePhoto] = useState(null);
+  const [isEditable, setIsEditable] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(
     document.documentElement.getAttribute('data-coreui-theme') === 'dark'
   );
 
+  const [editHover, setEditHover] = useState(false);
+  const [submitHover, setSubmitHover] = useState(false);
+
   useEffect(() => {
-    const handler = () => {
-      setIsDarkMode(document.documentElement.getAttribute('data-coreui-theme') === 'dark');
-    };
-    window.document.documentElement.addEventListener('ColorSchemeChange', handler);
-    return () => window.document.documentElement.removeEventListener('ColorSchemeChange', handler);
-  }, []);
-
-  const styles = useMemo(() => profileFormStyles(isDarkMode), [isDarkMode]);
-
-  const [isEditable, setIsEditable] = useState(false);
-  const profile = useSelector((state) => state.user.profile);
-
-  const [formData, setFormData] = useState(profile);
-  useEffect(() => {
-    setFormData(profile);
+    if (profile) setFormData(profile);
   }, [profile]);
 
-  const [success, setSuccess] = useState('');
-  const [error, setError] = useState('');
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  useEffect(() => {
+    const handler = () =>
+      setIsDarkMode(document.documentElement.getAttribute('data-coreui-theme') === 'dark');
+    window.document.documentElement.addEventListener('ColorSchemeChange', handler);
+    return () =>
+      window.document.documentElement.removeEventListener('ColorSchemeChange', handler);
+  }, []);
 
   const handleChange = ({ target: { name, value } }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (error) setError('');
   };
 
-  const handleSubmit = async (e) => {
+  const handlePhotoSelect = useCallback((file) => {
+    setProfilePhoto(file);
+  }, []);
 
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put('http://localhost:4000/api/users/me', formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+      let profileImageUrl = formData.profileImage || null;
+
+      if (profilePhoto) {
+        const uploadResult = await FileUploadService.uploadProfileImage(
+          profilePhoto,
+          formData.firstName,
+          formData.lastName
+        );
+
+        if (uploadResult.success && uploadResult.url) {
+          profileImageUrl = uploadResult.url;
+          notify.onSuccess('Profile image selected successfully!');
+        } else {
+          notify.onWarning('Profile image upload failed, profile saved without new image.');
+        }
+      }
+
+      const payload = { ...formData, profileImage: profileImageUrl };
+
+      const res = await axios.put('http://localhost:4000/api/users/me', payload, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('jwt_token')}` },
       });
+
       dispatch(setUserProfile(res.data));
-      setSuccess('Profile updated!');
-      setShowSuccessModal(true);
-    } catch (err) {
-      setError('Failed to update profile.');
-    } finally {
+      notify.onSuccess('Profile updated successfully!');
+      setProfilePhoto(null);
       setIsEditable(false);
+    } catch (err) {
+      console.error(err);
+      notify.onError('Failed to update profile. Please try again.');
     }
   };
 
   return (
     <div className="container py-4">
       <div className="row justify-content-center">
-        <div className="col-12 col-md-10 col-lg-8 col-xl-6" style={styles.formContainerCard}>
+        <Card className="shadow-sm border-0 bg-light dark:bg-dark form-container-card"
+          data-theme={isDarkMode ? 'dark' : 'light'}
+          style={{
+            marginLeft: sidebarWidth,
+            width: `calc(100% - ${sidebarWidth}px)`,
+            transition: 'margin-left 0.3s ease, width 0.3s ease',
+          }}
+        >
           <div className="d-flex justify-content-center align-items-center mb-4">
-            <h2 style={styles.title}>User Profile</h2>
+            <h2 className='form-title'>User Profile</h2>
           </div>
+
           <div className="text-center mb-4">
-            <CAvatar
-              src="https://i.pravatar.cc/150?u=filip"
-              size="l"
-              className="mb-3"
-              style={{ width: '6rem', height: '6rem' }}
+            <ProfilePhotoUpload
+              onPhotoSelect={handlePhotoSelect}
+              disabled={!isEditable}
+              currentPhoto={profile?.profileImage || null}
+              onRemove={() => {
+                notify.onSuccess('Profile photo removed successfully!');
+                setFormData((prev) => ({ ...prev, profileImage: null }));
+                setProfilePhoto(null);
+              }}
             />
-            <div className="d-flex justify-content-center gap-2 flex-wrap">
-              <CButton color="outline-primary" size="sm">
-                Change Photo
-              </CButton>
-              <CButton color="outline-secondary" size="sm">
-                Remove
-              </CButton>
-            </div>
           </div>
-          {error && <CAlert color="danger">{error}</CAlert>}
-          {success && <CAlert color="success">{success}</CAlert>}
+
           <CForm onSubmit={handleSubmit}>
             <div className="d-flex justify-content-end mb-3">
               <CButton
+                className="edit-toggle"
                 type="button"
                 size="sm"
                 onClick={() => setIsEditable((prev) => !prev)}
-                style={styles.editToggle}
+                style={{
+                  backgroundColor: editHover ? colors.primary : 'transparent',
+                  color: editHover
+                    ? colors.white
+                    : isDarkMode
+                      ? colors.white
+                      : colors.primary,
+                }}
+                onMouseEnter={() => setEditHover(true)}
+                onMouseLeave={() => setEditHover(false)}
               >
                 {isEditable ? 'Cancel' : 'Edit Profile'}
               </CButton>
             </div>
 
-            {[
-              { label: 'First name', name: 'firstName' },
-              { label: 'Last name', name: 'lastName' },
-              { label: 'Email', name: 'email', type: 'email' },
-            ].map(({ label, name, type = 'text' }) => (
-              <CInputGroup className="mb-3" key={name}>
-                <CInputGroupText style={styles.inputGroupText}>
-                  <CFormLabel style={styles.labelInInputGroupText}>{label}</CFormLabel>
-                </CInputGroupText>
-                <CFormInput
-                  type={type}
-                  name={name}
-                  placeholder={label}
-                  style={isEditable ? styles.formInput : styles.formInputDisabled}
-                  value={formData[name]}
-                  onChange={handleChange}
-                  disabled={!isEditable}
-                />
-              </CInputGroup>
-            ))}
-
             <CInputGroup className="mb-3">
-              <CInputGroupText style={styles.inputGroupText}>
-                <CFormLabel style={styles.labelInInputGroupText}>Role</CFormLabel>
+              <CInputGroupText className="input-group-text">
+                <CFormLabel className="label-in-input-group-text">First name</CFormLabel>
               </CInputGroupText>
               <CFormInput
-                style={styles.formInputDisabled}
-                value={capitalizeFirst(formData.roleName)}
-                disabled
+                type='text'
+                name='firstName'
+                placeholder='First name'
+                className={isEditable ? "form-input" : "form-input-disabled"}
+                value={formData.firstName || ''}
+                onChange={handleChange}
+                disabled={!isEditable}
               />
             </CInputGroup>
 
             <CInputGroup className="mb-3">
-              <CInputGroupText style={styles.inputGroupText}>
-                <CFormLabel style={styles.labelInInputGroupText}>Status</CFormLabel>
+              <CInputGroupText className="input-group-text">
+                <CFormLabel className="label-in-input-group-text">Last name</CFormLabel>
               </CInputGroupText>
               <CFormInput
-                style={styles.formInputDisabled}
-                value={capitalizeFirst(formData.statusName)}
-                disabled
+                type='text'
+                name='lastName'
+                placeholder='Last name'
+                className={isEditable ? "form-input" : "form-input-disabled"}
+                value={formData.lastName || ''}
+                onChange={handleChange}
+                disabled={!isEditable}
               />
             </CInputGroup>
 
             <CInputGroup className="mb-3">
-              <CInputGroupText style={styles.inputGroupText}>
-                <CFormLabel style={styles.labelInInputGroupText}>Last login</CFormLabel>
+              <CInputGroupText className="input-group-text">
+                <CFormLabel className="label-in-input-group-text">Email</CFormLabel>
               </CInputGroupText>
               <CFormInput
-                style={styles.formInputDisabled}
-                value={formatDateTime(formData.lastLoginAt)}
-                disabled
+                type='email'
+                name='email'
+                placeholder='Email'
+                className={isEditable ? "form-input" : "form-input-disabled"}
+                value={formData.email || ''}
+                onChange={handleChange}
+                disabled={!isEditable}
               />
+            </CInputGroup>
+
+            <CInputGroup className="mb-3">
+              <CInputGroupText className="input-group-text">
+                <CFormLabel className="label-in-input-group-text">Role</CFormLabel>
+              </CInputGroupText>
+              <CFormInput className="form-input-disabled" value={capitalizeFirst(formData.roleName)} disabled />
+            </CInputGroup>
+
+            <CInputGroup className="mb-3">
+              <CInputGroupText className="input-group-text">
+                <CFormLabel className="label-in-input-group-text">Status</CFormLabel>
+              </CInputGroupText>
+              <CFormInput className="form-input-disabled" value={capitalizeFirst(formData.statusName)} disabled />
+            </CInputGroup>
+
+            <CInputGroup className="mb-3">
+              <CInputGroupText className="input-group-text">
+                <CFormLabel className="label-in-input-group-text">Last login</CFormLabel>
+              </CInputGroupText>
+              <CFormInput className="form-input-disabled" value={formatDateTime(formData.lastLoginAt)} disabled />
             </CInputGroup>
 
             {isEditable && (
               <div className="d-flex justify-content-center mt-4">
-                <CButton type="submit" style={styles.button}>
+                <CButton type="submit" className="profile-button"
+                  style={{
+                    backgroundColor: submitHover ? colors.primary : 'transparent',
+                    color: submitHover
+                      ? colors.white
+                      : isDarkMode
+                        ? colors.white
+                        : colors.primary,
+                  }}
+                  onMouseEnter={() => setSubmitHover(true)}
+                  onMouseLeave={() => setSubmitHover(false)}
+                >
                   Submit Changes
                 </CButton>
               </div>
             )}
           </CForm>
-        </div>
-      </div>
-      <ConfirmationModal
-        visible={showSuccessModal}
-        onCancel={() => setShowSuccessModal(false)}
-        onConfirm={() => setShowSuccessModal(false)}
-        title="Profile Updated"
-        body="Your changes have been saved successfully."
-        confirmText="OK"
-        confirmColor="success"
-      />
-    </div>
+        </Card>
+      </div >
+    </div >
   );
 };
 
