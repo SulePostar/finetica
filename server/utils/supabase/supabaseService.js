@@ -66,7 +66,7 @@ class SupabaseService {
    * @param {string} mimeType - File MIME type (optional if fileBuffer is multer file object)
    * @returns {Promise<Object>} Upload result
    */
-  async uploadFile(fileBuffer, fileName, bucketName, mimeType) {
+  async uploadFile(fileBuffer, fileName, bucketName, mimeType, upsert = false) {
     try {
       // Handle both direct buffer and multer file object
       let buffer, name, type;
@@ -92,7 +92,7 @@ class SupabaseService {
         .upload(uniqueFileName, buffer, {
           contentType: type,
           cacheControl: '3600',
-          upsert: false,
+          upsert,
         });
 
       if (error) {
@@ -105,7 +105,7 @@ class SupabaseService {
       return {
         success: true,
         path: data.path,
-        publicUrl: urlData.publicUrl,
+        publicUrl: `${urlData.publicUrl}?v=${Date.now()}`,
         fileName: uniqueFileName,
       };
     } catch (error) {
@@ -138,7 +138,7 @@ class SupabaseService {
         const username = `${sanitizedFirstName}_${sanitizedLastName}`.toLowerCase();
         fileName = `${username}.${ext}`;
 
-        const result = await this.uploadFile(fileBuffer, fileName, 'user-images');
+        const result = await this.uploadFile(fileBuffer, fileName, 'user-images', undefined, true);
 
         // Make sure we return the result in the expected format
         if (result.success) {
@@ -155,7 +155,7 @@ class SupabaseService {
         const sanitizedLastName = this.sanitizeFileName(lastName);
         const username = `${sanitizedFirstName}_${sanitizedLastName}`.toLowerCase();
         fileName = `${username}.${fileExtension}`;
-        return await this.uploadFile(fileBuffer, fileName, 'user-images', mimeType);
+        return await this.uploadFile(fileBuffer, fileName, 'user-images', mimeType, true);
       }
     } catch (error) {
       console.error('Profile image upload error:', error);
