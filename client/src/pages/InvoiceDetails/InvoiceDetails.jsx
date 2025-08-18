@@ -24,7 +24,6 @@ const InvoiceDetails = () => {
         if (location.pathname.includes('/kif/')) return 'kif';
         if (location.pathname.includes('/kuf/')) return 'kuf';
         if (location.pathname.includes('/contracts/')) return 'contract';
-        return 'kuf'; // default fallback
     };
 
     const documentType = getDocumentType();
@@ -38,8 +37,6 @@ const InvoiceDetails = () => {
                 return createMockKufData(id);
             case 'contract':
                 return createMockContractData(id);
-            default:
-                return createMockKufData(id);
         }
     };
 
