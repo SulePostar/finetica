@@ -1,4 +1,5 @@
 const { getPaginatedContractData } = require('../services/contract');
+const { saveContract } = require('../services/contractService');
 
 const getContractData = (req, res) => {
   const { page, perPage, sortField, sortOrder } = req.query;
@@ -13,12 +14,6 @@ const getContractData = (req, res) => {
   res.json(result);
 };
 
-module.exports = {
-  getContractData,
-};
-
-const { saveContract } = require('../services/contractService');
-
 const addContract = async (req, res) => {
   try {
     const contract = await saveContract(req.body);
@@ -28,4 +23,7 @@ const addContract = async (req, res) => {
   }
 };
 
-module.exports = { addContract };
+module.exports = {
+  getContractData,
+  addContract,
+};
