@@ -1,5 +1,5 @@
 const { getPaginatedContractData } = require('../services/contract');
-const { saveContract } = require('../services/contractService');
+const { saveContract } = require('../services/contract');
 
 const getContractData = (req, res) => {
   const { page, perPage, sortField, sortOrder } = req.query;
