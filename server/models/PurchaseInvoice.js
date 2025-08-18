@@ -2,9 +2,10 @@ const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
   class PurchaseInvoice extends Model {
-    static associate({ BusinessPartner, PurchaseInvoiceItem }) {
+    static associate({ BusinessPartner, PurchaseInvoiceItem, Users }) {
       this.belongsTo(BusinessPartner, { foreignKey: 'supplierId' });
       this.hasMany(PurchaseInvoiceItem, { foreignKey: 'invoiceId' });
+      this.belongsTo(Users, { foreignKey: 'approvedBy' });
     }
   }
 
@@ -80,6 +81,22 @@ module.exports = (sequelize) => {
       vatExemptRegion: {
         type: DataTypes.STRING,
         field: 'vat_exempt_region',
+      },
+      approvedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        field: 'approved_at',
+      },
+      approvedBy: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        field: 'approved_by',
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
       },
     },
     {

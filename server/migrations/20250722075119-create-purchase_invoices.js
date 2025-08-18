@@ -43,6 +43,21 @@ module.exports = {
       deductible_vat: Sequelize.DECIMAL(18, 2),
       non_deductible_vat: Sequelize.DECIMAL(18, 2),
       vat_exempt_region: Sequelize.STRING,
+      approved_at: {
+        type: Sequelize.DATE,
+        allowNull: true,
+        defaultValue: null,
+      },
+      approved_by: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
