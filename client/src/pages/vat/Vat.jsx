@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { UploadButton } from '../../components/index';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
 import DynamicTable from '../../components/Tables/DynamicTable';
+import UploadButton from '../../components/UploadButton/UploadButton';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useBucketName } from '../../lib/bucketUtils';
@@ -61,15 +61,13 @@ const Vat = () => {
           width: `calc(100vw - ${sidebarWidth}px)`,
         }}
       >
-        <div className="table-header-controls">
-          <UploadButton bucketName={bucketName} />
-        </div>
         <div className="table-content-wrapper">
           <DynamicTable
             title="VAT"
             columns={columns}
             apiEndpoint="http://localhost:4000/api/vat-data"
             onRowClick={handleRowClick}
+            uploadButton={<UploadButton bucketName={bucketName} />}
           />
         </div>
       </div>
