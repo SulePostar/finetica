@@ -10,19 +10,28 @@ const api = axios.create({
   },
   withCredentials: true
 });
+
 // Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('jwt_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // Don't add Authorization header for auth endpoints
+    const authEndpoints = ['/auth/login', '/auth/register', '/auth/forgot-password', '/auth/reset-password'];
+    const isAuthEndpoint = authEndpoints.some(endpoint => config.url.includes(endpoint));
+
+    if (!isAuthEndpoint) {
+      const token = localStorage.getItem('jwt_token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
+
     return config;
   },
   (error) => {
     return Promise.reject(error);
   }
 );
+
 // Response interceptor to handle errors globally
 
 let isRefreshing = false;
@@ -88,7 +97,9 @@ api.interceptors.response.use(
       }
 
     }
+
     return Promise.reject(error);
   }
 );
+
 export default api;
