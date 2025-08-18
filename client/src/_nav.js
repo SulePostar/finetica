@@ -1,5 +1,5 @@
 import { CNavItem, CNavTitle, CNavGroup } from '@coreui/react';
-import { cilHome, cilListNumbered, cilList, cilCalculator, cilSpeedometer, cilDescription } from '@coreui/icons';
+import { cilHome, cilListNumbered, cilList, cilCalculator, cilSpeedometer, cilDescription, cilPeople, cilShieldAlt } from '@coreui/icons';
 
 const _nav = [
   {

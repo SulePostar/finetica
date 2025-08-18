@@ -17,7 +17,6 @@ import { logout } from './../redux/auth/authSlice';
 import ConfirmationModal from './Modals/ConfirmationModal';
 import './AppSidebar.css';
 import { colors } from '../styles/colors';
-import { setShowModal, setDriveConnected } from '../redux/sidebar/sidebarSlice';
 
 const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
@@ -27,8 +26,9 @@ const AppSidebar = ({ isDarkMode }) => {
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
   const userRole = useSelector((state) => state.user.profile.roleName);
 
-  const showModal = useSelector((state) => state.sidebar.showModal);
-  const driveConnected = useSelector((state) => state.sidebar.driveConnected);
+  // Local states instead of Redux slice
+  const [showModal, setShowModal] = useState(false);
+  const [driveConnected, setDriveConnected] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
   const handleLogout = () => {
@@ -43,10 +43,10 @@ const AppSidebar = ({ isDarkMode }) => {
         credentials: 'include',
       });
       const data = await response.json();
-      dispatch(setDriveConnected(data.connected));
+      setDriveConnected(data.connected);
     } catch (error) {
       console.error('Drive connection check error:', error);
-      dispatch(setDriveConnected(false));
+      setDriveConnected(false);
     }
   };
 
@@ -60,7 +60,6 @@ const AppSidebar = ({ isDarkMode }) => {
     .map((item) => {
       const isAdmin = userRole === 'admin';
 
-
       if (item.component?.displayName === 'CNavGroup' && item.items) {
         if (item.adminOnly && !isAdmin) return null;
         const filteredItems = item.items.filter(
@@ -69,7 +68,6 @@ const AppSidebar = ({ isDarkMode }) => {
         if (filteredItems.length === 0) return null;
         return { ...item, items: filteredItems };
       }
-
 
       if (item.component?.displayName === 'CNavTitle') {
         if (item.adminOnly && !isAdmin) return null;
@@ -160,7 +158,7 @@ const AppSidebar = ({ isDarkMode }) => {
           <div
             className="d-flex align-items-center gap-2"
             style={{ cursor: 'pointer' }}
-            onClick={() => dispatch(setShowModal(true))}
+            onClick={() => setShowModal(true)}
           >
             <CSidebarToggler
               onClick={() =>
@@ -179,7 +177,7 @@ const AppSidebar = ({ isDarkMode }) => {
 
       <ConfirmationModal
         visible={showModal}
-        onCancel={() => dispatch(setShowModal(false))}
+        onCancel={() => setShowModal(false)}
         onConfirm={handleLogout}
         title="Confirm Logout"
         body="Are you sure you want to log out?"
@@ -190,6 +188,5 @@ const AppSidebar = ({ isDarkMode }) => {
     </>
   );
 };
-
 
 export default React.memo(AppSidebar);
