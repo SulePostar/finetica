@@ -46,7 +46,7 @@ class UserService {
     const user = await User.findByPk(id);
     if (!user) throw new AppError('User not found', 404);
 
-    const allowedFields = ['firstName', 'lastName', 'email'];
+    const allowedFields = ['firstName', 'lastName', 'email', 'profileImage'];
     allowedFields.forEach((field) => {
       if (updatedData[field] !== undefined) {
         user[field] = updatedData[field];
