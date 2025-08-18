@@ -1,5 +1,5 @@
 import { CNavItem, CNavTitle, CNavGroup } from '@coreui/react';
-import { cilHome, cilListNumbered, cilList, cilCalculator, cilSpeedometer } from '@coreui/icons';
+import { cilHome, cilListNumbered, cilList, cilCalculator, cilSpeedometer, cilChart } from '@coreui/icons';
 
 const _nav = [
   {
@@ -49,6 +49,12 @@ const _nav = [
         component: CNavItem,
         name: 'Roles/Status',
         to: '/management/roles-status',
+      },
+      {
+        component: CNavItem,
+        name: 'Activity Logs',
+        to: '/admin/activity-logs',
+        icon: cilChart,
       },
     ],
   },
