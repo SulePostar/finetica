@@ -11,6 +11,7 @@ import {
     CCardHeader,
     CCardBody,
     CCardTitle,
+    CButton
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilFile } from '@coreui/icons';
@@ -54,8 +55,8 @@ const InvoiceDetails = () => {
                                 actions={
                                     isApproveMode && (
                                         <>
-                                            <button className="btn btn-success">Approve</button>
-                                            <button className="btn btn-secondary">Reject</button>
+                                            <CButton color="success">Approve</CButton>
+                                            <CButton color="secondary">Reject</CButton>
                                         </>
                                     )
                                 }

@@ -17,7 +17,7 @@ import '../DocumentInfo/DocumentInfo.css';
  * @param {boolean} loading - Loading state
  * @param {Error} error - Error state
  */
-const DocumentInfo = ({ data, type = 'kuf', loading = false, error = null }) => {
+const DocumentInfo = ({ data, type = 'kuf', loading = false, error = null, actions = null }) => {
     // Memoize field configuration to prevent unnecessary re-renders
     const fields = useMemo(() => {
         return DOCUMENT_FIELD_CONFIGS[type] || DOCUMENT_FIELD_CONFIGS.kuf;
@@ -83,10 +83,14 @@ const DocumentInfo = ({ data, type = 'kuf', loading = false, error = null }) => 
     // Handle empty state
     if (!data || formattedFields.length === 0) {
         return (
-            <DocInfoCard
-                title={cardTitle}
-                message="No document information available"
-            />
+            <DocInfoCard title={cardTitle}>
+                <div className="text-muted p-4">No document information available</div>
+                {actions && (
+                    <div className="document-actions mt-4 d-flex gap-3">
+                        {actions}
+                    </div>
+                )}
+            </DocInfoCard>
         );
     }
 
@@ -115,6 +119,11 @@ const DocumentInfo = ({ data, type = 'kuf', loading = false, error = null }) => 
                     </div>
                 ))}
             </div>
+            {actions && (
+                <div className="document-actions mt-4 d-flex gap-3">
+                    {actions}
+                </div>
+            )}
         </DocInfoCard>
     );
 };
