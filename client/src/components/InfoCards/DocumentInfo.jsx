@@ -1,21 +1,19 @@
 import { useMemo } from 'react';
-import { CCard, CCardHeader, CCardBody, CCardTitle } from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilFile } from '@coreui/icons';
 import {
     DOCUMENT_FIELD_CONFIGS,
     formatValue
 } from '../../utilis/constants/InvoicesData';
+import DocInfoCard from './DocInfoCard';
 import '../../components/InfoCards/DocumentInfo.css';
 
 /**
  * DocumentInfo Component
  * 
- * A reusable component for displaying document information for both KUF (Purchase Invoices) 
- * and KIF (Sales Invoices) based on the database schema.
+ * A reusable component for displaying document information for KUF (Purchase Invoices), 
+ * KIF (Sales Invoices), and Contracts based on the database schema.
  * 
  * @param {Object} data - The document data object
- * @param {string} type - The document type: 'kuf' for purchase invoices, 'kif' for sales invoices
+ * @param {string} type - The document type: 'kuf' for purchase invoices, 'kif' for sales invoices, 'contract' for contracts
  */
 const DocumentInfo = ({ data, type }) => {
     // Memoize field configuration to prevent unnecessary re-renders
@@ -39,28 +37,29 @@ const DocumentInfo = ({ data, type }) => {
             .filter(Boolean);
     }, [data, fields]);
 
-    const CardHeader = () => (
-        <CCardHeader>
-            <CCardTitle className="mb-0">
-                <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
-                Document Information
-            </CCardTitle>
-        </CCardHeader>
-    );
+    // Memoize card title to prevent unnecessary re-computation
+    const cardTitle = useMemo(() => {
+        const titles = {
+            contract: 'Contract Information',
+            kif: 'KIF (Sales Invoice) Information',
+            kuf: 'KUF (Purchase Invoice) Information'
+        };
+        return titles[type] || 'Document Information';
+    }, [type]);
 
-    const renderContent = () => {
-        if (formattedFields.length === 0) {
-            return (
-                <div className="text-center p-4">
-                    <div className="text-muted mb-3">
-                        <CIcon icon={cilFile} size="xl" />
-                    </div>
-                    <p className="text-muted">No document information available</p>
-                </div>
-            );
-        }
-
+    // Handle empty state
+    if (formattedFields.length === 0) {
         return (
+            <DocInfoCard
+                title={cardTitle}
+                message="No document information available"
+            />
+        );
+    }
+
+    // Main content state
+    return (
+        <DocInfoCard title={cardTitle}>
             <div className="document-info-list" role="list" aria-label="Document details">
                 {formattedFields.map(({ key, label, value }) => (
                     <div
@@ -83,16 +82,7 @@ const DocumentInfo = ({ data, type }) => {
                     </div>
                 ))}
             </div>
-        );
-    };
-
-    return (
-        <CCard className="h-100 shadow-sm detail-card">
-            <CardHeader />
-            <CCardBody>
-                {renderContent()}
-            </CCardBody>
-        </CCard>
+        </DocInfoCard>
     );
 };
 
