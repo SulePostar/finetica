@@ -18,16 +18,6 @@ const contractRouter = require('./routes/contract'); // 👈 tvoje
 const googleDriveAutoSync = require('./tasks/googleDriveAutoSync'); // 👈 master
 const googleDriveRouter = require('./routes/googleDrive'); // 👈 master
 
-const { extractPurchaseInvoice } = require("./services/kufExtractor");
-(async () => {
-  try {
-    const result = await extractPurchaseInvoice("uploads/invoice1.pdf");
-    console.log(result);
-  } catch (err) {
-    console.error("Error extracting purchase invoice:", err);
-  }
-})();
-
 const PORT = process.env.PORT;
 const SECRET = process.env.SESSION_SECRET;
 
