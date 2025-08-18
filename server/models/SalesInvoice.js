@@ -63,6 +63,16 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         field: 'vat_category',
       },
+      approvedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        field: 'approved_at',
+      },
+      approvedBy: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        field: 'approved_by',
+      },
     },
     {
       sequelize,
