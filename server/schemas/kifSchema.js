@@ -3,47 +3,39 @@ import { Type } from "@google/genai";
 export const salesInvoiceSchema = {
     type: Type.OBJECT,
     properties: {
-        id: { type: Type.NUMBER },
-        vatPeriod: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
-        invoiceType: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
         invoiceNumber: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
+        invoiceType: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
         billNumber: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
-        note: { anyOf: [{ type: Type.TEXT }, { type: Type.NULL }] },
-        customerId: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
-        invoiceDate: { anyOf: [{ type: Type.DATE }, { type: Type.NULL }] },
-        dueDate: { anyOf: [{ type: Type.DATE }, { type: Type.NULL }] },
+        vatPeriod: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
+        invoiceDate: { anyOf: [{ type: Type.DATE }, { type: Type.STRING }, { type: Type.NULL }] },
+        dueDate: { anyOf: [{ type: Type.DATE }, { type: Type.STRING }, { type: Type.NULL }] },
         deliveryPeriod: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
         totalAmount: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
+        currency: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
         vatCategory: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
-        createdAt: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
-        updatedAt: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
-        approvedAt: { anyOf: [{ type: Type.DATE }, { type: Type.NULL }] },
-        approvedBy: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] }, // should stay NUMBER because they document integer IDs
+        sellerName: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
+        sellerVatNumber: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
+        buyerName: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
+        buyerVatNumber: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
+        note: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
+
+        items: {
+            type: Type.ARRAY,
+            items: {
+                type: Type.OBJECT,
+                properties: {
+                    orderNumber: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
+                    description: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
+                    unit: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
+                    quantity: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
+                    unitPrice: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
+                    netSubtotal: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
+                    vatAmount: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
+                    grossSubtotal: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
+                },
+                required: ["description", "quantity", "unitPrice", "grossSubtotal"]
+            }
+        }
     },
-    required: [
-        "id",
-        "invoiceNumber",
-        "invoiceDate",
-        "dueDate",
-        "totalAmount",
-        "customerId"
-    ],
-    propertyOrdering: [
-        "id",
-        "vatPeriod",
-        "invoiceType",
-        "invoiceNumber",
-        "billNumber",
-        "note",
-        "customerId",
-        "invoiceDate",
-        "dueDate",
-        "deliveryPeriod",
-        "totalAmount",
-        "vatCategory",
-        "createdAt",
-        "updatedAt",
-        "approvedAt",
-        "approvedBy"
-    ],
+    required: ["invoiceNumber", "invoiceDate", "dueDate", "totalAmount", "items"]
 };
