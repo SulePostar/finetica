@@ -56,61 +56,22 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
     <>
       <CHeader
         position="fixed"
-        className={`p-0 header ${isDarkMode ? 'header-dark' : 'header-light'}`}
+        className={`p-0 header app-header ${isDarkMode ? 'header-dark' : 'header-light'}`}
         data-coreui-theme={isDarkMode ? 'dark' : 'light'}
         ref={headerRef}
-        style={{
-          width: '100%',
-          marginLeft: 0,
-          zIndex: 1040,
-          backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff',
-          transition: 'none',
-          height: '64px',
-          minHeight: '64px',
-          position: 'fixed',
-          top: 0,
-          left: 0,
-
-        }}
       >
         <CContainer
           fluid
-          className="px-4"
+          className={`px-4 header-container-fluid ${isDarkMode ? 'header-dark' : 'header-light'}`}
           style={{
-            height: '64px',
-            minHeight: '64px',
-            display: 'flex',
-            alignItems: 'center',
             marginLeft: `${headerMargin}px`,
-            transition: 'margin-left 0.3s ease-in-out',
-            backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff',
-            width: '100%'
           }}
         >
           {isKufDetailPage ? (
             <CButton
               variant="outline"
               onClick={() => navigate('/kuf')}
-              className="ms-n3"
-              style={{
-                border: '1px solid var(--cui-border-color)',
-                borderRadius: '6px',
-                padding: '8px 12px',
-                backgroundColor: 'transparent',
-                color: 'var(--cui-body-color)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.2s ease',
-                fontSize: '0.875rem'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'var(--cui-light)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = 'transparent';
-              }}
+              className="ms-n3 back-button"
             >
               <CIcon icon={cilArrowLeft} className="me-2" />
               Back to KUF
@@ -119,26 +80,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
             <CButton
               variant="outline"
               onClick={() => navigate('/kif')}
-              className="ms-n3"
-              style={{
-                border: '1px solid var(--cui-border-color)',
-                borderRadius: '6px',
-                padding: '8px 12px',
-                backgroundColor: 'transparent',
-                color: 'var(--cui-body-color)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.2s ease',
-                fontSize: '0.875rem'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'var(--cui-light)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = 'transparent';
-              }}
+              className="ms-n3 back-button"
             >
               <CIcon icon={cilArrowLeft} className="me-2" />
               Back to KIF
@@ -147,26 +89,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
             <CButton
               variant="outline"
               onClick={() => navigate('/contracts')}
-              className="ms-n3"
-              style={{
-                border: '1px solid var(--cui-border-color)',
-                borderRadius: '6px',
-                padding: '8px 12px',
-                backgroundColor: 'transparent',
-                color: 'var(--cui-body-color)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.2s ease',
-                fontSize: '0.875rem'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'var(--cui-light)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = 'transparent';
-              }}
+              className="ms-n3 back-button"
             >
               <CIcon icon={cilArrowLeft} className="me-2" />
               Back to Contracts
@@ -174,36 +97,18 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
           ) : (
             <CHeaderToggler
               onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
-              className="ms-n3"
-              style={{
-                border: 'none',
-                borderRadius: '6px',
-                padding: '10px',
-                backgroundColor: 'transparent',
-                color: isDarkMode ? '#FFFFFF' : '#000000',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'background-color 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = 'transparent';
-              }}
+              className={`ms-n3 header-toggle-btn ${isDarkMode ? 'toggle-dark' : 'toggle-light'}`}
             >
-              <CIcon icon={cilMenu} size="lg" style={{ color: isDarkMode ? '#FFFFFF' : '#000000' }} />
+              <CIcon icon={cilMenu} size="lg" className={isDarkMode ? 'menu-icon-dark' : 'menu-icon-light'} />
             </CHeaderToggler>
           )}
           <CHeaderNav className="d-none d-md-flex" />
-          <div style={{ flexGrow: 1 }}></div>
+          <div className="flex-spacer"></div>
         </CContainer>
       </CHeader >
 
       <div className="fixed-header-nav">
-        <CHeaderNav style={{ gap: '1rem' }}>
+        <CHeaderNav className="fixed-header-nav-gap">
           <CDropdown variant="nav-item" placement="bottom-end">
             <CDropdownToggle caret={false} className="bg-transparent border-0">
               {colorMode === 'dark' && <CIcon icon={cilMoon} size="lg" className="text-white" />}

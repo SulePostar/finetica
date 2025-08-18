@@ -28,6 +28,116 @@
   transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
 }
 
+/* Main Header Styles */
+.app-header {
+  width: 100%;
+  margin-left: 0;
+  z-index: 1040;
+  transition: none;
+  height: 64px;
+  min-height: 64px;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.app-header.header-dark {
+  background-color: #432e62df;
+}
+
+.app-header.header-light {
+  background-color: #bfaee5ff;
+}
+
+/* Header Container Styles */
+.header-container-fluid {
+  height: 64px;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  transition: margin-left 0.3s ease-in-out;
+  width: 100%;
+}
+
+.header-container-fluid.header-dark {
+  background-color: #432e62df;
+}
+
+.header-container-fluid.header-light {
+  background-color: #bfaee5ff;
+}
+
+/* Back Button Styles */
+.back-button {
+  border: 1px solid var(--cui-border-color);
+  border-radius: 6px;
+  padding: 8px 12px;
+  background-color: transparent;
+  color: var(--cui-body-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+}
+
+.back-button:hover {
+  background-color: var(--cui-light);
+}
+
+[data-coreui-theme='dark'] .back-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Header Toggle Button Styles */
+.header-toggle-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 10px;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.header-toggle-btn.toggle-dark {
+  color: #ffffff;
+}
+
+.header-toggle-btn.toggle-light {
+  color: #000000;
+}
+
+.header-toggle-btn:hover.toggle-dark {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.header-toggle-btn:hover.toggle-light {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Menu Icon Styles */
+.menu-icon-dark {
+  color: #ffffff;
+}
+
+.menu-icon-light {
+  color: #000000;
+}
+
+/* Flex spacer */
+.flex-spacer {
+  flex-grow: 1;
+}
+
+/* Fixed Header Nav Gap */
+.fixed-header-nav-gap {
+  gap: 1rem;
+}
+
 /* Sidebar Animation Support */
 .sidebar-hidden {
   transform: translateX(-100%);
