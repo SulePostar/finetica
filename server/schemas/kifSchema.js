@@ -1,6 +1,6 @@
-import { Type } from "@google/genai";
+const { Type } = require("@google/genai");
 
-export const salesInvoiceSchema = {
+const salesInvoiceSchema = {
     type: Type.OBJECT,
     properties: {
         invoiceNumber: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
@@ -18,7 +18,6 @@ export const salesInvoiceSchema = {
         buyerName: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
         buyerVatNumber: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
         note: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
-
         items: {
             type: Type.ARRAY,
             items: {
@@ -33,9 +32,37 @@ export const salesInvoiceSchema = {
                     vatAmount: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
                     grossSubtotal: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
                 },
-                required: ["description", "quantity", "unitPrice", "grossSubtotal"]
+                required: [
+                    'orderNumber',
+                    'description',
+                    'unit',
+                    'quantity',
+                    'unitPrice',
+                    'netSubtotal',
+                    'vatAmount',
+                    'grossSubtotal'
+                ]
             }
         }
     },
-    required: ["invoiceNumber", "invoiceDate", "dueDate", "totalAmount", "items"]
+    required: [
+        'invoiceNumber',
+        'invoiceType',
+        'billNumber',
+        'vatPeriod',
+        'invoiceDate',
+        'dueDate',
+        'deliveryPeriod',
+        'totalAmount',
+        'currency',
+        'vatCategory',
+        'sellerName',
+        'sellerVatNumber',
+        'buyerName',
+        'buyerVatNumber',
+        'note',
+        'items'
+    ]
 };
+
+module.exports = salesInvoiceSchema;
