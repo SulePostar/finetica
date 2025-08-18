@@ -207,3 +207,19 @@
 
 
 
+/* Ensure consistent folded width */
+.sidebar-unfoldable {
+  width: var(--cui-sidebar-narrow-width, 64px) !important;
+}
+
+/* Expanded on hover */
+.sidebar-unfoldable:hover {
+  width: var(--cui-sidebar-width, 240px) !important;
+}
+
+/* Prevent any accidental hover behavior on touch devices */
+@media (max-width: 991.98px) {
+  .sidebar.sidebar-unfoldable {
+    width: 0 !important; /* element exists but hidden via 'visible' prop */
+  }
+}
