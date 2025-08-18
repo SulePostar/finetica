@@ -35,24 +35,6 @@ module.exports = {
       delivery_period: Sequelize.STRING,
       total_amount: Sequelize.DECIMAL(18, 2),
       vat_category: Sequelize.STRING,
-      approved: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-      },
-      approved_at: {
-        type: Sequelize.DATE,
-        allowNull: true,
-      },
-      approved_by: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'users',
-          key: 'id',
-        },
-        onDelete: 'SET NULL',
-      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
