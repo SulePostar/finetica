@@ -26,7 +26,7 @@ const editMyProfile = async (req, res, next) => {
   }
   try {
     const { id, ...updateData } = req.body;
-    const updatedUser = await userService.updateProfile(id, updateData);
+    const updatedUser = await userService.updateProfile(id, updateData, req.clientInfo);
     res.json(new UserResponseDTO(updatedUser));
   } catch (error) {
     next(error);

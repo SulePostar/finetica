@@ -1,5 +1,6 @@
 const { User, Role, UserStatus } = require('../models');
 const AppError = require('../utils/errorHandler');
+const activityLogService = require('./activityLogService');
 
 class UserService {
   async getAllUsers() {
@@ -41,7 +42,7 @@ class UserService {
     return user;
   }
 
-  async updateProfile(id, updatedData) {
+  async updateProfile(id, updatedData, clientInfo = {}) {
     const user = await User.findByPk(id);
     if (!user) throw new AppError('User not found', 404);
 
@@ -53,6 +54,21 @@ class UserService {
     });
 
     await user.save();
+
+    // Log profile update
+    await activityLogService.logActivity({
+      userId: id,
+      action: 'update',
+      entity: 'User',
+      entityId: id,
+      details: {
+        updatedFields: Object.keys(updatedData),
+        method: 'profile_update',
+      },
+      ipAddress: clientInfo.ipAddress,
+      userAgent: clientInfo.userAgent,
+      status: 'success',
+    });
 
     return await this.getUserById(id);
   }

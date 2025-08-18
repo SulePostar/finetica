@@ -4,9 +4,10 @@ const { User, Role, UserStatus } = require('../models');
 
 const AppError = require('../utils/errorHandler');
 const { USER_STATUS } = require('../utils/constants');
+const activityLogService = require('./activityLogService');
 
 class AuthService {
-  async register(registerData) {
+  async register(registerData, clientInfo = {}) {
     const { email, password, profileImage, ...rest } = registerData;
 
     const existingUser = await User.findOne({
@@ -33,6 +34,22 @@ class AuthService {
 
     const user = await User.create(userData);
 
+    // Log user registration
+    await activityLogService.logActivity({
+      userId: user.id,
+      action: 'register',
+      entity: 'User',
+      entityId: user.id,
+      details: {
+        email: user.email,
+        roleId: user.roleId,
+        statusId: user.statusId,
+      },
+      ipAddress: clientInfo.ipAddress,
+      userAgent: clientInfo.userAgent,
+      status: 'success',
+    });
+
     return {
       success: true,
       message: 'Registration successful. Your account is pending admin approval.',
@@ -51,7 +68,7 @@ class AuthService {
     };
   }
 
-  async login(loginData) {
+  async login(loginData, clientInfo = {}) {
     const { email, password } = loginData;
     const user = await User.scope('withPassword').findOne({
       where: { email },
@@ -77,6 +94,22 @@ class AuthService {
     if (!isPasswordValid) throw new AppError('Invalid credentials', 401);
 
     await user.update({ lastLoginAt: new Date() });
+
+    // Log successful login
+    await activityLogService.logActivity({
+      userId: user.id,
+      action: 'login',
+      entity: 'User',
+      entityId: user.id,
+      details: {
+        method: 'email_password',
+        role: user.role?.role,
+        status: user.status?.status,
+      },
+      ipAddress: clientInfo.ipAddress,
+      userAgent: clientInfo.userAgent,
+      status: 'success',
+    });
 
     const token = this.#generateToken(user.id, user.role?.id, user.role?.role);
 
@@ -158,6 +191,18 @@ class AuthService {
     }
 
     const token = this.#generateToken(userId, user.role?.id, user.role?.name);
+
+    // Log token refresh
+    await activityLogService.logActivity({
+      userId: userId,
+      action: 'token_refresh',
+      entity: 'User',
+      entityId: userId,
+      details: {
+        method: 'jwt_refresh',
+      },
+      status: 'success',
+    });
 
     return {
       success: true,

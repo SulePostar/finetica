@@ -2,6 +2,7 @@ const { UploadedFile, User } = require('../models');
 const { Op } = require('sequelize');
 const supabaseService = require('../utils/supabase/supabaseService');
 const AppError = require('../utils/errorHandler');
+const activityLogService = require('./activityLogService');
 
 class UploadedFilesService {
   /**
@@ -384,6 +385,22 @@ class UploadedFilesService {
 
     const createdFile = await this.createFileRecord(fileData);
 
+    // Log file upload activity
+    await activityLogService.logActivity({
+      userId: userId,
+      action: 'upload',
+      entity: 'UploadedFile',
+      entityId: createdFile.id,
+      details: {
+        fileName: createdFile.fileName,
+        bucketName: bucketName,
+        fileSize: file.size,
+        mimeType: file.mimetype,
+        description: description,
+      },
+      status: 'success',
+    });
+
     return {
       success: true,
       data: createdFile,
@@ -411,6 +428,21 @@ class UploadedFilesService {
 
     // Delete from database
     await this.deleteFile(fileId);
+
+    // Log file deletion activity
+    await activityLogService.logActivity({
+      userId: file.uploadedBy, // Use the user who originally uploaded the file
+      action: 'delete',
+      entity: 'UploadedFile',
+      entityId: fileId,
+      details: {
+        fileName: file.fileName,
+        bucketName: file.bucketName,
+        originalFileSize: file.fileSize,
+        mimeType: file.mimeType,
+      },
+      status: 'success',
+    });
 
     return {
       success: true,
