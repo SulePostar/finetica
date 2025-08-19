@@ -1,6 +1,7 @@
 const { GoogleGenAI } = require("@google/genai");
 const multer = require("multer");
 const { SalesInvoice, PurchaseInvoice, Contract, BankTransaction, User } = require("../models");
+const { default: KIF_PROMPT } = require("../prompts/Kif.js");
 
 const upload = multer({
     storage: multer.memoryStorage(),
@@ -12,12 +13,15 @@ const ai = new GoogleGenAI({
 });
 
 // Generic AI Document Analysis Service
-const analyzeDocument = async (fileBuffer, mimeType, responseSchema, model) => {
+const analyzeDocument = async (fileBuffer, mimeType, responseSchema, model, prompt) => {
     if (mimeType !== "application/pdf") {
         throw new Error("Invalid file type. Only PDF files are allowed.");
     }
 
     const contents = [
+        {
+            text: prompt,
+        },
         {
             inlineData: {
                 mimeType: "application/pdf",
@@ -223,4 +227,5 @@ module.exports = {
     approveDocument,
     updateDocumentData,
     getDocumentWithApprovalStatus,
+    KIF_PROMPT,
 };
