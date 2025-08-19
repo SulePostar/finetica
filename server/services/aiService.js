@@ -2,7 +2,6 @@ const { GoogleGenAI } = require("@google/genai");
 const multer = require("multer");
 const { SalesInvoice, SalesInvoiceItem, PurchaseInvoice, Contract, BankTransaction, User } = require("../models");
 
-
 const upload = multer({
     storage: multer.memoryStorage(),
     limits: { fileSize: 20 * 1024 * 1024 },
