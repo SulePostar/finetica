@@ -3,22 +3,20 @@ const router = express.Router();
 const {
     getKifData,
     getKifDataById,
-    analyzeKifDocument,
+    processKifInvoice,
     approveKifInvoice,
-    updateKifInvoice,
-    getKifWithApprovalStatus
+    updateKifInvoice
 } = require('../controllers/kif');
 const { upload } = require('../services/aiService');
 const isAuthenticated = require('../middleware/isAuthenticated');
 
 // Basic CRUD routes
-router.get('/kif-data', getKifData);
-router.get('/kif-data/:id', getKifDataById);
+router.get('/', getKifData);
+router.get('/:id', getKifDataById);
 
-// AI Sales Invoice Processing Routes
-router.post('/analyze', isAuthenticated, upload.single('file'), analyzeKifDocument);
+// Sales Invoice Processing Routes
+router.post('/process', isAuthenticated, upload.single('file'), processKifInvoice);
 router.put('/:id/approve', isAuthenticated, approveKifInvoice);
 router.put('/:id/edit', isAuthenticated, updateKifInvoice);
-router.get('/:id', isAuthenticated, getKifWithApprovalStatus);
 
 module.exports = router;

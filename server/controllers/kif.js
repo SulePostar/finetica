@@ -1,10 +1,9 @@
 const {
     getPaginatedKifData,
     getKifById,
-    analyzeKifDocument,
-    approveKifInvoice,
-    updateKifInvoice,
-    getKifWithApprovalStatus
+    processKifDocument,
+    approveKifDocument,
+    updateKifDocumentData
 } = require('../services/kif');
 const AppError = require('../utils/errorHandler');
 
@@ -40,14 +39,14 @@ const getKifDataById = async (req, res, next) => {
     }
 };
 
-const analyzeKifDocumentController = async (req, res, next) => {
+const processKifInvoice = async (req, res, next) => {
     try {
         if (!req.file) {
             return next(new AppError("Missing 'file' in form-data", 400));
         }
 
         const { model } = req.body;
-        const result = await analyzeKifDocument(req.file.buffer, req.file.mimetype, model);
+        const result = await processKifDocument(req.file.buffer, req.file.mimetype, model);
 
         res.json(result);
     } catch (error) {
@@ -55,38 +54,27 @@ const analyzeKifDocumentController = async (req, res, next) => {
     }
 };
 
-const approveKifInvoiceController = async (req, res, next) => {
+const approveKifInvoice = async (req, res, next) => {
     try {
         const { id: invoiceId } = req.params;
         const { userId } = req.user;
 
-        const result = await approveKifInvoice(invoiceId, userId);
+        const result = await approveKifDocument(invoiceId, userId);
 
-        res.json(result);
+        res.json(result)
     } catch (error) {
         next(error);
     }
 };
 
-const updateKifInvoiceController = async (req, res, next) => {
+const updateKifInvoice = async (req, res, next) => {
     try {
         const { id: invoiceId } = req.params;
         const updatedData = req.body;
 
-        const result = await updateKifInvoice(invoiceId, updatedData);
+        const result = await updateKifDocumentData(invoiceId, updatedData);
 
-        res.json(result);
-    } catch (error) {
-        next(error);
-    }
-};
-
-const getKifWithApprovalStatusController = async (req, res, next) => {
-    try {
-        const { id: invoiceId } = req.params;
-        const result = await getKifWithApprovalStatus(invoiceId);
-
-        res.json(result);
+        res.json(result)
     } catch (error) {
         next(error);
     }
@@ -95,8 +83,7 @@ const getKifWithApprovalStatusController = async (req, res, next) => {
 module.exports = {
     getKifData,
     getKifDataById,
-    analyzeKifDocument: analyzeKifDocumentController,
-    approveKifInvoice: approveKifInvoiceController,
-    updateKifInvoice: updateKifInvoiceController,
-    getKifWithApprovalStatus: getKifWithApprovalStatusController,
+    processKifInvoice,
+    approveKifInvoice,
+    updateKifInvoice
 };
