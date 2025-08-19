@@ -59,7 +59,8 @@ router.post('/analyze', isAuthenticated, upload.single('file'), async (req, res)
 router.put('/:id/approve', isAuthenticated, async (req, res) => {
     try {
         const invoiceId = req.params.id;
-        const updatedInvoice = await approveDocument(invoiceId, req.user.id, 'kif');
+
+        const updatedInvoice = await approveDocument(invoiceId, req.user.userId, 'kif');
 
         res.json({
             success: true,
