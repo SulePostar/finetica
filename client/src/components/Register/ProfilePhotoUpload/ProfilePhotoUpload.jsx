@@ -6,61 +6,42 @@ import FileUploadService from '../../../services/fileUploadService';
 import notify from '../../../utilis/toastHelper';
 import './ProfilePhotoUpload.styles.css';
 
-const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false }) => {
+const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, currentPhoto }) => {
     const [showModal, setShowModal] = useState(false);
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [previewUrl, setPreviewUrl] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(currentPhoto || null);
 
     const handlePhotoClick = useCallback(() => {
-        if (!disabled) {
-            setShowModal(true);
-        }
+        if (!disabled) setShowModal(true);
     }, [disabled]);
 
-    const handleFileSelect = useCallback(async (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
+    const handleFileSelect = useCallback(
+        (event) => {
+            const file = event.target.files?.[0];
+            if (!file) return;
 
-        // Validate file
-        const validation = FileUploadService.validateImageFile(file);
-        if (!validation.isValid) {
-            notify.onError(validation.error);
-            return;
-        }
-
-        try {
-            // Create preview
-            const preview = await FileUploadService.createPreviewUrl(file);
-
-            setSelectedFile(file);
-            setPreviewUrl(preview);
-
-            // Notify parent component
-            if (onPhotoSelect) {
-                onPhotoSelect(file);
+            const validation = FileUploadService.validateImageFile(file);
+            if (!validation.isValid) {
+                notify.onError(validation.error);
+                return;
             }
 
-            // Show success message
-            notify.onSuccess('Photo selected! It will be uploaded when you register.');
-        } catch (err) {
-            notify.onError('Failed to process image');
-        }
-    }, [onPhotoSelect]);
+            const preview = URL.createObjectURL(file);
+            setPreviewUrl(preview);
+            onPhotoSelect?.(file);
+            notify.onSuccess('Photo selected! It will be uploaded when you save.');
+        },
+        [onPhotoSelect]
+    );
 
     const handleRemovePhoto = useCallback(() => {
-        setSelectedFile(null);
         setPreviewUrl(null);
+        onPhotoSelect?.(null);
+        onRemove?.();
+    }, [onPhotoSelect, onRemove, setPreviewUrl]);
 
-        if (onPhotoSelect) {
-            onPhotoSelect(null);
-        }
-    }, [onPhotoSelect]);
 
-    const handleCloseModal = useCallback(() => {
-        setShowModal(false);
-    }, []);
-
-    const hasPhoto = Boolean(previewUrl);
+    const handleCloseModal = useCallback(() => setShowModal(false), []);
+    const hasPhoto = Boolean(previewUrl || currentPhoto);
 
     return (
         <>
@@ -80,9 +61,11 @@ const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false }) => {
                 >
                     {hasPhoto ? (
                         <img
-                            src={previewUrl}
-                            alt="Profile preview"
+                            src={previewUrl || currentPhoto}
+                            alt="Profile"
                             className="profile-photo-preview"
+                            loading="lazy"
+                            crossOrigin="anonymous"
                         />
                     ) : (
                         <div className="profile-photo-placeholder">
@@ -90,9 +73,6 @@ const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false }) => {
                         </div>
                     )}
                 </div>
-
-                <div className="profile-photo-text">Upload a photo</div>
-                <div className="profile-photo-subtext">(Optional)</div>
             </div>
 
             <CModal visible={showModal} onClose={handleCloseModal} alignment="center">
@@ -101,12 +81,13 @@ const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false }) => {
                 </CModalHeader>
 
                 <CModalBody className="text-center">
-                    {previewUrl && (
+                    {hasPhoto && (
                         <div className="preview-container mb-3">
                             <img
-                                src={previewUrl}
+                                src={previewUrl || currentPhoto}
                                 alt="Preview"
                                 className="photo-preview"
+                                crossOrigin="anonymous"
                             />
                         </div>
                     )}
@@ -123,7 +104,7 @@ const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false }) => {
                         <CButton
                             color="primary"
                             variant="outline"
-                            onClick={() => document.getElementById('photo-upload-input').click()}
+                            onClick={() => document.getElementById('photo-upload-input')?.click()}
                             disabled={disabled}
                             className="mb-3"
                         >
@@ -132,37 +113,20 @@ const ProfilePhotoUpload = ({ onPhotoSelect, disabled = false }) => {
                         </CButton>
 
                         <div className="upload-info">
-                            <small className="text-muted">
-                                Supported: JPG, PNG, GIF, WebP (Max 5MB)
-                            </small>
+                            <small className="text-muted">Supported: JPG, PNG, GIF, WebP (Max 5MB)</small>
                         </div>
                     </div>
                 </CModalBody>
 
                 <CModalFooter>
-                    <CButton
-                        color="secondary"
-                        variant="outline"
-                        onClick={handleCloseModal}
-                        disabled={disabled}
-                    >
+                    <CButton color="secondary" variant="outline" onClick={handleCloseModal} disabled={disabled}>
                         Cancel
                     </CButton>
-
-                    <CButton
-                        color="success"
-                        onClick={handleCloseModal}
-                    >
+                    <CButton color="success" onClick={handleCloseModal}>
                         Done
                     </CButton>
-
                     {hasPhoto && (
-                        <CButton
-                            color="danger"
-                            variant="outline"
-                            onClick={handleRemovePhoto}
-                            disabled={disabled}
-                        >
+                        <CButton color="danger" variant="outline" onClick={handleRemovePhoto} disabled={disabled}>
                             Remove Photo
                         </CButton>
                     )}

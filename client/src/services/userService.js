@@ -23,6 +23,7 @@ class UserService {
         first_name: userData.firstName,
         last_name: userData.lastName,
         email: userData.email,
+        profile_image: userData.profileImage
       });
       return response.data;
     } catch (error) {

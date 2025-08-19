@@ -9,8 +9,13 @@ const errorHandler = require('./middleware/errorHandler');
 const kifRouter = require('./routes/kif');
 const kufRouter = require('./routes/kuf');
 const bankTransactionRouter = require('./routes/bankTransaction');
+const mailRoute = require("./routes/mailRoute");
+
+const { processEmailQueue } = require('./services/emailQueueService');
+
 const cookieParser = require('cookie-parser')
 const contractRouter = require('./routes/contract'); // 👈 tvoje
+const businessPartnerRouter = require('./routes/businessPartner');
 const googleDriveAutoSync = require('./tasks/googleDriveAutoSync'); // 👈 master
 const googleDriveRouter = require('./routes/googleDrive'); // 👈 master
 
@@ -45,7 +50,9 @@ app.use('/api/files', require('./routes/uploadedFiles'));
 app.use('/api', kifRouter);
 app.use('/api', kufRouter);
 app.use('/api', bankTransactionRouter);
+app.use(mailRoute);
 app.use('/api/contracts', contractRouter);
+app.use('/api/business-partners', businessPartnerRouter);
 app.use('/drive', googleDriveRouter);
 
 app.use(errorHandler);
@@ -57,4 +64,8 @@ googleDriveAutoSync.start();
 
 app.listen(PORT, () => {
   console.log(`🟢 Server is running at port: ${PORT}`);
+
+  setInterval(() => {
+    processEmailQueue().catch(err => console.error('Error in email queue processor:', err));
+  }, 1000 * 60);
 });
