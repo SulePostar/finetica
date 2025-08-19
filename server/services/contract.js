@@ -43,7 +43,6 @@ const getPaginatedContractData = ({ page = 1, perPage = 10, sortField, sortOrder
 };
 
 const approveContractById = async (id, contractData, userId) => {
-    console.log("Radi")
     const contract = await Contract.findByPk(id);
     if (!contract) {
         throw new AppError('Contract not found', 404);
