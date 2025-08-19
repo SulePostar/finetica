@@ -31,7 +31,7 @@ router.post('/analyze', isAuthenticated, upload.single('file'), async (req, res)
             req.file.mimetype,
             salesInvoiceSchema,
             model,
-            'sales invoice'
+            KIF_PROMPT
         );
 
         // Create sales invoice in database (not approved by default)
