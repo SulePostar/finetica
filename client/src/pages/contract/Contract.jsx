@@ -46,7 +46,7 @@ const Contract = () => {
             name: 'Partner ID',
             selector: row => row.partner_id,
             sortable: true,
-            width: '140px'
+            width: '140px',
         },
         {
             name: 'Contract Number',
@@ -140,7 +140,6 @@ const Contract = () => {
                 style={{
                     marginLeft: sidebarWidth,
                     width: `calc(100vw - ${sidebarWidth}px)`,
-                    padding: '10rem',
                 }}
             >
                 <div className="contract-table-responsive">

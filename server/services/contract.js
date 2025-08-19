@@ -1,6 +1,5 @@
-const db = require('../models');
+const { Contract } = require('../models');
 const AppError = require('../utils/errorHandler');
-
 const generateMockContracts = (total = 25) => {
     const contractTypes = ['Service', 'License', 'Supply', 'Consulting'];
     const paymentTerms = ['Net 30', 'Net 60', 'Advance', 'Upon Delivery'];
@@ -31,8 +30,12 @@ const getPaginatedContractData = ({ page = 1, perPage = 10, sortField, sortOrder
     if (sortField) {
         fullData.sort((a, b) =>
             sortOrder === 'asc'
-                ? a[sortField] > b[sortField] ? 1 : -1
-                : a[sortField] < b[sortField] ? 1 : -1
+                ? a[sortField] > b[sortField]
+                    ? 1
+                    : -1
+                : a[sortField] < b[sortField]
+                    ? 1
+                    : -1
         );
     }
 
@@ -42,46 +45,44 @@ const getPaginatedContractData = ({ page = 1, perPage = 10, sortField, sortOrder
     return { data: pagedData, total };
 };
 
-/**
- * Create a new contract in the database
- * @param {Object} contractData - The contract data
- * @returns {Promise<Object>} - Response object with success status, message and contract data
- */
-const createContract = async (contractData) => {
-    try {
-        // Get the Contract model
-        const Contract = db.Contract;
-
-        // Map the request data to database model fields
-        const mappedData = {
-            partnerId: contractData.partnerId,
-            contractNumber: contractData.contractNumber,
-            contractType: contractData.contractType,
-            description: contractData.description,
-            startDate: contractData.startDate,
-            endDate: contractData.endDate,
-            isActive: contractData.isActive !== undefined ? contractData.isActive : true,
-            paymentTerms: contractData.paymentTerms,
-            currency: contractData.currency,
-            amount: contractData.amount,
-            signedAt: contractData.signedAt
-        };
-
-        // Create the contract in the database
-        const contract = await Contract.create(mappedData);
-
-        // Return formatted response
-        return {
-            success: true,
-            message: 'Contract created successfully',
-            data: contract
-        };
-    } catch (error) {
-        throw new AppError(`Failed to create contract: ${error.message}`, 500);
+const approveContractById = async (id, contractData, userId) => {
+    const contract = await Contract.findByPk(id);
+    if (!contract) {
+        throw new AppError('Contract not found', 404);
     }
+
+    if (contract.approvedAt) {
+        throw new AppError('Contract already approved', 400);
+    }
+
+    await contract.update({
+        ...contractData,
+        approvedAt: new Date(),
+        approvedBy: userId,
+    });
+    return {
+        id: contract.id,
+        partnerId: contract.partnerId,
+        contractNumber: contract.contractNumber,
+        contractType: contract.contractType,
+        description: contract.description,
+        startDate: contract.startDate,
+        endDate: contract.endDate,
+        isActive: contract.isActive,
+        paymentTerms: contract.paymentTerms,
+        currency: contract.currency,
+        amount: contract.amount,
+        signedAt: contract.signedAt,
+    };
+};
+
+const createContract = async (contractData) => {
+    const newContract = await Contract.create(contractData);
+    return newContract;
 };
 
 module.exports = {
     getPaginatedContractData,
+    approveContractById,
     createContract,
 };

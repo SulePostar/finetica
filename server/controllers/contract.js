@@ -1,4 +1,5 @@
-const { getPaginatedContractData, createContract } = require('../services/contract');
+const { getPaginatedContractData, approveContractById } = require('../services/contract');
+const { createContract } = require('../services/contract');
 
 const getContractData = (req, res) => {
     const { page, perPage, sortField, sortOrder } = req.query;
@@ -13,28 +14,28 @@ const getContractData = (req, res) => {
     res.json(result);
 };
 
-/**
- * Create a new contract
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
- */
-const createNewContract = async (req, res, next) => {
+const approveContract = async (req, res) => {
+    const { id } = req.params;
+    console.log(req.user);
+    const userId = req.user.userId;
+    const contractData = req.body;
+    const result = await approveContractById(id, contractData, userId);
+    res.json(result);
+};
+
+const addContract = async (req, res, next) => {
     try {
-        // Contract data is already validated by the validation middleware
-        const contractData = req.body;
-
-        // Create the contract in the database and get formatted response
-        const result = await createContract(contractData);
-
-        // Return the result with a 201 status code
-        res.status(201).json(result);
+        const contract = await createContract(req.body);
+        return res.status(201).json({
+            message: 'Contract created successfully',
+            data: contract,
+        });
     } catch (error) {
         next(error);
     }
 };
-
 module.exports = {
     getContractData,
-    createNewContract,
+    approveContract,
+    addContract,
 };
