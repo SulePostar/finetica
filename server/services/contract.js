@@ -1,115 +1,128 @@
-const { Contract } = require('../models');
+const { Contract, BusinessPartner, Sequelize } = require('../models');
 const AppError = require('../utils/errorHandler');
-const generateMockContracts = (total = 25) => {
-    const contractTypes = ['Service', 'License', 'Supply', 'Consulting'];
-    const paymentTerms = ['Net 30', 'Net 60', 'Advance', 'Upon Delivery'];
-    const currencies = ['EUR', 'USD', 'BAM', 'GBP'];
 
-    return Array.from({ length: total }, (_, i) => ({
-        id: i + 1,
-        partner_id: 1000 + i,
-        contract_number: `CN-${2025}${String(i + 1).padStart(3, '0')}`,
-        contract_type: contractTypes[i % contractTypes.length],
-        description: `${contractTypes[i % contractTypes.length]} contract #${i + 1}`,
-        start_date: `2025-01-${((i % 28) + 1).toString().padStart(2, '0')}`,
-        end_date: `2025-12-${((i % 28) + 1).toString().padStart(2, '0')}`,
-        is_active: i % 3 !== 0,
-        payment_terms: paymentTerms[i % paymentTerms.length],
-        currency: currencies[i % currencies.length],
-        amount: parseFloat((Math.random() * 100000 + 1000).toFixed(2)),
-        signed_at: `2025-01-${((i % 28) + 1).toString().padStart(2, '0')}`,
-        created_at: `2024-12-${((i % 28) + 1).toString().padStart(2, '0')}`,
-        updated_at: `2025-01-${((i % 28) + 1).toString().padStart(2, '0')}`,
-    }));
+const SORT_FIELD_MAP = {
+  id: 'id',
+  partner_id: 'partnerId',
+  contract_number: 'contractNumber',
+  contract_type: 'contractType',
+  description: 'description',
+  start_date: 'startDate',
+  end_date: 'endDate',
+  is_active: 'isActive',
+  payment_terms: 'paymentTerms',
+  currency: 'currency',
+  amount: 'amount',
+  signed_at: 'signedAt',
+  approved_at: 'approvedAt',
+  approved_by: 'approvedBy',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
 };
 
-const getPaginatedContractData = ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
-    const total = 25;
-    const fullData = generateMockContracts(total);
-
-    if (sortField) {
-        fullData.sort((a, b) =>
-            sortOrder === 'asc'
-                ? a[sortField] > b[sortField]
-                    ? 1
-                    : -1
-                : a[sortField] < b[sortField]
-                    ? 1
-                    : -1
-        );
-    }
-
-    const start = (page - 1) * perPage;
-    const pagedData = fullData.slice(start, start + parseInt(perPage));
-
-    return { data: pagedData, total };
+const normalize = (row) => {
+  const r = { ...row };
+  if (r.amount != null) r.amount = Number(r.amount);
+  return r;
 };
 
-const approveContractById = async (id, contractData, userId) => {
-    const contract = await Contract.findByPk(id);
-    if (!contract) {
-        throw new AppError('Contract not found', 404);
-    }
+const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
+  const limit = Math.max(1, Number(perPage) || 10);
+  const offset = Math.max(0, ((Number(page) || 1) - 1) * limit);
 
-    if (contract.approvedAt) {
-        throw new AppError('Contract already approved', 400);
-    }
+  let order = [['created_at', 'DESC']];
+  if (sortField && SORT_FIELD_MAP[sortField]) {
+    order = [[SORT_FIELD_MAP[sortField], (sortOrder || 'asc').toUpperCase() === 'DESC' ? 'DESC' : 'ASC']];
+  }
 
-    await contract.update({
-        ...contractData,
-        approvedAt: new Date(),
-        approvedBy: userId,
-    });
-    return {
-        id: contract.id,
-        partnerId: contract.partnerId,
-        contractNumber: contract.contractNumber,
-        contractType: contract.contractType,
-        description: contract.description,
-        startDate: contract.startDate,
-        endDate: contract.endDate,
-        isActive: contract.isActive,
-        paymentTerms: contract.paymentTerms,
-        currency: contract.currency,
-        amount: contract.amount,
-        signedAt: contract.signedAt,
-        approvedAt: contract.approvedAt,
-        approvedBy: contract.approvedBy,
-    };
-};
+  const { rows, count } = await Contract.findAndCountAll({
+    offset,
+    limit,
+    order,
+    attributes: [
+      'id',
+      'partnerId',
+      'contractNumber',
+      'contractType',
+      'description',
+      'startDate',
+      'endDate',
+      'isActive',
+      'paymentTerms',
+      'currency',
+      'amount',
+      'signedAt',
+      'approvedAt',
+      'approvedBy',
+      'created_at',
+      'updated_at',
+    ],
+    include: [
+      {
+        model: BusinessPartner,
+        attributes: ['id', 'name', 'short_name'],
+        required: false,
+      },
+    ],
+  });
 
-const createContract = async (contractData) => {
-    const newContract = await Contract.create(contractData);
-    return newContract;
+  const data = rows.map((r) => normalize(r.get({ plain: true })));
+  return { data, total: count };
 };
 
 const findById = async (id) => {
-    const contract = await Contract.findByPk(id);
-    if (!contract) {
-        throw new AppError('Contract not found', 404);
-    }
-    return {
-        id: contract.id,
-        partnerId: contract.partnerId,
-        contractNumber: contract.contractNumber,
-        contractType: contract.contractType,
-        description: contract.description,
-        startDate: contract.startDate,
-        endDate: contract.endDate,
-        isActive: contract.isActive,
-        paymentTerms: contract.paymentTerms,
-        currency: contract.currency,
-        amount: contract.amount,
-        signedAt: contract.signedAt,
-        approvedAt: contract.approvedAt,
-        approvedBy: contract.approvedBy,
-    };
+  const contract = await Contract.findByPk(id, {
+    attributes: [
+      'id',
+      'partnerId',
+      'contractNumber',
+      'contractType',
+      'description',
+      'startDate',
+      'endDate',
+      'isActive',
+      'paymentTerms',
+      'currency',
+      'amount',
+      'signedAt',
+      'approvedAt',
+      'approvedBy',
+      'created_at',
+      'updated_at',
+    ],
+    include: [
+      {
+        model: BusinessPartner,
+        attributes: ['id', 'name', 'short_name'],
+      },
+    ],
+  });
+  if (!contract) throw new AppError('Contract not found', 404);
+  return normalize(contract.get({ plain: true }));
 };
 
+const approveContractById = async (id, body, userId) => {
+  const contract = await Contract.findByPk(id);
+  if (!contract) throw new AppError('Contract not found', 404);
+  if (contract.approvedAt) throw new AppError('Contract already approved', 400);
+
+  await contract.update({
+    ...body,
+    approvedAt: new Date(),
+    approvedBy: userId ?? null,
+  });
+
+  return normalize(contract.get({ plain: true }));
+};
+
+const createContract = async (payload) => {
+  const created = await Contract.create(payload);
+  return normalize(created.get({ plain: true }));
+};
 
 module.exports = {
-    getPaginatedContractData,
-    approveContractById,
-    createContract,
-    findById
+  listContracts,
+  findById,
+  approveContractById,
+  createContract,
 };

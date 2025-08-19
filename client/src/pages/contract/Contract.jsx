@@ -10,7 +10,6 @@ const Contract = () => {
   const navigate = useNavigate();
   const sidebarWidth = useSidebarWidth();
 
-  // Ako koristiš Vite env var za API
   const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
   const apiEndpoint = useMemo(() => `${API_BASE}/contracts`, [API_BASE]);
 
@@ -19,7 +18,6 @@ const Contract = () => {
   }, [navigate]);
 
   const handleApprove = useCallback((id) => {
-    // ⬇️ samo navigacija na approve stranicu
     navigate(`/contracts/${id}/approve`);
   }, [navigate]);
 
