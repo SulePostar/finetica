@@ -17,11 +17,9 @@ const Vat = () => {
     const handleView = (row) => {
         navigate(`/vat/${row.id}`);
     };
-    //Placeholder functions for edit, delete, and download actions
+    //Placeholder functions for edit and download actions
     const handleEdit = (row) => { };
-    const handleDelete = (row) => { };
     const handleDownload = (row) => { };
-
 
     const columns = [
         { name: 'ID', selector: row => row.id, sortable: true },
@@ -29,6 +27,7 @@ const Vat = () => {
         { name: 'Quantity', selector: row => row.amount, sortable: true },
         { name: 'Price', selector: row => row.price, sortable: true },
         { name: 'Date', selector: row => row.date, sortable: true },
+        { name: 'Review Status', selector: row => row.status, sortable: true },
         {
             name: 'Actions',
             cell: row => (
@@ -36,7 +35,6 @@ const Vat = () => {
                     row={row}
                     onView={handleView}
                     onEdit={handleEdit}
-                    onDelete={handleDelete}
                     onDownload={handleDownload}
                 />
             ),

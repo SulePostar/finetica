@@ -17,9 +17,8 @@ const Kif = () => {
     const handleView = (id) => {
         navigate(`/kif/${id}`);
     };
-    //Placeholder functions for edit, delete, and download actions
+    //Placeholder functions for edit and download actions
     const handleEdit = (id) => { };
-    const handleDelete = (id) => { };
     const handleDownload = (id) => { };
 
     const columns = [
@@ -28,6 +27,7 @@ const Kif = () => {
         { name: 'Quantity', selector: row => row.amount, sortable: true },
         { name: 'Price', selector: row => row.price, sortable: true },
         { name: 'Date', selector: row => row.date, sortable: true },
+        { name: 'Review Status', selector: row => row.status, sortable: true },
         {
             name: 'Actions',
             cell: row => (
@@ -35,7 +35,6 @@ const Kif = () => {
                     row={row}
                     onView={handleView}
                     onEdit={handleEdit}
-                    onDelete={handleDelete}
                     onDownload={handleDownload}
                 />
             ),

@@ -1,26 +1,43 @@
-import React from 'react';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
 import { useNavigate } from 'react-router-dom';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import './Contract.css';
+import { useState, useEffect } from 'react';
 
 const Contract = () => {
     const navigate = useNavigate();
     const sidebarWidth = useSidebarWidth();
+    const [approvedContracts, setApprovedContracts] = useState({});
+
+    // Load approved contracts from localStorage on mount
+    useEffect(() => {
+        const stored = localStorage.getItem('approvedContracts');
+        if (stored) {
+            setApprovedContracts(JSON.parse(stored));
+        }
+    }, []);
 
     const handleView = (id) => {
         navigate(`/contracts/${id}`);
     };
 
-    const handleEdit = (id) => { };
-    const handleDelete = (id) => { };
+    const handleApprove = (id) => {
+        // Update local state
+        const updated = { ...approvedContracts, [id]: true };
+        setApprovedContracts(updated);
+
+        // Persist to localStorage
+        localStorage.setItem('approvedContracts', JSON.stringify(updated));
+
+        // Navigate if you still want to go to the approve page
+        navigate(`/contracts/${id}/approve`);
+    };
+
     const handleDownload = (id) => { };
 
     const handleRowClick = (row) => {
-        console.log('Row clicked:', row);
-        console.log('Navigating to:', `/contracts/${row.id}`);
         navigate(`/contracts/${row.id}`);
     };
 
@@ -100,6 +117,7 @@ const Contract = () => {
             width: '150px',
             cell: row => new Date(row.signed_at).toLocaleDateString()
         },
+        { name: 'Review Status', selector: row => row.status, sortable: true, width: '190px' },
         {
             name: 'Actions',
             width: '120px',
@@ -107,15 +125,14 @@ const Contract = () => {
                 <ActionsDropdown
                     row={row}
                     onView={handleView}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
+                    onApprove={() => handleApprove(row.id)}
                     onDownload={handleDownload}
+                    isApproved={!!approvedContracts[row.id]}
                 />
             ),
             ignoreRowClick: true
         }
     ];
-
     return (
         <DefaultLayout>
             <div
