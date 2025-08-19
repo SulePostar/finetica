@@ -32,10 +32,13 @@ import {
 import { cilSearch, cilCloudDownload, cilFilter, cilMagnifyingGlass } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import { format } from 'date-fns';
-import { AppHeader, AppSidebar } from '../../components/index';
+import DefaultLayout from '../../layout/DefaultLayout';
+import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import { activityLogService } from '../../services/activityLogService';
+import '../../styles/TablePages.css';
 
 const ActivityLogs = () => {
+    const sidebarWidth = useSidebarWidth();
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -202,11 +205,15 @@ const ActivityLogs = () => {
     };
 
     return (
-        <>
-            <AppSidebar />
-            <div className="wrapper d-flex flex-column min-vh-100">
-                <AppHeader />
-                <div className="body flex-grow-1 px-3">
+        <DefaultLayout>
+            <div
+                className="table-page-outer"
+                style={{
+                    marginLeft: sidebarWidth,
+                    width: `calc(100vw - ${sidebarWidth}px)`,
+                }}
+            >
+                <div className="table-content-wrapper">
                     <CRow>
                         <CCol xs={12}>
                             <CCard className="mb-4">
@@ -547,7 +554,7 @@ const ActivityLogs = () => {
                     </CButton>
                 </CModalFooter>
             </CModal>
-        </>
+        </DefaultLayout>
     );
 };
 

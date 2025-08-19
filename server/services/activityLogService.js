@@ -1,4 +1,5 @@
 const { ActivityLog, User } = require('../models');
+const { Op } = require('sequelize');
 
 /**
  * Centralized activity logging service
@@ -98,25 +99,25 @@ class ActivityLogService {
 
         if (startDate || endDate) {
             whereClause.createdAt = {};
-            if (startDate) whereClause.createdAt.$gte = new Date(startDate);
-            if (endDate) whereClause.createdAt.$lte = new Date(endDate);
+            if (startDate) whereClause.createdAt[Op.gte] = new Date(startDate);
+            if (endDate) whereClause.createdAt[Op.lte] = new Date(endDate);
         }
 
         // Build search clause
         let searchClause = null;
         if (search) {
             searchClause = {
-                $or: [
-                    { action: { $iLike: `%${search}%` } },
-                    { entity: { $iLike: `%${search}%` } },
-                    { details: { $iLike: `%${search}%` } },
+                [Op.or]: [
+                    { action: { [Op.iLike]: `%${search}%` } },
+                    { entity: { [Op.iLike]: `%${search}%` } },
+                    { details: { [Op.iLike]: `%${search}%` } },
                 ],
             };
         }
 
         // Combine where clauses
         const finalWhere = searchClause
-            ? { $and: [whereClause, searchClause] }
+            ? { [Op.and]: [whereClause, searchClause] }
             : whereClause;
 
         // Calculate offset
@@ -228,7 +229,7 @@ class ActivityLogService {
                 ActivityLog.count({
                     where: {
                         createdAt: {
-                            $gte: new Date(new Date().setHours(0, 0, 0, 0)),
+                            [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0)),
                         },
                     },
                 }),
@@ -269,7 +270,7 @@ class ActivityLogService {
                         [ActivityLog.sequelize.fn('COUNT', '*'), 'count'],
                     ],
                     where: {
-                        entity: { $ne: null },
+                        entity: { [Op.ne]: null },
                     },
                     group: ['entity'],
                     order: [[ActivityLog.sequelize.fn('COUNT', '*'), 'DESC']],

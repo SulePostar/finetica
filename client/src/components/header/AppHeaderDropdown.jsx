@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../redux/auth/authSlice';
+import authService from '../../services/authService';
 import notify from '../../utilis/toastHelper';
 import ConfirmationModal from './../Modals/ConfirmationModal';
 
@@ -20,10 +21,19 @@ const AppHeaderDropdown = ({ isDarkMode }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleLogout = () => {
-    dispatch(logout());
-    notify.onSuccess('Logout successful');
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+      dispatch(logout());
+      notify.onSuccess('Logout successful');
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Even if the API call fails, we should still log out locally
+      dispatch(logout());
+      notify.onSuccess('Logout successful');
+      navigate('/login');
+    }
   };
 
   return (

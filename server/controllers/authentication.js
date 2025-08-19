@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken'); // ← Add this line
 const authService = require('../services/authentication');
 const activityLogService = require('../services/activityLogService');
 
@@ -35,18 +36,30 @@ const refreshToken = async (req, res, next) => {
 
 const logout = async (req, res) => {
   try {
-    // Log logout activity
-    if (req.user && req.user.userId) {
-      await activityLogService.logActivity({
-        userId: req.user.userId,
-        action: 'logout',
-        entity: 'User',
-        entityId: req.user.userId,
-        details: {
-          method: 'token_invalidation',
-        },
-        status: 'success',
-      });
+    // Log logout activity if we have user info from the token
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      try {
+        const token = authHeader.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Log the logout activity
+        await activityLogService.logActivity({
+          userId: decoded.userId,
+          action: 'logout',
+          entity: 'User',
+          entityId: decoded.userId,
+          details: {
+            method: 'token_invalidation',
+            role: decoded.roleName || 'unknown',
+          },
+          ipAddress: req.clientInfo?.ipAddress,
+          userAgent: req.clientInfo?.userAgent,
+          status: 'success',
+        });
+      } catch (error) {
+        console.log('Token verification failed during logout:', error.message);
+      }
     }
 
     return res.status(200).json({

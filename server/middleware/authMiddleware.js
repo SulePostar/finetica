@@ -15,10 +15,15 @@ module.exports = function authorizeAdmin(req, res, next) {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
 
-    console.log('Decoded token:', decoded); // Debug log
+    console.log('=== AUTH MIDDLEWARE DEBUG ===');
+    console.log('Decoded token:', decoded);
+    console.log('Role name from token:', decoded.roleName);
+    console.log('User ID from token:', decoded.userId);
 
     // Check if user has admin role using roleName from token
-    if (decoded.roleName === 'admin') {
+    // Allow both 'admin' and 'Admin' (case-insensitive check)
+    const userRole = decoded.roleName?.toLowerCase();
+    if (userRole === 'admin' || userRole === 'administrator') {
       return next();
     } else {
       console.log('Access denied - Role:', decoded.roleName); // Debug log
