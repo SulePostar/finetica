@@ -16,7 +16,7 @@ import {
 import CIcon from '@coreui/icons-react';
 import { cilFile } from '@coreui/icons';
 import { useState, useEffect } from 'react';
-import ContractService from '../../services/contract'
+import ContractService from '../../services/contract'; 
 
 const InvoiceDetails = () => {
   const { id } = useParams();
@@ -29,18 +29,33 @@ const InvoiceDetails = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
 
-  // Determine document type
-  const documentType = (() => {
-    if (location.pathname.includes('/kif/')) return 'kif';
-    if (location.pathname.includes('/kuf/')) return 'kuf';
-    if (location.pathname.includes('/contracts/')) return 'contract';
-    return 'kuf';
-  })();
 
-  // Determine mode
   const isApproveMode = location.pathname.includes('/approve');
 
-  // Fetch contract data
+  const computeApproved = (d) =>
+    Boolean(d?.approved_at || d?.approved_by || d?.status === 'approved');
+
+  // helper: snake_case -> camelCase payload koji backend schema očekuje
+  const toCamelApprovePayload = (d) => ({
+    // obavezna polja iz tvoje validacije (camelCase!)
+    partnerId: d.partner_id,
+    contractNumber: d.contract_number,
+    contractType: d.contract_type,
+    startDate: d.start_date,
+    endDate: d.end_date,
+
+    // ostala polja
+    description: d.description,
+    isActive: d.is_active,
+    paymentTerms: d.payment_terms,
+    currency: d.currency,
+    amount: d.amount,
+    signedAt: d.signed_at,
+    pdfUrl: d.pdfUrl ?? null,
+
+    status: 'approved',
+  });
+
   useEffect(() => {
     const fetchDocument = async () => {
       setLoading(true);
@@ -49,6 +64,7 @@ const InvoiceDetails = () => {
         const { data } = await ContractService.getById(id);
         setFormData(data);
         setPdfUrl(data.pdfUrl || 'https://pdfobject.com/pdf/sample.pdf');
+        setIsApproved(computeApproved(data));
       } catch (err) {
         const msg = err?.response?.data?.message || err.message || 'Failed to load document';
         setError(msg);
@@ -59,17 +75,17 @@ const InvoiceDetails = () => {
     };
 
     fetchDocument();
-  }, [id, documentType]);
+  }, [id]);
 
-  // Handlers
+
   const handleApprove = async () => {
     try {
-      const payload = { status: 'approved' };
+      const payload = toCamelApprovePayload(formData);
       const { data } = await ContractService.approve(id, payload);
       setFormData(data);
-      setIsApproved(true);
+      setIsApproved(computeApproved(data));
     } catch (err) {
-      console.error('Approve failed:', err?.response?.data || err.message);
+      console.error('Approve failed:', err?.response?.status, err?.response?.data || err.message);
     }
   };
 
@@ -79,21 +95,29 @@ const InvoiceDetails = () => {
     setIsEditing(false);
     setLoading(true);
     setError(null);
-
     ContractService.getById(id)
-      .then(res => setFormData(res.data))
-      .catch(err => setError(err?.response?.data?.message || err.message))
+      .then((res) => {
+        setFormData(res.data);
+        setIsApproved(computeApproved(res.data));
+      })
+      .catch((err) => setError(err?.response?.data?.message || err.message))
       .finally(() => setLoading(false));
   };
 
   const handleSave = async () => {
     try {
-      await ContractService.update(id, formData);
+      const payload = toCamelApprovePayload(formData);
+      const { data } = await ContractService.approve(id, payload);
+      setFormData(data);
+      setIsApproved(computeApproved(data));
       setIsEditing(false);
     } catch (err) {
-      console.error('Save failed:', err?.response?.data || err.message);
+      console.error('Save (approve) failed:', err?.response?.status, err?.response?.data || err.message);
     }
   };
+
+
+  const documentType = 'contract';
 
   return (
     <DefaultLayout>
@@ -107,12 +131,12 @@ const InvoiceDetails = () => {
                 <DocumentInfo
                   data={formData}
                   type={documentType}
-                  editable={isEditing}
+                  editable={isApproveMode && isEditing} 
                   loading={loading}
                   error={error}
-                  onChange={setFormData}
+                  onChange={setFormData}                 
                   actions={
-                    isApproveMode && (
+                    isApproveMode ? (                    
                       <>
                         {!isEditing ? (
                           <div className="w-100 d-flex justify-content-center mt-3 gap-2">
@@ -140,7 +164,7 @@ const InvoiceDetails = () => {
                           </div>
                         )}
                       </>
-                    )
+                    ) : undefined
                   }
                 />
               )}
