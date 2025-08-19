@@ -1,15 +1,14 @@
-const { getPaginatedKifData, getKifById } = require('../services/kif');
 const {
-    analyzeDocument,
-    createDocumentFromAI,
-    approveDocument,
-    updateDocumentData,
-    getDocumentWithApprovalStatus
-} = require('../services/aiService');
-const KIF_PROMPT = require('../prompts/Kif.js');
-const salesInvoiceSchema = require('../schemas/kifSchema');
+    getPaginatedKifData,
+    getKifById,
+    analyzeKifDocument,
+    approveKifInvoice,
+    updateKifInvoice,
+    getKifWithApprovalStatus
+} = require('../services/kif');
+const AppError = require('../utils/errorHandler');
 
-const getKifData = async (req, res) => {
+const getKifData = async (req, res, next) => {
     try {
         const { page, perPage, sortField, sortOrder } = req.query;
 
@@ -22,150 +21,82 @@ const getKifData = async (req, res) => {
 
         res.json(result);
     } catch (error) {
-        console.error('Error in getKifData controller:', error);
-        res.status(500).json({
-            error: 'Failed to fetch KIF data',
-            message: error.message
-        });
+        next(error);
     }
 };
 
-const getKifDataById = async (req, res) => {
+const getKifDataById = async (req, res, next) => {
     try {
         const { id } = req.params;
 
         if (!id) {
-            return res.status(400).json({
-                error: 'ID parameter is required'
-            });
+            return next(new AppError('ID parameter is required', 400));
         }
 
         const result = await getKifById(parseInt(id));
         res.json(result);
     } catch (error) {
-        console.error('Error in getKifDataById controller:', error);
-        if (error.message === 'Sales invoice not found') {
-            res.status(404).json({
-                error: 'KIF record not found',
-                message: error.message
-            });
-        } else {
-            res.status(500).json({
-                error: 'Failed to fetch KIF data',
-                message: error.message
-            });
-        }
+        next(error);
     }
 };
 
-const analyzeKifDocument = async (req, res) => {
+const analyzeKifDocumentController = async (req, res, next) => {
     try {
         if (!req.file) {
-            return res.status(400).json({ error: "Missing 'file' in form-data." });
+            return next(new AppError("Missing 'file' in form-data", 400));
         }
 
-        // Get model from request body or use default
-        const { model = "gemini-2.5-flash-lite" } = req.body;
+        const { model } = req.body;
+        const result = await analyzeKifDocument(req.file.buffer, req.file.mimetype, model);
 
-        const extractedData = await analyzeDocument(
-            req.file.buffer,
-            req.file.mimetype,
-            salesInvoiceSchema,
-            model,
-            KIF_PROMPT
-        );
-
-        // Create sales invoice in database (not approved by default)
-        const invoice = await createDocumentFromAI(extractedData, 'kif');
-
-        res.json({
-            success: true,
-            data: {
-                ...invoice.toJSON(),
-                isApproved: false,
-                approvalStatus: 'pending'
-            }
-        });
+        res.json(result);
     } catch (error) {
-        console.error('Sales Invoice Analysis Error:', error);
-        res.status(500).json({
-            error: error.message || 'Failed to analyze sales invoice',
-            success: false
-        });
+        next(error);
     }
 };
 
-const approveKifInvoice = async (req, res) => {
+const approveKifInvoiceController = async (req, res, next) => {
     try {
-        const invoiceId = req.params.id;
-        const userId = req.user.userId;
+        const { id: invoiceId } = req.params;
+        const { userId } = req.user;
 
-        const updatedInvoice = await approveDocument(invoiceId, userId, 'kif');
+        const result = await approveKifInvoice(invoiceId, userId);
 
-        res.json({
-            success: true,
-            data: {
-                ...updatedInvoice.toJSON(),
-                isApproved: true,
-                approvalStatus: 'approved'
-            }
-        });
+        res.json(result);
     } catch (error) {
-        console.error('Sales Invoice Approval Error:', error);
-        res.status(500).json({
-            error: error.message || 'Failed to approve sales invoice',
-            success: false
-        });
+        next(error);
     }
 };
 
-const updateKifInvoice = async (req, res) => {
+const updateKifInvoiceController = async (req, res, next) => {
     try {
-        const invoiceId = req.params.id;
+        const { id: invoiceId } = req.params;
         const updatedData = req.body;
 
-        const updatedInvoice = await updateDocumentData(invoiceId, updatedData, 'kif');
+        const result = await updateKifInvoice(invoiceId, updatedData);
 
-        res.json({
-            success: true,
-            data: {
-                ...updatedInvoice.toJSON(),
-                isApproved: false,
-                approvalStatus: 'pending'
-            }
-        });
+        res.json(result);
     } catch (error) {
-        console.error('Sales Invoice Update Error:', error);
-        res.status(500).json({
-            error: error.message || 'Failed to update sales invoice',
-            success: false
-        });
+        next(error);
     }
 };
 
-const getKifWithApprovalStatus = async (req, res) => {
+const getKifWithApprovalStatusController = async (req, res, next) => {
     try {
-        const invoiceId = req.params.id;
-        const invoice = await getDocumentWithApprovalStatus(invoiceId, 'kif');
+        const { id: invoiceId } = req.params;
+        const result = await getKifWithApprovalStatus(invoiceId);
 
-        res.json({
-            success: true,
-            data: invoice
-        });
+        res.json(result);
     } catch (error) {
-        console.error('Sales Invoice Fetch Error:', error);
-        res.status(500).json({
-            error: error.message || 'Failed to fetch sales invoice',
-            success: false
-        });
+        next(error);
     }
 };
 
 module.exports = {
     getKifData,
     getKifDataById,
-    analyzeKifDocument,
-    approveKifInvoice,
-    updateKifInvoice,
-    getKifWithApprovalStatus,
+    analyzeKifDocument: analyzeKifDocumentController,
+    approveKifInvoice: approveKifInvoiceController,
+    updateKifInvoice: updateKifInvoiceController,
+    getKifWithApprovalStatus: getKifWithApprovalStatusController,
 };

@@ -1,4 +1,14 @@
 const { SalesInvoice, SalesInvoiceItem, BusinessPartner } = require('../models');
+const {
+    analyzeDocument,
+    createDocumentFromAI,
+    approveDocument,
+    updateDocumentData,
+    getDocumentWithApprovalStatus
+} = require('./aiService');
+const KIF_PROMPT = require('../prompts/Kif.js');
+const salesInvoiceSchema = require('../schemas/kifSchema');
+const AppError = require('../utils/errorHandler');
 
 // Transform function for sales invoice data
 const transformInvoiceData = (invoice) => ({
@@ -20,6 +30,12 @@ const transformInvoiceData = (invoice) => ({
     createdAt: invoice.created_at,
     updatedAt: invoice.updated_at,
     items: invoice.SalesInvoiceItems || []
+});
+
+const formatInvoiceWithStatus = (invoice, isApproved = false) => ({
+    ...invoice.toJSON(),
+    isApproved,
+    approvalStatus: isApproved ? 'approved' : 'pending'
 });
 
 const getPaginatedKifData = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
@@ -59,8 +75,7 @@ const getPaginatedKifData = async ({ page = 1, perPage = 10, sortField, sortOrde
 
         return { data: transformedData, total };
     } catch (error) {
-        console.error('Error fetching KIF data:', error);
-        throw error;
+        throw new AppError('Failed to fetch KIF data', 500);
     }
 };
 
@@ -80,7 +95,7 @@ const getKifById = async (id) => {
         });
 
         if (!salesInvoice) {
-            throw new Error('Sales invoice not found');
+            throw new AppError('Sales invoice not found', 404);
         }
 
         // Transform data to match the expected format
@@ -88,12 +103,82 @@ const getKifById = async (id) => {
 
         return transformedData;
     } catch (error) {
-        console.error('Error fetching KIF by ID:', error);
-        throw error;
+        throw new AppError('Failed to fetch KIF by ID', 500);
+    }
+};
+
+// AI Document Analysis Service for KIF
+const analyzeKifDocument = async (fileBuffer, mimeType, model = "gemini-2.5-flash-lite") => {
+    try {
+        const extractedData = await analyzeDocument(
+            fileBuffer,
+            mimeType,
+            salesInvoiceSchema,
+            model,
+            KIF_PROMPT
+        );
+
+        const invoice = await createDocumentFromAI(extractedData, 'kif');
+        const formattedInvoice = formatInvoiceWithStatus(invoice, false);
+
+        return {
+            success: true,
+            data: formattedInvoice
+        };
+    } catch (error) {
+        throw new AppError('Failed to analyze KIF document', 500);
+    }
+};
+
+// Approve KIF Invoice Service
+const approveKifInvoice = async (invoiceId, userId) => {
+    try {
+        const updatedInvoice = await approveDocument(invoiceId, userId, 'kif');
+        const formattedInvoice = formatInvoiceWithStatus(updatedInvoice, true);
+
+        return {
+            success: true,
+            data: formattedInvoice
+        };
+    } catch (error) {
+        throw new AppError('Failed to approve KIF invoice', 500);
+    }
+};
+
+// Update KIF Invoice Service  
+const updateKifInvoice = async (invoiceId, updatedData) => {
+    try {
+        const updatedInvoice = await updateDocumentData(invoiceId, updatedData, 'kif');
+        const formattedInvoice = formatInvoiceWithStatus(updatedInvoice, false);
+
+        return {
+            success: true,
+            data: formattedInvoice
+        };
+    } catch (error) {
+        throw new AppError('Failed to update KIF invoice', 500);
+    }
+};
+
+// Get KIF with Approval Status Service
+const getKifWithApprovalStatus = async (invoiceId) => {
+    try {
+        const result = await getDocumentWithApprovalStatus(invoiceId, 'kif');
+
+        return {
+            success: true,
+            data: result
+        };
+    } catch (error) {
+        throw new AppError('Failed to fetch KIF with approval status', 500);
     }
 };
 
 module.exports = {
     getPaginatedKifData,
     getKifById,
+    analyzeKifDocument,
+    approveKifInvoice,
+    updateKifInvoice,
+    getKifWithApprovalStatus,
 };

@@ -1,6 +1,7 @@
 const { GoogleGenAI } = require("@google/genai");
 const multer = require("multer");
 const { SalesInvoice, SalesInvoiceItem, PurchaseInvoice, Contract, BankTransaction, User } = require("../models");
+const AppError = require('../utils/errorHandler');
 
 const upload = multer({
     storage: multer.memoryStorage(),
@@ -14,7 +15,7 @@ const ai = new GoogleGenAI({
 // Generic AI Document Analysis Service
 const analyzeDocument = async (fileBuffer, mimeType, responseSchema, model, prompt) => {
     if (mimeType !== "application/pdf") {
-        throw new Error("Invalid file type. Only PDF files are allowed.");
+        throw new AppError("Invalid file type. Only PDF files are allowed.", 400);
     }
 
     const contents = [
@@ -48,7 +49,7 @@ const analyzeDocument = async (fileBuffer, mimeType, responseSchema, model, prom
         return extractedData;
     } catch (error) {
         console.error("AI Analysis Error:", error);
-        throw new Error(`Failed to analyze document with AI`);
+        throw new AppError(`Failed to analyze document with AI: ${error.message}`, 500);
     }
 };
 
@@ -117,13 +118,16 @@ const createDocumentFromAI = async (extractedData, modelType) => {
                 document = await BankTransaction.create(documentDataBank);
                 break;
             default:
-                throw new Error(`Unsupported model type: ${modelType}`);
+                throw new AppError(`Unsupported model type: ${modelType}`, 400);
         }
 
         return document;
     } catch (error) {
+        if (error instanceof AppError) {
+            throw error;
+        }
         console.error("Database Error:", error);
-        throw new Error(`Failed to save ${modelType} to database`);
+        throw new AppError(`Failed to save ${modelType} to database`, 500);
     }
 };
 
@@ -147,11 +151,11 @@ const approveDocument = async (documentId, userId, modelType) => {
                 document = await BankTransaction.findByPk(documentId);
                 break;
             default:
-                throw new Error(`Unsupported model type: ${modelType}`);
+                throw new AppError(`Unsupported model type: ${modelType}`, 400);
         }
 
         if (!document) {
-            throw new Error(`${modelType} not found`);
+            throw new AppError(`${modelType} not found`, 404);
         }
 
         const updatedDocument = await document.update({
@@ -161,8 +165,11 @@ const approveDocument = async (documentId, userId, modelType) => {
 
         return updatedDocument;
     } catch (error) {
+        if (error instanceof AppError) {
+            throw error;
+        }
         console.error("Approval Error:", error);
-        throw new Error(`Failed to approve ${modelType}`);
+        throw new AppError(`Failed to approve ${modelType}`, 500);
     }
 };
 
@@ -176,7 +183,7 @@ const updateDocumentData = async (documentId, updatedData, modelType) => {
                 document = await SalesInvoice.findByPk(documentId);
 
                 if (!document) {
-                    throw new Error(`${modelType} not found`);
+                    throw new AppError(`${modelType} not found`, 404);
                 }
 
                 // Extract items from the updated data
@@ -219,7 +226,7 @@ const updateDocumentData = async (documentId, updatedData, modelType) => {
                 document = await PurchaseInvoice.findByPk(documentId);
 
                 if (!document) {
-                    throw new Error(`${modelType} not found`);
+                    throw new AppError(`${modelType} not found`, 404);
                 }
 
                 // Ensure approval fields are reset when editing
@@ -236,7 +243,7 @@ const updateDocumentData = async (documentId, updatedData, modelType) => {
                 document = await Contract.findByPk(documentId);
 
                 if (!document) {
-                    throw new Error(`${modelType} not found`);
+                    throw new AppError(`${modelType} not found`, 404);
                 }
 
                 // Ensure approval fields are reset when editing
@@ -253,7 +260,7 @@ const updateDocumentData = async (documentId, updatedData, modelType) => {
                 document = await BankTransaction.findByPk(documentId);
 
                 if (!document) {
-                    throw new Error(`${modelType} not found`);
+                    throw new AppError(`${modelType} not found`, 404);
                 }
 
                 // Ensure approval fields are reset when editing
@@ -267,11 +274,14 @@ const updateDocumentData = async (documentId, updatedData, modelType) => {
                 const updatedDocumentBank = await document.update(dataToUpdateBank);
                 return updatedDocumentBank;
             default:
-                throw new Error(`Unsupported model type: ${modelType}`);
+                throw new AppError(`Unsupported model type: ${modelType}`, 400);
         }
     } catch (error) {
+        if (error instanceof AppError) {
+            throw error;
+        }
         console.error("Update Error:", error);
-        throw new Error(`Failed to update ${modelType}`);
+        throw new AppError(`Failed to update ${modelType}`, 500);
     }
 };
 
@@ -300,11 +310,11 @@ const getDocumentWithApprovalStatus = async (documentId, modelType) => {
                 document = await BankTransaction.findByPk(documentId);
                 break;
             default:
-                throw new Error(`Unsupported model type: ${modelType}`);
+                throw new AppError(`Unsupported model type: ${modelType}`, 400);
         }
 
         if (!document) {
-            throw new Error(`${modelType} not found`);
+            throw new AppError(`${modelType} not found`, 404);
         }
 
         let approverInfo = null;
@@ -330,8 +340,11 @@ const getDocumentWithApprovalStatus = async (documentId, modelType) => {
             approver: approverInfo,
         };
     } catch (error) {
+        if (error instanceof AppError) {
+            throw error;
+        }
         console.error("Fetch Error:", error);
-        throw new Error(`Failed to fetch ${modelType}`);
+        throw new AppError(`Failed to fetch ${modelType}`, 500);
     }
 };
 
