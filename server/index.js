@@ -47,7 +47,7 @@ app.use(cookieParser());
 app.use('/api/auth', require('./routes/authentication'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/files', require('./routes/uploadedFiles'));
-app.use('/api', kifRouter);
+app.use('/api/kif', kifRouter);
 app.use('/api', kufRouter);
 app.use('/api', vatRouter);
 app.use(mailRoute);
