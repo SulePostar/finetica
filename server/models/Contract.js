@@ -60,6 +60,14 @@ module.exports = (sequelize) => {
         field: 'signed_at',
         defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
+      approvedAt: {
+        type: DataTypes.DATE,
+        field: 'approved_at',
+      },
+      approvedBy: {
+        type: DataTypes.INTEGER,
+        field: 'approved_by',
+      },
     },
     {
       sequelize,
