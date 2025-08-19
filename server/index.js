@@ -18,6 +18,7 @@ const contractRouter = require('./routes/contract'); // 👈 tvoje
 const businessPartnerRouter = require('./routes/businessPartner');
 const googleDriveAutoSync = require('./tasks/googleDriveAutoSync'); // 👈 master
 const googleDriveRouter = require('./routes/googleDrive'); // 👈 master
+const bankTransactionRouter = require('./routes/bankTransactions');
 
 const PORT = process.env.PORT;
 const SECRET = process.env.SESSION_SECRET;
@@ -50,6 +51,7 @@ app.use('/api/files', require('./routes/uploadedFiles'));
 app.use('/api', kifRouter);
 app.use('/api', kufRouter);
 app.use('/api', vatRouter);
+app.use('/api/transactions', bankTransactionRouter);
 app.use(mailRoute);
 app.use('/api/contracts', contractRouter);
 app.use('/api/business-partners', businessPartnerRouter);
