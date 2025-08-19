@@ -17,29 +17,28 @@ import CIcon from '@coreui/icons-react';
 import { cilFile } from '@coreui/icons';
 import { useState, useEffect } from 'react';
 
-const MOCK_MODE = true; // switch to false when backend is ready
+const MOCK_MODE = true;
 
 const InvoiceDetails = () => {
     const { id } = useParams();
     const location = useLocation();
 
-    const [isEditing, setIsEditing] = useState(false);
-    const [isApproved, setIsApproved] = useState(false);
     const [formData, setFormData] = useState({});
+    const [pdfUrl, setPdfUrl] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [pdfUrl, setPdfUrl] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [isApproved, setIsApproved] = useState(false);
 
     // Determine document type
-    const getDocumentType = () => {
+    const documentType = (() => {
         if (location.pathname.includes('/kif/')) return 'kif';
         if (location.pathname.includes('/kuf/')) return 'kuf';
         if (location.pathname.includes('/contracts/')) return 'contract';
         return 'kuf';
-    };
-    const documentType = getDocumentType();
+    })();
 
-    // Determine mode (view or approve)
+    // Determine mode
     const isApproveMode = location.pathname.includes('/approve');
 
     // Fetch document data
@@ -47,11 +46,9 @@ const InvoiceDetails = () => {
         const fetchDocument = async () => {
             setLoading(true);
             setError(null);
-
             try {
                 if (MOCK_MODE) {
-                    // Mock response
-                    const data = {
+                    const mockData = {
                         id,
                         title: "Sample Document",
                         type: documentType,
@@ -60,24 +57,18 @@ const InvoiceDetails = () => {
                         createdAt: new Date().toISOString(),
                     };
                     await new Promise(r => setTimeout(r, 500));
-                    setFormData(data);
-                    setPdfUrl(data.pdfUrl);
+                    setFormData(mockData);
+                    setPdfUrl(mockData.pdfUrl);
                 } else {
-                    // 🔹 Real API call
-                    const res = await fetch(`/api/documents/${id}`);
+                    const res = await fetch(`/api/contracts/${id}`);
                     if (!res.ok) throw new Error('Failed to fetch document');
 
-                    const contentType = res.headers.get("content-type");
-                    if (contentType && contentType.includes("application/json")) {
-                        const data = await res.json();
-                        setFormData(data);
-                        setPdfUrl(data.pdfUrl || 'https://pdfobject.com/pdf/sample.pdf');
-                    } else {
-                        throw new Error("Expected JSON but got " + contentType);
-                    }
+                    const data = await res.json();
+                    setFormData(data);
+                    setPdfUrl(data.pdfUrl || 'https://pdfobject.com/pdf/sample.pdf');
                 }
             } catch (err) {
-                setError(err);
+                setError(err.message || 'Something went wrong');
             } finally {
                 setLoading(false);
             }
@@ -88,77 +79,65 @@ const InvoiceDetails = () => {
 
     // Handlers
     const handleApprove = async () => {
+        if (MOCK_MODE) {
+            setIsApproved(true);
+            return;
+        }
         try {
-            if (MOCK_MODE) {
-                await new Promise(r => setTimeout(r, 500));
-                setIsApproved(true);
-                return;
-            }
-
             const payload = {
                 status: "approved",
                 approvedAt: new Date().toISOString(),
-                approvedBy: "Current User", // replace with logged-in user info
+                approvedBy: "Current User",
             };
-
-            const response = await fetch(`/api/documents/${id}/approve`, {
+            const res = await fetch(`/api/contracts/${id}/approve`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
             });
-
-            if (!response.ok) throw new Error("Approval failed");
+            if (!res.ok) throw new Error("Approval failed");
             setIsApproved(true);
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
+            console.error(err);
         }
     };
 
-    const handleEdit = () => {
-        setIsEditing(true);
-    };
-
-    const handleSave = async () => {
-        try {
-            if (MOCK_MODE) {
-                await new Promise(r => setTimeout(r, 500));
-                setIsEditing(false);
-                return;
-            }
-
-            const response = await fetch(`/api/documents/${id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
-            });
-
-            if (!response.ok) throw new Error("Save failed");
-            setIsEditing(false);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
+    const handleEdit = () => setIsEditing(true);
     const handleCancel = () => {
         setIsEditing(false);
         setLoading(true);
         setError(null);
-
         if (MOCK_MODE) {
-            const data = {
+            setFormData({
                 id,
                 title: "Sample Document",
                 type: documentType,
                 pdfUrl: "https://pdfobject.com/pdf/sample.pdf",
-            };
-            setFormData(data);
-            setPdfUrl(data.pdfUrl);
+            });
+            setPdfUrl("https://pdfobject.com/pdf/sample.pdf");
             setLoading(false);
         } else {
-            fetch(`/api/documents/${id}`)
+            fetch(`/api/contracts/${id}`)
                 .then(res => res.json())
                 .then(data => setFormData(data))
                 .finally(() => setLoading(false));
+        }
+    };
+
+    const handleSave = async () => {
+        if (MOCK_MODE) {
+            setIsEditing(false);
+            return;
+        }
+        try {
+            const res = await fetch(`/api/contracts/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
+            if (!res.ok) throw new Error("Save failed");
+            setIsEditing(false);
+        } catch (err) {
+            console.error(err);
         }
     };
 
@@ -190,7 +169,6 @@ const InvoiceDetails = () => {
                                                         >
                                                             {isApproved ? "Approved" : "Approve"}
                                                         </CButton>
-
                                                         {!isApproved && (
                                                             <CButton color="secondary" onClick={handleEdit}>
                                                                 Edit
@@ -219,9 +197,7 @@ const InvoiceDetails = () => {
                                 <CCardHeader>
                                     <CCardTitle className="mb-0">
                                         <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
-                                        {isApproveMode
-                                            ? "Approve Document"
-                                            : `View ${documentType.toUpperCase()} Details`}
+                                        {isApproveMode ? "Approve Document" : `View ${documentType.toUpperCase()} Details`}
                                     </CCardTitle>
                                 </CCardHeader>
                                 <CCardBody>
