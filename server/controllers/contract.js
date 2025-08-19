@@ -1,5 +1,5 @@
 const { getPaginatedContractData } = require('../services/contract');
-const { saveContract } = require('../services/contract');
+const { createContract } = require('../services/contract');
 
 const getContractData = (req, res) => {
   const { page, perPage, sortField, sortOrder } = req.query;
@@ -14,15 +14,17 @@ const getContractData = (req, res) => {
   res.json(result);
 };
 
-const addContract = async (req, res) => {
+const addContract = async (req, res, next) => {
   try {
-    const contract = await saveContract(req.body);
-    res.json({ message: 'Contract saved successfully', data: contract });
+    const contract = await createContract(req.body);
+    return res.status(201).json({
+      message: 'Contract created successfully',
+      data: contract,
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to save contract' });
+    next(error);
   }
 };
-
 module.exports = {
   getContractData,
   addContract,

@@ -45,17 +45,12 @@ const getPaginatedContractData = ({ page = 1, perPage = 10, sortField, sortOrder
   return { data: pagedData, total };
 };
 
-const saveContract = async (contractData) => {
-  try {
-    const newContract = await Contract.create(contractData);
-    return newContract;
-  } catch (error) {
-    console.error('Error saving contract:', error);
-    throw error;
-  }
+const createContract = async (contractData) => {
+  const newContract = await Contract.create(contractData);
+  return newContract;
 };
 
 module.exports = {
   getPaginatedContractData,
-  saveContract,
+  createContract,
 };
