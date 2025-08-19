@@ -4,60 +4,40 @@ import {
     formatValue
 } from '../../../utilis/constants/InvoicesData';
 import DocInfoCard from '../DocInfoCard/DocInfoCard';
+import { CFormInput, CFormLabel, CBadge } from '@coreui/react';
 import '../DocumentInfo/DocumentInfo.css';
 
-/**
- * DocumentInfo Component
- * 
- * A reusable component for displaying document information for KUF (Purchase Invoices), 
- * KIF (Sales Invoices), and Contracts based on the database schema.
- * 
- * @param {Object} data - The document data object
- * @param {string} type - The document type: 'kuf' for purchase invoices, 'kif' for sales invoices, 'contract' for contracts
- * @param {boolean} loading - Loading state
- * @param {Error} error - Error state
- */
-const DocumentInfo = ({ data, type = 'kuf', loading = false, error = null, actions = null }) => {
-    // Memoize field configuration to prevent unnecessary re-renders
-    const fields = useMemo(() => {
-        return DOCUMENT_FIELD_CONFIGS[type] || DOCUMENT_FIELD_CONFIGS.kuf;
-    }, [type]);
+const DocumentInfo = ({
+    data,
+    type = 'kuf',
+    loading = false,
+    error = null,
+    actions = null,
+    editable = false,
+    onChange = () => { }
+}) => {
+    const fields = useMemo(() => DOCUMENT_FIELD_CONFIGS[type] || DOCUMENT_FIELD_CONFIGS.kuf, [type]);
 
-    // Memoize filtered and formatted data
     const formattedFields = useMemo(() => {
         if (!data) return [];
-
-        return fields
-            .map(({ label, key }) => {
-                const value = data[key];
-                if (value === undefined || value === null || value === '') return null;
-
-                return {
-                    key,
-                    label,
-                    value: formatValue(value, key, data.currency)
-                };
-            })
-            .filter(Boolean);
+        return fields.map(({ label, key }) => ({
+            key,
+            label,
+            value: data[key] ?? ''
+        }));
     }, [data, fields]);
 
-    // Determine card title based on type
     const getCardTitle = (type) => {
         switch (type) {
-            case 'contract':
-                return 'Contract Information';
-            case 'kif':
-                return 'KIF (Sales Invoice) Information';
-            case 'kuf':
-                return 'KUF (Purchase Invoice) Information';
-            default:
-                return 'Document Information';
+            case 'contract': return 'Contract Information';
+            case 'kif': return 'KIF (Sales Invoice) Information';
+            case 'kuf': return 'KUF (Purchase Invoice) Information';
+            default: return 'Document Information';
         }
     };
 
     const cardTitle = getCardTitle(type);
 
-    // Handle loading state
     if (loading) {
         return (
             <DocInfoCard
@@ -68,7 +48,6 @@ const DocumentInfo = ({ data, type = 'kuf', loading = false, error = null, actio
         );
     }
 
-    // Handle error state
     if (error) {
         return (
             <DocInfoCard
@@ -80,53 +59,60 @@ const DocumentInfo = ({ data, type = 'kuf', loading = false, error = null, actio
         );
     }
 
-    // Handle empty state
     if (!data || formattedFields.length === 0) {
         return (
             <DocInfoCard title={cardTitle}>
                 <div className="text-muted p-4">No document information available</div>
-                {actions && (
-                    <div className="document-actions mt-4 d-flex gap-3">
-                        {actions}
-                    </div>
-                )}
+                {actions && <div className="mt-4 d-flex gap-3">{actions}</div>}
             </DocInfoCard>
         );
     }
 
-    // Main content state
     return (
         <DocInfoCard title={cardTitle}>
-            <div className="document-info-list" role="list" aria-label="Document details">
+            <div
+                className="document-info-list d-flex flex-column gap-2 fs-6 rounded shadow-sm border-start border-4 px-3 py-4 mb-3"
+                role="list"
+                aria-label="Document details"
+            >
                 {formattedFields.map(({ key, label, value }) => (
                     <div
                         key={key}
-                        className="info-row"
+                        className="info-row d-flex align-items-center justify-content-between p-2 rounded gap-2"
                         role="listitem"
                         tabIndex="0"
                         aria-label={`${label}: ${value}`}
                     >
-                        <span className="info-label" id={`label-${key}`}>
+                        <CFormLabel className="fw-bold mb-0" id={`label-${key}`}>
                             {label}:
-                        </span>
-                        <span
-                            className="info-value"
-                            aria-labelledby={`label-${key}`}
-                            title={value}
-                        >
-                            {value}
-                        </span>
+                        </CFormLabel>
+
+                        {editable ? (
+                            <CFormInput
+                                value={value}
+                                onChange={(e) =>
+                                    onChange((prev) => ({ ...prev, [key]: e.target.value }))
+                                }
+                                className="info-input"
+                                aria-labelledby={`label-${key}`}
+                            />
+                        ) : (
+                            <CBadge
+                                color="dark"
+                                className="info-value"
+                                aria-labelledby={`label-${key}`}
+                                title={formatValue(value, key, data.currency)}
+                            >
+                                {formatValue(value, key, data.currency)}
+                            </CBadge>
+                        )}
                     </div>
                 ))}
             </div>
-            {actions && (
-                <div className="document-actions mt-4 d-flex gap-3">
-                    {actions}
-                </div>
-            )}
+
+            {actions && <div className="mt-4 d-flex gap-3">{actions}</div>}
         </DocInfoCard>
     );
 };
-
 
 export default DocumentInfo;

@@ -14,9 +14,9 @@ const mailRoute = require("./routes/mailRoute");
 const { processEmailQueue } = require('./services/emailQueueService');
 
 const cookieParser = require('cookie-parser')
-const contractRouter = require('./routes/contract'); // 👈 tvoje
-const googleDriveAutoSync = require('./tasks/googleDriveAutoSync'); // 👈 master
-const googleDriveRouter = require('./routes/googleDrive'); // 👈 master
+const contractRouter = require('./routes/contract');
+const googleDriveAutoSync = require('./tasks/googleDriveAutoSync');
+const googleDriveRouter = require('./routes/googleDrive');
 
 const PORT = process.env.PORT;
 const SECRET = process.env.SESSION_SECRET;
