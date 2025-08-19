@@ -9,6 +9,5 @@ const { addContract } = require('../controllers/contract');
 
 router.get('/', getContractData);
 router.put('/:id/approve', isAuthenticated, validate(approveContractSchema), approveContract);
-router.post('/', isAuthenticated, addContract);
 
 module.exports = router;
