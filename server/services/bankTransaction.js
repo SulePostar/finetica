@@ -13,7 +13,7 @@ const generateMockData = (total = 25) => {
     }));
 };
 
-const getPaginatedVatData = ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
+const getPaginatedBankTransactionData = ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
     const total = 25;
     const fullData = generateMockData(total);
 
@@ -31,12 +31,12 @@ const getPaginatedVatData = ({ page = 1, perPage = 10, sortField, sortOrder = 'a
     return { data: pagedData, total };
 };
 
-const getVatDocumentById = (id) => {
+const getBankTransactionDocumentById = (id) => {
     const fullData = generateMockData(25);
     return fullData.find((doc) => doc.id === parseInt(id)) || null;
 };
 
 module.exports = {
-    getPaginatedVatData,
-    getVatDocumentById,
+    getPaginatedBankTransactionData,
+    getBankTransactionDocumentById,
 };
