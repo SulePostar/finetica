@@ -1,7 +1,7 @@
 const { GoogleGenAI } = require("@google/genai");
 const multer = require("multer");
 const { SalesInvoice, PurchaseInvoice, Contract, BankTransaction, User } = require("../models");
-const { default: KIF_PROMPT } = require("../prompts/Kif.js");
+const KIF_PROMPT = require("../prompts/Kif.js");
 
 const upload = multer({
     storage: multer.memoryStorage(),

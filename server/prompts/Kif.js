@@ -14,4 +14,4 @@ const KIF_PROMPT = `
     - Output must be valid JSON only — no markdown, no comments, no code fences.
 `;
 
-export default KIF_PROMPT;
+module.exports = KIF_PROMPT;
