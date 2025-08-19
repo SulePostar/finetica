@@ -5,7 +5,7 @@ module.exports = (sequelize) => {
     static associate({ BusinessPartner, SalesInvoiceItem, User }) {
       this.belongsTo(BusinessPartner, { foreignKey: 'customerId' });
       this.hasMany(SalesInvoiceItem, { foreignKey: 'invoiceId' });
-      this.belongsTo(User, { foreignKey: 'approvedBy', as: 'approver' });
+      this.belongsTo(User, { foreignKey: 'approvedBy'});
     }
   }
 
