@@ -323,14 +323,13 @@ class AuthService {
       throw new AppError('Invalid user or account status', 403);
     }
 
-    const token = this.#generateToken(userId, user.role?.id, user.role?.name);
 
     // Log token refresh
     await activityLogService.logActivity({
-      userId: userId,
+      userId: user.id,
       action: 'token_refresh',
       entity: 'User',
-      entityId: userId,
+      entityId: user.id,
       details: {
         method: 'jwt_refresh',
       },

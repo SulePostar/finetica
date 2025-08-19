@@ -59,7 +59,7 @@ app.use('/drive', googleDriveRouter);
 
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 4000;
+
 
 connectToDatabase();
 
