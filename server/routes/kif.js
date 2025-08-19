@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getKifData } = require('../controllers/kif');
+const { getKifData, getKifDataById } = require('../controllers/kif');
 const {
     upload,
     analyzeDocument,
@@ -13,8 +13,9 @@ const KIF_PROMPT = require('../prompts/Kif.js');
 const salesInvoiceSchema = require('../schemas/kifSchema');
 const isAuthenticated = require('../middleware/isAuthenticated');
 
-// Existing route
+// Existing routes
 router.get('/kif-data', getKifData);
+router.get('/kif-data/:id', getKifDataById);
 
 // AI Sales Invoice Processing Routes
 router.post('/analyze', isAuthenticated, upload.single('file'), async (req, res) => {
