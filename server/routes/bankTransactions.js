@@ -53,4 +53,44 @@ router.post('/analyze', isAuthenticated, upload.single('file'), async (req, res)
     }
 });
 
+router.put('/:id/approve', isAuthenticated, async (req, res) => {
+    try {
+        const transactionId = req.params.id;
+        const updatedTransaction = await approveDocument(transactionId, req.user.id, 'bank_transaction');
+
+        res.json({
+            success: true,
+            data: {
+                ...updatedTransaction.toJSON(),
+                isApproved: true,
+                approvalStatus: 'approved'
+            }
+        });
+    } catch (error) {
+        console.error('Bank Transaction Approval Error:', error);
+        res.status(500).json({
+            error: error.message || 'Failed to approve bank transaction',
+            success: false
+        });
+    }
+});
+
+router.get('/:id', isAuthenticated, async (req, res) => {
+    try {
+        const transactionId = req.params.id;
+        const transaction = await getDocumentWithApprovalStatus(transactionId, 'bank_transaction');
+
+        res.json({
+            success: true,
+            data: transaction
+        });
+    } catch (error) {
+        console.error('Bank Transaction Fetch Error:', error);
+        res.status(500).json({
+            error: error.message || 'Failed to fetch bank transaction',
+            success: false
+        });
+    }
+});
+
 module.exports = router;
