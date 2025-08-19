@@ -74,5 +74,4 @@ module.exports = {
   getContractData,
   getContract,
   approveContract,
-  addContract,
 };
