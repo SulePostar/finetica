@@ -11,7 +11,7 @@ const {
 } = require('../services/aiService');
 const KIF_PROMPT = require('../prompts/Kif.js');
 const salesInvoiceSchema = require('../schemas/kifSchema');
-const { isAuthenticated } = require('../middleware/isAuthenticated');
+const isAuthenticated = require('../middleware/isAuthenticated');
 
 // Existing route
 router.get('/kif-data', getKifData);
@@ -31,11 +31,11 @@ router.post('/analyze', isAuthenticated, upload.single('file'), async (req, res)
             req.file.mimetype,
             salesInvoiceSchema,
             model,
-            KIF_PROMPT
+            'sales invoice'
         );
 
         // Create sales invoice in database (not approved by default)
-        const invoice = await createDocumentFromAI(extractedData, req.user.id, 'kif');
+        const invoice = await createDocumentFromAI(extractedData, 'kif');
 
         res.json({
             success: true,
@@ -83,7 +83,7 @@ router.put('/:id/edit', isAuthenticated, async (req, res) => {
         const invoiceId = req.params.id;
         const updatedData = req.body;
 
-        const updatedInvoice = await updateDocumentData(invoiceId, updatedData, req.user.id, 'kif');
+        const updatedInvoice = await updateDocumentData(invoiceId, updatedData, 'kif');
 
         res.json({
             success: true,
