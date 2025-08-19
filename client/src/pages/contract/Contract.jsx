@@ -117,7 +117,7 @@ const Contract = () => {
             width: '150px',
             cell: row => new Date(row.signed_at).toLocaleDateString()
         },
-        { name: 'Status', selector: row => row.status, sortable: true, width: '140px' },
+        { name: 'Review Status', selector: row => row.status, sortable: true, width: '190px' },
         {
             name: 'Actions',
             width: '120px',

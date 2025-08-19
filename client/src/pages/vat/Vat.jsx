@@ -27,7 +27,7 @@ const Vat = () => {
         { name: 'Quantity', selector: row => row.amount, sortable: true },
         { name: 'Price', selector: row => row.price, sortable: true },
         { name: 'Date', selector: row => row.date, sortable: true },
-        { name: 'Status', selector: row => row.status, sortable: true },
+        { name: 'Review Status', selector: row => row.status, sortable: true },
         {
             name: 'Actions',
             cell: row => (
