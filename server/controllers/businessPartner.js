@@ -11,15 +11,11 @@ const createNewBusinessPartner = async (req, res, next) => {
         // Partner data is already validated by the validation middleware
         const partnerData = req.body;
 
-        // Create the partner in the database
-        const partner = await createBusinessPartner(partnerData);
+        // Create the partner in the database and get formatted response
+        const result = await createBusinessPartner(partnerData);
 
-        // Return the created partner with a 201 status code
-        res.status(201).json({
-            success: true,
-            message: 'Business partner created successfully',
-            data: partner
-        });
+        // Return the result with a 201 status code
+        res.status(201).json(result);
     } catch (error) {
         next(error);
     }
@@ -33,12 +29,8 @@ const createNewBusinessPartner = async (req, res, next) => {
  */
 const getAllPartners = async (req, res, next) => {
     try {
-        const partners = await getAllBusinessPartners();
-
-        res.json({
-            success: true,
-            data: partners
-        });
+        const result = await getAllBusinessPartners();
+        res.json(result);
     } catch (error) {
         next(error);
     }
@@ -54,12 +46,9 @@ const getPartner = async (req, res, next) => {
     try {
         const { id } = req.params;
 
-        const partner = await getBusinessPartnerById(parseInt(id));
+        const result = await getBusinessPartnerById(parseInt(id));
 
-        res.json({
-            success: true,
-            data: partner
-        });
+        res.json(result);
     } catch (error) {
         next(error);
     }

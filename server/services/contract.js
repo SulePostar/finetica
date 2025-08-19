@@ -45,7 +45,7 @@ const getPaginatedContractData = ({ page = 1, perPage = 10, sortField, sortOrder
 /**
  * Create a new contract in the database
  * @param {Object} contractData - The contract data
- * @returns {Promise<Object>} - The created contract
+ * @returns {Promise<Object>} - Response object with success status, message and contract data
  */
 const createContract = async (contractData) => {
     try {
@@ -70,7 +70,12 @@ const createContract = async (contractData) => {
         // Create the contract in the database
         const contract = await Contract.create(mappedData);
 
-        return contract;
+        // Return formatted response
+        return {
+            success: true,
+            message: 'Contract created successfully',
+            data: contract
+        };
     } catch (error) {
         throw new AppError(`Failed to create contract: ${error.message}`, 500);
     }

@@ -24,15 +24,11 @@ const createNewContract = async (req, res, next) => {
         // Contract data is already validated by the validation middleware
         const contractData = req.body;
 
-        // Create the contract in the database
-        const contract = await createContract(contractData);
+        // Create the contract in the database and get formatted response
+        const result = await createContract(contractData);
 
-        // Return the created contract with a 201 status code
-        res.status(201).json({
-            success: true,
-            message: 'Contract created successfully',
-            data: contract
-        });
+        // Return the result with a 201 status code
+        res.status(201).json(result);
     } catch (error) {
         next(error);
     }

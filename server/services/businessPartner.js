@@ -4,7 +4,7 @@ const AppError = require('../utils/errorHandler');
 /**
  * Create a new business partner in the database
  * @param {Object} partnerData - The business partner data
- * @returns {Promise<Object>} - The created business partner
+ * @returns {Promise<Object>} - Response object with success status, message and partner data
  */
 const createBusinessPartner = async (partnerData) => {
     try {
@@ -14,7 +14,12 @@ const createBusinessPartner = async (partnerData) => {
         // Create the business partner in the database
         const partner = await BusinessPartner.create(partnerData);
 
-        return partner;
+        // Return formatted response
+        return {
+            success: true,
+            message: 'Business partner created successfully',
+            data: partner
+        };
     } catch (error) {
         throw new AppError(`Failed to create business partner: ${error.message}`, 500);
     }
@@ -23,7 +28,7 @@ const createBusinessPartner = async (partnerData) => {
 /**
  * Get a business partner by ID
  * @param {Number} id - The business partner ID
- * @returns {Promise<Object>} - The business partner
+ * @returns {Promise<Object>} - Response object with success status and partner data
  */
 const getBusinessPartnerById = async (id) => {
     try {
@@ -35,18 +40,19 @@ const getBusinessPartnerById = async (id) => {
             throw new AppError(`Business partner with ID ${id} not found`, 404);
         }
 
-        return partner;
+        return {
+            success: true,
+            data: partner
+        };
     } catch (error) {
         if (error instanceof AppError) {
             throw error;
         }
         throw new AppError(`Failed to get business partner: ${error.message}`, 500);
     }
-};
-
-/**
+};/**
  * Get all business partners
- * @returns {Promise<Array>} - Array of business partners
+ * @returns {Promise<Object>} - Response object with success status and partners data
  */
 const getAllBusinessPartners = async () => {
     try {
@@ -56,7 +62,10 @@ const getAllBusinessPartners = async () => {
             order: [['id', 'ASC']]
         });
 
-        return partners;
+        return {
+            success: true,
+            data: partners
+        };
     } catch (error) {
         throw new AppError(`Failed to get business partners: ${error.message}`, 500);
     }
