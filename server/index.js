@@ -15,6 +15,7 @@ const { processEmailQueue } = require('./services/emailQueueService');
 
 const cookieParser = require('cookie-parser')
 const contractRouter = require('./routes/contract');
+const businessPartnerRouter = require('./routes/businessPartner');
 const googleDriveAutoSync = require('./tasks/googleDriveAutoSync');
 const googleDriveRouter = require('./routes/googleDrive');
 
@@ -51,6 +52,7 @@ app.use('/api', kufRouter);
 app.use('/api', vatRouter);
 app.use(mailRoute);
 app.use('/api/contracts', contractRouter);
+app.use('/api/business-partners', businessPartnerRouter);
 app.use('/drive', googleDriveRouter);
 
 app.use(errorHandler);
