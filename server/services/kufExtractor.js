@@ -2,7 +2,7 @@ require("dotenv").config();
 const fs = require("fs");
 const pdfParse = require("pdf-parse");
 
-const kufPrompt = require("../prompts/kufPrompt"); // adjust path if needed
+const kufPrompt = require("../prompts/kufPrompt");
 
 
 /**
@@ -12,12 +12,10 @@ const kufPrompt = require("../prompts/kufPrompt"); // adjust path if needed
  */
 async function extractPurchaseInvoice(filePath) {
     try {
-        // 1. Read PDF
         const pdfBuffer = fs.readFileSync(filePath);
         const pdfData = await pdfParse(pdfBuffer);
         const invoiceText = pdfData.text;
 
-        // 2. Import Gemini dynamically (since it's ESM-only)
         const { GoogleGenerativeAI } = await import("@google/generative-ai");
 
         const apiKey = process.env.GEMINI_API_KEY;
@@ -25,15 +23,12 @@ async function extractPurchaseInvoice(filePath) {
             throw new Error("❌ GEMINI_API_KEY missing from .env");
         }
 
-        // 3. Init Gemini
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-        // 4. Create prompt
         const prompt = `${kufPrompt}\n\nInvoice content:\n${invoiceText}`;
 
 
-        // 5. Call Gemini
         const result = await model.generateContent(prompt);
 
         return result.response.text();
