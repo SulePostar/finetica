@@ -37,7 +37,6 @@ const getPaginatedContractData = ({ page = 1, perPage = 10, sortField, sortOrder
 
     const start = (page - 1) * perPage;
     const pagedData = fullData.slice(start, start + parseInt(perPage));
-    console.log("Paged Data:", pagedData);
 
     return { data: pagedData, total };
 };
