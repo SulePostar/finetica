@@ -1,4 +1,4 @@
-const { getPaginatedContractData, approveContractById } = require('../services/contract');
+const { getPaginatedContractData, approveContractById, findById } = require('../services/contract');
 const { createContract } = require('../services/contract');
 
 const getContractData = (req, res) => {
@@ -34,8 +34,16 @@ const addContract = async (req, res, next) => {
         next(error);
     }
 };
+
+const getContract = async (req, res) => {
+    const { id } = req.params;
+    const contract = await findById(id);
+    res.json(contract);
+};
+
 module.exports = {
     getContractData,
+    getContract,
     approveContract,
     addContract,
 };

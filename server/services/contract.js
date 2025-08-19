@@ -73,6 +73,8 @@ const approveContractById = async (id, contractData, userId) => {
         currency: contract.currency,
         amount: contract.amount,
         signedAt: contract.signedAt,
+        approvedAt: contract.approvedAt,
+        approvedBy: contract.approvedBy,
     };
 };
 
@@ -81,8 +83,33 @@ const createContract = async (contractData) => {
     return newContract;
 };
 
+const findById = async (id) => {
+    const contract = await Contract.findByPk(id);
+    if (!contract) {
+        throw new AppError('Contract not found', 404);
+    }
+    return {
+        id: contract.id,
+        partnerId: contract.partnerId,
+        contractNumber: contract.contractNumber,
+        contractType: contract.contractType,
+        description: contract.description,
+        startDate: contract.startDate,
+        endDate: contract.endDate,
+        isActive: contract.isActive,
+        paymentTerms: contract.paymentTerms,
+        currency: contract.currency,
+        amount: contract.amount,
+        signedAt: contract.signedAt,
+        approvedAt: contract.approvedAt,
+        approvedBy: contract.approvedBy,
+    };
+};
+
+
 module.exports = {
     getPaginatedContractData,
     approveContractById,
     createContract,
+    findById
 };
