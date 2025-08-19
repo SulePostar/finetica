@@ -50,7 +50,7 @@ const InvoiceDetails = () => {
 
             try {
                 if (MOCK_MODE) {
-                    // 🔹 Mock response
+                    // Mock response
                     const data = {
                         id,
                         title: "Sample Document",

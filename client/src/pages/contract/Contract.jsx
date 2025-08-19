@@ -4,18 +4,37 @@ import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
 import { useNavigate } from 'react-router-dom';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import './Contract.css';
+import { useState, useEffect } from 'react';
 
 const Contract = () => {
     const navigate = useNavigate();
     const sidebarWidth = useSidebarWidth();
+    const [approvedContracts, setApprovedContracts] = useState({});
+
+    // Load approved contracts from localStorage on mount
+    useEffect(() => {
+        const stored = localStorage.getItem('approvedContracts');
+        if (stored) {
+            setApprovedContracts(JSON.parse(stored));
+        }
+    }, []);
 
     const handleView = (id) => {
         navigate(`/contracts/${id}`);
     };
 
     const handleApprove = (id) => {
+        // Update local state
+        const updated = { ...approvedContracts, [id]: true };
+        setApprovedContracts(updated);
+
+        // Persist to localStorage
+        localStorage.setItem('approvedContracts', JSON.stringify(updated));
+
+        // Navigate if you still want to go to the approve page
         navigate(`/contracts/${id}/approve`);
     };
+
     const handleDownload = (id) => { };
 
     const handleRowClick = (row) => {
@@ -108,6 +127,7 @@ const Contract = () => {
                     onView={handleView}
                     onApprove={() => handleApprove(row.id)}
                     onDownload={handleDownload}
+                    isApproved={!!approvedContracts[row.id]}
                 />
             ),
             ignoreRowClick: true
