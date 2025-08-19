@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
 import {
-  CCloseButton,
   CSidebar,
   CSidebarFooter,
-  CSidebarHeader,
   CSidebarToggler,
   CBadge,
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilCloudDownload } from '@coreui/icons';
 
-import navigation from '../_nav';
+import navigation from '../../_nav';
 import { AppSidebarNav } from './AppSidebarNav';
 import './AppSidebar.css';
-import { colors } from '../styles/colors';
-import { setDriveConnected } from '../redux/sidebar/sidebarSlice';
+import { colors } from '../../styles/colors';
+import { setDriveConnected } from '../../redux/sidebar/sidebarSlice';
 
 const AppSidebar = ({ isDarkMode }) => {
   const dispatch = useDispatch();
@@ -47,6 +44,15 @@ const AppSidebar = ({ isDarkMode }) => {
     const interval = setInterval(checkDriveConnection, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (sidebarShow && window.innerWidth <= 768) {
+      document.body.classList.add('sidebar-open');
+    } else {
+      document.body.classList.remove('sidebar-open');
+    }
+  }, [sidebarShow]);
+
 
   const filteredNav = navigation
     .map((item) => {
@@ -108,19 +114,6 @@ const AppSidebar = ({ isDarkMode }) => {
             alt="Logo"
           />
         </div>
-
-        <CCloseButton
-          className="d-lg-none"
-          dark={isDarkMode}
-          onClick={() => dispatch({ type: 'set', sidebarShow: false })}
-        />
-        <CSidebarHeader className="border-bottom">
-          <CCloseButton
-            className="d-lg-none"
-            dark={isDarkMode}
-            onClick={() => dispatch({ type: 'set', sidebarShow: false })}
-          />
-        </CSidebarHeader>
 
         <AppSidebarNav items={filteredNav} />
 
