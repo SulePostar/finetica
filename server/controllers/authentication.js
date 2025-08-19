@@ -39,6 +39,26 @@ const logout = async (req, res) => {
   });
 };
 
+const requestPasswordReset = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const result = await authService.requestPasswordReset(email);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const resetPassword = async (req, res, next) => {
+  try {
+    const { token, new_password } = req.body;
+    const result = await authService.resetPassword(token, new_password);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const attachCookiesToResponse = (res, refreshToken) => {
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
@@ -54,4 +74,6 @@ module.exports = {
   register,
   refreshToken,
   logout,
+  requestPasswordReset,
+  resetPassword,
 };

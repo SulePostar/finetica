@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { CButton } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilCloudUpload } from '@coreui/icons';
@@ -38,17 +38,16 @@ const UploadButton = ({
 
     return (
         <>
-            <div className={`upload-button-container ${className}`}>
-                <CButton
-                    variant="outline"
-                    onClick={handleUploadClick}
-                    className="d-flex align-items-center upload-button"
-                    {...props}
-                >
-                    <CIcon icon={cilCloudUpload} className="me-1 upload-button-icon" />
-                    {children || 'Upload File'}
-                </CButton>
-            </div>
+            <CButton
+                variant="outline"
+                onClick={handleUploadClick}
+                className={`d-flex align-items-center compact-upload-button ${className}`}
+                size="sm"
+                {...props}
+            >
+                <CIcon icon={cilCloudUpload} className="me-1 compact-upload-button-icon" />
+                {children || 'Upload'}
+            </CButton>
 
             {/* File Upload Modal */}
             <FileUploadModal
