@@ -48,6 +48,10 @@ const approveContractById = async (id, contractData, userId) => {
         throw new AppError('Contract not found', 404);
     }
 
+    if (contract.approvedAt) {
+        throw new AppError('Contract already approved', 400);
+    }
+
     await contract.update({
         ...contractData,
         approvedAt: new Date(),
