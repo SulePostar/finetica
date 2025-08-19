@@ -1,7 +1,7 @@
 const { GoogleGenAI } = require("@google/genai");
 const multer = require("multer");
-const { SalesInvoice, PurchaseInvoice, Contract, BankTransaction, User } = require("../models");
-const KIF_PROMPT = require("../prompts/Kif.js");
+const { SalesInvoice, SalesInvoiceItem, PurchaseInvoice, Contract, BankTransaction, User } = require("../models");
+
 
 const upload = multer({
     storage: multer.memoryStorage(),
@@ -56,29 +56,66 @@ const analyzeDocument = async (fileBuffer, mimeType, responseSchema, model, prom
 // Generic function to create a document from AI extracted data
 const createDocumentFromAI = async (extractedData, modelType) => {
     try {
-        const documentData = {
-            ...extractedData,
-            approvedAt: null,
-            approvedBy: null,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        };
-
         let document;
         switch (modelType.toLowerCase()) {
             case 'kif':
             case 'salesinvoice':
+                // Extract items from the data
+                const { items, ...invoiceData } = extractedData;
+
+                const documentData = {
+                    ...invoiceData,
+                    approvedAt: null,
+                    approvedBy: null,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                };
+
+                // Create the sales invoice first
                 document = await SalesInvoice.create(documentData);
+
+                // Create sales invoice items if they exist
+                if (items && Array.isArray(items) && items.length > 0) {
+                    const itemsToCreate = items.map(item => ({
+                        ...item,
+                        invoiceId: document.id,
+                        createdAt: new Date(),
+                        updatedAt: new Date(),
+                    }));
+
+                    await SalesInvoiceItem.bulkCreate(itemsToCreate);
+                }
                 break;
             case 'kuf':
             case 'purchaseinvoice':
-                document = await PurchaseInvoice.create(documentData);
+                const documentDataPurchase = {
+                    ...extractedData,
+                    approvedAt: null,
+                    approvedBy: null,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                };
+                document = await PurchaseInvoice.create(documentDataPurchase);
                 break;
             case 'contract':
-                document = await Contract.create(documentData);
+                const documentDataContract = {
+                    ...extractedData,
+                    approvedAt: null,
+                    approvedBy: null,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                };
+                document = await Contract.create(documentDataContract);
                 break;
             case 'bank_transaction':
-                document = await BankTransaction.create(documentData);
+                const documentDataBank = {
+                    ...extractedData,
+                    approvedAt: null,
+                    approvedBy: null,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                };
+                document = await BankTransaction.create(documentDataBank);
                 break;
             default:
                 throw new Error(`Unsupported model type: ${modelType}`);
@@ -138,35 +175,101 @@ const updateDocumentData = async (documentId, updatedData, modelType) => {
             case 'kif':
             case 'salesinvoice':
                 document = await SalesInvoice.findByPk(documentId);
-                break;
+
+                if (!document) {
+                    throw new Error(`${modelType} not found`);
+                }
+
+                // Extract items from the updated data
+                const { items, ...invoiceUpdateData } = updatedData;
+
+                // Ensure approval fields are reset when editing
+                const dataToUpdate = {
+                    ...invoiceUpdateData,
+                    approvedAt: null,
+                    approvedBy: null,
+                    updatedAt: new Date(),
+                };
+
+                // Update the sales invoice
+                const updatedDocument = await document.update(dataToUpdate);
+
+                // Update sales invoice items if they exist
+                if (items && Array.isArray(items)) {
+                    // Delete existing items
+                    await SalesInvoiceItem.destroy({
+                        where: { invoiceId: documentId }
+                    });
+
+                    // Create new items
+                    if (items.length > 0) {
+                        const itemsToCreate = items.map(item => ({
+                            ...item,
+                            invoiceId: documentId,
+                            createdAt: new Date(),
+                            updatedAt: new Date(),
+                        }));
+
+                        await SalesInvoiceItem.bulkCreate(itemsToCreate);
+                    }
+                }
+
+                return updatedDocument;
             case 'kuf':
             case 'purchaseinvoice':
                 document = await PurchaseInvoice.findByPk(documentId);
-                break;
+
+                if (!document) {
+                    throw new Error(`${modelType} not found`);
+                }
+
+                // Ensure approval fields are reset when editing
+                const dataToUpdatePurchase = {
+                    ...updatedData,
+                    approvedAt: null,
+                    approvedBy: null,
+                    updatedAt: new Date(),
+                };
+
+                const updatedDocumentPurchase = await document.update(dataToUpdatePurchase);
+                return updatedDocumentPurchase;
             case 'contract':
                 document = await Contract.findByPk(documentId);
-                break;
+
+                if (!document) {
+                    throw new Error(`${modelType} not found`);
+                }
+
+                // Ensure approval fields are reset when editing
+                const dataToUpdateContract = {
+                    ...updatedData,
+                    approvedAt: null,
+                    approvedBy: null,
+                    updatedAt: new Date(),
+                };
+
+                const updatedDocumentContract = await document.update(dataToUpdateContract);
+                return updatedDocumentContract;
             case 'bank_transaction':
                 document = await BankTransaction.findByPk(documentId);
-                break;
+
+                if (!document) {
+                    throw new Error(`${modelType} not found`);
+                }
+
+                // Ensure approval fields are reset when editing
+                const dataToUpdateBank = {
+                    ...updatedData,
+                    approvedAt: null,
+                    approvedBy: null,
+                    updatedAt: new Date(),
+                };
+
+                const updatedDocumentBank = await document.update(dataToUpdateBank);
+                return updatedDocumentBank;
             default:
                 throw new Error(`Unsupported model type: ${modelType}`);
         }
-
-        if (!document) {
-            throw new Error(`${modelType} not found`);
-        }
-
-        // Ensure approval fields are reset when editing
-        const dataToUpdate = {
-            ...updatedData,
-            approvedAt: null,
-            approvedBy: null,
-            updatedAt: new Date(),
-        };
-
-        const updatedDocument = await document.update(dataToUpdate);
-        return updatedDocument;
     } catch (error) {
         console.error("Update Error:", error);
         throw new Error(`Failed to update ${modelType}`);
@@ -180,7 +283,12 @@ const getDocumentWithApprovalStatus = async (documentId, modelType) => {
         switch (modelType.toLowerCase()) {
             case 'kif':
             case 'salesinvoice':
-                document = await SalesInvoice.findByPk(documentId);
+                document = await SalesInvoice.findByPk(documentId, {
+                    include: [{
+                        model: SalesInvoiceItem,
+                        as: 'SalesInvoiceItems'
+                    }]
+                });
                 break;
             case 'kuf':
             case 'purchaseinvoice':
@@ -208,8 +316,16 @@ const getDocumentWithApprovalStatus = async (documentId, modelType) => {
             approverInfo = approver ? approver.toJSON() : null;
         }
 
+        const documentData = document.toJSON();
+
+        // For KIF/sales invoices, include items in the response
+        if (modelType.toLowerCase() === 'kif' || modelType.toLowerCase() === 'salesinvoice') {
+            documentData.items = documentData.SalesInvoiceItems || [];
+            delete documentData.SalesInvoiceItems;
+        }
+
         return {
-            ...document.toJSON(),
+            ...documentData,
             isApproved: !!document.approvedAt,
             approvalStatus: document.approvedAt ? 'approved' : 'pending',
             approver: approverInfo,
@@ -227,5 +343,4 @@ module.exports = {
     approveDocument,
     updateDocumentData,
     getDocumentWithApprovalStatus,
-    KIF_PROMPT,
 };
