@@ -246,13 +246,6 @@ const kifIdSchema = Joi.object({
     }),
 });
 
-const kifProcessSchema = Joi.object({
-    model: Joi.string().valid('gemini-2.5-flash-lite', 'gemini-pro').default('gemini-2.5-flash-lite').optional().messages({
-        'string.base': 'Model must be a string',
-        'any.only': 'Model must be either "gemini-2.5-flash-lite" or "gemini-pro"',
-    }),
-});
-
 module.exports = {
     kifInvoiceItemSchema,
     kifInvoiceCreateSchema,
