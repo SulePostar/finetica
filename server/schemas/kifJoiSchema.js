@@ -54,7 +54,7 @@ const kifInvoiceItemSchema = Joi.object({
     }),
 });
 
-const kifInvoiceItemSchema = Joi.object({
+const kifInvoiceCreateSchema = Joi.object({
     invoiceNumber: Joi.string().trim().max(50).allow(null, '').optional().messages({
         'string.base': 'Invoice number must be a string',
         'string.max': 'Invoice number cannot exceed 50 characters',

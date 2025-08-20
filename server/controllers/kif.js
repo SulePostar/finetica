@@ -38,7 +38,7 @@ const getKifDataById = async (req, res, next) => {
 const createKifInvoice = async (req, res, next) => {
     try {
         const invoiceData = req.body;
-        const userId = req.user.userId; // Assuming user info is available from authentication middleware
+        const userId = req.user.userId;
 
         const result = await createKifManually(invoiceData, userId);
 

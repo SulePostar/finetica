@@ -280,7 +280,7 @@ const processKifDocument = async (fileBuffer, mimeType, model = "gemini-2.5-flas
 module.exports = {
     getPaginatedKifData,
     getKifById,
-    createKifFromManualData,
+    createKifManually,
     processKifDocument,
     createKifFromAI,
     approveKifDocument,
