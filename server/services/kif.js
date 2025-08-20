@@ -1,4 +1,4 @@
-const { SalesInvoice, SalesInvoiceItem, BusinessPartner, User } = require('../models');
+const { SalesInvoice, SalesInvoiceItem, BusinessPartner } = require('../models');
 const { processDocument } = require('./aiService');
 const KIF_PROMPT = require('../prompts/Kif.js');
 const salesInvoiceSchema = require('../schemas/kifSchema');
@@ -43,6 +43,56 @@ const createKifFromAI = async (extractedData) => {
     }
 };
 
+// KIF-specific function to create sales invoice from manual data
+const createKifManually = async (invoiceData, userId) => {
+    try {
+        const { items, ...documentData } = invoiceData;
+
+        const finalDocumentData = {
+            ...documentData,
+            approvedAt: null,
+            approvedBy: null,
+            createdBy: userId,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+
+        // Create the sales invoice
+        const document = await SalesInvoice.create(finalDocumentData);
+
+        // Create sales invoice items if they exist
+        if (items && Array.isArray(items) && items.length > 0) {
+            const itemsToCreate = items.map(item => ({
+                ...item,
+                invoiceId: document.id,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            }));
+
+            await SalesInvoiceItem.bulkCreate(itemsToCreate);
+        }
+
+        // Fetch the created invoice with its items
+        const createdInvoice = await SalesInvoice.findByPk(document.id, {
+            include: [
+                {
+                    model: SalesInvoiceItem,
+                    required: false
+                },
+                {
+                    model: BusinessPartner,
+                    required: false
+                }
+            ]
+        });
+
+        return createdInvoice;
+    } catch (error) {
+        console.error("Manual Creation Error:", error);
+        throw new AppError('Failed to create KIF sales invoice', 500);
+    }
+};
+
 // KIF-specific function to approve a sales invoice
 const approveKifDocument = async (documentId, userId) => {
     try {
@@ -50,6 +100,10 @@ const approveKifDocument = async (documentId, userId) => {
 
         if (!document) {
             throw new AppError('KIF sales invoice not found', 404);
+        }
+
+        if (document.approvedAt) {
+            throw new AppError('Invoice is already approved', 400);
         }
 
         const updatedDocument = await document.update({
@@ -64,7 +118,7 @@ const approveKifDocument = async (documentId, userId) => {
     }
 };
 
-// KIF-specific function to update sales invoice data (for editing before approval)
+// KIF-specific function to update sales invoice data
 const updateKifDocumentData = async (documentId, updatedData) => {
     try {
         const document = await SalesInvoice.findByPk(documentId);
@@ -201,7 +255,7 @@ const getKifById = async (id) => {
     }
 };
 
-// AI Document Analysis Service for KIF
+// AI Document Process Service for KIF
 const processKifDocument = async (fileBuffer, mimeType, model = "gemini-2.5-flash-lite") => {
     try {
         const extractedData = await processDocument(
@@ -226,6 +280,7 @@ const processKifDocument = async (fileBuffer, mimeType, model = "gemini-2.5-flas
 module.exports = {
     getPaginatedKifData,
     getKifById,
+    createKifFromManualData,
     processKifDocument,
     createKifFromAI,
     approveKifDocument,
