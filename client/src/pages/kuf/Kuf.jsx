@@ -1,5 +1,4 @@
-import { useSelector } from 'react-redux';
-import { UploadButton } from '../../components/index';
+import UploadButton from '../../components/UploadButton/UploadButton';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown'; // <-- Import the reusable dropdown
@@ -60,15 +59,13 @@ const Kuf = () => {
                     width: `calc(100vw - ${sidebarWidth}px)`,
                 }}
             >
-                <div className="table-header-controls">
-                    <UploadButton bucketName={bucketName} />
-                </div>
                 <div className="table-content-wrapper">
                     <DynamicTable
                         title="KUF Table"
                         columns={columns}
                         apiEndpoint="http://localhost:4000/api/kuf-data"
                         onRowClick={handleRowClick}
+                        uploadButton={<UploadButton bucketName={bucketName} />}
                     />
                 </div>
             </div>
