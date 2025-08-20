@@ -66,7 +66,7 @@ const Kif = () => {
                     <DynamicTable
                         title="KIF"
                         columns={columns}
-                        apiEndpoint="http://localhost:4000/api/kif-data"
+                        apiEndpoint="http://localhost:4000/api/kif"
                         onRowClick={handleRowClick}
                         uploadButton={<UploadButton bucketName={bucketName} />}
                     />
