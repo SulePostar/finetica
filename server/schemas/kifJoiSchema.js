@@ -252,5 +252,4 @@ module.exports = {
     kifInvoiceUpdateSchema,
     kifQuerySchema,
     kifIdSchema,
-    kifProcessSchema,
 };
