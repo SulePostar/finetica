@@ -19,9 +19,9 @@ const Vat = () => {
   };
 
   //Placeholder functions for edit, delete, and download actions
-  const handleEdit = (row) => {};
-  const handleDelete = (row) => {};
-  const handleDownload = (row) => {};
+  const handleEdit = (row) => { };
+  const handleDelete = (row) => { };
+  const handleDownload = (row) => { };
 
   const columns = [
     { name: 'ID', selector: (row) => row.id, sortable: true },
@@ -65,7 +65,7 @@ const Vat = () => {
           <DynamicTable
             title="VAT"
             columns={columns}
-            apiEndpoint="http://localhost:4000/api/bank-transaction-data"
+            apiEndpoint="http://localhost:4000/api/transactions/bank-transaction-data"
             onRowClick={handleRowClick}
             uploadButton={<UploadButton bucketName={bucketName} />}
           />
