@@ -49,7 +49,7 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/files', require('./routes/uploadedFiles'));
 app.use('/api/kif', kifRouter);
 app.use('/api', kufRouter);
-app.use('/api', bankTransactionRouter);
+app.use('/api/transactions', bankTransactionRouter);
 app.use(mailRoute);
 app.use('/api/contracts', contractRouter);
 app.use('/api/business-partners', businessPartnerRouter);

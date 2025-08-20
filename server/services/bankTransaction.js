@@ -1,4 +1,4 @@
-const { BusinessPartners, TransactionCategories, Users, BankTransactions } = require('../models');
+const { BusinessPartners, TransactionCategories, Users, BankTransaction } = require('../models');
 const { processDocument } = require('./aiService');
 const AppError = require('../utils/errorHandler');
 const BANK_TRANSACTIONS_PROMPT = require('../prompts/BankTransactions');
@@ -56,7 +56,7 @@ const createBankTransactionFromAI = async (extractedData) => {
         };
 
         // Create the bank transaction
-        const document = await BankTransactions.create(documentData);
+        const document = await BankTransaction.create(documentData);
 
         if (items && Array.isArray(items) && items.length > 0) {
             const itemsToCreate = items.map(item => ({
@@ -66,7 +66,7 @@ const createBankTransactionFromAI = async (extractedData) => {
                 updatedAt: new Date(),
             }));
 
-            await BankTransactions.bulkCreate(itemsToCreate);
+            await BankTransaction.bulkCreate(itemsToCreate);
         }
 
         const responseData = {
@@ -94,7 +94,7 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
         };
 
         // Create the bank transaction
-        const document = await BankTransactions.create(finalDocumentData);
+        const document = await BankTransaction.create(finalDocumentData);
         if (items && Array.isArray(items) && items.length > 0) {
             const itemsToCreate = items.map(item => ({
                 ...item,
@@ -103,9 +103,9 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
                 updatedAt: new Date(),
             }));
 
-            await BankTransactions.bulkCreate(itemsToCreate);
+            await BankTransaction.bulkCreate(itemsToCreate);
         }
-        const createdData = await BankTransactions.findByPk(document.id, {
+        const createdData = await BankTransaction.findByPk(document.id, {
             include: [
                 {
                     model: TransactionCategories,
@@ -127,7 +127,7 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
 
 const approveBankTransactionDocument = async (id, userId) => {
     try {
-        const document = await BankTransactions.findByPk(id);
+        const document = await BankTransaction.findByPk(id);
         if (!document) {
             throw new AppError('Bank transaction not found', 404);
         }
@@ -147,7 +147,7 @@ const approveBankTransactionDocument = async (id, userId) => {
 // BankTransaction-specific function to update document data
 const editBankTransactionDocumentData = async (id, updatedData) => {
     try {
-        const document = await BankTransactions.findByPk(id);
+        const document = await BankTransaction.findByPk(id);
 
         if (!document) {
             throw new AppError('Bank transaction not found', 404);
@@ -165,7 +165,7 @@ const editBankTransactionDocumentData = async (id, updatedData) => {
         const updatedDocument = await document.update(dataToUpdate);
 
         // Fetch with associations (TransactionCategories, BusinessPartners, Users)
-        const updatedWithRelations = await BankTransactions.findByPk(id, {
+        const updatedWithRelations = await BankTransaction.findByPk(id, {
             include: [
                 { model: TransactionCategories, required: false },
                 { model: BusinessPartners, required: false },
