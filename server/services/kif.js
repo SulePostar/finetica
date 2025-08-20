@@ -201,7 +201,7 @@ const getPaginatedKifData = async ({ page = 1, perPage = 10, sortField, sortOrde
         if (sortField) {
             orderOptions = [[sortField, sortOrder.toUpperCase()]];
         } else {
-            orderOptions = [['created_at', 'DESC']];
+            orderOptions = [['id', 'ASC']];
         }
 
         // Get total count

@@ -12,10 +12,10 @@ const getKifData = async (req, res, next) => {
         const { page, perPage, sortField, sortOrder } = req.query;
 
         const result = await getPaginatedKifData({
-            page: page || 1,
-            perPage: perPage || 10,
+            page: parseInt(page),
+            perPage: parseInt(perPage),
             sortField,
-            sortOrder: sortOrder || 'desc',
+            sortOrder,
         });
 
         res.json(result);
@@ -42,11 +42,7 @@ const createKifInvoice = async (req, res, next) => {
 
         const result = await createKifManually(invoiceData, userId);
 
-        res.status(201).json({
-            success: true,
-            message: 'KIF sales invoice created successfully',
-            data: result
-        });
+        res.json(result)
     } catch (error) {
         next(error);
     }
