@@ -32,19 +32,19 @@ const Contract = () => {
   const columns = [
     {
       name: 'Partner ID',
-      selector: row => row.partner_id,
+      selector: row => row.partnerId,
       sortable: true,
       width: '140px',
     },
     {
       name: 'Contract Number',
-      selector: row => row.contract_number,
+      selector: row => row.contractNumber,
       sortable: true,
       width: '200px',
     },
     {
       name: 'Type',
-      selector: row => row.contract_type,
+      selector: row => row.contractType,
       sortable: true,
     },
     {
@@ -56,32 +56,32 @@ const Contract = () => {
     },
     {
       name: 'Start Date',
-      selector: row => row.start_date,
+      selector: row => row.startDate,
       sortable: true,
       width: '150px',
-      cell: row => row.start_date ? new Date(row.start_date).toLocaleDateString() : '',
+      cell: row => row.startDate ? new Date(row.start_date).toLocaleDateString() : '',
     },
     {
       name: 'End Date',
-      selector: row => row.end_date,
+      selector: row => row.endDate,
       sortable: true,
       width: '145px',
-      cell: row => row.end_date ? new Date(row.end_date).toLocaleDateString() : '',
+      cell: row => row.endDate ? new Date(row.end_date).toLocaleDateString() : '',
     },
     {
       name: 'Status',
-      selector: row => row.is_active,
+      selector: row => row.isActive,
       sortable: true,
       cell: row => (
-        <span className={`status-badge ${row.is_active ? 'active' : 'inactive'}`}>
-          {row.is_active ? 'Active' : 'Inactive'}
+        <span className={`status-badge ${row.isActive ? 'active' : 'inactive'}`}>
+          {row.isActive ? 'Active' : 'Inactive'}
         </span>
       ),
       width: '120px',
     },
     {
       name: 'Payment Terms',
-      selector: row => row.payment_terms,
+      selector: row => row.paymentTerms,
       sortable: true,
       width: '190px',
     },
@@ -100,10 +100,10 @@ const Contract = () => {
     },
     {
       name: 'Signed At',
-      selector: row => row.signed_at,
+      selector: row => row.signedAt,
       sortable: true,
       width: '150px',
-      cell: row => row.signed_at ? new Date(row.signed_at).toLocaleDateString() : '',
+      cell: row => row.signedAt ? new Date(row.signedAt).toLocaleDateString() : '',
     },
     {
       name: 'Review Status',

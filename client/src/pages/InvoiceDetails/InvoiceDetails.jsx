@@ -16,7 +16,7 @@ import {
 import CIcon from '@coreui/icons-react';
 import { cilFile } from '@coreui/icons';
 import { useState, useEffect } from 'react';
-import ContractService from '../../services/contract'; 
+import ContractService from '../../services/contract';
 
 const InvoiceDetails = () => {
   const { id } = useParams();
@@ -33,28 +33,8 @@ const InvoiceDetails = () => {
   const isApproveMode = location.pathname.includes('/approve');
 
   const computeApproved = (d) =>
-    Boolean(d?.approved_at || d?.approved_by || d?.status === 'approved');
+    Boolean(d?.approvedAt || d?.approvedBy || d?.status === 'approved');
 
-  // helper: snake_case -> camelCase payload koji backend schema očekuje
-  const toCamelApprovePayload = (d) => ({
-    // obavezna polja iz tvoje validacije (camelCase!)
-    partnerId: d.partner_id,
-    contractNumber: d.contract_number,
-    contractType: d.contract_type,
-    startDate: d.start_date,
-    endDate: d.end_date,
-
-    // ostala polja
-    description: d.description,
-    isActive: d.is_active,
-    paymentTerms: d.payment_terms,
-    currency: d.currency,
-    amount: d.amount,
-    signedAt: d.signed_at,
-    pdfUrl: d.pdfUrl ?? null,
-
-    status: 'approved',
-  });
 
   useEffect(() => {
     const fetchDocument = async () => {
@@ -80,8 +60,7 @@ const InvoiceDetails = () => {
 
   const handleApprove = async () => {
     try {
-      const payload = toCamelApprovePayload(formData);
-      const { data } = await ContractService.approve(id, payload);
+      const { data } = await ContractService.approve(id, formData);
       setFormData(data);
       setIsApproved(computeApproved(data));
     } catch (err) {
@@ -106,8 +85,7 @@ const InvoiceDetails = () => {
 
   const handleSave = async () => {
     try {
-      const payload = toCamelApprovePayload(formData);
-      const { data } = await ContractService.approve(id, payload);
+      const { data } = await ContractService.approve(id, formData);
       setFormData(data);
       setIsApproved(computeApproved(data));
       setIsEditing(false);
@@ -131,12 +109,12 @@ const InvoiceDetails = () => {
                 <DocumentInfo
                   data={formData}
                   type={documentType}
-                  editable={isApproveMode && isEditing} 
+                  editable={isApproveMode && isEditing}
                   loading={loading}
                   error={error}
-                  onChange={setFormData}                 
+                  onChange={setFormData}
                   actions={
-                    isApproveMode ? (                    
+                    isApproveMode ? (
                       <>
                         {!isEditing ? (
                           <div className="w-100 d-flex justify-content-center mt-3 gap-2">

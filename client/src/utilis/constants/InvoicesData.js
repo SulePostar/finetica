@@ -41,19 +41,19 @@ export const DOCUMENT_FIELD_CONFIGS = {
         { label: 'Updated', key: 'updated_at' }
     ],
     contract: [
-        { label: 'Partner ID', key: 'partner_id' },
-        { label: 'Contract Number', key: 'contract_number' },
-        { label: 'Contract Type', key: 'contract_type' },
+        { label: 'Partner ID', key: 'partnerId' },
+        { label: 'Contract Number', key: 'contractNumber' },
+        { label: 'Contract Type', key: 'contractType' },
         { label: 'Description', key: 'description' },
-        { label: 'Start Date', key: 'start_date' },
-        { label: 'End Date', key: 'end_date' },
-        { label: 'Status', key: 'is_active' },
-        { label: 'Payment Terms', key: 'payment_terms' },
+        { label: 'Start Date', key: 'startDate' },
+        { label: 'End Date', key: 'endDate' },
+        { label: 'Status', key: 'isActive' },
+        { label: 'Payment Terms', key: 'paymentTerms' },
         { label: 'Currency', key: 'currency' },
         { label: 'Amount', key: 'amount' },
-        { label: 'Signed At', key: 'signed_at' },
-        { label: 'Created', key: 'created_at' },
-        { label: 'Updated', key: 'updated_at' }
+        { label: 'Signed At', key: 'signedAt' },
+        { label: 'Created', key: 'createdAt' },
+        { label: 'Updated', key: 'updatedAt' }
     ]
 };
 
