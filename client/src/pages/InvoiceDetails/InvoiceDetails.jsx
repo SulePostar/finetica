@@ -6,6 +6,7 @@ import DocumentInfo from '../../components/InfoCards/DocumentInfo';
 import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
 import DefaultLayout from '../../layout/DefaultLayout';
 import {
+  createMockContractData,
   createMockKifData,
   createMockKufData,
   createMockVatData,
@@ -16,26 +17,30 @@ const InvoiceDetails = () => {
   const location = useLocation();
 
   // Determine document type based on URL path
-  let documentType;
+  const getDocumentType = () => {
+    if (location.pathname.includes('/kif/')) return 'kif';
+    if (location.pathname.includes('/kuf/')) return 'kuf';
+    if (location.pathname.includes('/contracts/')) return 'contract';
+    if (location.pathname.includes('/vat/')) return 'vat';
+  };
 
-  if (location.pathname.includes('/kif/')) {
-    documentType = 'kif';
-  } else if (location.pathname.includes('/kuf/')) {
-    documentType = 'kuf';
-  } else if (location.pathname.includes('/vat/')) {
-    documentType = 'vat';
-  }
+  const documentType = getDocumentType();
 
   // Get appropriate mock data based on document type
-  let mockData;
+  const getMockData = () => {
+    switch (documentType) {
+      case 'kif':
+        return createMockKifData(id);
+      case 'kuf':
+        return createMockKufData(id);
+      case 'contract':
+        return createMockContractData(id);
+      case 'vat':
+        return createMockVatData(id);
+    }
+  };
 
-  if (documentType === 'kif') {
-    mockData = createMockKifData(id);
-  } else if (documentType === 'kuf') {
-    mockData = createMockKufData(id);
-  } else if (documentType === 'vat') {
-    mockData = createMockVatData(id);
-  }
+  const mockData = getMockData();
 
   // For now hardcoded, this will come from an API call
   const mockPdfUrl = 'https://pdfobject.com/pdf/sample.pdf';
@@ -54,7 +59,7 @@ const InvoiceDetails = () => {
                 <CCardHeader>
                   <CCardTitle className="mb-0">
                     <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
-                    Document Viewer
+                    {documentType === 'contract' ? 'Contract Viewer' : 'Document Viewer'}
                   </CCardTitle>
                 </CCardHeader>
                 <CCardBody>

@@ -40,6 +40,21 @@ export const DOCUMENT_FIELD_CONFIGS = {
     { label: 'Created', key: 'created_at' },
     { label: 'Updated', key: 'updated_at' },
   ],
+  contract: [
+    { label: 'Partner ID', key: 'partner_id' },
+    { label: 'Contract Number', key: 'contract_number' },
+    { label: 'Contract Type', key: 'contract_type' },
+    { label: 'Description', key: 'description' },
+    { label: 'Start Date', key: 'start_date' },
+    { label: 'End Date', key: 'end_date' },
+    { label: 'Status', key: 'is_active' },
+    { label: 'Payment Terms', key: 'payment_terms' },
+    { label: 'Currency', key: 'currency' },
+    { label: 'Amount', key: 'amount' },
+    { label: 'Signed At', key: 'signed_at' },
+    { label: 'Created', key: 'created_at' },
+    { label: 'Updated', key: 'updated_at' },
+  ],
   vat: [
     { label: 'ID', key: 'id' },
     { label: 'Product Name', key: 'name' },
@@ -88,7 +103,7 @@ export const formatValue = (value, key, currency = 'BAM') => {
 
   // Format boolean values
   if (typeof value === 'boolean') {
-    return value ? 'Da' : 'Ne';
+    return value ? 'Active' : 'Inactive';
   }
 
   return value;
@@ -150,3 +165,30 @@ export const createMockVatData = (id = '1') => ({
   documentNumber: `VAT-${id}`,
   totalPrice: `${25.5 * 10}`,
 });
+
+export const createMockContractData = (id = '1') => {
+  const contractTypes = ['Service', 'License', 'Supply', 'Consulting'];
+  const paymentTerms = ['Net 30', 'Net 60', 'Advance', 'Upon Delivery'];
+  const currencies = ['EUR', 'USD', 'BAM', 'GBP'];
+
+  const index = parseInt(id) - 1 || 0;
+
+  return {
+    id,
+    partner_id: 1000 + index,
+    contract_number: `CN-${2025}${String(index + 1).padStart(3, '0')}`,
+    contract_type: contractTypes[index % contractTypes.length],
+    description: `${
+      contractTypes[index % contractTypes.length]
+    } contract for business operations and service delivery with detailed terms and conditions.`,
+    start_date: `2025-01-${((index % 28) + 1).toString().padStart(2, '0')}`,
+    end_date: `2025-12-${((index % 28) + 1).toString().padStart(2, '0')}`,
+    is_active: index % 3 !== 0,
+    payment_terms: paymentTerms[index % paymentTerms.length],
+    currency: currencies[index % currencies.length],
+    amount: parseFloat((Math.random() * 100000 + 1000).toFixed(2)),
+    signed_at: `2025-01-${((index % 28) + 1).toString().padStart(2, '0')}T10:00:00Z`,
+    created_at: `2024-12-${((index % 28) + 1).toString().padStart(2, '0')}T09:00:00Z`,
+    updated_at: `2025-01-${((index % 28) + 1).toString().padStart(2, '0')}T11:00:00Z`,
+  };
+};
