@@ -2,6 +2,59 @@
  * Field configuration for different document types
  */
 export const DOCUMENT_FIELD_CONFIGS = {
+    kuf: [
+        { label: 'Document Number', key: 'documentNumber' },
+        { label: 'Invoice Number', key: 'invoice_number' },
+        { label: 'Bill Number', key: 'bill_number' },
+        { label: 'Supplier', key: 'supplier_name' },
+        { label: 'Supplier ID', key: 'supplier_id' },
+        { label: 'VAT Period', key: 'vat_period' },
+        { label: 'Invoice Type', key: 'invoice_type' },
+        { label: 'Invoice Date', key: 'invoice_date' },
+        { label: 'Due Date', key: 'due_date' },
+        { label: 'Received Date', key: 'received_date' },
+        { label: 'Net Total', key: 'net_total' },
+        { label: 'Lump Sum', key: 'lump_sum' },
+        { label: 'VAT Amount', key: 'vat_amount' },
+        { label: 'Deductible VAT', key: 'deductible_vat' },
+        { label: 'Non-deductible VAT', key: 'non_deductible_vat' },
+        { label: 'VAT Exempt Region', key: 'vat_exempt_region' },
+        { label: 'Note', key: 'note' },
+        { label: 'Created', key: 'created_at' },
+        { label: 'Updated', key: 'updated_at' }
+    ],
+    kif: [
+        { label: 'Document Number', key: 'documentNumber' },
+        { label: 'Invoice Number', key: 'invoice_number' },
+        { label: 'Bill Number', key: 'bill_number' },
+        { label: 'Customer', key: 'customer_name' },
+        { label: 'Customer ID', key: 'customer_id' },
+        { label: 'VAT Period', key: 'vat_period' },
+        { label: 'Invoice Type', key: 'invoice_type' },
+        { label: 'Invoice Date', key: 'invoice_date' },
+        { label: 'Due Date', key: 'due_date' },
+        { label: 'Delivery Period', key: 'delivery_period' },
+        { label: 'Total Amount', key: 'total_amount' },
+        { label: 'VAT Category', key: 'vat_category' },
+        { label: 'Note', key: 'note' },
+        { label: 'Created', key: 'created_at' },
+        { label: 'Updated', key: 'updated_at' }
+    ],
+    contract: [
+        { label: 'Partner ID', key: 'partner_id' },
+        { label: 'Contract Number', key: 'contract_number' },
+        { label: 'Contract Type', key: 'contract_type' },
+        { label: 'Description', key: 'description' },
+        { label: 'Start Date', key: 'start_date' },
+        { label: 'End Date', key: 'end_date' },
+        { label: 'Status', key: 'is_active' },
+        { label: 'Payment Terms', key: 'payment_terms' },
+        { label: 'Currency', key: 'currency' },
+        { label: 'Amount', key: 'amount' },
+        { label: 'Signed At', key: 'signed_at' },
+        { label: 'Created', key: 'created_at' },
+        { label: 'Updated', key: 'updated_at' }
+    ]
   kuf: [
     { label: 'Document Number', key: 'documentNumber' },
     { label: 'Invoice Number', key: 'invoice_number' },
@@ -101,10 +154,10 @@ export const formatValue = (value, key, currency = 'BAM') => {
     }
   }
 
-  // Format boolean values
-  if (typeof value === 'boolean') {
-    return value ? 'Active' : 'Inactive';
-  }
+    // Format boolean values
+    if (typeof value === 'boolean') {
+        return value ? 'Active' : 'Inactive';
+    }
 
   return value;
 };
