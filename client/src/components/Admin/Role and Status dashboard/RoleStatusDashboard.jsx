@@ -5,14 +5,15 @@ import {
     fetchRoles,
     addRole,
     selectRoles,
-    deleteRole
+    deleteRole,
 } from '../../../redux/roles/rolesSlice';
 import {
     fetchStatuses,
     addStatus,
     selectStatuses,
-    deleteStatus
+    deleteStatus,
 } from '../../../redux/statuses/statusesSlice';
+import { useSidebarWidth } from '../../../hooks/useSidebarWidth';
 
 const RoleStatusDashboard = () => {
     const dispatch = useDispatch();
@@ -36,7 +37,6 @@ const RoleStatusDashboard = () => {
         });
     };
 
-
     const handleDeleteRole = (roleId) => {
         dispatch(deleteRole(roleId));
     };
@@ -46,8 +46,17 @@ const RoleStatusDashboard = () => {
     };
 
     return (
-        <div className="row mt-4">
-            <div className="col-md-6 mb-4">
+        <div
+            style={{
+                display: 'flex',
+                gap: '20px',
+                width: '100%',
+                padding: '20px',
+                transition: 'all 0.3s ease',
+
+            }}
+        >
+            <div style={{ flex: 1 }}>
                 <RolesStatusesTable
                     title="Roles"
                     data={roles}
@@ -56,7 +65,7 @@ const RoleStatusDashboard = () => {
                     onDelete={handleDeleteRole}
                 />
             </div>
-            <div className="col-md-6 mb-4">
+            <div style={{ flex: 1 }}>
                 <RolesStatusesTable
                     title="Statuses"
                     data={statuses}

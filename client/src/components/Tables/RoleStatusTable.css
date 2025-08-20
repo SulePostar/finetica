@@ -1,0 +1,78 @@
+:root {
+  --color-primary: #5B3CC4;
+  --color-primary-hover: #553c9a;
+  --color-white: #FFFFFF;
+  --color-text: #1A202C;
+  --color-border: #E2E8F0;
+  --color-card-bg: #FFFFFF;
+  --color-table-bg: #FFFFFF;
+  --color-table-text: #1A202C;
+  --color-modal-bg: #FFFFFF;
+}
+
+[data-theme='dark'] {
+  --color-card-bg: #2D3748;
+  --color-table-bg: #1A202C;
+  --color-table-text: #E2E8F0;
+  --color-border: #4A5568;
+  --color-modal-bg: #2D3748;
+}
+
+.role-status-dashboard-outer {
+  padding: 40px 30px;
+  min-height: 100vh;
+  transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+}
+
+.table-card {
+  background-color: var(--color-card-bg);
+  border-radius: 8px;
+  color: var(--color-table-text);
+}
+
+.table-wrapper table {
+  background-color: var(--color-table-bg);
+  color: var(--color-table-text);
+  width: 100% !important;
+}
+
+table th,
+table td {
+  text-align: center;
+  vertical-align: middle;
+  border-color: var(--color-border);
+}
+
+.add-btn {
+  background-color: var(--color-primary);
+  border: none;
+  color: #fff;
+}
+
+.add-btn:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-delete-icon {
+  background-color: var(--color-primary);
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.btn-delete-icon i {
+  color: #fff;
+  font-size: 1rem;
+}
+
+.btn-delete-icon:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.modal-content {
+  background-color: var(--color-modal-bg);
+  color: var(--color-table-text);
+}
+.modal-header, .modal-footer {
+  border: none;
+}
