@@ -18,7 +18,6 @@ const contractRouter = require('./routes/contract'); // 👈 tvoje
 const businessPartnerRouter = require('./routes/businessPartner');
 const googleDriveAutoSync = require('./tasks/googleDriveAutoSync'); // 👈 master
 const googleDriveRouter = require('./routes/googleDrive'); // 👈 master
-const bankTransactionRouter = require('./routes/bankTransactions');
 
 const PORT = process.env.PORT;
 const SECRET = process.env.SESSION_SECRET;
