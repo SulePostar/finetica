@@ -24,10 +24,6 @@ const Contract = () => {
   const handleDownload = useCallback((id) => {
   }, []);
 
-  const handleRowClick = useCallback((row) => {
-    navigate(`/contracts/${row.id}`);
-  }, [navigate]);
-
   const columns = [
     {
       name: 'Partner ID',
@@ -141,7 +137,6 @@ const Contract = () => {
             title="Contracts"
             columns={columns}
             apiEndpoint={apiEndpoint}
-            onRowClick={handleRowClick}
           />
         </div>
       </div>
