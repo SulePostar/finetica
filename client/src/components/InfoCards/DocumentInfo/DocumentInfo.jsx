@@ -98,7 +98,6 @@ const DocumentInfo = ({
                             />
                         ) : (
                             <CBadge
-                                color="dark"
                                 className="info-value"
                                 aria-labelledby={`label-${key}`}
                                 title={formatValue(value, key, data.currency)}
