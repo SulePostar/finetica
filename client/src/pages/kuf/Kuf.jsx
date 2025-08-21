@@ -44,12 +44,6 @@ const Kuf = () => {
         }
     ];
 
-    const handleRowClick = (row) => {
-        console.log('Row clicked:', row);
-        console.log('Navigating to:', `/kuf/${row.id}`);
-        navigate(`/kuf/${row.id}`);
-    };
-
     return (
         <DefaultLayout>
             <div
@@ -64,7 +58,6 @@ const Kuf = () => {
                         title="KUF"
                         columns={columns}
                         apiEndpoint="http://localhost:4000/api/kuf-data"
-                        onRowClick={handleRowClick}
                         uploadButton={<UploadButton bucketName={bucketName} />}
                     />
                 </div>

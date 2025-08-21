@@ -1,14 +1,6 @@
 const { Contract, BusinessPartner, Sequelize } = require('../models');
 const AppError = require('../utils/errorHandler');
 
-
-
-const normalize = (row) => {
-  const r = { ...row };
-  if (r.amount != null) r.amount = Number(r.amount);
-  return r;
-};
-
 const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
   const limit = Math.max(1, Number(perPage) || 10);
   const offset = Math.max(0, ((Number(page) || 1) - 1) * limit);
@@ -32,7 +24,7 @@ const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'a
     ],
   });
 
-  const data = rows.map((r) => normalize(r.get({ plain: true })));
+  const data = rows.map((r) => r.get({ plain: true }));
   return { data, total: count };
 };
 
@@ -47,7 +39,7 @@ const findById = async (id) => {
     ],
   });
   if (!contract) throw new AppError('Contract not found', 404);
-  return contract;
+  return contract.get({ plain: true });
 };
 
 const approveContractById = async (id, body, userId) => {
@@ -58,15 +50,15 @@ const approveContractById = async (id, body, userId) => {
   await contract.update({
     ...body,
     approvedAt: new Date(),
-    approvedBy: userId ?? null,
+    approvedBy: userId,
   });
 
-  return contract;
+  return contract.get({ plain: true });
 };
 
 const createContract = async (payload) => {
   const created = await Contract.create(payload);
-  return created;
+  return created.get({ plain: true });
 };
 
 module.exports = {
