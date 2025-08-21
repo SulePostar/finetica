@@ -15,7 +15,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
+    "@google/genai": "^1.14.0",
     "@supabase/supabase-js": "^2.53.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -29,6 +29,7 @@
     "jsonwebtoken": "^9.0.2",
     "mkdirp": "^3.0.1",
     "multer": "^2.0.2",
+    "mutter": "^1.0.1",
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.5",
     "pdf-parse": "^1.1.1",
