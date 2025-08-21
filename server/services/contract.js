@@ -58,7 +58,7 @@ const approveContractById = async (id, body, userId) => {
   await contract.update({
     ...body,
     approvedAt: new Date(),
-    approvedBy: userId ?? null,
+    approvedBy: userId,
   });
 
   return contract;

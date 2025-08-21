@@ -10,7 +10,7 @@ const Contract = () => {
   const navigate = useNavigate();
   const sidebarWidth = useSidebarWidth();
 
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
   const apiEndpoint = useMemo(() => `${API_BASE}/contracts`, [API_BASE]);
 
   const handleView = useCallback((id) => {
@@ -22,7 +22,6 @@ const Contract = () => {
   }, [navigate]);
 
   const handleDownload = useCallback((id) => {
-    // TODO: implement download kada backend ruta bude spremna
   }, []);
 
   const handleRowClick = useCallback((row) => {
@@ -119,9 +118,8 @@ const Contract = () => {
         <ActionsDropdown
           row={row}
           onView={handleView}
-          onApprove={() => handleApprove(row.id)}   // ⬅️ samo navigate
+          onApprove={() => handleApprove(row.id)}
           onDownload={handleDownload}
-          // Approved stanje isključivo iz baze (nema localStorage)
           isApproved={Boolean(row.approved_at || row.approved_by || row.status === 'approved')}
         />
       ),

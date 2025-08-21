@@ -18,7 +18,6 @@ import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ContractService from '../../services/contract';
 import {
-  createMockContractData,
   createMockKifData,
   createMockKufData,
   createMockVatData,
@@ -45,8 +44,6 @@ const InvoiceDetails = () => {
         return createMockKifData(id);
       case 'kuf':
         return createMockKufData(id);
-      case 'contract':
-        return createMockContractData(id);
       case 'vat':
         return createMockVatData(id);
     }
@@ -68,25 +65,27 @@ const InvoiceDetails = () => {
   const computeApproved = (d) =>
     Boolean(d?.approvedAt || d?.approvedBy || d?.status === 'approved');
 
-  useEffect(() => {
-    const fetchDocument = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const { data } = await ContractService.getById(id);
-        setFormData(data);
-        setPdfUrl(data.pdfUrl || 'https://pdfobject.com/pdf/sample.pdf');
-        setIsApproved(computeApproved(data));
-      } catch (err) {
-        const msg = err?.response?.data?.message || err.message || 'Failed to load document';
-        setError(msg);
-        console.error('GET /contracts/:id failed:', msg);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchDocument = async (id, setFormData, setPdfUrl, setIsApproved, setLoading, setError) => {
+    setLoading(true);
+    setError(null);
 
-    fetchDocument();
+    try {
+      const { data } = await ContractService.getById(id);
+      setFormData(data);
+      setPdfUrl(data.pdfUrl || 'https://pdfobject.com/pdf/sample.pdf');
+      setIsApproved(computeApproved(data));
+    } catch (err) {
+      const msg = err?.response?.data?.message || err.message || 'Failed to load document';
+      setError(msg);
+      console.error('GET /contracts/:id failed:', msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!id) return;
+    fetchDocument(id, setFormData, setPdfUrl, setIsApproved, setLoading, setError);
   }, [id]);
 
   const handleApprove = async () => {
