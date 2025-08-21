@@ -3,9 +3,17 @@ const { processDocument } = require('./aiService');
 const AppError = require('../utils/errorHandler');
 const BANK_TRANSACTIONS_PROMPT = require('../prompts/BankTransactions');
 const bankTransactionSchema = require('../schemas/bankTransactionSchema');
+const { sequelize } = require('../models');
 
-const getPaginatedBankTransactionData = async ({ page = 1, perPage = 10, sortField = 'created_at', sortOrder = 'asc' }) => {
+const getTransactions = async (query = {}) => {
     try {
+        const {
+            page = 1,
+            perPage = 10,
+            sortField = 'created_at',
+            sortOrder = 'asc'
+        } = query;
+
         const pageNum = parseInt(page, 10);
         const perPageNum = parseInt(perPage, 10);
 
@@ -32,9 +40,7 @@ const getPaginatedBankTransactionData = async ({ page = 1, perPage = 10, sortFie
     }
 };
 
-
-
-const getBankTransactionDocumentById = async (id) => {
+const getBankTransactionById = async (id) => {
     try {
         const document = await BankTransaction.findByPk(id, {
             include: [
@@ -51,6 +57,7 @@ const getBankTransactionDocumentById = async (id) => {
 };
 
 const createBankTransactionFromAI = async (extractedData) => {
+    const t = await sequelize.transaction();
     try {
         const { items, ...bankTransactionData } = extractedData;
 
@@ -62,8 +69,7 @@ const createBankTransactionFromAI = async (extractedData) => {
             updatedAt: new Date(),
         };
 
-        // Create the bank transaction
-        const document = await BankTransaction.create(documentData);
+        const document = await BankTransaction.create(documentData, { transaction: t });
 
         if (items && Array.isArray(items) && items.length > 0) {
             const itemsToCreate = items.map(item => ({
@@ -73,8 +79,10 @@ const createBankTransactionFromAI = async (extractedData) => {
                 updatedAt: new Date(),
             }));
 
-            await BankTransaction.bulkCreate(itemsToCreate);
+            await BankTransaction.bulkCreate(itemsToCreate, { transaction: t });
         }
+
+        await t.commit();
 
         const responseData = {
             ...document.toJSON(),
@@ -83,14 +91,17 @@ const createBankTransactionFromAI = async (extractedData) => {
 
         return responseData;
     } catch (error) {
+        await t.rollback();
         console.error("Database Error:", error);
         throw new AppError('Failed to save bank transaction to database', 500);
     }
 };
 
 const createBankTransactionManually = async (bankTransactionData, userId) => {
+    const t = await sequelize.transaction();
     try {
         const { items, ...documentData } = bankTransactionData;
+
         const finalDocumentData = {
             ...documentData,
             approvedAt: null,
@@ -99,9 +110,8 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
             createdAt: new Date(),
             updatedAt: new Date(),
         };
+        const document = await BankTransaction.create(finalDocumentData, { transaction: t });
 
-        // Create the bank transaction
-        const document = await BankTransaction.create(finalDocumentData);
         if (items && Array.isArray(items) && items.length > 0) {
             const itemsToCreate = items.map(item => ({
                 ...item,
@@ -110,29 +120,30 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
                 updatedAt: new Date(),
             }));
 
-            await BankTransaction.bulkCreate(itemsToCreate);
+            await BankTransaction.bulkCreate(itemsToCreate, { transaction: t });
         }
+
+        // Fetch the full document including relations
         const createdData = await BankTransaction.findByPk(document.id, {
             include: [
-                {
-                    model: TransactionCategory,
-                    required: false
-                },
-                {
-                    model: BusinessPartner,
-                    required: false
-                }
-            ]
+                { model: TransactionCategory, required: false },
+                { model: BusinessPartner, required: false }
+            ],
+            transaction: t,
         });
+
+        await t.commit();
 
         return createdData;
     } catch (error) {
+        await t.rollback();
         console.error("Manual Creation Error:", error);
         throw new AppError('Failed to create bank transaction', 500);
     }
 };
 
-const approveBankTransactionDocument = async (id, userId) => {
+
+const approveBankTransaction = async (id, userId) => {
     try {
         const document = await BankTransaction.findByPk(id);
         if (!document) {
@@ -151,8 +162,7 @@ const approveBankTransactionDocument = async (id, userId) => {
     }
 };
 
-// BankTransaction-specific function to update document data
-const editBankTransactionDocumentData = async (id, updatedData) => {
+const editBankTransaction = async (id, updatedData) => {
     try {
         const document = await BankTransaction.findByPk(id);
 
@@ -186,6 +196,7 @@ const editBankTransactionDocumentData = async (id, updatedData) => {
         throw new AppError('Failed to update bank transaction', 500);
     }
 };
+
 const processBankTransaction = async (fileBuffer, mimeType, model = "gemini-2.5-flash-lite") => {
     try {
         const extractedData = await processDocument(
@@ -209,11 +220,11 @@ const processBankTransaction = async (fileBuffer, mimeType, model = "gemini-2.5-
 
 
 module.exports = {
-    getPaginatedBankTransactionData,
-    getBankTransactionDocumentById,
+    getTransactions,
+    getBankTransactionById,
     createBankTransactionFromAI,
     createBankTransactionManually,
-    approveBankTransactionDocument,
-    editBankTransactionDocumentData,
+    approveBankTransaction,
+    editBankTransaction,
     processBankTransaction
 };

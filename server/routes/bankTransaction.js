@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const {
-    getBankTransactionData,
-    getBankTransactionDocument,
+    getBankTransactions,
+    getTransactionById,
     processTransaction,
     createBankTransaction,
     approveTransaction
@@ -10,10 +10,10 @@ const {
 const { upload } = require('../services/aiService');
 const isAuthenticated = require('../middleware/isAuthenticated');
 const validate = require('../middleware/validation');
-const { bankTransactionCreateSchema, bankTransactionUpdateSchema } = require('../schemas/bankTransactionJoi');
+const { bankTransactionCreateSchema } = require('../schemas/bankTransactionJoi');
 
-router.get('/bank-transaction-data', getBankTransactionData);
-router.get('/bank-transaction-data/:id', getBankTransactionDocument);
+router.get('/bank-transaction-data', getBankTransactions);
+router.get('/bank-transaction-data/:id', getTransactionById);
 
 router.post('/',
     isAuthenticated,

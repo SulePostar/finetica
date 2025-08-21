@@ -1,53 +1,32 @@
 const {
-    getPaginatedBankTransactionData,
-    getBankTransactionDocumentById,
+    getTransactions,
+    getBankTransactionById,
     createBankTransactionManually,
-    approveBankTransactionDocument,
-    editBankTransactionDocumentData,
+    approveBankTransaction,
+    editBankTransaction,
     processBankTransaction
 } = require('../services/bankTransaction');
 
-const getBankTransactionData = async (req, res, next) => {
+const getBankTransactions = async (req, res, next) => {
     try {
-        const { page = 1, perPage = 10, sortField = 'created_at', sortOrder = 'asc' } = req.query;
-
-        const result = await getPaginatedBankTransactionData({
-            page: parseInt(page, 10),
-            perPage: parseInt(perPage, 10),
-            sortField,
-            sortOrder,
-        });
-
+        // Pass the whole query object directly to the service
+        const result = await getTransactions(req.query);
         res.json(result);
     } catch (error) {
         console.error("Get Bank Transaction Data Error:", error);
-        next(error); // pass to error middleware
+        next(error);
     }
 };
 
-
-const getBankTransactionDocument = (req, res) => {
+const getTransactionById = (req, res) => {
     const { id } = req.params;
-    const document = getBankTransactionDocumentById(id);
+    const document = getBankTransactionById(id);
 
     if (!document) {
         return res.status(404).json({ error: 'Bank Transaction document not found' });
     }
 
     res.json(document);
-};
-
-const getTransactionDocumentById = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const document = await getBankTransactionDocumentById(id);
-        if (!document) {
-            return res.status(404).json({ error: 'Bank Transaction document not found' });
-        }
-        res.json(document);
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to retrieve Bank Transaction document' });
-    }
 };
 
 const createBankTransaction = async (req, res) => {
@@ -76,7 +55,7 @@ const processTransaction = async (req, res, next) => {
 const approveTransaction = async (req, res) => {
     const { id: transactionId } = req.params;
     const { userId } = req.user;
-    const result = await approveBankTransactionDocument(transactionId, userId);
+    const result = await approveBankTransaction(transactionId, userId);
     res.json(result);
 
 };
@@ -86,7 +65,7 @@ const updatedDocument = async (req, res) => {
     const updatedData = req.body;
 
     try {
-        const result = await editBankTransactionDocumentData(transactionId, updatedData);
+        const result = await editBankTransaction(transactionId, updatedData);
         res.json(result);
     } catch (error) {
         console.error("Update Bank Transaction Error:", error);
@@ -94,9 +73,8 @@ const updatedDocument = async (req, res) => {
     }
 }
 module.exports = {
-    getBankTransactionData,
-    getBankTransactionDocument,
-    getTransactionDocumentById,
+    getBankTransactions,
+    getTransactionById,
     processTransaction,
     createBankTransaction,
     approveTransaction,
