@@ -14,21 +14,6 @@ const kufInvoiceItemSchema = Joi.object({
         'string.max': 'Description cannot exceed 500 characters',
     }),
 
-    unit: Joi.string().trim().allow(null, '').optional().messages({
-        'string.base': 'Unit must be a string',
-    }),
-
-    quantity: Joi.number().positive().precision(3).required().messages({
-        'number.base': 'Quantity must be a number',
-        'number.positive': 'Quantity must be positive',
-        'any.required': 'Quantity is required',
-    }),
-
-    unitPrice: Joi.number().positive().precision(2).required().messages({
-        'number.base': 'Unit price must be a number',
-        'number.positive': 'Unit price must be positive',
-        'any.required': 'Unit price is required',
-    }),
 
     netSubtotal: Joi.number().min(0).precision(2).required().messages({
         'number.base': 'Net subtotal must be a number',

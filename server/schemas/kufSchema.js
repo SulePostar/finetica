@@ -24,18 +24,12 @@ const purchaseInvoiceSchema = {
                 type: Type.OBJECT,
                 properties: {
                     description: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
-                    unit: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
-                    quantity: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
-                    unitPrice: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
                     netSubtotal: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
                     vatAmount: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
                     grossSubtotal: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
                 },
                 required: [
                     'description',
-                    'unit',
-                    'quantity',
-                    'unitPrice',
                     'netSubtotal',
                     'vatAmount',
                     'grossSubtotal'
