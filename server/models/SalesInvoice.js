@@ -2,9 +2,10 @@ const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
   class SalesInvoice extends Model {
-    static associate({ BusinessPartner, SalesInvoiceItem }) {
+    static associate({ BusinessPartner, SalesInvoiceItem, User }) {
       this.belongsTo(BusinessPartner, { foreignKey: 'customerId' });
       this.hasMany(SalesInvoiceItem, { foreignKey: 'invoiceId' });
+      this.belongsTo(User, { foreignKey: 'approvedBy'});
     }
   }
 
@@ -62,6 +63,16 @@ module.exports = (sequelize) => {
       vatCategory: {
         type: DataTypes.STRING,
         field: 'vat_category',
+      },
+      approvedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        field: 'approved_at',
+      },
+      approvedBy: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        field: 'approved_by',
       },
     },
     {

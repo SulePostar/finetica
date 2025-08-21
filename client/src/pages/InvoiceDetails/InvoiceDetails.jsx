@@ -13,7 +13,19 @@ import {
   CButton,
   CSpinner
 } from '@coreui/react';
+import { cilFile } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
+import { CCard, CCardBody, CCardHeader, CCardTitle, CCol, CContainer, CRow } from '@coreui/react';
+import { useLocation, useParams } from 'react-router-dom';
+import DocumentInfo from '../../components/InfoCards/DocumentInfo';
+import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
+import DefaultLayout from '../../layout/DefaultLayout';
+import {
+  createMockContractData,
+  createMockKifData,
+  createMockKufData,
+  createMockVatData,
+} from '../../utilis/constants/InvoicesData';
 import { cilFile } from '@coreui/icons';
 import { useState, useEffect } from 'react';
 import ContractService from '../../services/contract';
@@ -22,6 +34,34 @@ const InvoiceDetails = () => {
   const { id } = useParams();
   const location = useLocation();
 
+  // Determine document type based on URL path
+  const getDocumentType = () => {
+    if (location.pathname.includes('/kif/')) return 'kif';
+    if (location.pathname.includes('/kuf/')) return 'kuf';
+    if (location.pathname.includes('/contracts/')) return 'contract';
+    if (location.pathname.includes('/vat/')) return 'vat';
+  };
+
+  const documentType = getDocumentType();
+
+  // Get appropriate mock data based on document type
+  const getMockData = () => {
+    switch (documentType) {
+      case 'kif':
+        return createMockKifData(id);
+      case 'kuf':
+        return createMockKufData(id);
+      case 'contract':
+        return createMockContractData(id);
+      case 'vat':
+        return createMockVatData(id);
+    }
+  };
+
+  const mockData = getMockData();
+
+  // For now hardcoded, this will come from an API call
+  const mockPdfUrl = 'https://pdfobject.com/pdf/sample.pdf';
   const [formData, setFormData] = useState({});
   const [pdfUrl, setPdfUrl] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -95,7 +135,6 @@ const InvoiceDetails = () => {
   };
 
 
-  const documentType = 'contract';
 
   return (
     <DefaultLayout>

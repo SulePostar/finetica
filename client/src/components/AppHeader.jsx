@@ -1,6 +1,7 @@
-import { cilContrast, cilMenu, cilMoon, cilSun, cilArrowLeft } from '@coreui/icons';
+import { cilArrowLeft, cilContrast, cilMenu, cilMoon, cilSun } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import {
+  CButton,
   CContainer,
   CDropdown,
   CDropdownItem,
@@ -9,13 +10,29 @@ import {
   CHeader,
   CHeaderNav,
   CHeaderToggler,
-  CButton,
 } from '@coreui/react';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
 import './AppHeader.css';
+import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
+
+//Returns route and label for a detail page, or null if not a detail page
+const getDetailPageConfig = (pathname) => {
+  if (pathname.startsWith('/kuf/') && pathname !== '/kuf') {
+    return { route: '/kuf', label: 'KUF' };
+  }
+  if (pathname.startsWith('/kif/') && pathname !== '/kif') {
+    return { route: '/kif', label: 'KIF' };
+  }
+  if (pathname.startsWith('/vat/') && pathname !== '/vat') {
+    return { route: '/vat', label: 'VAT' };
+  }
+  if (pathname.startsWith('/contracts/') && pathname !== '/contracts') {
+    return { route: '/contracts', label: 'CONTRACTS' };
+  }
+  return null;
+};
 
 const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const headerRef = useRef();
@@ -24,16 +41,14 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const location = useLocation();
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
   const sidebarUnfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
-  const isKufDetailPage = location.pathname.startsWith('/kuf/') && location.pathname !== '/kuf';
-  const isKifDetailPage = location.pathname.startsWith('/kif/') && location.pathname !== '/kif';
-  const isContractDetailPage = location.pathname.startsWith('/contracts/') && location.pathname !== '/contracts';
-  const isDetailPage = isKufDetailPage || isKifDetailPage || isContractDetailPage;
+
+  const detailPage = getDetailPageConfig(location.pathname);
 
   useEffect(() => {
-    if (isDetailPage && sidebarShow) {
+    if (detailPage && sidebarShow) {
       dispatch({ type: 'set', sidebarShow: false });
     }
-  }, [isDetailPage, sidebarShow, dispatch]);
+  }, [detailPage, sidebarShow, dispatch]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,45 +82,31 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
             marginLeft: `${headerMargin}px`,
           }}
         >
-          {isKufDetailPage ? (
+          {detailPage ? (
             <CButton
               variant="outline"
-              onClick={() => navigate('/kuf')}
+              onClick={() => navigate(detailPage.route)}
               className="ms-n3 back-button"
             >
               <CIcon icon={cilArrowLeft} className="me-2" />
-              Back to KUF
-            </CButton>
-          ) : isKifDetailPage ? (
-            <CButton
-              variant="outline"
-              onClick={() => navigate('/kif')}
-              className="ms-n3 back-button"
-            >
-              <CIcon icon={cilArrowLeft} className="me-2" />
-              Back to KIF
-            </CButton>
-          ) : isContractDetailPage ? (
-            <CButton
-              variant="outline"
-              onClick={() => navigate('/contracts')}
-              className="ms-n3 back-button"
-            >
-              <CIcon icon={cilArrowLeft} className="me-2" />
-              Back to Contracts
+              Back to {detailPage.label}
             </CButton>
           ) : (
             <CHeaderToggler
               onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
               className={`ms-n3 header-toggle-btn ${isDarkMode ? 'toggle-dark' : 'toggle-light'}`}
             >
-              <CIcon icon={cilMenu} size="lg" className={isDarkMode ? 'menu-icon-dark' : 'menu-icon-light'} />
+              <CIcon
+                icon={cilMenu}
+                size="lg"
+                className={isDarkMode ? 'menu-icon-dark' : 'menu-icon-light'}
+              />
             </CHeaderToggler>
           )}
           <CHeaderNav className="d-none d-md-flex" />
           <div className="flex-spacer"></div>
         </CContainer>
-      </CHeader >
+      </CHeader>
 
       <div className="fixed-header-nav">
         <CHeaderNav className="fixed-header-nav-gap">
@@ -153,8 +154,9 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
           </CDropdown>
           <AppHeaderDropdown isDarkMode={isDarkMode} />
         </CHeaderNav>
-      </div >
+      </div>
     </>
   );
 };
+
 export default AppHeader;
