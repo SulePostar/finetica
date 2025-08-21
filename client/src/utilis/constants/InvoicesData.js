@@ -159,11 +159,14 @@ export const createMockKifData = (id = '1') => ({
 export const createMockVatData = (id = '1') => ({
   id,
   name: 'Product A',
-  amount: '10',
-  price: '25.5',
+  amount: 10,
+  price: 25.5,
   date: '2025-08-10',
-  documentNumber: `VAT-${id}`,
-  totalPrice: `${25.5 * 10}`,
+  document_number: `VAT-${id}`,
+  total_price: 25.5 * 10,
+  status: 'pending',
+  created_at: '2025-08-11',
+  updated_at: '2025-08-12',
 });
 
 export const createMockContractData = (id = '1') => {

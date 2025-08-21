@@ -1,34 +1,28 @@
-import { useParams, useLocation } from 'react-router-dom';
+import { cilFile } from '@coreui/icons';
+import CIcon from '@coreui/icons-react';
+import {
+  CButton,
+  CCard,
+  CCardBody,
+  CCardHeader,
+  CCardTitle,
+  CCol,
+  CContainer,
+  CRow,
+  CSpinner,
+} from '@coreui/react';
+import { useEffect, useState } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
 import DocumentInfo from '../../components/InfoCards/DocumentInfo/DocumentInfo';
 import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
 import DefaultLayout from '../../layout/DefaultLayout';
-import {
-  CContainer,
-  CRow,
-  CCol,
-  CCard,
-  CCardHeader,
-  CCardBody,
-  CCardTitle,
-  CButton,
-  CSpinner
-} from '@coreui/react';
-import { cilFile } from '@coreui/icons';
-import CIcon from '@coreui/icons-react';
-import { CCard, CCardBody, CCardHeader, CCardTitle, CCol, CContainer, CRow } from '@coreui/react';
-import { useLocation, useParams } from 'react-router-dom';
-import DocumentInfo from '../../components/InfoCards/DocumentInfo';
-import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
-import DefaultLayout from '../../layout/DefaultLayout';
+import ContractService from '../../services/contract';
 import {
   createMockContractData,
   createMockKifData,
   createMockKufData,
   createMockVatData,
 } from '../../utilis/constants/InvoicesData';
-import { cilFile } from '@coreui/icons';
-import { useState, useEffect } from 'react';
-import ContractService from '../../services/contract';
 
 const InvoiceDetails = () => {
   const { id } = useParams();
@@ -69,12 +63,10 @@ const InvoiceDetails = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
 
-
   const isApproveMode = location.pathname.includes('/approve');
 
   const computeApproved = (d) =>
     Boolean(d?.approvedAt || d?.approvedBy || d?.status === 'approved');
-
 
   useEffect(() => {
     const fetchDocument = async () => {
@@ -96,7 +88,6 @@ const InvoiceDetails = () => {
 
     fetchDocument();
   }, [id]);
-
 
   const handleApprove = async () => {
     try {
@@ -130,11 +121,13 @@ const InvoiceDetails = () => {
       setIsApproved(computeApproved(data));
       setIsEditing(false);
     } catch (err) {
-      console.error('Save (approve) failed:', err?.response?.status, err?.response?.data || err.message);
+      console.error(
+        'Save (approve) failed:',
+        err?.response?.status,
+        err?.response?.data || err.message
+      );
     }
   };
-
-
 
   return (
     <DefaultLayout>
@@ -143,7 +136,9 @@ const InvoiceDetails = () => {
           <CRow className="justify-content-center">
             <CCol lg={4} className="mb-4">
               {loading ? (
-                <div className="text-center py-5"><CSpinner color="primary" /></div>
+                <div className="text-center py-5">
+                  <CSpinner color="primary" />
+                </div>
               ) : (
                 <DocumentInfo
                   data={formData}
@@ -157,12 +152,8 @@ const InvoiceDetails = () => {
                       <>
                         {!isEditing ? (
                           <div className="w-100 d-flex justify-content-center mt-3 gap-2">
-                            <CButton
-                              color="success"
-                              onClick={handleApprove}
-                              disabled={isApproved}
-                            >
-                              {isApproved ? "Approved" : "Approve"}
+                            <CButton color="success" onClick={handleApprove} disabled={isApproved}>
+                              {isApproved ? 'Approved' : 'Approve'}
                             </CButton>
                             {!isApproved && (
                               <CButton color="secondary" onClick={handleEdit}>
@@ -192,12 +183,12 @@ const InvoiceDetails = () => {
                 <CCardHeader>
                   <CCardTitle className="mb-0">
                     <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
-                    {isApproveMode ? "Approve Document" : `View ${documentType.toUpperCase()} Details`}
+                    {isApproveMode
+                      ? 'Approve Document'
+                      : `View ${documentType.toUpperCase()} Details`}
                   </CCardTitle>
                 </CCardHeader>
-                <CCardBody>
-                  {loading ? <CSpinner /> : <PdfViewer pdfUrl={pdfUrl} />}
-                </CCardBody>
+                <CCardBody>{loading ? <CSpinner /> : <PdfViewer pdfUrl={pdfUrl} />}</CCardBody>
               </CCard>
             </CCol>
           </CRow>
