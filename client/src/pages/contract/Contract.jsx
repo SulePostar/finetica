@@ -1,10 +1,10 @@
-import DynamicTable from '../../components/Tables/DynamicTable';
-import DefaultLayout from '../../layout/DefaultLayout';
-import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
-import { useNavigate } from 'react-router-dom';
-import { useSidebarWidth } from '../../hooks/useSidebarWidth';
-import './Contract.css';
 import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
+import DynamicTable from '../../components/Tables/DynamicTable';
+import { useSidebarWidth } from '../../hooks/useSidebarWidth';
+import DefaultLayout from '../../layout/DefaultLayout';
+import './Contract.css';
 
 const Contract = () => {
   const navigate = useNavigate();
@@ -58,14 +58,14 @@ const Contract = () => {
       selector: row => row.startDate,
       sortable: true,
       width: '150px',
-      cell: row => row.startDate ? new Date(row.start_date).toLocaleDateString() : '',
+      cell: row => row.startDate ? new Date(row.startDate).toLocaleDateString() : '',
     },
     {
       name: 'End Date',
       selector: row => row.endDate,
       sortable: true,
       width: '145px',
-      cell: row => row.endDate ? new Date(row.end_date).toLocaleDateString() : '',
+      cell: row => row.endDate ? new Date(row.endDate).toLocaleDateString() : '',
     },
     {
       name: 'Status',

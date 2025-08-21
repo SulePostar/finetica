@@ -72,15 +72,10 @@ export const DOCUMENT_FIELD_CONFIGS = {
 export const formatValue = (value, key, currency = 'BAM') => {
   if (value === null || value === undefined || value === '') return '/';
 
-  // Format dates
-  if (key.includes('date') || key.includes('_at')) {
+  if (key.includes('Date') || key.includes('At')) {
     try {
       const date = new Date(value);
-      if (isNaN(date)) return value;
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const year = date.getFullYear();
-      return `${day}-${month}-${year}`;
+      return date.toLocaleDateString();
     } catch {
       return value;
     }
