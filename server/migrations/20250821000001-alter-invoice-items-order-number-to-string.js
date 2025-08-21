@@ -17,22 +17,14 @@ module.exports = {
 
     async down(queryInterface, Sequelize) {
         // Use raw SQL to handle the conversion safely
-        await queryInterface.sequelize.query(`
-            ALTER TABLE sales_invoice_items 
-            ALTER COLUMN order_number TYPE INTEGER 
-            USING CASE 
-                WHEN order_number ~ '^[0-9]+$' THEN order_number::INTEGER 
-                ELSE NULL 
-            END
-        `);
+        await queryInterface.changeColumn('sales_invoice_items', 'order_number', {
+            type: Sequelize.INTEGER,
+            allowNull: true,
+        });
 
-        await queryInterface.sequelize.query(`
-            ALTER TABLE purchase_invoice_items 
-            ALTER COLUMN order_number TYPE INTEGER 
-            USING CASE 
-                WHEN order_number ~ '^[0-9]+$' THEN order_number::INTEGER 
-                ELSE NULL 
-            END
-        `);
+        await queryInterface.changeColumn('purchase_invoice_items', 'order_number', {
+            type: Sequelize.INTEGER,
+            allowNull: true,
+        });
     },
 };
