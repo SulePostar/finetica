@@ -1,7 +1,7 @@
-const { SalesInvoice, SalesInvoiceItem, BusinessPartner } = require('../models');
+const { PurchaseInvoice, PurchaseInvoiceItem, BusinessPartner } = require('../models');
 const { processDocument } = require('./aiService');
 const KUF_PROMPT = require('../prompts/kufPrompt.js');
-const salesInvoiceSchema = require('../schemas/kufSchema');
+const purchaseInvoiceSchema = require('../schemas/kufSchema');
 const AppError = require('../utils/errorHandler');
 
 const createKufFromAI = async (extractedData) => {
@@ -17,7 +17,7 @@ const createKufFromAI = async (extractedData) => {
         };
 
         // Create the sales invoice
-        const document = await SalesInvoice.create(documentData);
+        const document = await PurchaseInvoice.create(documentData);
 
         // Create sales invoice items if they exist
         if (items && Array.isArray(items) && items.length > 0) {
@@ -28,7 +28,7 @@ const createKufFromAI = async (extractedData) => {
                 updatedAt: new Date(),
             }));
 
-            await SalesInvoiceItem.bulkCreate(itemsToCreate);
+            await PurchaseInvoiceItem.bulkCreate(itemsToCreate);
         }
 
         const responseData = {
@@ -58,7 +58,7 @@ const createKufManually = async (invoiceData, userId) => {
         };
 
         // Create the sales invoice
-        const document = await SalesInvoice.create(finalDocumentData);
+        const document = await PurchaseInvoice.create(finalDocumentData);
 
         // Create sales invoice items if they exist
         if (items && Array.isArray(items) && items.length > 0) {
@@ -69,14 +69,14 @@ const createKufManually = async (invoiceData, userId) => {
                 updatedAt: new Date(),
             }));
 
-            await SalesInvoiceItem.bulkCreate(itemsToCreate);
+            await PurchaseInvoiceItem.bulkCreate(itemsToCreate);
         }
 
         // Fetch the created invoice with its items
-        const createdInvoice = await SalesInvoice.findByPk(document.id, {
+        const createdInvoice = await PurchaseInvoice.findByPk(document.id, {
             include: [
                 {
-                    model: SalesInvoiceItem,
+                    model: PurchaseInvoiceItem,
                     required: false
                 },
                 {
@@ -96,7 +96,7 @@ const createKufManually = async (invoiceData, userId) => {
 // KUF-specific function to approve a sales invoice
 const approveKufDocument = async (documentId, userId) => {
     try {
-        const document = await SalesInvoice.findByPk(documentId);
+        const document = await PurchaseInvoice.findByPk(documentId);
 
         if (!document) {
             throw new AppError('KUF sales invoice not found', 404);
@@ -121,7 +121,7 @@ const approveKufDocument = async (documentId, userId) => {
 // KUF-specific function to update sales invoice data
 const updateKufDocumentData = async (documentId, updatedData) => {
     try {
-        const document = await SalesInvoice.findByPk(documentId);
+        const document = await PurchaseInvoice.findByPk(documentId);
 
         if (!document) {
             throw new AppError('KUF sales invoice not found', 404);
@@ -144,7 +144,7 @@ const updateKufDocumentData = async (documentId, updatedData) => {
         // Update sales invoice items if they exist
         if (items && Array.isArray(items)) {
             // Get existing items
-            const existingItems = await SalesInvoiceItem.findAll({
+            const existingItems = await PurchaseInvoiceItem.findAll({
                 where: { invoiceId: documentId }
             });
 
@@ -155,7 +155,7 @@ const updateKufDocumentData = async (documentId, updatedData) => {
             for (const item of items) {
                 if (item.id && existingItemsMap.has(item.id)) {
                     // Update existing item
-                    await SalesInvoiceItem.update(
+                    await PurchaseInvoiceItem.update(
                         {
                             ...item,
                             updatedAt: new Date(),
@@ -167,7 +167,7 @@ const updateKufDocumentData = async (documentId, updatedData) => {
                     updatedItemIds.add(item.id);
                 } else {
                     // Create new item
-                    await SalesInvoiceItem.create({
+                    await PurchaseInvoiceItem.create({
                         ...item,
                         invoiceId: documentId,
                         createdAt: new Date(),
@@ -178,7 +178,7 @@ const updateKufDocumentData = async (documentId, updatedData) => {
         }
 
         // Fetch updated items to return
-        const updatedItems = await SalesInvoiceItem.findAll({
+        const updatedItems = await PurchaseInvoiceItem.findAll({
             where: { invoiceId: documentId }
         });
 
@@ -194,8 +194,12 @@ const updateKufDocumentData = async (documentId, updatedData) => {
 
 const getPaginatedKufData = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
     try {
-        const offset = (page - 1) * perPage;
-        const limit = parseInt(perPage);
+        // Ensure numbers with fallbacks
+        const safePage = Number(page) > 0 ? Number(page) : 1;
+        const safePerPage = Number(perPage) > 0 ? Number(perPage) : 10;
+
+        const offset = (safePage - 1) * safePerPage;
+        const limit = safePerPage;
 
         let orderOptions = [];
         if (sortField) {
@@ -204,38 +208,32 @@ const getPaginatedKufData = async ({ page = 1, perPage = 10, sortField, sortOrde
             orderOptions = [['id', 'ASC']];
         }
 
-        // Get total count
-        const total = await SalesInvoice.count();
+        const total = await PurchaseInvoice.count();
 
-        // Get paginated data with associated items and business partner
-        const salesInvoices = await SalesInvoice.findAll({
+        const purchaseInvoices = await PurchaseInvoice.findAll({
             include: [
-                {
-                    model: SalesInvoiceItem,
-                    required: false
-                },
-                {
-                    model: BusinessPartner,
-                    required: false
-                }
+                { model: PurchaseInvoiceItem, required: false },
+                { model: BusinessPartner, required: false }
             ],
             order: orderOptions,
             limit,
-            offset
+            offset,
         });
 
-        return { data: salesInvoices, total };
+        return { data: purchaseInvoices, total };
     } catch (error) {
+        console.error("🔥 Sequelize error:", error);
         throw new AppError('Failed to fetch KUF data', 500);
     }
 };
 
+
 const getKufById = async (id) => {
     try {
-        const salesInvoice = await SalesInvoice.findByPk(id, {
+        const purchaseInvoice = await PurchaseInvoice.findByPk(id, {
             include: [
                 {
-                    model: SalesInvoiceItem,
+                    model: PurchaseInvoiceItem,
                     required: false
                 },
                 {
@@ -245,11 +243,11 @@ const getKufById = async (id) => {
             ]
         });
 
-        if (!salesInvoice) {
+        if (!purchaseInvoice) {
             throw new AppError('Sales invoice not found', 404);
         }
 
-        return salesInvoice
+        return purchaseInvoice
     } catch (error) {
         throw new AppError('Failed to fetch KUF by ID', 500);
     }
@@ -261,7 +259,7 @@ const processKufDocument = async (fileBuffer, mimeType, model = "gemini-2.5-flas
         const extractedData = await processDocument(
             fileBuffer,
             mimeType,
-            salesInvoiceSchema,
+            purchaseInvoiceSchema,
             model,
             KUF_PROMPT
         );
