@@ -25,7 +25,7 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       direction: {
-        type: DataTypes.ENUM('in', 'out', 'Potrazuje', 'Duguje', 'credit', 'debit'),
+        type: DataTypes.ENUM('in', 'out'),
         allowNull: false,
       },
       accountNumber: {

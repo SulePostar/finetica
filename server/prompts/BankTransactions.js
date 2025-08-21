@@ -9,13 +9,15 @@ Rules:
 4. Dates MUST be in ISO format (YYYY-MM-DD).
 5. Numbers MUST use '.' as the decimal separator.
 6. Normalize currencies: KM → BAM, € → EUR, $ → USD.
-7. Normalize transaction directions:
-   - If the direction means the bank **credits** the account (incoming money), map it to 'credit'.
-   - If the direction means the bank **debits** the account (outgoing money), map it to 'debit'.
-   - Recognize all possible synonyms or translations for credit/debit, e.g., 'Potrazuje', 'Duguje', 'debit', 'credit', etc.
-   - Always output only 'credit' or 'debit' in the final JSON.
-8. Do not invent values that are not present in the document.
-9. Output valid JSON ONLY — no markdown, no comments, no code fences.
-10. Be careful: your output must always match the schema exactly.`;
+7. Normalize transaction directions into only two values:
+   - Use "in" for incoming funds to the account 
+     (examples: 'Duguje', 'Debit', 'debit', 'Dr.', 'Belasten', etc.).
+   - Use "out" for outgoing funds from the account 
+     (examples: 'Potrazuje', 'Credit', 'credit', 'Haben', etc.).
+   - Always output only "in" or "out" in the final JSON.
+8. Recognize synonyms and translations in multiple languages (e.g., English, Bosnian/Croatian/Serbian, German, etc.) and map them correctly.
+9. Do not invent values that are not present in the document.
+10. Output valid JSON ONLY — no markdown, no comments, no code fences.
+11. Be careful: your output must always match the schema exactly.`;
 
 module.exports = BANK_TRANSACTIONS_PROMPT;
