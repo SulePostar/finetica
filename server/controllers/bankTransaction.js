@@ -1,7 +1,6 @@
 const {
     getPaginatedBankTransactionData,
     getBankTransactionDocumentById,
-    createBankTransactionFromAI,
     createBankTransactionManually,
     approveBankTransactionDocument,
     editBankTransactionDocumentData,
@@ -58,7 +57,7 @@ const createBankTransaction = async (req, res) => {
     }
 };
 
-const processTransaction = async (req, res) => {
+const processTransaction = async (req, res, next) => {
     try {
         const { model } = req.body;
         const result = await processBankTransaction(req.file.buffer, req.file.mimetype, model);
