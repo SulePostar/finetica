@@ -1,38 +1,43 @@
 const express = require('express');
-const multer = require('multer');
-const path = require('path');
-const { extractPurchaseInvoice } = require("../services/kufExtractor.js");
-const { getKufData } = require('../controllers/kuf');
-
 const router = express.Router();
+const {
+    getKufData,
+    getKufDataById,
+    createKufInvoice,
+    processKufInvoice,
+    approveKufInvoice,
+    updateKufInvoice
+} = require('../controllers/kuf');
+const { upload } = require('../services/aiService');
+const isAuthenticated = require('../middleware/isAuthenticated');
+const validate = require('../middleware/validation');
+const {
+    kufInvoiceCreateSchema,
+    kufInvoiceUpdateSchema,
+} = require('../schemas/kufJoiSchema');
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "uploads/");
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    },
-});
+router.get('/', getKufData);
+router.get('/:id', getKufDataById);
+router.post('/',
+    isAuthenticated,
+    validate(kufInvoiceCreateSchema),
+    createKufInvoice
+);
 
-const upload = multer({ storage });
+router.post('/process',
+    isAuthenticated,
+    upload.single('file'),
+    processKufInvoice
+);
 
-router.post("/upload-invoice", upload.single("invoice"), async (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ error: "No file uploaded" });
-        }
-
-        const filePath = req.file.path;
-        const extracted = await extractPurchaseInvoice(filePath);
-
-        res.json({ success: true, data: extracted });
-    } catch (err) {
-        console.error("❌ Upload error:", err);
-        res.status(500).json({ error: "Failed to process invoice" });
-    }
-});
-
-router.get('/kuf-data', getKufData);
+router.patch('/:id/approve',
+    isAuthenticated,
+    approveKufInvoice
+);
+router.patch('/:id/edit',
+    isAuthenticated,
+    validate(kufInvoiceUpdateSchema),
+    updateKufInvoice
+);
 
 module.exports = router;
