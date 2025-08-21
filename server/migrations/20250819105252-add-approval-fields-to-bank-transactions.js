@@ -14,7 +14,7 @@ module.exports = {
         model: 'users',
         key: 'id',
       },
-      onDelete: 'SET NULL',
+      onDelete: 'NO ACTION',
     });
   },
 
