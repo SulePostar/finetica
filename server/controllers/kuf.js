@@ -4,7 +4,7 @@ const {
     createKufManually,
     processKufDocument,
     approveKufDocument,
-    updateKufDocumentData
+    updateKufDocument,
 } = require('../services/kuf');
 
 const getKufData = async (req, res, next) => {
@@ -35,7 +35,7 @@ const getKufDataById = async (req, res, next) => {
     }
 };
 
-const createKufInvoice = async (req, res, next) => {
+const createKufDocument = async (req, res, next) => {
     try {
         const invoiceData = req.body;
         const userId = req.user.userId;
@@ -48,7 +48,7 @@ const createKufInvoice = async (req, res, next) => {
     }
 };
 
-const processKufInvoice = async (req, res, next) => {
+const processKufDocument = async (req, res, next) => {
     try {
         const { model } = req.body;
         const result = await processKufDocument(req.file.buffer, req.file.mimetype, model);
@@ -59,7 +59,7 @@ const processKufInvoice = async (req, res, next) => {
     }
 };
 
-const approveKufInvoice = async (req, res, next) => {
+const approveKufDocument = async (req, res, next) => {
     try {
         const { id: invoiceId } = req.params;
         const { userId } = req.user;
@@ -72,7 +72,7 @@ const approveKufInvoice = async (req, res, next) => {
     }
 };
 
-const updateKufInvoice = async (req, res, next) => {
+const updateKufDocument = async (req, res, next) => {
     try {
         const { id: invoiceId } = req.params;
         const updatedData = req.body;
@@ -88,8 +88,8 @@ const updateKufInvoice = async (req, res, next) => {
 module.exports = {
     getKufData,
     getKufDataById,
-    createKufInvoice,
-    processKufInvoice,
-    approveKufInvoice,
-    updateKufInvoice
+    createKufDocument,
+    processKufDocument,
+    approveKufDocument,
+    updateKufDocument
 };

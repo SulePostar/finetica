@@ -3,10 +3,10 @@ const router = express.Router();
 const {
     getKufData,
     getKufDataById,
-    createKufInvoice,
-    processKufInvoice,
-    approveKufInvoice,
-    updateKufInvoice
+    createKufDocument,
+    processKufDocument,
+    approveKufDocument,
+    updateKufDocument,
 } = require('../controllers/kuf');
 const { upload } = require('../services/aiService');
 const isAuthenticated = require('../middleware/isAuthenticated');
@@ -21,23 +21,23 @@ router.get('/:id', getKufDataById);
 router.post('/',
     isAuthenticated,
     validate(kufInvoiceCreateSchema),
-    createKufInvoice
+    createKufDocument
 );
 
 router.post('/process',
     isAuthenticated,
     upload.single('file'),
-    processKufInvoice
+    processKufDocument
 );
 
 router.patch('/:id/approve',
     isAuthenticated,
-    approveKufInvoice
+    approveKufDocument
 );
 router.patch('/:id/edit',
     isAuthenticated,
     validate(kufInvoiceUpdateSchema),
-    updateKufInvoice
+    updateKufDocument
 );
 
 module.exports = router;

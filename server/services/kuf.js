@@ -3,8 +3,11 @@ const { processDocument } = require('./aiService');
 const KUF_PROMPT = require('../prompts/kufPrompt.js');
 const purchaseInvoiceSchema = require('../schemas/kufSchema');
 const AppError = require('../utils/errorHandler');
+const { sequelize } = require('../config/db');
+
 
 const createKufFromAI = async (extractedData) => {
+    const transaction = await sequelize.transaction();
     try {
         const { items, ...invoiceData } = extractedData;
 
@@ -17,7 +20,7 @@ const createKufFromAI = async (extractedData) => {
         };
 
         // Create the sales invoice
-        const document = await PurchaseInvoice.create(documentData);
+        const document = await PurchaseInvoice.create(documentData, { transaction });
 
         // Create sales invoice items if they exist
         if (items && Array.isArray(items) && items.length > 0) {
@@ -28,8 +31,9 @@ const createKufFromAI = async (extractedData) => {
                 updatedAt: new Date(),
             }));
 
-            await PurchaseInvoiceItem.bulkCreate(itemsToCreate);
+            await PurchaseInvoiceItem.bulkCreate(itemsToCreate, { transaction });
         }
+        await transaction.commit();
 
         const responseData = {
             ...document.toJSON(),
@@ -38,6 +42,7 @@ const createKufFromAI = async (extractedData) => {
 
         return responseData;
     } catch (error) {
+        await transaction.rollback();
         console.error("Database Error:", error);
         throw new AppError('Failed to save KUF sales invoice to database', 500);
     }
@@ -45,6 +50,7 @@ const createKufFromAI = async (extractedData) => {
 
 // KUF-specific function to create sales invoice from manual data
 const createKufManually = async (invoiceData, userId) => {
+    const transaction = await sequelize.transaction();
     try {
         const { items, ...documentData } = invoiceData;
 
@@ -58,7 +64,7 @@ const createKufManually = async (invoiceData, userId) => {
         };
 
         // Create the sales invoice
-        const document = await PurchaseInvoice.create(finalDocumentData);
+        const document = await PurchaseInvoice.create(finalDocumentData, { transaction });
 
         // Create sales invoice items if they exist
         if (items && Array.isArray(items) && items.length > 0) {
@@ -69,8 +75,9 @@ const createKufManually = async (invoiceData, userId) => {
                 updatedAt: new Date(),
             }));
 
-            await PurchaseInvoiceItem.bulkCreate(itemsToCreate);
+            await PurchaseInvoiceItem.bulkCreate(itemsToCreate, { transaction });
         }
+        await transaction.commit();
 
         // Fetch the created invoice with its items
         const createdInvoice = await PurchaseInvoice.findByPk(document.id, {
@@ -88,6 +95,7 @@ const createKufManually = async (invoiceData, userId) => {
 
         return createdInvoice;
     } catch (error) {
+        await transaction.rollback();
         console.error("Manual Creation Error:", error);
         throw new AppError('Failed to create KUF sales invoice', 500);
     }
@@ -119,7 +127,7 @@ const approveKufDocument = async (documentId, userId) => {
 };
 
 // KUF-specific function to update sales invoice data
-const updateKufDocumentData = async (documentId, updatedData) => {
+const updateKufDocument = async (documentId, updatedData) => {
     try {
         const document = await PurchaseInvoice.findByPk(documentId);
 
@@ -192,7 +200,7 @@ const updateKufDocumentData = async (documentId, updatedData) => {
     }
 };
 
-const getPaginatedKufData = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
+const getKufData = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
     try {
         // Ensure numbers with fallbacks
         const safePage = Number(page) > 0 ? Number(page) : 1;
@@ -276,11 +284,11 @@ const processKufDocument = async (fileBuffer, mimeType, model = "gemini-2.5-flas
 };
 
 module.exports = {
-    getPaginatedKufData,
+    getKufData,
     getKufById,
     createKufManually,
     processKufDocument,
     createKufFromAI,
     approveKufDocument,
-    updateKufDocumentData,
+    updateKufDocument,
 };
