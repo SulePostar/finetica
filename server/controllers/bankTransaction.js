@@ -7,18 +7,24 @@ const {
     processBankTransaction
 } = require('../services/bankTransaction');
 
-const getBankTransactionData = (req, res) => {
-    const { page, perPage, sortField, sortOrder } = req.query;
+const getBankTransactionData = async (req, res, next) => {
+    try {
+        const { page = 1, perPage = 10, sortField = 'created_at', sortOrder = 'asc' } = req.query;
 
-    const result = getPaginatedBankTransactionData({
-        page: parseInt(page),
-        perPage: parseInt(perPage),
-        sortField,
-        sortOrder,
-    });
+        const result = await getPaginatedBankTransactionData({
+            page: parseInt(page, 10),
+            perPage: parseInt(perPage, 10),
+            sortField,
+            sortOrder,
+        });
 
-    res.json(result);
+        res.json(result);
+    } catch (error) {
+        console.error("Get Bank Transaction Data Error:", error);
+        next(error); // pass to error middleware
+    }
 };
+
 
 const getBankTransactionDocument = (req, res) => {
     const { id } = req.params;

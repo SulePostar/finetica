@@ -1,46 +1,53 @@
-const { BusinessPartners, TransactionCategories, Users, BankTransaction } = require('../models');
+const { BusinessPartner, TransactionCategory, Users, BankTransaction } = require('../models');
 const { processDocument } = require('./aiService');
 const AppError = require('../utils/errorHandler');
 const BANK_TRANSACTIONS_PROMPT = require('../prompts/BankTransactions');
 const bankTransactionSchema = require('../schemas/bankTransactionSchema');
 
+const getPaginatedBankTransactionData = async ({ page = 1, perPage = 10, sortField = 'created_at', sortOrder = 'asc' }) => {
+    try {
+        const pageNum = parseInt(page, 10);
+        const perPageNum = parseInt(perPage, 10);
 
-const generateMockData = (total = 25) => {
-    return Array.from({ length: total }, (_, i) => ({
-        id: i + 1,
-        name: `Article ${i + 1}`,
-        amount: Math.floor(Math.random() * 10),
-        price: parseFloat((Math.random() * 10).toFixed(2)),
-        date: `2025-01-${((i % 30) + 1).toString().padStart(2, '0')}`,
-        vatNumber: `VAT-${1000 + i + 1}`,
-        taxableAmount: parseFloat((Math.random() * 1000).toFixed(2)),
-        vatAmount: parseFloat((Math.random() * 200).toFixed(2)),
-        totalAmount: parseFloat((Math.random() * 1200).toFixed(2)),
-        currency: "EUR",
-    }));
-};
+        const offset = !isNaN(pageNum) && pageNum > 0 ? (pageNum - 1) * perPageNum : 0;
+        const limit = !isNaN(perPageNum) && perPageNum > 0 ? perPageNum : 10;
 
-const getPaginatedBankTransactionData = ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
-    const total = 25;
-    const fullData = generateMockData(total);
+        const total = await BankTransaction.count();
 
-    if (sortField) {
-        fullData.sort((a, b) =>
-            sortOrder === 'asc'
-                ? a[sortField] > b[sortField] ? 1 : -1
-                : a[sortField] < b[sortField] ? 1 : -1
-        );
+        const data = await BankTransaction.findAll({
+            include: [
+                { model: BusinessPartner, required: false },
+                { model: TransactionCategory, required: false }
+            ],
+            order: [[sortField, sortOrder.toUpperCase()]],
+            offset,
+            limit
+        });
+
+        console.log('Fetched rows:', data.length);
+        return { data, total };
+    } catch (error) {
+        console.error("Fetch Paginated Data Error:", error);
+        throw new AppError('Failed to fetch bank transactions', 500);
     }
-
-    const start = (page - 1) * perPage;
-    const pagedData = fullData.slice(start, start + parseInt(perPage));
-
-    return { data: pagedData, total };
 };
 
-const getBankTransactionDocumentById = (id) => {
-    const fullData = generateMockData(25);
-    return fullData.find((doc) => doc.id === parseInt(id)) || null;
+
+
+const getBankTransactionDocumentById = async (id) => {
+    try {
+        const document = await BankTransaction.findByPk(id, {
+            include: [
+                { model: TransactionCategory, required: false },
+                { model: BusinessPartner, required: false },
+                { model: Users, required: false }
+            ]
+        });
+        return document || null;
+    } catch (error) {
+        console.error("Fetch Document Error:", error);
+        throw new AppError('Failed to fetch bank transaction document', 500);
+    }
 };
 
 const createBankTransactionFromAI = async (extractedData) => {
@@ -108,11 +115,11 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
         const createdData = await BankTransaction.findByPk(document.id, {
             include: [
                 {
-                    model: TransactionCategories,
+                    model: TransactionCategory,
                     required: false
                 },
                 {
-                    model: BusinessPartners,
+                    model: BusinessPartner,
                     required: false
                 }
             ]
@@ -167,8 +174,8 @@ const editBankTransactionDocumentData = async (id, updatedData) => {
         // Fetch with associations (TransactionCategories, BusinessPartners, Users)
         const updatedWithRelations = await BankTransaction.findByPk(id, {
             include: [
-                { model: TransactionCategories, required: false },
-                { model: BusinessPartners, required: false },
+                { model: TransactionCategory, required: false },
+                { model: BusinessPartner, required: false },
                 { model: Users, required: false }
             ]
         });
