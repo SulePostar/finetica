@@ -18,39 +18,32 @@ const Kif = () => {
     navigate(`/kif/${id}`);
   };
   //Placeholder functions for edit, delete, and download actions
-  const handleEdit = (id) => {};
-  const handleDelete = (id) => {};
-  const handleDownload = (id) => {};
+  const handleEdit = (id) => { };
+  const handleDelete = (id) => { };
+  const handleDownload = (id) => { };
 
-    const columns = [
-        { name: 'ID', selector: row => row.id, sortable: true },
-        { name: 'Name', selector: row => row.name, sortable: true },
-        { name: 'Quantity', selector: row => row.amount, sortable: true },
-        { name: 'Price', selector: row => row.price, sortable: true },
-        { name: 'Date', selector: row => row.date, sortable: true },
-        { name: 'Review Status', selector: row => row.status, sortable: true },
-        {
-            name: 'Actions',
-            cell: row => (
-                <ActionsDropdown
-                    row={row}
-                    onView={handleView}
-                    onEdit={handleEdit}
-                    onDownload={handleDownload}
-                />
-            ),
-            ignoreRowClick: true,
-            allowOverflow: true,
-            button: true,
-        }
-    ];
-
-
-  const handleRowClick = (row) => {
-    console.log('Row clicked:', row);
-    console.log('Navigating to:', `/kif/${row.id}`);
-    navigate(`/kif/${row.id}`);
-  };
+  const columns = [
+    { name: 'ID', selector: row => row.id, sortable: true },
+    { name: 'Name', selector: row => row.name, sortable: true },
+    { name: 'Quantity', selector: row => row.amount, sortable: true },
+    { name: 'Price', selector: row => row.price, sortable: true },
+    { name: 'Date', selector: row => row.date, sortable: true },
+    { name: 'Review Status', selector: row => row.status, sortable: true },
+    {
+      name: 'Actions',
+      cell: row => (
+        <ActionsDropdown
+          row={row}
+          onView={handleView}
+          onEdit={handleEdit}
+          onDownload={handleDownload}
+        />
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    }
+  ];
 
   return (
     <DefaultLayout>
@@ -66,7 +59,6 @@ const Kif = () => {
             title="KIF"
             columns={columns}
             apiEndpoint="http://localhost:4000/api/kif"
-            onRowClick={handleRowClick}
             uploadButton={<UploadButton bucketName={bucketName} />}
           />
         </div>
