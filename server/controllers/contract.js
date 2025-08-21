@@ -1,40 +1,51 @@
-const { getPaginatedContractData, createContract } = require('../services/contract');
+const { listContracts, approveContractById, findById, createContract, } = require('../services/contract');
 
-const getContractData = (req, res) => {
-    const { page, perPage, sortField, sortOrder } = req.query;
-
-    const result = getPaginatedContractData({
-        page: parseInt(page),
-        perPage: parseInt(perPage),
-        sortField,
-        sortOrder,
+const getContractData = async (req, res, next) => {
+  try {
+    const { page = 1, perPage = 10, sortField, sortOrder = 'asc' } = req.query;
+    const { data, total } = await listContracts({
+      page: Number(page) || 1,
+      perPage: Number(perPage) || 10,
+      sortField,
+      sortOrder,
     });
-
-    res.json(result);
+    res.json({ data, total });
+  } catch (err) {
+    next(err);
+  }
 };
 
-/**
- * Create a new contract
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
- */
-const createNewContract = async (req, res, next) => {
-    try {
-        // Contract data is already validated by the validation middleware
-        const contractData = req.body;
+const getContract = async (req, res, next) => {
+  try {
+    const contract = await findById(Number(req.params.id));
+    res.json(contract);
+  } catch (err) {
+    next(err);
+  }
+};
 
-        // Create the contract in the database and get formatted response
-        const result = await createContract(contractData);
+const approveContract = async (req, res, next) => {
+  try {
+    const userId = req.user?.userId;
+    const result = await approveContractById(Number(req.params.id), req.body, userId);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
 
-        // Return the result with a 201 status code
-        res.status(201).json(result);
-    } catch (error) {
-        next(error);
-    }
+const create = async (req, res, next) => {
+  try {
+    const created = await createContract(req.body);
+    res.status(201).json(created);
+  } catch (err) {
+    next(err);
+  }
 };
 
 module.exports = {
-    getContractData,
-    createNewContract,
+  getContractData,
+  getContract,
+  approveContract,
+  create,
 };
