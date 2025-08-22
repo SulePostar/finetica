@@ -4,9 +4,9 @@ const {
     getKufData,
     getKufDataById,
     createKufDocument,
-    processKufDocument,
-    approveKufDocument,
-    updateKufDocument,
+    processKufInvoice,
+    approveKufInvoice,
+    updateKufInvoice,
 } = require('../controllers/kuf');
 const { upload } = require('../services/aiService');
 const isAuthenticated = require('../middleware/isAuthenticated');
@@ -27,17 +27,17 @@ router.post('/',
 router.post('/process',
     isAuthenticated,
     upload.single('file'),
-    processKufDocument
+    processKufInvoice
 );
 
 router.patch('/:id/approve',
     isAuthenticated,
-    approveKufDocument
+    approveKufInvoice
 );
 router.patch('/:id/edit',
     isAuthenticated,
     validate(kufInvoiceUpdateSchema),
-    updateKufDocument
+    updateKufInvoice
 );
 
 module.exports = router;
