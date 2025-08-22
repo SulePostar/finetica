@@ -17,6 +17,7 @@ import DocumentInfo from '../../components/InfoCards/DocumentInfo/DocumentInfo';
 import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ContractService from '../../services/contract';
+import KifService from '../../services/kif';
 import {
   createMockKifData,
   createMockKufData,
@@ -70,14 +71,25 @@ const InvoiceDetails = () => {
     setError(null);
 
     try {
-      const { data } = await ContractService.getById(id);
+      let data;
+      if (documentType === 'contract') {
+        const response = await ContractService.getById(id);
+        data = response.data;
+      } else if (documentType === 'kif') {
+        const response = await KifService.getById(id);
+        data = response.data;
+      } else {
+        // For KUF and VAT, use mock data for now
+        data = mockData;
+      }
+
       setFormData(data);
       setPdfUrl(data.pdfUrl || 'https://pdfobject.com/pdf/sample.pdf');
       setIsApproved(computeApproved(data));
     } catch (err) {
       const msg = err?.response?.data?.message || err.message || 'Failed to load document';
       setError(msg);
-      console.error('GET /contracts/:id failed:', msg);
+      console.error(`GET /${documentType}s/:id failed:`, msg);
     } finally {
       setLoading(false);
     }
@@ -90,7 +102,18 @@ const InvoiceDetails = () => {
 
   const handleApprove = async () => {
     try {
-      const { data } = await ContractService.approve(id, formData);
+      let data;
+      if (documentType === 'contract') {
+        const response = await ContractService.approve(id, formData);
+        data = response.data;
+      } else if (documentType === 'kif') {
+        const response = await KifService.approve(id, formData);
+        data = response.data;
+      } else {
+        // For KUF and VAT, use mock approval for now
+        data = { ...formData, approvedAt: new Date().toISOString() };
+      }
+
       setFormData(data);
       setIsApproved(computeApproved(data));
     } catch (err) {
@@ -104,18 +127,47 @@ const InvoiceDetails = () => {
     setIsEditing(false);
     setLoading(true);
     setError(null);
-    ContractService.getById(id)
-      .then((res) => {
-        setFormData(res.data);
-        setIsApproved(computeApproved(res.data));
-      })
-      .catch((err) => setError(err?.response?.data?.message || err.message))
-      .finally(() => setLoading(false));
+
+    const fetchData = async () => {
+      try {
+        let data;
+        if (documentType === 'contract') {
+          const response = await ContractService.getById(id);
+          data = response.data;
+        } else if (documentType === 'kif') {
+          const response = await KifService.getById(id);
+          data = response.data;
+        } else {
+          // For KUF and VAT, use mock data for now
+          data = mockData;
+        }
+
+        setFormData(data);
+        setIsApproved(computeApproved(data));
+      } catch (err) {
+        setError(err?.response?.data?.message || err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   };
 
   const handleSave = async () => {
     try {
-      const { data } = await ContractService.approve(id, formData);
+      let data;
+      if (documentType === 'contract') {
+        const response = await ContractService.approve(id, formData);
+        data = response.data;
+      } else if (documentType === 'kif') {
+        const response = await KifService.approve(id, formData);
+        data = response.data;
+      } else {
+        // For KUF and VAT, use mock approval for now
+        data = { ...formData, approvedAt: new Date().toISOString() };
+      }
+
       setFormData(data);
       setIsApproved(computeApproved(data));
       setIsEditing(false);
