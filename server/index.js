@@ -11,6 +11,7 @@ const kufRouter = require('./routes/kuf');
 const bankTransactionRouter = require('./routes/bankTransaction');
 const mailRoute = require("./routes/mailRoute");
 const userStatusRouter = require('./routes/userStatus');
+const userRoleRouter = require('./routes/userRoles');
 const { processEmailQueue } = require('./services/emailQueueService');
 
 const cookieParser = require('cookie-parser')
@@ -55,7 +56,7 @@ app.use('/api/contracts', contractRouter);
 app.use('/api/business-partners', businessPartnerRouter);
 app.use('/drive', googleDriveRouter);
 app.use('/api/user-statuses', userStatusRouter);
-
+app.use('/api/user-roles', userRoleRouter);
 app.use(errorHandler);
 
 connectToDatabase();
