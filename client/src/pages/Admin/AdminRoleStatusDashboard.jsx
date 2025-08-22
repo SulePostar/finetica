@@ -1,18 +1,27 @@
 import React from 'react';
-import { AppHeader, AppSidebar } from '../../components/index';
+import DefaultLayout from '../../layout/DefaultLayout';
 import RoleStatusDashboard from '../../components/Admin/Role and Status dashboard/RoleStatusDashboard.jsx';
+import { useSidebarWidth } from '../../hooks/useSidebarWidth';
+import '../../styles/shared/CommonStyles.css';
+import '../../styles/TablePages.css';
 
 const AdminRoleStatusDashboard = () => {
+    const sidebarWidth = useSidebarWidth();
+
     return (
-        <>
-            <AppSidebar />
-            <div className="wrapper d-flex flex-column min-vh-100">
-                <AppHeader />
-                <div className="body flex-grow-1 px-3">
+        <DefaultLayout>
+            <div
+                className="table-page-outer"
+                style={{
+                    marginLeft: sidebarWidth,
+                    width: `calc(100vw - ${sidebarWidth}px)`,
+                }}
+            >
+                <div className="table-content-wrapper">
                     <RoleStatusDashboard />
                 </div>
             </div>
-        </>
+        </DefaultLayout>
     );
 };
 
