@@ -56,7 +56,7 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Roles/Status',
-        to: '/management/roles-status',
+        to: '/admin/role-status-dashboard',
         icon: cilShieldAlt,
       },
     ],

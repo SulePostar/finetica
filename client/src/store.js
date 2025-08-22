@@ -3,9 +3,11 @@ import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 import userReducer from './redux/user/userSlice';
+
 import authReducer from './redux/auth/authSlice';
 import sidebarReducer from './redux/sidebar/sidebarSlice';
-
+import rolesReducer from './redux/roles/rolesSlice';
+import statusesReducer from './redux/statuses/statusesSlice';
 // Simple UI state reducer
 const initialUIState = {
   sidebarShow: true,
@@ -32,6 +34,8 @@ const rootReducer = combineReducers({
   auth: authReducer,
   ui: uiReducer,
   sidebar: sidebarReducer,
+  roles: rolesReducer,
+  statuses: statusesReducer,
 });
 
 // Konfiguracija za redux-persist
