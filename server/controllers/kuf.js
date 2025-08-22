@@ -1,17 +1,17 @@
 const {
-    getPaginatedKufData,
-    getKufById,
+    getKufData,
+    getKufDataById,
     createKufManually,
     processKufDocument,
     approveKufDocument,
     updateKufDocument,
 } = require('../services/kuf');
 
-const getKufData = async (req, res, next) => {
+const getKuf = async (req, res, next) => {
     try {
         const { page, perPage, sortField, sortOrder } = req.query;
 
-        const result = await getPaginatedKufData({
+        const result = await getKufData({
             page: parseInt(page),
             perPage: parseInt(perPage),
             sortField,
@@ -24,18 +24,18 @@ const getKufData = async (req, res, next) => {
     }
 };
 
-const getKufDataById = async (req, res, next) => {
+const getKufById = async (req, res, next) => {
     try {
         const { id } = req.params;
 
-        const result = await getKufById(parseInt(id));
+        const result = await getKufDataById(parseInt(id));
         res.json(result);
     } catch (error) {
         next(error);
     }
 };
 
-const createKufDocument = async (req, res, next) => {
+const createKuf = async (req, res, next) => {
     try {
         const invoiceData = req.body;
         const userId = req.user.userId;
@@ -48,7 +48,7 @@ const createKufDocument = async (req, res, next) => {
     }
 };
 
-const processKufDocument = async (req, res, next) => {
+const processKuf = async (req, res, next) => {
     try {
         const { model } = req.body;
         const result = await processKufDocument(req.file.buffer, req.file.mimetype, model);
@@ -59,7 +59,7 @@ const processKufDocument = async (req, res, next) => {
     }
 };
 
-const approveKufDocument = async (req, res, next) => {
+const approveKuf = async (req, res, next) => {
     try {
         const { id: invoiceId } = req.params;
         const { userId } = req.user;
@@ -72,7 +72,7 @@ const approveKufDocument = async (req, res, next) => {
     }
 };
 
-const updateKufDocument = async (req, res, next) => {
+const updateKuf = async (req, res, next) => {
     try {
         const { id: invoiceId } = req.params;
         const updatedData = req.body;
@@ -86,10 +86,10 @@ const updateKufDocument = async (req, res, next) => {
 };
 
 module.exports = {
-    getKufData,
-    getKufDataById,
-    createKufDocument,
-    processKufDocument,
-    approveKufDocument,
-    updateKufDocument
+    getKuf,
+    getKufById,
+    createKuf,
+    processKuf,
+    approveKuf,
+    updateKuf
 };

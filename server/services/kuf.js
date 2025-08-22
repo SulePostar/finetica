@@ -236,7 +236,7 @@ const getKufData = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc'
 };
 
 
-const getKufById = async (id) => {
+const getKufDataById = async (id) => {
     try {
         const purchaseInvoice = await PurchaseInvoice.findByPk(id, {
             include: [
@@ -285,7 +285,7 @@ const processKufDocument = async (fileBuffer, mimeType, model = "gemini-2.5-flas
 
 module.exports = {
     getKufData,
-    getKufById,
+    getKufDataById,
     createKufManually,
     processKufDocument,
     createKufFromAI,
