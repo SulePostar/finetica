@@ -59,7 +59,8 @@ const Vat = () => {
           <DynamicTable
             title="VAT"
             columns={columns}
-            apiEndpoint="http://localhost:4000/api/bank-transaction-data"
+            apiEndpoint="http://localhost:4000/api/transactions/bank-transaction-data"
+            onRowClick={handleRowClick}
             uploadButton={<UploadButton bucketName={bucketName} />}
           />
         </div>
