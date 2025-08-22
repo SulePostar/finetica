@@ -17,9 +17,8 @@ const Kuf = () => {
     const handleView = (id) => {
         navigate(`/kuf/${id}`);
     };
-    // Placeholder functions for edit, delete, and download actions
+    // Placeholder functions for edit and download actions
     const handleEdit = (id) => { };
-    const handleDelete = (id) => { };
     const handleDownload = (id) => { };
 
     const columns = [
@@ -28,6 +27,7 @@ const Kuf = () => {
         { name: 'Quantity', selector: row => row.amount, sortable: true },
         { name: 'Price', selector: row => row.price, sortable: true },
         { name: 'Date', selector: row => row.date, sortable: true },
+        { name: 'Review Status', selector: row => row.status, sortable: true },
         {
             name: 'Actions',
             cell: row => (
@@ -35,7 +35,6 @@ const Kuf = () => {
                     row={row}
                     onView={handleView}
                     onEdit={handleEdit}
-                    onDelete={handleDelete}
                     onDownload={handleDownload}
                 />
             ),
@@ -44,12 +43,6 @@ const Kuf = () => {
             button: true,
         }
     ];
-
-    const handleRowClick = (row) => {
-        console.log('Row clicked:', row);
-        console.log('Navigating to:', `/kuf/${row.id}`);
-        navigate(`/kuf/${row.id}`);
-    };
 
     return (
         <DefaultLayout>
@@ -65,7 +58,6 @@ const Kuf = () => {
                         title="KUF"
                         columns={columns}
                         apiEndpoint="http://localhost:4000/api/kuf-data"
-                        onRowClick={handleRowClick}
                         uploadButton={<UploadButton bucketName={bucketName} />}
                     />
                 </div>

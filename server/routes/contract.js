@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { getContractData, createNewContract } = require('../controllers/contract');
+const { getContractData, approveContract, getContract } = require('../controllers/contract');
+const isAuthenticated = require('../middleware/isAuthenticated');
 const validate = require('../middleware/validation');
-const { createContractSchema } = require('../schemas/contractSchema');
 
-// Get all contracts with pagination
+const approveContractSchema = require('../schemas/approveContract');
+
 router.get('/', getContractData);
-
-// Create a new contract
-router.post('/', validate(createContractSchema), createNewContract);
+router.put('/:id/approve', isAuthenticated, validate(approveContractSchema), approveContract);
+router.get('/:id', isAuthenticated, getContract);
 
 module.exports = router;

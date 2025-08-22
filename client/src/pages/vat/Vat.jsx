@@ -19,38 +19,32 @@ const Vat = () => {
   };
 
   //Placeholder functions for edit, delete, and download actions
-  const handleEdit = (row) => {};
-  const handleDelete = (row) => {};
-  const handleDownload = (row) => {};
+  const handleEdit = (row) => { };
+  const handleDelete = (row) => { };
+  const handleDownload = (row) => { };
 
   const columns = [
-    { name: 'ID', selector: (row) => row.id, sortable: true },
-    { name: 'Name', selector: (row) => row.name, sortable: true },
-    { name: 'Quantity', selector: (row) => row.amount, sortable: true },
-    { name: 'Price', selector: (row) => row.price, sortable: true },
-    { name: 'Date', selector: (row) => row.date, sortable: true },
+    { name: 'ID', selector: row => row.id, sortable: true },
+    { name: 'Name', selector: row => row.name, sortable: true },
+    { name: 'Quantity', selector: row => row.amount, sortable: true },
+    { name: 'Price', selector: row => row.price, sortable: true },
+    { name: 'Date', selector: row => row.date, sortable: true },
+    { name: 'Review Status', selector: row => row.status, sortable: true },
     {
       name: 'Actions',
-      cell: (row) => (
+      cell: row => (
         <ActionsDropdown
           row={row}
           onView={handleView}
           onEdit={handleEdit}
-          onDelete={handleDelete}
           onDownload={handleDownload}
         />
       ),
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
-    },
+    }
   ];
-
-  const handleRowClick = (row) => {
-    console.log('Row clicked:', row);
-    console.log('Navigating to:', `/vat/${row.id}`);
-    navigate(`/vat/${row.id}`);
-  };
 
   return (
     <DefaultLayout>
@@ -66,7 +60,6 @@ const Vat = () => {
             title="VAT"
             columns={columns}
             apiEndpoint="http://localhost:4000/api/bank-transaction-data"
-            onRowClick={handleRowClick}
             uploadButton={<UploadButton bucketName={bucketName} />}
           />
         </div>
