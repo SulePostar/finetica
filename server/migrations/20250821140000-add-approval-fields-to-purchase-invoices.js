@@ -2,12 +2,12 @@
 
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.addColumn('purchase_invoice', 'approved_at', {
+        await queryInterface.addColumn('purchase_invoices', 'approved_at', {
             type: Sequelize.DATE,
             allowNull: true,
         });
 
-        await queryInterface.addColumn('purchase_invoice', 'approved_by', {
+        await queryInterface.addColumn('purchase_invoices', 'approved_by', {
             type: Sequelize.INTEGER,
             allowNull: true,
             references: {
@@ -19,7 +19,7 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.removeColumn('purchase_invoice', 'approved_by');
-        await queryInterface.removeColumn('purchase_invoice', 'approved_at');
+        await queryInterface.removeColumn('purchase_invoices', 'approved_by');
+        await queryInterface.removeColumn('purchase_invoices', 'approved_at');
     },
 };

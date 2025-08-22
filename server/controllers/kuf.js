@@ -48,7 +48,7 @@ const createKufDocument = async (req, res, next) => {
     }
 };
 
-const processKufDocument = async (req, res, next) => {
+const processKufInvoice = async (req, res, next) => {
     try {
         const { model } = req.body;
         const result = await processKufDocument(req.file.buffer, req.file.mimetype, model);
@@ -59,7 +59,7 @@ const processKufDocument = async (req, res, next) => {
     }
 };
 
-const approveKufDocument = async (req, res, next) => {
+const approveKufInvoice = async (req, res, next) => {
     try {
         const { id: invoiceId } = req.params;
         const { userId } = req.user;
@@ -72,7 +72,7 @@ const approveKufDocument = async (req, res, next) => {
     }
 };
 
-const updateKufDocument = async (req, res, next) => {
+const updateKufInvoice = async (req, res, next) => {
     try {
         const { id: invoiceId } = req.params;
         const updatedData = req.body;
@@ -89,7 +89,7 @@ module.exports = {
     getKufData,
     getKufDataById,
     createKufDocument,
-    processKufDocument,
-    approveKufDocument,
-    updateKufDocument
+    processKufInvoice,
+    approveKufInvoice,
+    updateKufInvoice
 };
