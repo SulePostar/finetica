@@ -3,39 +3,37 @@
  */
 export const DOCUMENT_FIELD_CONFIGS = {
   kuf: [
-    { label: 'Document Number', key: 'documentNumber' },
-    { label: 'Invoice Number', key: 'invoice_number' },
-    { label: 'Bill Number', key: 'bill_number' },
+    { label: 'Invoice Number', key: 'invoiceNumber' },
+    { label: 'Bill Number', key: 'billNumber' },
     { label: 'Supplier', key: 'supplier_name' },
-    { label: 'Supplier ID', key: 'supplier_id' },
-    { label: 'VAT Period', key: 'vat_period' },
-    { label: 'Invoice Type', key: 'invoice_type' },
-    { label: 'Invoice Date', key: 'invoice_date' },
-    { label: 'Due Date', key: 'due_date' },
-    { label: 'Received Date', key: 'received_date' },
-    { label: 'Net Total', key: 'net_total' },
-    { label: 'Lump Sum', key: 'lump_sum' },
-    { label: 'VAT Amount', key: 'vat_amount' },
-    { label: 'Deductible VAT', key: 'deductible_vat' },
-    { label: 'Non-deductible VAT', key: 'non_deductible_vat' },
-    { label: 'VAT Exempt Region', key: 'vat_exempt_region' },
+    { label: 'Supplier ID', key: 'supplierId' },
+    { label: 'VAT Period', key: 'vatPeriod' },
+    { label: 'Invoice Type', key: 'invoiceType' },
+    { label: 'Invoice Date', key: 'invoiceDate' },
+    { label: 'Due Date', key: 'dueDate' },
+    { label: 'Received Date', key: 'receivedDate' },
+    { label: 'Net Total', key: 'netTotal' },
+    { label: 'Lump Sum', key: 'lumpSum' },
+    { label: 'VAT Amount', key: 'vatAmount' },
+    { label: 'Deductible VAT', key: 'deductibleVat' },
+    { label: 'Non-deductible VAT', key: 'nonDeductibleVat' },
+    { label: 'VAT Exempt Region', key: 'vatExemptRegion' },
     { label: 'Note', key: 'note' },
     { label: 'Created', key: 'created_at' },
     { label: 'Updated', key: 'updated_at' },
   ],
   kif: [
-    { label: 'Document Number', key: 'documentNumber' },
-    { label: 'Invoice Number', key: 'invoice_number' },
-    { label: 'Bill Number', key: 'bill_number' },
-    { label: 'Customer', key: 'customer_name' },
-    { label: 'Customer ID', key: 'customer_id' },
-    { label: 'VAT Period', key: 'vat_period' },
-    { label: 'Invoice Type', key: 'invoice_type' },
-    { label: 'Invoice Date', key: 'invoice_date' },
-    { label: 'Due Date', key: 'due_date' },
-    { label: 'Delivery Period', key: 'delivery_period' },
-    { label: 'Total Amount', key: 'total_amount' },
-    { label: 'VAT Category', key: 'vat_category' },
+    { label: 'Invoice Number', key: 'invoiceNumber' },
+    { label: 'Bill Number', key: 'billNumber' },
+    { label: 'Customer', key: 'customerName' },
+    { label: 'Customer ID', key: 'customerId' },
+    { label: 'VAT Period', key: 'vatPeriod' },
+    { label: 'Invoice Type', key: 'invoiceType' },
+    { label: 'Invoice Date', key: 'invoiceDate' },
+    { label: 'Due Date', key: 'dueDate' },
+    { label: 'Delivery Period', key: 'deliveryPeriod' },
+    { label: 'Total Amount', key: 'totalAmount' },
+    { label: 'VAT Category', key: 'vatCategory' },
     { label: 'Note', key: 'note' },
     { label: 'Created', key: 'created_at' },
     { label: 'Updated', key: 'updated_at' },
@@ -65,22 +63,23 @@ export const DOCUMENT_FIELD_CONFIGS = {
     { label: 'Total Price', key: 'totalPrice' },
   ],
 };
-
 /**
  * Formats values based on their type and context
  */
 export const formatValue = (value, key, currency = 'BAM') => {
   if (value === null || value === undefined || value === '') return '/';
-
-  if (key.includes('Date') || key.includes('At')) {
+  if (key.includes('Date') || key.includes('At') || key.includes('_at') || key === 'createdAt' || key === 'updatedAt') {
     try {
       const date = new Date(value);
-      return date.toLocaleDateString();
+      if (isNaN(date.getTime())) return value;
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
     } catch {
       return value;
     }
   }
-
   // Format currency values
   if (
     key.includes('amount') ||
@@ -96,15 +95,12 @@ export const formatValue = (value, key, currency = 'BAM') => {
       }).format(value);
     }
   }
-
   // Format boolean values
   if (typeof value === 'boolean') {
     return value ? 'Active' : 'Inactive';
   }
-
   return value;
 };
-
 /**
  * Mock data generators for testing
  */
@@ -131,27 +127,25 @@ export const createMockKufData = (id = '1') => ({
   created_at: '2024-01-15T10:30:00Z',
   updated_at: '2024-01-15T14:45:00Z',
 });
-
 export const createMockKifData = (id = '1') => ({
   id,
   documentNumber: 'KIF-2024-001',
-  invoice_number: 'ISFAK-001/2024',
-  bill_number: 'IRN-2024-001',
-  customer_name: 'BH Telecom d.d. Sarajevo',
-  customer_id: '4200000050013',
-  vat_period: '2024-01',
-  invoice_type: 'Standardna faktura',
-  invoice_date: '2024-01-15T00:00:00Z',
-  due_date: '2024-02-15T00:00:00Z',
-  delivery_period: '2024-01-20T00:00:00Z',
-  total_amount: 5932.2,
-  vat_category: 'Standardna stopa (17%)',
+  invoiceNumber: 'ISFAK-001/2024',
+  billNumber: 'IRN-2024-001',
+  customerName: 'BH Telecom d.d. Sarajevo',
+  customerId: '4200000050013',
+  vatPeriod: '2024-01',
+  invoiceType: 'Standardna faktura',
+  invoiceDate: '2024-01-15T00:00:00Z',
+  dueDate: '2024-02-15T00:00:00Z',
+  deliveryPeriod: '2024-01-20T00:00:00Z',
+  totalAmount: 5932.2,
+  vatCategory: 'Standardna stopa (17%)',
   note: 'Usluge telekomunikacija za period januar 2024. godine.',
   currency: 'BAM',
-  created_at: '2024-01-15T10:30:00Z',
-  updated_at: '2024-01-15T14:45:00Z',
+  createdAt: '2024-01-15T10:30:00Z',
+  updatedAt: '2024-01-15T14:45:00Z',
 });
-
 export const createMockVatData = (id = '1') => ({
   id,
   name: 'Product A',
