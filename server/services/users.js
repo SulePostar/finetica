@@ -26,17 +26,6 @@ class UserService {
         },
       ],
     });
-    console.log(
-      'Users from database:',
-      users.map((u) => ({
-        id: u.id,
-        email: u.email,
-        firstName: u.firstName,
-        lastName: u.lastName,
-        roleId: u.roleId,
-        role: u.role,
-      }))
-    );
     return users;
   }
   async getUserById(id) {
