@@ -60,9 +60,8 @@ const processTransaction = async (req, res, next) => {
 const approveTransaction = async (req, res) => {
     const { id: transactionId } = req.params;
     const { userId } = req.user;
-    const result = await approveBankTransaction(transactionId, userId);
+    const result = await approveBankTransaction(transactionId, userId, req.body);
     res.json(result);
-
 };
 
 const updatedDocument = async (req, res) => {
