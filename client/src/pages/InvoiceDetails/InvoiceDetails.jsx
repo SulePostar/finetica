@@ -18,6 +18,7 @@ import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ContractService from '../../services/contract';
 import KifService from '../../services/kif';
+
 const InvoiceDetails = () => {
   const { id } = useParams();
   const location = useLocation();
@@ -38,6 +39,7 @@ const InvoiceDetails = () => {
         return ContractService;
     }
   };
+
   const service = getService();
   const [formData, setFormData] = useState({});
   const [pdfUrl, setPdfUrl] = useState(null);
@@ -46,8 +48,10 @@ const InvoiceDetails = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
   const isApproveMode = location.pathname.includes('/approve');
+
   const computeApproved = (d) =>
     Boolean(d?.approvedAt || d?.approvedBy || d?.status === 'approved');
+
   const fetchDocument = async (id, setFormData, setPdfUrl, setIsApproved, setLoading, setError) => {
     setLoading(true);
     setError(null);
@@ -64,10 +68,12 @@ const InvoiceDetails = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     if (!id) return;
     fetchDocument(id, setFormData, setPdfUrl, setIsApproved, setLoading, setError);
   }, [id]);
+
   const handleApprove = async () => {
     try {
       const { data } = await service.approve(id, formData);
@@ -77,7 +83,9 @@ const InvoiceDetails = () => {
       console.error('Approve failed:', err?.response?.status, err?.response?.data || err.message);
     }
   };
+
   const handleEdit = () => setIsEditing(true);
+
   const handleCancel = () => {
     setIsEditing(false);
     setLoading(true);
@@ -90,6 +98,7 @@ const InvoiceDetails = () => {
       .catch((err) => setError(err?.response?.data?.message || err.message))
       .finally(() => setLoading(false));
   };
+
   const handleSave = async () => {
     try {
       let data;
@@ -113,6 +122,7 @@ const InvoiceDetails = () => {
       );
     }
   };
+
   return (
     <DefaultLayout>
       <div className="body flex-grow-1 px-3 details-page">
@@ -180,4 +190,5 @@ const InvoiceDetails = () => {
     </DefaultLayout>
   );
 };
+
 export default InvoiceDetails;
