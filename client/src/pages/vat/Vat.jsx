@@ -53,11 +53,10 @@ const Vat = () => {
       ),
     },
     {
-      name: 'Amount',
-      selector: row => row.amount,
+      name: 'Category',
+      selector: row => row.TransactionCategory?.name,
       sortable: true,
-      cell: row => row.amount ? `${parseFloat(row.amount).toFixed(2)} KM` : '—',
-      style: { textAlign: 'right' },
+      cell: row => row.TransactionCategory?.name || '—',
     },
     {
       name: 'Account Number',
@@ -82,10 +81,11 @@ const Vat = () => {
       cell: row => row.BusinessPartner?.name || '—',
     },
     {
-      name: 'Category',
-      selector: row => row.TransactionCategory?.name,
+      name: 'Amount',
+      selector: row => row.amount,
       sortable: true,
-      cell: row => row.TransactionCategory?.name || '—',
+      cell: row => row.amount ? `${parseFloat(row.amount).toFixed(2)} KM` : '—',
+      style: { textAlign: 'right' },
     },
     {
       name: 'Status',

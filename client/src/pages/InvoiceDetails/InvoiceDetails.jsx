@@ -18,6 +18,7 @@ import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ContractService from '../../services/contract';
 import KifService from '../../services/kif';
+import BankTransactionsService from '../../services/bankTransactions';
 
 const InvoiceDetails = () => {
   const { id } = useParams();
@@ -37,6 +38,8 @@ const InvoiceDetails = () => {
         return KifService;
       case 'contract':
         return ContractService;
+      case 'vat':
+        return BankTransactionsService;
     }
   };
 

@@ -45,16 +45,18 @@ const getBankTransactionById = async (id) => {
         const document = await BankTransaction.findByPk(id, {
             include: [
                 { model: TransactionCategory, required: false },
-                { model: BusinessPartner, required: false },
-                { model: Users, required: false }
+                { model: BusinessPartner, required: false }
+                // add Users here if the association exists
             ]
         });
+
         return document || null;
     } catch (error) {
         console.error("Fetch Document Error:", error);
         throw new AppError('Failed to fetch bank transaction document', 500);
     }
 };
+
 
 const createBankTransactionFromAI = async (extractedData) => {
     const t = await sequelize.transaction();
@@ -142,7 +144,6 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
     }
 };
 
-
 const approveBankTransaction = async (id, userId) => {
     try {
         const document = await BankTransaction.findByPk(id);
@@ -170,32 +171,32 @@ const editBankTransaction = async (id, updatedData) => {
             throw new AppError('Bank transaction not found', 404);
         }
 
-        // Reset approval fields when editing
+        // Exclude unrelated fields
+        const { items, ...updateData } = updatedData;
+
         const dataToUpdate = {
-            ...updatedData,
+            ...updateData,
             approvedAt: null,
             approvedBy: null,
-            updatedAt: new Date(),
         };
 
-        // Update the transaction
-        const updatedDocument = await document.update(dataToUpdate);
+        // Update transaction
+        await document.update(dataToUpdate);
 
-        // Fetch with associations (TransactionCategories, BusinessPartners, Users)
-        const updatedWithRelations = await BankTransaction.findByPk(id, {
+        // Return updated transaction with associations
+        return await BankTransaction.findByPk(id, {
             include: [
                 { model: TransactionCategory, required: false },
                 { model: BusinessPartner, required: false },
-                { model: Users, required: false }
+                { model: Users, required: false } // only works if association exists
             ]
         });
-
-        return updatedWithRelations;
     } catch (error) {
         console.error("Update Error:", error);
         throw new AppError('Failed to update bank transaction', 500);
     }
 };
+
 
 const processBankTransaction = async (fileBuffer, mimeType, model = "gemini-2.5-flash-lite") => {
     try {
