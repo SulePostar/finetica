@@ -4,7 +4,6 @@ const {
     createKif,
     processKif,
     approveKif,
-    updateKif
 } = require('../services/kif');
 
 const getKifData = async (req, res, next) => {
@@ -63,21 +62,9 @@ const approveKifInvoice = async (req, res, next) => {
     try {
         const { id: invoiceId } = req.params;
         const { userId } = req.user;
-
-        const result = await approveKif(invoiceId, userId);
-
-        res.json(result)
-    } catch (error) {
-        next(error);
-    }
-};
-
-const updateKifInvoice = async (req, res, next) => {
-    try {
-        const { id: invoiceId } = req.params;
         const updatedData = req.body;
 
-        const result = await updateKif(invoiceId, updatedData);
+        const result = await approveKif(invoiceId, updatedData, userId);
 
         res.json(result)
     } catch (error) {
@@ -91,5 +78,4 @@ module.exports = {
     createKifInvoice,
     processKifInvoice,
     approveKifInvoice,
-    updateKifInvoice
 };

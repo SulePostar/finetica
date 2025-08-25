@@ -105,7 +105,7 @@ const createKif = async (invoiceData, userId) => {
 };
 
 // KIF-specific function to approve a sales invoice
-const approveKif = async (documentId, userId) => {
+const approveKif = async (documentId, updatedData = {}, userId) => {
     try {
         const document = await SalesInvoice.findByPk(documentId);
 
@@ -117,35 +117,14 @@ const approveKif = async (documentId, userId) => {
             throw new AppError('Invoice is already approved', 400);
         }
 
-        const updatedDocument = await document.update({
-            approvedAt: new Date(),
-            approvedBy: userId,
-        });
-
-        return updatedDocument;
-    } catch (error) {
-        console.error("Approval Error:", error);
-        throw new AppError('Failed to approve KIF sales invoice', 500);
-    }
-};
-
-// KIF-specific function to update sales invoice data
-const updateKif = async (documentId, updatedData) => {
-    try {
-        const document = await SalesInvoice.findByPk(documentId);
-
-        if (!document) {
-            throw new AppError('KIF sales invoice not found', 404);
-        }
-
-        // Extract items from the updated data
+        // Extract items from the updated data if provided
         const { items, ...invoiceUpdateData } = updatedData;
 
-        // Ensure approval fields are reset when editing
+        // Prepare data to update (including approval fields)
         const dataToUpdate = {
             ...invoiceUpdateData,
-            approvedAt: null,
-            approvedBy: null,
+            approvedAt: new Date(),
+            approvedBy: userId,
             updatedAt: new Date(),
         };
 
@@ -193,13 +172,29 @@ const updateKif = async (documentId, updatedData) => {
             where: { invoiceId: documentId }
         });
 
+        // Fetch the complete document with BusinessPartner relationship
+        const completeDocument = await SalesInvoice.findByPk(documentId, {
+            include: [
+                {
+                    model: SalesInvoiceItem,
+                    required: false
+                },
+                {
+                    model: BusinessPartner,
+                    required: false,
+                    attributes: ['id', 'name', 'vatNumber']
+                }
+            ]
+        });
+
+        const documentData = completeDocument.toJSON();
         return {
-            ...updatedDocument.toJSON(),
-            items: updatedItems
+            ...documentData,
+            customerName: documentData.BusinessPartner?.name || null
         };
     } catch (error) {
-        console.error("Update Error:", error);
-        throw new AppError('Failed to update KIF sales invoice', 500);
+        console.error("Approval Error:", error);
+        throw new AppError('Failed to approve KIF sales invoice', 500);
     }
 };
 
@@ -309,5 +304,4 @@ module.exports = {
     processKif,
     createKifFromAI,
     approveKif,
-    updateKif,
 };

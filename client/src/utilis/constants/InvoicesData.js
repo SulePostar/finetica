@@ -65,23 +65,7 @@ export const DOCUMENT_FIELD_CONFIGS = {
     { label: 'Partner Name', key: 'BusinessPartner.name' },
     { label: 'Category', key: 'TransactionCategory.name' },
     { label: 'Created at', key: 'created_at' },
-    { label: 'Updated at', key: 'updated_at' },
-    { label: 'Transaction Category ID', key: 'TransactionCategory.id' },
-    { label: 'Transaction Category Name', key: 'TransactionCategory.name' },
-    { label: 'Transaction Category code', key: 'TransactionCategory.code' },
-    { label: 'Is Manual', key: 'TransactionCategory.isManual' },
-    { label: 'Business Partner ID', key: 'BusinessPartner.id' },
-    { label: 'Business Partner Name', key: 'BusinessPartner.name' },
-    { label: 'Business Partner Type', key: 'BusinessPartner.type' },
-    { label: 'Business Partner Short Name', key: 'BusinessPartner.shortName' },
-    { label: 'Business Partner countryCode', key: 'BusinessPartner.countryCode' },
-    { label: 'Business Partner Vat Number', key: 'BusinessPartner.vatNumber' },
-    { label: 'Business Partner Registered?', key: 'BusinessPartner.isVatRegistered' },
-    { label: 'Business Partner Address', key: 'BusinessPartner.address' },
-    { label: 'Business Partner City', key: 'BusinessPartner.city' },
-    { label: 'Business Partner Email', key: 'BusinessPartner.email' },
-    { label: 'Business Partner Phone', key: 'BusinessPartner.phone' },
-
+    { label: 'Updated at', key: 'updated_at' }
   ],
 
 };

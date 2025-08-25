@@ -6,7 +6,7 @@ class BankTransactionsService {
     }
 
     approve(id, payload) {
-        return api.patch(`/transactions/bank-transaction-data/${id}/approve`, payload);
+        return api.patch(`/transactions/${id}/approve`, payload);
     }
 
     update(id, payload) {
