@@ -1,5 +1,9 @@
 const { Contract, BusinessPartner, Sequelize } = require('../models');
 const AppError = require('../utils/errorHandler');
+const { processDocument } = require('./aiService');
+const { contractSchema } = require('../schemas/contract');
+const { contractsPrompt } = require('../prompts/contract');
+const MODEL_NAME = "gemini-2.5-flash-lite";
 
 const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
   const limit = Math.max(1, Number(perPage) || 10);
@@ -59,6 +63,11 @@ const approveContractById = async (id, body, userId) => {
 const createContract = async (payload) => {
   const created = await Contract.create(payload);
   return created.get({ plain: true });
+};
+
+const extractData = async (fileBuffer, mimeType) => {
+  const data = await processDocument(fileBuffer, mimeType, contractSchema, MODEL_NAME, contractsPrompt);
+  console.log(data);
 };
 
 module.exports = {
