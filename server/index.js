@@ -27,7 +27,7 @@ const app = express();
 const corsOptions = {
   origin: process.env.CLIENT_URL,
   credentials: true,
-  methods: 'GET,POST,PUT,DELETE,OPTIONS',
+  methods: 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
 };
 app.use(cors(corsOptions));
 app.use(session({
@@ -48,7 +48,7 @@ app.use('/api/auth', require('./routes/authentication'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/files', require('./routes/uploadedFiles'));
 app.use('/api/kif', kifRouter);
-app.use('/api', kufRouter);
+app.use('/api/kuf', kufRouter);
 app.use('/api/transactions', bankTransactionRouter);
 app.use(mailRoute);
 app.use('/api/contracts', contractRouter);
