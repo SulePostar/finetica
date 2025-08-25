@@ -8,15 +8,16 @@ const {
   deleteUser,
   getUserStats,
 } = require('../controllers/user');
-const { authorizeAdmin } = require('../middleware/authMiddleware');
+const isAuthenticated = require('../middleware/isAuthenticated');
+const hasRole = require('../middleware/hasRole');
 const router = express.Router();
 // Public routes (authenticated users)
 router.get('/me', getMyProfile);
 // Admin-only routes
-router.get('/', authorizeAdmin, getAllUsers);
-router.get('/stats', authorizeAdmin, getUserStats);
-router.get('/:id', authorizeAdmin, getUserById);
-router.patch('/:id', authorizeAdmin, updateUser);
-router.delete('/:id', authorizeAdmin, deleteUser);
+router.get('/', isAuthenticated, hasRole(['admin']), getAllUsers);
+router.get('/stats', isAuthenticated, hasRole(['admin']), getUserStats);
+router.get('/:id', isAuthenticated, hasRole(['admin']), getUserById);
+router.patch('/:id', isAuthenticated, hasRole(['admin']), updateUser);
+router.delete('/:id', isAuthenticated, hasRole(['admin']), deleteUser);
 router.put('/me', editMyProfile);
 module.exports = router;
