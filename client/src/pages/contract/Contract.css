@@ -1,3 +1,7 @@
+div.table-page-outer.contract-table-outer {
+  padding: 5rem 5rem 2rem;
+}
+
 .status-badge {
   padding: 0.3rem 0.75rem;
   border-radius: 20px;

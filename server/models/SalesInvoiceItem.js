@@ -20,7 +20,7 @@ module.exports = (sequelize) => {
         field: 'invoice_id',
       },
       orderNumber: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         field: 'order_number',
       },
       description: {

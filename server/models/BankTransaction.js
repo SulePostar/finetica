@@ -47,6 +47,16 @@ module.exports = (sequelize) => {
         field: 'category_id',
         type: DataTypes.INTEGER,
       },
+      approvedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        field: 'approved_at',
+      },
+      approvedBy: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        field: 'approved_by',
+      },
     },
     {
       sequelize,
