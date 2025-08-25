@@ -6,7 +6,6 @@ const {
     createKifInvoice,
     processKifInvoice,
     approveKifInvoice,
-    updateKifInvoice
 } = require('../controllers/kif');
 const { upload } = require('../services/aiService');
 const isAuthenticated = require('../middleware/isAuthenticated');
@@ -32,12 +31,8 @@ router.post('/process',
 
 router.patch('/:id/approve',
     isAuthenticated,
-    approveKifInvoice
-);
-router.patch('/:id/edit',
-    isAuthenticated,
     validate(kifInvoiceUpdateSchema),
-    updateKifInvoice
+    approveKifInvoice
 );
 
 module.exports = router;

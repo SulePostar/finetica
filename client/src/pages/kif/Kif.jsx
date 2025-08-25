@@ -100,13 +100,13 @@ const Kif = () => {
       width: '160px',
     },
     {
-      name: 'Status',
+      name: 'Approval Status',
       selector: row => {
         if (row.approvedAt || row.approvedBy) return 'Approved';
         return 'Pending';
       },
       sortable: true,
-      width: '130px',
+      width: '190px',
       cell: row => {
         const status = row.approvedAt || row.approvedBy ? 'Approved' : 'Pending';
         return (

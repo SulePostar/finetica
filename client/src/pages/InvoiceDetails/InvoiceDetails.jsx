@@ -101,16 +101,9 @@ const InvoiceDetails = () => {
 
   const handleSave = async () => {
     try {
-      let data;
-      if (documentType === 'kif') {
-        // For KIF, use the update endpoint first, then approve if needed
-        const updateResult = await service.update(id, formData);
-        data = updateResult.data;
-      } else {
-        // For contracts, use approve endpoint
-        const approveResult = await service.approve(id, formData);
-        data = approveResult.data;
-      }
+      const approveResult = await service.approve(id, formData);
+      const data = approveResult.data;
+
       setFormData(data);
       setIsApproved(computeApproved(data));
       setIsEditing(false);
