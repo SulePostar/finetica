@@ -50,7 +50,7 @@ const createKifFromAI = async (extractedData) => {
 };
 
 // KIF-specific function to create sales invoice from manual data
-const createKifManually = async (invoiceData, userId) => {
+const createKif = async (invoiceData, userId) => {
     const transaction = await sequelize.transaction();
 
     try {
@@ -105,7 +105,7 @@ const createKifManually = async (invoiceData, userId) => {
 };
 
 // KIF-specific function to approve a sales invoice
-const approveKifDocument = async (documentId, userId) => {
+const approveKif = async (documentId, userId) => {
     try {
         const document = await SalesInvoice.findByPk(documentId);
 
@@ -130,7 +130,7 @@ const approveKifDocument = async (documentId, userId) => {
 };
 
 // KIF-specific function to update sales invoice data
-const updateKifDocumentData = async (documentId, updatedData) => {
+const updateKif = async (documentId, updatedData) => {
     try {
         const document = await SalesInvoice.findByPk(documentId);
 
@@ -203,7 +203,7 @@ const updateKifDocumentData = async (documentId, updatedData) => {
     }
 };
 
-const getPaginatedKifData = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
+const getKifs = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
     try {
         const offset = (page - 1) * perPage;
         const limit = parseInt(perPage);
@@ -227,7 +227,8 @@ const getPaginatedKifData = async ({ page = 1, perPage = 10, sortField, sortOrde
                 },
                 {
                     model: BusinessPartner,
-                    required: false
+                    required: false,
+                    attributes: ['id', 'name', 'vatNumber']
                 }
             ],
             order: orderOptions,
@@ -235,7 +236,15 @@ const getPaginatedKifData = async ({ page = 1, perPage = 10, sortField, sortOrde
             offset
         });
 
-        return { data: salesInvoices, total };
+        const transformedData = salesInvoices.map(invoice => {
+            const invoiceData = invoice.toJSON();
+            return {
+                ...invoiceData,
+                customerName: invoiceData.BusinessPartner?.name || null
+            };
+        });
+
+        return { data: transformedData, total };
     } catch (error) {
         throw new AppError('Failed to fetch KIF data', 500);
     }
@@ -251,7 +260,8 @@ const getKifById = async (id) => {
                 },
                 {
                     model: BusinessPartner,
-                    required: false
+                    required: false,
+                    attributes: ['id', 'name', 'vatNumber']
                 }
             ]
         });
@@ -260,14 +270,18 @@ const getKifById = async (id) => {
             throw new AppError('Sales invoice not found', 404);
         }
 
-        return salesInvoice
+        const invoiceData = salesInvoice.toJSON();
+        return {
+            ...invoiceData,
+            customerName: invoiceData.BusinessPartner?.name || null
+        };
     } catch (error) {
         throw new AppError('Failed to fetch KIF by ID', 500);
     }
 };
 
 // AI Document Process Service for KIF
-const processKifDocument = async (fileBuffer, mimeType, model = "gemini-2.5-flash-lite") => {
+const processKif = async (fileBuffer, mimeType, model = "gemini-2.5-flash-lite") => {
     try {
         const extractedData = await processDocument(
             fileBuffer,
@@ -289,11 +303,11 @@ const processKifDocument = async (fileBuffer, mimeType, model = "gemini-2.5-flas
 };
 
 module.exports = {
-    getPaginatedKifData,
+    getKifs,
     getKifById,
-    createKifManually,
-    processKifDocument,
+    createKif,
+    processKif,
     createKifFromAI,
-    approveKifDocument,
-    updateKifDocumentData,
+    approveKif,
+    updateKif,
 };

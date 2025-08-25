@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
     getKifData,
-    getKifDataById,
+    getKif,
     createKifInvoice,
     processKifInvoice,
     approveKifInvoice,
@@ -17,7 +17,7 @@ const {
 } = require('../schemas/kifJoiSchema');
 
 router.get('/', getKifData);
-router.get('/:id', getKifDataById);
+router.get('/:id', getKif);
 router.post('/',
     isAuthenticated,
     validate(kifInvoiceCreateSchema),
