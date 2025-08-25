@@ -1,13 +1,13 @@
 const { PurchaseInvoice, PurchaseInvoiceItem, BusinessPartner } = require('../models');
 const { processDocument } = require('./aiService');
+const { sequelize } = require('../config/db');
 const KUF_PROMPT = require('../prompts/kufPrompt.js');
 const purchaseInvoiceSchema = require('../schemas/kufSchema');
 const AppError = require('../utils/errorHandler');
-const { sequelize } = require('../config/db');
-
 
 const createKufFromAI = async (extractedData) => {
     const transaction = await sequelize.transaction();
+
     try {
         const { items, ...invoiceData } = extractedData;
 
@@ -19,7 +19,7 @@ const createKufFromAI = async (extractedData) => {
             updatedAt: new Date(),
         };
 
-        // Create the sales invoice
+        // Create the sales invoice within transaction
         const document = await PurchaseInvoice.create(documentData, { transaction });
 
         // Create sales invoice items if they exist
@@ -33,6 +33,7 @@ const createKufFromAI = async (extractedData) => {
 
             await PurchaseInvoiceItem.bulkCreate(itemsToCreate, { transaction });
         }
+
         await transaction.commit();
 
         const responseData = {
@@ -44,13 +45,14 @@ const createKufFromAI = async (extractedData) => {
     } catch (error) {
         await transaction.rollback();
         console.error("Database Error:", error);
-        throw new AppError('Failed to save KUF sales invoice to database', 500);
+        throw new AppError('Failed to save KIF sales invoice to database', 500);
     }
 };
 
-// KUF-specific function to create sales invoice from manual data
-const createKufManually = async (invoiceData, userId) => {
+// KIF-specific function to create sales invoice from manual data
+const createKuf = async (invoiceData, userId) => {
     const transaction = await sequelize.transaction();
+
     try {
         const { items, ...documentData } = invoiceData;
 
@@ -63,7 +65,7 @@ const createKufManually = async (invoiceData, userId) => {
             updatedAt: new Date(),
         };
 
-        // Create the sales invoice
+        // Create the sales invoice within transaction
         const document = await PurchaseInvoice.create(finalDocumentData, { transaction });
 
         // Create sales invoice items if they exist
@@ -77,9 +79,10 @@ const createKufManually = async (invoiceData, userId) => {
 
             await PurchaseInvoiceItem.bulkCreate(itemsToCreate, { transaction });
         }
+
         await transaction.commit();
 
-        // Fetch the created invoice with its items
+        // Fetch the created invoice with its items (outside transaction since it's committed)
         const createdInvoice = await PurchaseInvoice.findByPk(document.id, {
             include: [
                 {
@@ -97,52 +100,31 @@ const createKufManually = async (invoiceData, userId) => {
     } catch (error) {
         await transaction.rollback();
         console.error("Manual Creation Error:", error);
-        throw new AppError('Failed to create KUF sales invoice', 500);
+        throw new AppError('Failed to create KIF sales invoice', 500);
     }
 };
 
-// KUF-specific function to approve a sales invoice
-const approveKufDocument = async (documentId, userId) => {
+// KIF-specific function to approve a sales invoice
+const approveKuf = async (documentId, updatedData = {}, userId) => {
     try {
         const document = await PurchaseInvoice.findByPk(documentId);
 
         if (!document) {
-            throw new AppError('KUF sales invoice not found', 404);
+            throw new AppError('KUF purchase invoice not found', 404);
         }
 
         if (document.approvedAt) {
             throw new AppError('Invoice is already approved', 400);
         }
 
-        const updatedDocument = await document.update({
-            approvedAt: new Date(),
-            approvedBy: userId,
-        });
-
-        return updatedDocument;
-    } catch (error) {
-        console.error("Approval Error:", error);
-        throw new AppError('Failed to approve KUF sales invoice', 500);
-    }
-};
-
-// KUF-specific function to update sales invoice data
-const updateKufDocument = async (documentId, updatedData) => {
-    try {
-        const document = await PurchaseInvoice.findByPk(documentId);
-
-        if (!document) {
-            throw new AppError('KUF sales invoice not found', 404);
-        }
-
-        // Extract items from the updated data
+        // Extract items from the updated data if provided
         const { items, ...invoiceUpdateData } = updatedData;
 
-        // Ensure approval fields are reset when editing
+        // Prepare data to update (including approval fields)
         const dataToUpdate = {
             ...invoiceUpdateData,
-            approvedAt: null,
-            approvedBy: null,
+            approvedAt: new Date(),
+            approvedBy: userId,
             updatedAt: new Date(),
         };
 
@@ -152,7 +134,7 @@ const updateKufDocument = async (documentId, updatedData) => {
         // Update sales invoice items if they exist
         if (items && Array.isArray(items)) {
             // Get existing items
-            const existingItems = await PurchaseInvoiceItem.findAll({
+            const existingItems = await SalesInvoiceItem.findAll({
                 where: { invoiceId: documentId }
             });
 
@@ -163,7 +145,7 @@ const updateKufDocument = async (documentId, updatedData) => {
             for (const item of items) {
                 if (item.id && existingItemsMap.has(item.id)) {
                     // Update existing item
-                    await PurchaseInvoiceItem.update(
+                    await SalesInvoiceItem.update(
                         {
                             ...item,
                             updatedAt: new Date(),
@@ -175,7 +157,7 @@ const updateKufDocument = async (documentId, updatedData) => {
                     updatedItemIds.add(item.id);
                 } else {
                     // Create new item
-                    await PurchaseInvoiceItem.create({
+                    await SalesInvoiceItem.create({
                         ...item,
                         invoiceId: documentId,
                         createdAt: new Date(),
@@ -186,28 +168,40 @@ const updateKufDocument = async (documentId, updatedData) => {
         }
 
         // Fetch updated items to return
-        const updatedItems = await PurchaseInvoiceItem.findAll({
+        const updatedItems = await SalesInvoiceItem.findAll({
             where: { invoiceId: documentId }
         });
 
+        // Fetch the complete document with BusinessPartner relationship
+        const completeDocument = await SalesInvoice.findByPk(documentId, {
+            include: [
+                {
+                    model: SalesInvoiceItem,
+                    required: false
+                },
+                {
+                    model: BusinessPartner,
+                    required: false,
+                    attributes: ['id', 'name', 'vatNumber']
+                }
+            ]
+        });
+
+        const documentData = completeDocument.toJSON();
         return {
-            ...updatedDocument.toJSON(),
-            items: updatedItems
+            ...documentData,
+            customerName: documentData.BusinessPartner?.name || null
         };
     } catch (error) {
-        console.error("Update Error:", error);
-        throw new AppError('Failed to update KUF sales invoice', 500);
+        console.error("Approval Error:", error);
+        throw new AppError('Failed to approve KUF purchase invoice', 500);
     }
 };
 
-const getKufData = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
+const getKufs = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
     try {
-        // Ensure numbers with fallbacks
-        const safePage = Number(page) > 0 ? Number(page) : 1;
-        const safePerPage = Number(perPage) > 0 ? Number(perPage) : 10;
-
-        const offset = (safePage - 1) * safePerPage;
-        const limit = safePerPage;
+        const offset = (page - 1) * perPage;
+        const limit = parseInt(perPage);
 
         let orderOptions = [];
         if (sortField) {
@@ -216,25 +210,40 @@ const getKufData = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc'
             orderOptions = [['id', 'ASC']];
         }
 
+        // Get total count
         const total = await PurchaseInvoice.count();
 
+        // Get paginated data with associated items and business partner
         const purchaseInvoices = await PurchaseInvoice.findAll({
             include: [
-                { model: PurchaseInvoiceItem, required: false },
-                { model: BusinessPartner, required: false }
+                {
+                    model: PurchaseInvoiceItem,
+                    required: false
+                },
+                {
+                    model: BusinessPartner,
+                    required: false,
+                    attributes: ['id', 'name', 'vatNumber']
+                }
             ],
             order: orderOptions,
             limit,
-            offset,
+            offset
         });
 
-        return { data: purchaseInvoices, total };
+        const transformedData = purchaseInvoices.map(invoice => {
+            const invoiceData = invoice.toJSON();
+            return {
+                ...invoiceData,
+                customerName: invoiceData.BusinessPartner?.name || null
+            };
+        });
+
+        return { data: transformedData, total };
     } catch (error) {
-        console.error("🔥 Sequelize error:", error);
         throw new AppError('Failed to fetch KUF data', 500);
     }
 };
-
 
 const getKufById = async (id) => {
     try {
@@ -246,23 +255,28 @@ const getKufById = async (id) => {
                 },
                 {
                     model: BusinessPartner,
-                    required: false
+                    required: false,
+                    attributes: ['id', 'name', 'vatNumber']
                 }
             ]
         });
 
         if (!purchaseInvoice) {
-            throw new AppError('Sales invoice not found', 404);
+            throw new AppError('Purchase invoice not found', 404);
         }
 
-        return purchaseInvoice
+        const invoiceData = purchaseInvoice.toJSON();
+        return {
+            ...invoiceData,
+            customerName: invoiceData.BusinessPartner?.name || null
+        };
     } catch (error) {
         throw new AppError('Failed to fetch KUF by ID', 500);
     }
 };
 
-// AI Document Process Service for KUF
-const processKufDocument = async (fileBuffer, mimeType, model = "gemini-2.5-flash-lite") => {
+// AI Document Process Service for KIF
+const processKuf = async (fileBuffer, mimeType, model = "gemini-2.5-flash-lite") => {
     try {
         const extractedData = await processDocument(
             fileBuffer,
@@ -284,11 +298,10 @@ const processKufDocument = async (fileBuffer, mimeType, model = "gemini-2.5-flas
 };
 
 module.exports = {
-    getKufData,
+    getKufs,
     getKufById,
-    createKufManually,
-    processKufDocument,
+    createKuf,
+    processKuf,
     createKufFromAI,
-    approveKufDocument,
-    updateKufDocument,
+    approveKuf,
 };

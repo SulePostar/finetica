@@ -2,11 +2,10 @@ const express = require('express');
 const router = express.Router();
 const {
     getKufData,
-    getKufDataById,
-    createKufDocument,
+    getKuf,
+    createKufInvoice,
     processKufInvoice,
     approveKufInvoice,
-    updateKufInvoice,
 } = require('../controllers/kuf');
 const { upload } = require('../services/aiService');
 const isAuthenticated = require('../middleware/isAuthenticated');
@@ -17,11 +16,11 @@ const {
 } = require('../schemas/kufJoiSchema');
 
 router.get('/', getKufData);
-router.get('/:id', getKufDataById);
+router.get('/:id', getKuf);
 router.post('/',
     isAuthenticated,
     validate(kufInvoiceCreateSchema),
-    createKufDocument
+    createKufInvoice
 );
 
 router.post('/process',
@@ -32,12 +31,8 @@ router.post('/process',
 
 router.patch('/:id/approve',
     isAuthenticated,
-    approveKufInvoice
-);
-router.patch('/:id/edit',
-    isAuthenticated,
     validate(kufInvoiceUpdateSchema),
-    updateKufInvoice
+    approveKufInvoice
 );
 
 module.exports = router;

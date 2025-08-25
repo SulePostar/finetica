@@ -1,17 +1,16 @@
 const {
-    getPaginatedKufData,
+    getKufs,
     getKufById,
-    createKufManually,
-    processKufDocument,
-    approveKufDocument,
-    updateKufDocument,
+    createKuf,
+    processKuf,
+    approveKuf,
 } = require('../services/kuf');
 
 const getKufData = async (req, res, next) => {
     try {
         const { page, perPage, sortField, sortOrder } = req.query;
 
-        const result = await getPaginatedKufData({
+        const result = await getKufs({
             page: parseInt(page),
             perPage: parseInt(perPage),
             sortField,
@@ -24,7 +23,7 @@ const getKufData = async (req, res, next) => {
     }
 };
 
-const getKufDataById = async (req, res, next) => {
+const getKuf = async (req, res, next) => {
     try {
         const { id } = req.params;
 
@@ -35,12 +34,12 @@ const getKufDataById = async (req, res, next) => {
     }
 };
 
-const createKufDocument = async (req, res, next) => {
+const createKufInvoice = async (req, res, next) => {
     try {
         const invoiceData = req.body;
         const userId = req.user.userId;
 
-        const result = await createKufManually(invoiceData, userId);
+        const result = await createKuf(invoiceData, userId);
 
         res.json(result)
     } catch (error) {
@@ -51,7 +50,7 @@ const createKufDocument = async (req, res, next) => {
 const processKufInvoice = async (req, res, next) => {
     try {
         const { model } = req.body;
-        const result = await processKufDocument(req.file.buffer, req.file.mimetype, model);
+        const result = await processKuf(req.file.buffer, req.file.mimetype, model);
 
         res.json(result);
     } catch (error) {
@@ -63,21 +62,9 @@ const approveKufInvoice = async (req, res, next) => {
     try {
         const { id: invoiceId } = req.params;
         const { userId } = req.user;
-
-        const result = await approveKufDocument(invoiceId, userId);
-
-        res.json(result)
-    } catch (error) {
-        next(error);
-    }
-};
-
-const updateKufInvoice = async (req, res, next) => {
-    try {
-        const { id: invoiceId } = req.params;
         const updatedData = req.body;
 
-        const result = await updateKufDocumentData(invoiceId, updatedData);
+        const result = await approveKuf(invoiceId, updatedData, userId);
 
         res.json(result)
     } catch (error) {
@@ -87,9 +74,8 @@ const updateKufInvoice = async (req, res, next) => {
 
 module.exports = {
     getKufData,
-    getKufDataById,
-    createKufDocument,
+    getKuf,
+    createKufInvoice,
     processKufInvoice,
     approveKufInvoice,
-    updateKufInvoice
 };
