@@ -64,7 +64,7 @@ export default function AppRoutes() {
           path="/"
           element={
             <ProtectedRoute>
-              <Navigate to="/admin/user-dashboard" replace />
+              <DefaultLayout />
             </ProtectedRoute>
           }
         />

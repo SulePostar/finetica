@@ -16,7 +16,7 @@ export const updateUser = createAsyncThunk(
   'users/updateUser',
   async ({ userId, userData }, { rejectWithValue }) => {
     try {
-      const response = await api.patch(`/users/${userId}`, userData);
+      const response = await api.put(`/users/${userId}`, userData);
       return { userId, user: response.data };
     } catch (error) {
       return rejectWithValue(extractErrorMessage(error));
@@ -40,7 +40,7 @@ export const quickChangeUserStatus = createAsyncThunk(
   'users/quickChangeStatus',
   async ({ userId, statusId }, { rejectWithValue }) => {
     try {
-      const response = await api.patch(`/users/${userId}`, { statusId });
+      const response = await api.put(`/users/${userId}`, { statusId });
       return { userId, user: response.data };
     } catch (error) {
       return rejectWithValue(extractErrorMessage(error));
@@ -52,7 +52,7 @@ export const quickChangeUserRole = createAsyncThunk(
   'users/quickChangeRole',
   async ({ userId, roleId }, { rejectWithValue }) => {
     try {
-      const response = await api.patch(`/users/${userId}`, { roleId });
+      const response = await api.put(`/users/${userId}`, { roleId });
       return { userId, user: response.data };
     } catch (error) {
       return rejectWithValue(extractErrorMessage(error));
