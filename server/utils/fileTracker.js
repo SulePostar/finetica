@@ -11,20 +11,45 @@ class FileTracker {
      */
     static async getUnprocessedFiles(bucketFiles, forceReprocess = false) {
         try {
-            Logger.info('Checking for already processed files...');
+            Logger.info('Checking for unprocessed files in kif_processed_files table...');
 
             const fileNames = bucketFiles.map(file => file.name);
 
             if (forceReprocess) {
-                Logger.info('Force reprocess mode enabled - all files will be processed');
+                Logger.info('Force reprocess mode enabled - will include all files found in tracking table');
+
+                // In force mode, get all files from tracking table regardless of processed status
+                const allTrackedFiles = await KifProcessedFile.findAll({
+                    where: {
+                        fileName: fileNames
+                    },
+                    attributes: ['fileName', 'id', 'processedAt', 'errorMessage', 'processed']
+                });
+
+                const trackedFileNames = new Set(allTrackedFiles.map(file => file.fileName));
+
+                // Only include bucket files that exist in tracking table
+                const trackedBucketFiles = bucketFiles.filter(file =>
+                    trackedFileNames.has(file.name)
+                );
+
                 return {
-                    unprocessedFiles: bucketFiles,
+                    unprocessedFiles: trackedBucketFiles,
                     processedFiles: []
                 };
             }
 
-            // Use the KifProcessedFile model to find processed files
-            const processedFiles = await KifProcessedFile.findAll({
+            // Get files that are in tracking table but not yet processed
+            const unprocessedTrackedFiles = await KifProcessedFile.findAll({
+                where: {
+                    fileName: fileNames,
+                    processed: false
+                },
+                attributes: ['fileName', 'id', 'processedAt', 'errorMessage']
+            });
+
+            // Get files that are already processed
+            const processedTrackedFiles = await KifProcessedFile.findAll({
                 where: {
                     fileName: fileNames,
                     processed: true
@@ -32,17 +57,18 @@ class FileTracker {
                 attributes: ['fileName', 'id', 'processedAt', 'errorMessage']
             });
 
-            const processedFileNames = new Set(processedFiles.map(file => file.fileName));
+            const unprocessedFileNames = new Set(unprocessedTrackedFiles.map(file => file.fileName));
 
-            // Filter out already processed files
+            // Only include bucket files that exist in tracking table and are not processed
             const unprocessedFiles = bucketFiles.filter(file =>
-                !processedFileNames.has(file.name)
+                unprocessedFileNames.has(file.name)
             );
 
-            Logger.info(`Found ${unprocessedFiles.length} unprocessed files out of ${bucketFiles.length} total files`);
+            Logger.info(`Found ${unprocessedFiles.length} unprocessed files out of ${bucketFiles.length} bucket files (${unprocessedTrackedFiles.length} in tracking table)`);
+
             return {
                 unprocessedFiles,
-                processedFiles: processedFiles.map(f => ({
+                processedFiles: processedTrackedFiles.map(f => ({
                     fileName: f.fileName,
                     id: f.id,
                     processedAt: f.processedAt,
@@ -61,16 +87,23 @@ class FileTracker {
      */
     static async trackFileProcessing(fileName, forceReprocess = false) {
         try {
-            // Create or find the KIF processed file record
-            const [record, created] = await KifProcessedFile.findOrCreate({
-                where: { fileName },
-                defaults: {
-                    fileName,
-                    processed: false
-                }
+            // Find existing KIF processed file record (don't create new ones)
+            const record = await KifProcessedFile.findOne({
+                where: { fileName }
             });
 
-            if (!created && record.processed && !forceReprocess) {
+            // If no record exists, skip this file (someone else should have created it)
+            if (!record) {
+                Logger.warn(`File ${fileName} not found in kif_processed_files table, skipping...`);
+                return {
+                    record: null,
+                    shouldSkip: true,
+                    reason: 'Not found in tracking table'
+                };
+            }
+
+            // If already processed and not forcing reprocess, skip
+            if (record.processed && !forceReprocess) {
                 Logger.warn(`File ${fileName} already marked as processed, skipping...`);
                 return {
                     record,
@@ -79,6 +112,7 @@ class FileTracker {
                 };
             }
 
+            // If forcing reprocess on already processed file
             if (forceReprocess && record.processed) {
                 Logger.info(`Force reprocessing ${fileName}...`);
                 await record.resetProcessing();

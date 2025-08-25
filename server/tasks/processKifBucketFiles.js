@@ -1,15 +1,15 @@
 const path = require('path');
 const dotenv = require('dotenv');
 
+// Load environment variables
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
 // Import utilities and services
 const Logger = require('../utils/logger');
 const SupabaseStorageService = require('../utils/supabase/supabaseStorage');
 const KifProcessor = require('../utils/kifProcessor');
 const FileTracker = require('../utils/fileTracker');
 const CliHelpers = require('../utils/cliHelpers');
-
-// Load environment variables
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 /**
  * Command line interface for KIF bucket processing
