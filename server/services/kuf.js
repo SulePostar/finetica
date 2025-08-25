@@ -134,7 +134,7 @@ const approveKuf = async (documentId, updatedData = {}, userId) => {
         // Update sales invoice items if they exist
         if (items && Array.isArray(items)) {
             // Get existing items
-            const existingItems = await SalesInvoiceItem.findAll({
+            const existingItems = await PurchaseInvoiceItem.findAll({
                 where: { invoiceId: documentId }
             });
 
@@ -145,7 +145,7 @@ const approveKuf = async (documentId, updatedData = {}, userId) => {
             for (const item of items) {
                 if (item.id && existingItemsMap.has(item.id)) {
                     // Update existing item
-                    await SalesInvoiceItem.update(
+                    await PurchaseInvoiceItem.update(
                         {
                             ...item,
                             updatedAt: new Date(),
@@ -157,7 +157,7 @@ const approveKuf = async (documentId, updatedData = {}, userId) => {
                     updatedItemIds.add(item.id);
                 } else {
                     // Create new item
-                    await SalesInvoiceItem.create({
+                    await PurchaseInvoiceItem.create({
                         ...item,
                         invoiceId: documentId,
                         createdAt: new Date(),
@@ -168,15 +168,15 @@ const approveKuf = async (documentId, updatedData = {}, userId) => {
         }
 
         // Fetch updated items to return
-        const updatedItems = await SalesInvoiceItem.findAll({
+        const updatedItems = await PurchaseInvoiceItem.findAll({
             where: { invoiceId: documentId }
         });
 
         // Fetch the complete document with BusinessPartner relationship
-        const completeDocument = await SalesInvoice.findByPk(documentId, {
+        const completeDocument = await PurchaseInvoice.findByPk(documentId, {
             include: [
                 {
-                    model: SalesInvoiceItem,
+                    model: PurchaseInvoiceItem,
                     required: false
                 },
                 {
