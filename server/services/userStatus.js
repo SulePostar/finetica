@@ -7,7 +7,12 @@ class UserStatusService {
             attributes: ['id', 'status', 'created_at', 'updated_at'],
             order: [['id', 'ASC']],
         });
-        return statuses;
+
+        return {
+            statusCode: 200,
+            message: 'User statuses fetched successfully',
+            data: statuses,
+        };
     }
 
     async getUserStatusById(id) {
@@ -16,29 +21,46 @@ class UserStatusService {
         });
 
         if (!status) {
-            throw new AppError('Status not found', 404);
+            throw new AppError(`User status with id ${id} not found`, 404);
         }
 
-        return status;
+        return {
+            statusCode: 200,
+            message: 'User status fetched successfully',
+            data: status,
+        };
     }
 
     async createUserStatus(statusName) {
+        if (!statusName || typeof statusName !== 'string') {
+            throw new AppError('Status name is required and must be a string', 400);
+        }
+
         const existingStatus = await UserStatus.findOne({ where: { status: statusName } });
         if (existingStatus) {
             throw new AppError('Status already exists', 400);
         }
 
         const newStatus = await UserStatus.create({ status: statusName });
-        return newStatus;
+        return {
+            statusCode: 201,
+            message: 'User status created successfully',
+            data: newStatus,
+        };
     }
 
     async deleteUserStatus(id) {
         const status = await UserStatus.findByPk(id);
         if (!status) {
-            throw new AppError('Status not found', 404);
+            throw new AppError(`User status with id ${id} not found`, 404);
         }
 
         await status.destroy();
+        return {
+            statusCode: 200,
+            message: 'User status deleted successfully',
+            data: { success: true },
+        };
     }
 }
 

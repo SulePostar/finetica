@@ -1,56 +1,41 @@
 const userStatusService = require('../services/userStatus');
 
-const getAllUserStatuses = async (req, res) => {
-    console.log('Fetching all user statuses');
+const getAllUserStatuses = async (req, res, next) => {
     try {
-        const statuses = await userStatusService.getAllUserStatuses();
-        res.status(200).json({ message: 'User statuses fetched successfully', data: statuses });
+        const result = await userStatusService.getAllUserStatuses();
+        res.json(result);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch user statuses', details: error.message });
+        next(error);
     }
 };
 
-const getUserStatusById = async (req, res) => {
+const getUserStatusById = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const status = await userStatusService.getUserStatusById(id);
-        if (!status) {
-            return res.status(404).json({ error: `User status with id ${id} not found` });
-        }
-        res.status(200).json({ message: 'User status fetched successfully', data: status });
+        const result = await userStatusService.getUserStatusById(id);
+        res.json(result);
     } catch (error) {
-        res
-            .status(error.statusCode || 500)
-            .json({ error: 'Failed to fetch user status', details: error.message });
+        next(error);
     }
 };
 
-const createUserStatus = async (req, res) => {
+const createUserStatus = async (req, res, next) => {
     try {
         const { status } = req.body;
-        if (!status || typeof status !== 'string') {
-            return res.status(400).json({ error: 'Status name is required and must be a string' });
-        }
-
-        const newStatus = await userStatusService.createUserStatus(status);
-        res.status(201).json({ message: 'User status created successfully', data: newStatus });
+        const result = await userStatusService.createUserStatus(status);
+        res.json(result);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to create user status', details: error.message });
+        next(error);
     }
 };
 
-const deleteUserStatus = async (req, res) => {
+const deleteUserStatus = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const deleted = await userStatusService.deleteUserStatus(id);
-        // if (!deleted) {
-        //   return res.status(404).json({ error: `User status with id ${id} not found` });
-        // }
-        res.status(200).json({ message: 'User status deleted successfully' });
+        const result = await userStatusService.deleteUserStatus(id);
+        res.json(result);
     } catch (error) {
-        res
-            .status(error.statusCode || 500)
-            .json({ error: 'Failed to delete user status', details: error.message });
+        next(error);
     }
 };
 
