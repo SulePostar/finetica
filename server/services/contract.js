@@ -1,4 +1,4 @@
-const { Contract, BusinessPartner, ContractProcessingLog, Sequelize } = require('../models');
+const { Contract, BusinessPartner, ContractProcessingLog, sequelize } = require('../models');
 const AppError = require('../utils/errorHandler');
 const { processDocument } = require('./aiService');
 const contractSchema = require('../schemas/contract');
@@ -88,23 +88,28 @@ const extractData = async (fileBuffer, mimeType) => {
 };
 
 const processUnprocessedFiles = async () => {
-  const unprocessedFileLogs = await ContractProcessingLog.findAll({
-    where: {
-      isProcessed: false
-    }
+  const unprocessedFileLog = await ContractProcessingLog.findAll({
+    where: { isProcessed: false }
   });
-  const unprocessedFileLog = unprocessedFileLogs[0];
+
   if (!unprocessedFileLog) return;
 
-  const { buffer, mimeType } = await supabaseService.getFile(BUCKET_NAME, unprocessedFileLog.filename);
-  const extractedData = await extractData(buffer, mimeType);
+  try {
+    const { buffer, mimeType } = await supabaseService.getFile(BUCKET_NAME, unprocessedFileLog.filename);
+    const extractedData = await extractData(buffer, mimeType);
+    console.log('Extracted Data:', extractedData);
 
-  await Contract.create(extractedData);
+    await sequelize.transaction(async (t) => {
+      await Contract.create(extractedData, { transaction: t });
+      await unprocessedFileLog.update({
+        isProcessed: true,
+        processedAt: new Date(),
+      }, { transaction: t });
+    });
 
-  await unprocessedFileLog.update({
-    isProcessed: true,
-    processedAt: new Date(),
-  });
+  } catch (error) {
+    console.error(`Failed to process log ID ${unprocessedFileLog.id}:`, error);
+  }
 
 };
 
