@@ -66,7 +66,14 @@ const createContract = async (payload) => {
 };
 
 const extractData = async (fileBuffer, mimeType) => {
-  const data = await processDocument(fileBuffer, mimeType, contractSchema, MODEL_NAME, contractsPrompt);
+  const businessPartners = await BusinessPartner.findAll({
+    attributes: ['id', 'name']
+  });
+
+  const promptWithPartners = `${contractsPrompt}\nAvailable partners: ${JSON.stringify(businessPartners)}`;
+
+  const data = await processDocument(fileBuffer, mimeType, contractSchema, MODEL_NAME, promptWithPartners);
+
   return data;
 };
 
