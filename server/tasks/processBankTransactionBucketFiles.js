@@ -121,7 +121,7 @@ class BankTransactionBucketProcessingCLI {
                 };
             }
 
-            const result = await this.processor.processFile(file, options);
+            const result = await this.transactionProcessor.processFile(file, options);
 
             if (result.success) {
                 await this.fileTracker.markAsProcessed(tracking.record);
