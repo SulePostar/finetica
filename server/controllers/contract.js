@@ -1,4 +1,9 @@
-const { listContracts, approveContractById, findById, createContract, } = require('../services/contract');
+const {
+  listContracts,
+  approveContractById,
+  findById,
+  createContract,
+} = require('../services/contract');
 
 const getContractData = async (req, res, next) => {
   try {

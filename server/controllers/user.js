@@ -1,41 +1,65 @@
+// controllers/users.js
 const userService = require('../services/users');
-const { UserResponseDTO } = require('../dto/user/responses/UserResponseDTO.js');
 
-const getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res, next) => {
   try {
     const users = await userService.getAllUsers();
-    res.json(users.map((user) => new UserResponseDTO(user)));
+    res.json(users);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 };
 
 const getMyProfile = async (req, res, next) => {
   try {
-    const user = await userService.getUserById(req.user.userId);
-    res.json(new UserResponseDTO(user));
+    const profile = await userService.getUserById(req.user.id);
+    res.json(profile);
   } catch (error) {
     next(error);
-
   }
 };
 
 const editMyProfile = async (req, res, next) => {
-  if (!req.body.id) {
-    return res.status(400).json({ error: 'User ID is required in request body' });
-  }
   try {
-    const { id, ...updateData } = req.body;
-    const updatedUser = await userService.updateProfile(id, updateData, req.clientInfo);
-    res.json(new UserResponseDTO(updatedUser));
+    const updatedUser = await userService.updateProfile(req.body);
+    res.json(updatedUser);
   } catch (error) {
     next(error);
   }
 };
 
+const getUserById = async (req, res, next) => {
+  try {
+    const user = await userService.getUserById(req.params.id);
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateUser = async (req, res, next) => {
+  try {
+    const updated = await userService.updateUser(req.params.id, req.body);
+    res.json(updated);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteUser = async (req, res, next) => {
+  try {
+    await userService.deleteUser(req.params.id);
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getAllUsers,
   getMyProfile,
   editMyProfile,
+  getUserById,
+  updateUser,
+  deleteUser
 };

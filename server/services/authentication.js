@@ -327,7 +327,10 @@ class AuthService {
 
     const refreshToken = await RefreshToken.findOne({
       where: { tokenHash: crypto.createHash('sha256').update(token).digest('hex') },
-      include: [{ model: User, as: 'user' }],
+      include: [{
+        model: User, as: 'user',
+        include: [{ model: Role, as: 'role' }]
+      }],
     });
 
     if (!refreshToken || refreshToken.expiresAt < new Date()) throw new AppError('Unauthorized', 401);
