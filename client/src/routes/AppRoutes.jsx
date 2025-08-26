@@ -7,7 +7,6 @@ import { Nav } from 'react-bootstrap';
 const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
-const AdminDashboard = React.lazy(() => import('../pages/AdminDashboard/AdminDashboard'));
 const Kif = React.lazy(() => import('../pages/kif/Kif'));
 const InvoiceDetails = React.lazy(() => import('../pages/InvoiceDetails/InvoiceDetails'));
 const Vat = React.lazy(() => import('../pages/vat/Vat'));
@@ -18,6 +17,8 @@ const GuestWrapper = React.lazy(() => import('../protectedRoutes/GuestWrapper'))
 const ForgotPasswordForm = React.lazy(() => import('../components/Login/ForgotPasswordForm'));
 const ResetPasswordForm = React.lazy(() => import('../components/Login/ResetPasswordForm'));
 const RoleStatusDashboard = React.lazy(() => import('../pages/Admin/RoleStatusDashboard'));
+const UsersDashboard = React.lazy(() => import('../pages/Admin/UsersDashboard'));
+const ActivityLogs = React.lazy(() => import('../pages/AdminDashboard/ActivityLogs'));
 
 export default function AppRoutes() {
   return (

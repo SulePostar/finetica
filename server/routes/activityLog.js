@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const authorizeAdmin = require('../middleware/authMiddleware');
+const isAuthenticated = require('../middleware/isAuthenticated');
 const {
     getActivityLogs,
     exportActivityLogs,
@@ -8,12 +8,12 @@ const {
 } = require('../controllers/activityLog');
 
 // Get activity logs with filtering and pagination
-router.get('/', authorizeAdmin, getActivityLogs);
+router.get('/', isAuthenticated, getActivityLogs);
 
 // Export activity logs to CSV
-router.get('/export', authorizeAdmin, exportActivityLogs);
+router.get('/export', isAuthenticated, exportActivityLogs);
 
 // Get activity statistics for dashboard
-router.get('/stats', authorizeAdmin, getActivityStats);
+router.get('/stats', isAuthenticated, getActivityStats);
 
 module.exports = router;
