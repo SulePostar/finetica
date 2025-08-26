@@ -3,7 +3,7 @@ const AppError = require('../utils/errorHandler');
 const { processDocument } = require('./aiService');
 const contractSchema = require('../schemas/contract');
 const contractsPrompt = require('../prompts/contract');
-const MODEL_NAME = "gemini-2.5-flash-lite";
+const MODEL_NAME = 'gemini-2.5-flash-lite';
 
 const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
   const limit = Math.max(1, Number(perPage) || 10);
@@ -11,7 +11,9 @@ const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'a
 
   let order = [['createdAt', 'DESC']];
   if (sortField && SORT_FIELD_MAP[sortField]) {
-    order = [[SORT_FIELD_MAP[sortField], (sortOrder || 'asc').toUpperCase() === 'DESC' ? 'DESC' : 'ASC']];
+    order = [
+      [SORT_FIELD_MAP[sortField], (sortOrder || 'asc').toUpperCase() === 'DESC' ? 'DESC' : 'ASC'],
+    ];
   }
 
   const { rows, count } = await Contract.findAndCountAll({
@@ -66,8 +68,21 @@ const createContract = async (payload) => {
 };
 
 const extractData = async (fileBuffer, mimeType) => {
-  const data = await processDocument(fileBuffer, mimeType, contractSchema, MODEL_NAME, contractsPrompt);
+  const data = await processDocument(
+    fileBuffer,
+    mimeType,
+    contractSchema,
+    MODEL_NAME,
+    contractsPrompt
+  );
   return data;
+};
+
+const extractAndSaveContract = async (fileBuffer, mimeType, prompt) => {
+  const extractedData = await extractData(fileBuffer, mimeType, prompt);
+
+  const saved = await createContract(extractedData);
+  return saved;
 };
 
 module.exports = {
@@ -75,5 +90,6 @@ module.exports = {
   findById,
   approveContractById,
   createContract,
-  extractData
+  extractData,
+  extractAndSaveContract,
 };
