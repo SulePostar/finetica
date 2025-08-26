@@ -94,7 +94,6 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
       unprocessedFileLog.filename
     );
     const extractedData = await extractData(buffer, mimeType);
-    console.log('Extracted Data:', extractedData);
 
     await sequelize.transaction(async (t) => {
       await Contract.create(extractedData, { transaction: t });
@@ -112,13 +111,11 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
 };
 
 const processUnprocessedFiles = async () => {
-  const unprocessedFileLog = await ContractProcessingLog.findAll({
+  const unprocessedFileLogs = await ContractProcessingLog.findAll({
     where: { isProcessed: false },
   });
 
-  if (unprocessedFileLog.length === 0) return;
-
-  for (const fileLog of unprocessedFileLog) {
+  for (const fileLog of unprocessedFileLogs) {
     await processSingleUnprocessedFile(fileLog);
   }
 };
