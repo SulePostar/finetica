@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('contract_processed_files', {
+    await queryInterface.createTable('contract_processing_logs', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
-      status: {
+      is_processed: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false,
@@ -41,6 +41,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('contract_processed_files');
+    await queryInterface.dropTable('contract_processing_logs');
   },
 };
