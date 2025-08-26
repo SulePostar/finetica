@@ -2,11 +2,12 @@ import { CContainer, CSpinner } from '@coreui/react';
 import React, { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from '../protectedRoutes/ProtectedRouter';
+import { Nav } from 'react-bootstrap';
 
 const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
-const AdminDashboard = React.lazy(() => import('../pages/AdminDashboard/AdminDashboard'));
+const UsersDashboard = React.lazy(() => import('../pages/Admin/UsersDashboard'));
 const Kif = React.lazy(() => import('../pages/kif/Kif'));
 const InvoiceDetails = React.lazy(() => import('../pages/InvoiceDetails/InvoiceDetails'));
 const Vat = React.lazy(() => import('../pages/vat/Vat'));
@@ -69,10 +70,10 @@ export default function AppRoutes() {
         />
 
         <Route
-          path="/admin/*"
+          path="/admin/users"
           element={
             <ProtectedRoute>
-              <AdminDashboard />
+              <UsersDashboard />
             </ProtectedRoute>
           }
         />
