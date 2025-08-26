@@ -1,11 +1,11 @@
 import React from 'react';
-import DefaultLayout from '../../layout/DefaultLayout';
-import RoleStatusDashboard from '../../components/Admin/RoleAndStatusDashboard/RoleStatusDashboard.jsx';
-import { useSidebarWidth } from '../../hooks/useSidebarWidth';
+import DefaultLayout from '../../layout/DefaultLayout.jsx';
+import RoleAndStatusDashboard from '../../components/Admin/RoleAndStatusDashboard/RoleAndStatusDashboard.jsx';
+import { useSidebarWidth } from '../../hooks/useSidebarWidth.js';
 import '../../styles/shared/CommonStyles.css';
 import '../../styles/TablePages.css';
 
-const AdminRoleStatusDashboard = () => {
+const RoleStatusDashboard = () => {
     const sidebarWidth = useSidebarWidth();
 
     return (
@@ -18,11 +18,11 @@ const AdminRoleStatusDashboard = () => {
                 }}
             >
                 <div className="table-content-wrapper">
-                    <RoleStatusDashboard />
+                    <RoleAndStatusDashboard />
                 </div>
             </div>
         </DefaultLayout>
     );
 };
 
-export default AdminRoleStatusDashboard;
+export default RoleStatusDashboard;

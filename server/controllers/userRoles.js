@@ -2,8 +2,8 @@ const userRoleService = require('../services/userRoles');
 
 const getAllUserRoles = async (req, res) => {
     try {
-        const roles = await userRoleService.getAllUserRoles();
-        res.status(200).json({ message: 'User roles fetched successfully', data: roles });
+        const result = await userRoleService.getAllUserRoles();
+        res.status(result.statusCode).json(result);
     } catch (error) {
         res.status(error.statusCode || 500).json({ error: error.message });
     }
@@ -12,8 +12,8 @@ const getAllUserRoles = async (req, res) => {
 const getUserRoleById = async (req, res) => {
     try {
         const { id } = req.params;
-        const role = await userRoleService.getUserRoleById(id);
-        res.status(200).json({ message: 'User role fetched successfully', data: role });
+        const result = await userRoleService.getUserRoleById(id);
+        res.status(result.statusCode).json(result);
     } catch (error) {
         res.status(error.statusCode || 500).json({ error: error.message });
     }
@@ -22,8 +22,8 @@ const getUserRoleById = async (req, res) => {
 const createUserRole = async (req, res) => {
     try {
         const { role } = req.body;
-        const newRole = await userRoleService.createUserRole(role);
-        res.status(201).json({ message: 'User role created successfully', data: newRole });
+        const result = await userRoleService.createUserRole(role);
+        res.status(result.statusCode).json(result);
     } catch (error) {
         res.status(error.statusCode || 500).json({ error: error.message });
     }
@@ -32,8 +32,8 @@ const createUserRole = async (req, res) => {
 const deleteUserRole = async (req, res) => {
     try {
         const { id } = req.params;
-        await userRoleService.deleteUserRole(id);
-        res.status(200).json({ message: 'User role deleted successfully' });
+        const result = await userRoleService.deleteUserRole(id);
+        res.status(result.statusCode).json(result);
     } catch (error) {
         res.status(error.statusCode || 500).json({ error: error.message });
     }

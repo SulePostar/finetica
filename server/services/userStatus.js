@@ -3,10 +3,16 @@ const AppError = require('../utils/errorHandler');
 
 class UserStatusService {
     async getAllUserStatuses() {
-        return UserStatus.findAll({
+        const statuses = await UserStatus.findAll({
             attributes: ['id', 'status', 'created_at', 'updated_at'],
             order: [['id', 'ASC']],
         });
+
+        return {
+            statusCode: 200,
+            message: 'User statuses fetched successfully',
+            data: statuses,
+        };
     }
 
     async getUserStatusById(id) {
@@ -18,7 +24,11 @@ class UserStatusService {
             throw new AppError(`User status with id ${id} not found`, 404);
         }
 
-        return status;
+        return {
+            statusCode: 200,
+            message: 'User status fetched successfully',
+            data: status,
+        };
     }
 
     async createUserStatus(statusName) {
@@ -31,7 +41,12 @@ class UserStatusService {
             throw new AppError('Status already exists', 400);
         }
 
-        return UserStatus.create({ status: statusName });
+        const newStatus = await UserStatus.create({ status: statusName });
+        return {
+            statusCode: 201,
+            message: 'User status created successfully',
+            data: newStatus,
+        };
     }
 
     async deleteUserStatus(id) {
@@ -41,7 +56,11 @@ class UserStatusService {
         }
 
         await status.destroy();
-        return { success: true };
+        return {
+            statusCode: 200,
+            message: 'User status deleted successfully',
+            data: { success: true },
+        };
     }
 }
 
