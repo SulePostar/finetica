@@ -1,4 +1,9 @@
-const { listContracts, approveContractById, findById, createContract, processUnprocessedFiles } = require('../services/contract');
+const {
+  listContracts,
+  approveContractById,
+  findById,
+  createContract,
+} = require('../services/contract');
 
 const getContractData = async (req, res, next) => {
   try {
@@ -43,15 +48,9 @@ const create = async (req, res, next) => {
   }
 };
 
-const processUnprocessed = async (req, res, next) => {
-  await processUnprocessedFiles();
-  res.status(200).json({ message: 'Processed' });
-};
-
 module.exports = {
   getContractData,
   getContract,
   approveContract,
-  processUnprocessed,
   create,
 };
