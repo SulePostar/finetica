@@ -85,10 +85,7 @@ const getActivityStats = async (req, res, next) => {
     try {
         const stats = await activityLogService.getActivityStats();
 
-        res.json({
-            success: true,
-            data: stats,
-        });
+        res.json(stats);
     } catch (error) {
         next(error);
     }
