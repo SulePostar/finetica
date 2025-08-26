@@ -50,7 +50,7 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Users',
-        to: '/management/users',
+        to: '/admin/users',
         icon: cilPeople,
       },
       {
