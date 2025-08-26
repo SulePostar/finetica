@@ -22,7 +22,7 @@ router.post('/',
 );
 
 router.post('/process',
-    // isAuthenticated,
+    isAuthenticated,
     upload.single('file'),
     processUnprocessed
 );
