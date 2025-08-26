@@ -50,13 +50,13 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Users',
-        to: '/management/users',
+        to: '/admin/users',
         icon: cilPeople,
       },
       {
         component: CNavItem,
         name: 'Roles/Status',
-        to: '/management/roles-status',
+        to: '/admin/role-status',
         icon: cilShieldAlt,
       },
     ],

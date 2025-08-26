@@ -335,14 +335,17 @@ class SupabaseService {
       }
     }
   }
+
   async getFile(bucketName, filePath) {
     try {
       const { data, error } = await this.supabase.storage
         .from(bucketName)
         .download(filePath);
+
       if (error) {
         throw new Error(`File download failed: ${error.message}`);
       }
+
       const buffer = await data.arrayBuffer();
       return {
         buffer,
@@ -352,7 +355,6 @@ class SupabaseService {
       throw error;
     }
   }
-
 }
 
 module.exports = new SupabaseService();
