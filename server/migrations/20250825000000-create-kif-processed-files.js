@@ -37,9 +37,6 @@ module.exports = {
             },
         });
 
-        // Add index on file_name for faster lookups
-        await queryInterface.addIndex('kif_processed_files', ['file_name']);
-
         // Add index on processed status for filtering
         await queryInterface.addIndex('kif_processed_files', ['processed']);
     },
