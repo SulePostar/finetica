@@ -1,6 +1,8 @@
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import '../../styles/shared/CommonStyles.css';
+import { CContainer } from '@coreui/react';
+import AppHeader from '../../components/AppHeader';
 
 const AdminDashboard = () => {
     const sidebarWidth = useSidebarWidth();
