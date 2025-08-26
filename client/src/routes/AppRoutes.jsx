@@ -17,6 +17,7 @@ const ProfilePage = React.lazy(() => import('../pages/Profile/ProfilePage'));
 const GuestWrapper = React.lazy(() => import('../protectedRoutes/GuestWrapper'));
 const ForgotPasswordForm = React.lazy(() => import('../components/Login/ForgotPasswordForm'));
 const ResetPasswordForm = React.lazy(() => import('../components/Login/ResetPasswordForm'));
+const RoleStatusDashboard = React.lazy(() => import('../pages/Admin/RoleStatusDashboard'));
 
 export default function AppRoutes() {
   return (
@@ -178,6 +179,14 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <InvoiceDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/role-status"
+          element={
+            <ProtectedRoute>
+              <RoleStatusDashboard />
             </ProtectedRoute>
           }
         />
