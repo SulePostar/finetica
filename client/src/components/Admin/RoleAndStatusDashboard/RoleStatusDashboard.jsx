@@ -6,13 +6,13 @@ import {
     addRole,
     selectRoles,
     deleteRole
-} from '../../../redux/roles/rolesSlice';
+} from '../../../redux/roles/rolesSlice.js';
 import {
     fetchStatuses,
     addStatus,
     selectStatuses,
     deleteStatus
-} from '../../../redux/statuses/statusesSlice';
+} from '../../../redux/statuses/statusesSlice.js';
 
 const RoleStatusDashboard = () => {
     const dispatch = useDispatch();

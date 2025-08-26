@@ -182,7 +182,7 @@ export default function AppRoutes() {
           }
         />
         <Route
-          path="/admin/role-status-dashboard"
+          path="/admin/role-status"
           element={
             <ProtectedRoute>
               <AdminRoleStatusDashboard />

@@ -3,11 +3,10 @@ const AppError = require('../utils/errorHandler');
 
 class UserStatusService {
     async getAllUserStatuses() {
-        const statuses = await UserStatus.findAll({
+        return UserStatus.findAll({
             attributes: ['id', 'status', 'created_at', 'updated_at'],
             order: [['id', 'ASC']],
         });
-        return statuses;
     }
 
     async getUserStatusById(id) {
@@ -16,29 +15,33 @@ class UserStatusService {
         });
 
         if (!status) {
-            throw new AppError('Status not found', 404);
+            throw new AppError(`User status with id ${id} not found`, 404);
         }
 
         return status;
     }
 
     async createUserStatus(statusName) {
+        if (!statusName || typeof statusName !== 'string') {
+            throw new AppError('Status name is required and must be a string', 400);
+        }
+
         const existingStatus = await UserStatus.findOne({ where: { status: statusName } });
         if (existingStatus) {
             throw new AppError('Status already exists', 400);
         }
 
-        const newStatus = await UserStatus.create({ status: statusName });
-        return newStatus;
+        return UserStatus.create({ status: statusName });
     }
 
     async deleteUserStatus(id) {
         const status = await UserStatus.findByPk(id);
         if (!status) {
-            throw new AppError('Status not found', 404);
+            throw new AppError(`User status with id ${id} not found`, 404);
         }
 
         await status.destroy();
+        return { success: true };
     }
 }
 

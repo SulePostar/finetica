@@ -3,11 +3,10 @@ const AppError = require('../utils/errorHandler');
 
 class UserRoleService {
     async getAllUserRoles() {
-        const roles = await Role.findAll({
+        return Role.findAll({
             attributes: ['id', 'role', 'created_at', 'updated_at'],
             order: [['id', 'ASC']],
         });
-        return roles;
     }
 
     async getUserRoleById(id) {
@@ -16,29 +15,33 @@ class UserRoleService {
         });
 
         if (!role) {
-            throw new AppError('Role not found', 404);
+            throw new AppError(`Role with id ${id} not found`, 404);
         }
 
         return role;
     }
 
     async createUserRole(roleName) {
+        if (!roleName || typeof roleName !== 'string') {
+            throw new AppError('Role name is required and must be a string', 400);
+        }
+
         const existingRole = await Role.findOne({ where: { role: roleName } });
         if (existingRole) {
             throw new AppError('Role already exists', 400);
         }
 
-        const newRole = await Role.create({ role: roleName });
-        return newRole;
+        return Role.create({ role: roleName });
     }
 
     async deleteUserRole(id) {
         const role = await Role.findByPk(id);
         if (!role) {
-            throw new AppError('Role not found', 404);
+            throw new AppError(`Role with id ${id} not found`, 404);
         }
 
         await role.destroy();
+        return { success: true };
     }
 }
 

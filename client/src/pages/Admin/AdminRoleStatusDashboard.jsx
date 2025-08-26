@@ -1,6 +1,6 @@
 import React from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
-import RoleStatusDashboard from '../../components/Admin/Role and Status dashboard/RoleStatusDashboard.jsx';
+import RoleStatusDashboard from '../../components/Admin/RoleAndStatusDashboard/RoleStatusDashboard.jsx';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import '../../styles/shared/CommonStyles.css';
 import '../../styles/TablePages.css';
