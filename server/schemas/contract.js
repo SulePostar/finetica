@@ -4,7 +4,7 @@ const { Type } = require("@google/genai");
 const contractSchema = {
     type: Type.OBJECT,
     properties: {
-        partnerName: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
+        partnerId: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
         contractNumber: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
         contractType: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
         description: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
@@ -17,7 +17,7 @@ const contractSchema = {
 
     },
     required: [
-        'partnerName',
+        'partnerId',
         'contractNumber',
         'contractType',
         'description',
