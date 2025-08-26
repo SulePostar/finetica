@@ -37,11 +37,6 @@ module.exports = {
         allowNull: true,
       },
     });
-    // Add index on file_name for faster lookups
-    await queryInterface.addIndex('bank_transaction_processed_files', ['file_name']);
-
-    // Add index on processed status for filtering
-    await queryInterface.addIndex('bank_transaction_processed_files', ['processed']);
   },
 
   async down(queryInterface, Sequelize) {
