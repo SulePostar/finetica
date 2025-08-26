@@ -2,18 +2,19 @@
 
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('kif_processed_files', {
+        await queryInterface.createTable('kif_processing_logs', {
             id: {
                 type: Sequelize.INTEGER,
-                autoIncrement: true,
                 primaryKey: true,
+                autoIncrement: true,
+                allowNull: false,
             },
-            file_name: {
+            filename: {
                 type: Sequelize.STRING,
                 allowNull: false,
                 unique: true,
             },
-            processed: {
+            is_processed: {
                 type: Sequelize.BOOLEAN,
                 allowNull: false,
                 defaultValue: false,
@@ -22,7 +23,7 @@ module.exports = {
                 type: Sequelize.DATE,
                 allowNull: true,
             },
-            error_message: {
+            message: {
                 type: Sequelize.TEXT,
                 allowNull: true,
             },
@@ -33,15 +34,13 @@ module.exports = {
             },
             updated_at: {
                 type: Sequelize.DATE,
-                allowNull: true,
+                allowNull: false,
+                defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             },
         });
-
-        // Add index on processed status for filtering
-        await queryInterface.addIndex('kif_processed_files', ['processed']);
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('kif_processed_files');
+        await queryInterface.dropTable('kif_processing_logs');
     },
 };
