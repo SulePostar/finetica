@@ -1,16 +1,16 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  class ContractProcessedFiles extends Model {}
+  class ContractProcessingLog extends Model { }
 
-  ContractProcessedFiles.init(
+  ContractProcessingLog.init(
     {
       filename: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
       },
-      status: {
+      isProcessed: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: false,
@@ -26,24 +26,12 @@ module.exports = (sequelize) => {
     },
     {
       sequelize,
-      modelName: 'ContractProcessedFiles',
-      tableName: 'contract_processed_files',
+      modelName: 'ContractProcessingLog',
+      tableName: 'contract_processing_logs',
       timestamps: true,
       underscored: true,
-      hooks: {
-        beforeUpdate: (record) => {
-          if (record.changed('status') && record.status === true) {
-            record.processedAt = new Date();
-          }
-        },
-        beforeCreate: (record) => {
-          if (record.status === true && !record.processedAt) {
-            record.processedAt = new Date();
-          }
-        },
-      },
     }
   );
 
-  return ContractProcessedFiles;
+  return ContractProcessingLog;
 };
