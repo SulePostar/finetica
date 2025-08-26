@@ -1,52 +1,34 @@
 const Logger = require('./logger');
-const { KifProcessedFile } = require('../models');
-
-/**
- * File tracking and status management utilities
- */
+const { Op } = require('sequelize');
 class FileTracker {
-
+    constructor(model, label = 'file') {
+        if (!model) throw new Error("FileTracker requires a Sequelize model");
+        this.model = model;
+        this.label = label; // just for logging clarity
+    }
     /**
      * Check which files are already processed
      */
-    static async getUnprocessedFiles(bucketFiles, forceReprocess = false) {
+    async getUnprocessedFiles(bucketFiles, forceReprocess = false) {
         try {
-            Logger.info('Checking for unprocessed files in kif_processed_files table...');
-
+            Logger.info(`Checking for unprocessed ${this.label}s in tracking table...`);
             const fileNames = bucketFiles.map(file => file.name);
-
-            if (forceReprocess) {
-                Logger.info('Force reprocess mode enabled - will include all files found in tracking table');
-
-                // In force mode, get all files from tracking table regardless of processed status
-                const allTrackedFiles = await KifProcessedFile.findAll({
-                    where: { fileName: fileNames },
-                    attributes: ['fileName', 'id', 'processedAt', 'errorMessage', 'processed']
-                });
-
-                const trackedFileNames = new Set(allTrackedFiles.map(file => file.fileName));
-
-                // Only include bucket files that exist in tracking table
-                const trackedBucketFiles = bucketFiles.filter(file =>
-                    trackedFileNames.has(file.name)
-                );
-
-                return {
-                    unprocessedFiles: trackedBucketFiles,
-                    processedFiles: []
-                };
-            }
-
-            // Single query to get all tracked files with their status
-            const allTrackedFiles = await KifProcessedFile.findAll({
+            // Get all tracked files for these names
+            const allTrackedFiles = await this.model.findAll({
                 where: { fileName: fileNames },
                 attributes: ['fileName', 'id', 'processedAt', 'errorMessage', 'processed']
             });
-
-            // Separate files by processing status
+            if (forceReprocess) {
+                Logger.info('Force reprocess mode enabled - will include all tracked files');
+                const trackedFileNames = new Set(allTrackedFiles.map(f => f.fileName));
+                return {
+                    unprocessedFiles: bucketFiles.filter(f => trackedFileNames.has(f.name)),
+                    processedFiles: []
+                };
+            }
+            // Split into processed / unprocessed
             const processedFiles = [];
             const unprocessedFileNames = new Set();
-
             allTrackedFiles.forEach(file => {
                 if (file.processed) {
                     processedFiles.push({
@@ -59,169 +41,93 @@ class FileTracker {
                     unprocessedFileNames.add(file.fileName);
                 }
             });
-
-            // Filter bucket files to only include unprocessed ones
-            const unprocessedFiles = bucketFiles.filter(file =>
-                unprocessedFileNames.has(file.name)
-            );
-
-            Logger.info(`Found ${unprocessedFiles.length} unprocessed files out of ${bucketFiles.length} bucket files (${allTrackedFiles.length} in tracking table)`);
-
+            const unprocessedFiles = bucketFiles.filter(f => unprocessedFileNames.has(f.name));
+            Logger.info(`Found ${unprocessedFiles.length} unprocessed out of ${bucketFiles.length} bucket files`);
             return { unprocessedFiles, processedFiles };
-
         } catch (error) {
-            Logger.error(`Error checking processed files: ${error.message}`);
+            Logger.error(`Error checking processed ${this.label}s: ${error.message}`);
             throw error;
         }
     }
-
     /**
      * Track file processing status
      */
-    static async trackFileProcessing(fileName, forceReprocess = false) {
+    async trackFileProcessing(fileName, forceReprocess = false) {
         try {
-            // Find existing KIF processed file record (don't create new ones)
-            const record = await KifProcessedFile.findOne({
-                where: { fileName }
-            });
-
-            // If no record exists, skip this file (someone else should have created it)
+            const record = await this.model.findOne({ where: { fileName } });
             if (!record) {
-                Logger.warn(`File ${fileName} not found in kif_processed_files table, skipping...`);
-                return {
-                    record: null,
-                    shouldSkip: true,
-                    reason: 'Not found in tracking table'
-                };
+                Logger.warn(`${this.label} ${fileName} not found in tracking table, skipping...`);
+                return { record: null, shouldSkip: true, reason: 'Not found in tracking table' };
             }
-
-            // If already processed and not forcing reprocess, skip
             if (record.processed && !forceReprocess) {
-                Logger.warn(`File ${fileName} already marked as processed, skipping...`);
-                return {
-                    record,
-                    shouldSkip: true,
-                    reason: 'Already processed'
-                };
+                Logger.warn(`${this.label} ${fileName} already marked as processed, skipping...`);
+                return { record, shouldSkip: true, reason: 'Already processed' };
             }
-
-            // If forcing reprocess on already processed file
             if (forceReprocess && record.processed) {
-                Logger.info(`Force reprocessing ${fileName}...`);
-                await record.resetProcessing();
+                Logger.info(`Force reprocessing ${this.label} ${fileName}...`);
+                await record.update({ processed: false, processedAt: null, errorMessage: null });
             }
-
-            return {
-                record,
-                shouldSkip: false
-            };
-
+            return { record, shouldSkip: false };
         } catch (error) {
-            Logger.error(`Error tracking file ${fileName}: ${error.message}`);
+            Logger.error(`Error tracking ${this.label} ${fileName}: ${error.message}`);
             throw error;
         }
     }
-
-    /**
-     * Mark file as successfully processed
-     */
-    static async markAsProcessed(record) {
+    async markAsProcessed(record) {
         try {
-            await record.markAsProcessed();
+            await record.update({ processed: true, processedAt: new Date(), errorMessage: null });
         } catch (error) {
-            Logger.error(`Failed to mark file as processed: ${error.message}`);
+            Logger.error(`Failed to mark ${this.label} as processed: ${error.message}`);
             throw error;
         }
     }
-
-    /**
-     * Mark file as failed
-     */
-    static async markAsFailed(record, errorMessage) {
+    async markAsFailed(record, errorMessage) {
         try {
-            await record.markAsFailed(errorMessage);
+            await record.update({ processed: false, errorMessage, processedAt: new Date() });
         } catch (error) {
-            Logger.error(`Failed to mark file as failed: ${error.message}`);
+            Logger.error(`Failed to mark ${this.label} as failed: ${error.message}`);
         }
     }
-
-    /**
-     * Reset all processing status
-     */
-    static async resetAllProcessing() {
+    async resetAllProcessing() {
         try {
-            Logger.info('Resetting processing status for all KIF files...');
-
-            const result = await KifProcessedFile.update(
-                {
-                    processed: false,
-                    processedAt: null,
-                    errorMessage: null
-                },
-                {
-                    where: {},
-                    returning: true
-                }
+            Logger.info(`Resetting processing status for all ${this.label}s...`);
+            const [resetCount] = await this.model.update(
+                { processed: false, processedAt: null, errorMessage: null },
+                { where: {} }
             );
-
-            const resetCount = Array.isArray(result) ? result[0] : result;
-            Logger.success(`Reset processing status for ${resetCount} files`);
-
-            return {
-                success: true,
-                resetCount: resetCount,
-                message: `Processing status reset for ${resetCount} files`
-            };
-
+            Logger.success(`Reset ${resetCount} ${this.label} records`);
+            return { success: true, resetCount, message: `Reset ${resetCount} ${this.label} records` };
         } catch (error) {
-            Logger.error(`Error resetting processing status: ${error.message}`);
+            Logger.error(`Error resetting ${this.label}s: ${error.message}`);
             throw error;
         }
     }
-
-    /**
-     * Get processing status summary
-     */
-    static async getProcessingStatus() {
+    async getProcessingStatus() {
         try {
-            const { Op } = require('sequelize');
-
             const [totalFiles, processedFiles, failedFiles] = await Promise.all([
-                KifProcessedFile.count(),
-                KifProcessedFile.count({ where: { processed: true } }),
-                KifProcessedFile.count({
-                    where: {
-                        processed: false,
-                        errorMessage: { [Op.ne]: null }
-                    }
-                })
+                this.model.count(),
+                this.model.count({ where: { processed: true } }),
+                this.model.count({ where: { processed: false, errorMessage: { [Op.ne]: null } } })
             ]);
-
             return {
                 totalFiles,
                 processedFiles,
                 failedFiles,
                 unprocessedFiles: totalFiles - processedFiles - failedFiles
             };
-
         } catch (error) {
-            Logger.error(`Error getting processing status: ${error.message}`);
+            Logger.error(`Error getting ${this.label} status: ${error.message}`);
             throw error;
         }
     }
-
-    /**
-     * Database health check
-     */
-    static async healthCheck() {
+    async healthCheck() {
         try {
-            await KifProcessedFile.findOne({ limit: 1 });
+            await this.model.findOne({ limit: 1 });
             return true;
         } catch (error) {
-            Logger.warn(`Database connection check failed: ${error.message}`);
+            Logger.warn(`Database check failed for ${this.label}: ${error.message}`);
             return false;
         }
     }
 }
-
 module.exports = FileTracker;

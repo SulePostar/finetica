@@ -14,6 +14,15 @@ const KIF_PROCESSING = Object.freeze({
   PDF_EXTENSION: '.pdf'
 });
 
+// Bank Transaction Processing Constants
+const BANK_TRANSACTION_PROCESSING = Object.freeze({
+  BUCKET_NAME: 'transactions',
+  AI_MODEL: 'gemini-2.5-flash-lite',
+  PROCESSING_DELAY: 1000,
+  MAX_FILE_SIZE_BYTES: 50 * 1024 * 1024, // 50MB
+  PDF_EXTENSION: '.pdf'
+});
+
 const EXIT_CODES = Object.freeze({
   SUCCESS: 0,
   ERROR: 1
@@ -66,5 +75,6 @@ module.exports = {
   CLI_OPTIONS,
   DISPLAY_ICONS,
   SUPABASE_CONFIG,
-  FILE_CONFIG
+  FILE_CONFIG,
+  BANK_TRANSACTION_PROCESSING
 };
