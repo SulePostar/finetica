@@ -239,11 +239,11 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
     try {
         const { buffer, mimeType } = await supabaseService.getFile(
             BUCKET_NAME,
-            unprocessedFileLog.filename
+            unprocessedFileLog.fileName
         );
         const extractedData = await extractData(buffer, mimeType);
         await sequelize.transaction(async (t) => {
-            await BankTransaction.create(extractedData, { transaction: t });
+            await createBankTransactionFromAI(extractedData, { transaction: t });
             await unprocessedFileLog.update(
                 {
                     isProcessed: true,

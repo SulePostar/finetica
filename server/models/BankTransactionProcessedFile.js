@@ -20,6 +20,7 @@ module.exports = (sequelize) => {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: false,
+                field: 'is_processed',
             },
             processedAt: {
                 type: DataTypes.DATE,
