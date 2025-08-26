@@ -45,7 +45,7 @@ const create = async (req, res, next) => {
 
 const processUnprocessed = async (req, res, next) => {
   await processUnprocessedFiles();
-  res.status(200).json({ message: 'Processing initiated' });
+  res.status(200).json({ message: 'Processed' });
 };
 
 module.exports = {
