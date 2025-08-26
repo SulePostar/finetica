@@ -4,8 +4,8 @@ const { processDocument } = require('./aiService');
 const contractSchema = require('../schemas/contract');
 const contractsPrompt = require('../prompts/contract');
 const supabaseService = require('../utils/supabase/supabaseService');
-const MODEL_NAME = "gemini-2.5-flash-lite";
-const BUCKET_NAME = "contracts";
+const MODEL_NAME = 'gemini-2.5-flash-lite';
+const BUCKET_NAME = 'contracts';
 
 const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
   const limit = Math.max(1, Number(perPage) || 10);
@@ -87,30 +87,40 @@ const extractData = async (fileBuffer, mimeType) => {
   return data;
 };
 
-const processUnprocessedFiles = async () => {
-  const unprocessedFileLog = await ContractProcessingLog.findAll({
-    where: { isProcessed: false }
-  });
-
-  if (!unprocessedFileLog) return;
-
+export const processSingleUnprocessedFile = async (unprocessedFileLog) => {
   try {
-    const { buffer, mimeType } = await supabaseService.getFile(BUCKET_NAME, unprocessedFileLog.filename);
+    const { buffer, mimeType } = await supabaseService.getFile(
+      BUCKET_NAME,
+      unprocessedFileLog.filename
+    );
     const extractedData = await extractData(buffer, mimeType);
     console.log('Extracted Data:', extractedData);
 
     await sequelize.transaction(async (t) => {
       await Contract.create(extractedData, { transaction: t });
-      await unprocessedFileLog.update({
-        isProcessed: true,
-        processedAt: new Date(),
-      }, { transaction: t });
+      await unprocessedFileLog.update(
+        {
+          isProcessed: true,
+          processedAt: new Date(),
+        },
+        { transaction: t }
+      );
     });
-
   } catch (error) {
     console.error(`Failed to process log ID ${unprocessedFileLog.id}:`, error);
   }
+};
 
+const processUnprocessedFiles = async () => {
+  const unprocessedFileLog = await ContractProcessingLog.findAll({
+    where: { isProcessed: false },
+  });
+
+  if (unprocessedFileLog.length === 0) return;
+
+  for (const fileLog of unprocessedFileLog) {
+    await processSingleUnprocessedFile(fileLog);
+  }
 };
 
 const extractAndSaveContract = async (fileBuffer, mimeType, prompt) => {
