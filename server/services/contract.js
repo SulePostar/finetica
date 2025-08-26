@@ -1,5 +1,11 @@
-const { Contract, BusinessPartner, Sequelize } = require('../models');
+const { Contract, BusinessPartner, ContractProcessingLog, sequelize } = require('../models');
 const AppError = require('../utils/errorHandler');
+const { processDocument } = require('./aiService');
+const contractSchema = require('../schemas/contract');
+const contractsPrompt = require('../prompts/contract');
+const supabaseService = require('../utils/supabase/supabaseService');
+const MODEL_NAME = 'gemini-2.5-flash-lite';
+const BUCKET_NAME = 'contracts';
 
 const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
   const limit = Math.max(1, Number(perPage) || 10);
@@ -7,7 +13,9 @@ const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'a
 
   let order = [['createdAt', 'DESC']];
   if (sortField && SORT_FIELD_MAP[sortField]) {
-    order = [[SORT_FIELD_MAP[sortField], (sortOrder || 'asc').toUpperCase() === 'DESC' ? 'DESC' : 'ASC']];
+    order = [
+      [SORT_FIELD_MAP[sortField], (sortOrder || 'asc').toUpperCase() === 'DESC' ? 'DESC' : 'ASC'],
+    ];
   }
 
   const { rows, count } = await Contract.findAndCountAll({
@@ -61,9 +69,64 @@ const createContract = async (payload) => {
   return created.get({ plain: true });
 };
 
+const extractData = async (fileBuffer, mimeType) => {
+  const businessPartners = await BusinessPartner.findAll({
+    attributes: ['id', 'name'],
+  });
+
+  const promptWithPartners = `${contractsPrompt}\nAvailable partners: ${JSON.stringify(businessPartners)}`;
+
+  const data = await processDocument(
+    fileBuffer,
+    mimeType,
+    contractSchema,
+    MODEL_NAME,
+    promptWithPartners
+  );
+
+  return data;
+};
+
+const processSingleUnprocessedFile = async (unprocessedFileLog) => {
+  try {
+    const { buffer, mimeType } = await supabaseService.getFile(
+      BUCKET_NAME,
+      unprocessedFileLog.filename
+    );
+    const extractedData = await extractData(buffer, mimeType);
+
+    await sequelize.transaction(async (t) => {
+      await Contract.create(extractedData, { transaction: t });
+      await unprocessedFileLog.update(
+        {
+          isProcessed: true,
+          processedAt: new Date(),
+        },
+        { transaction: t }
+      );
+    });
+  } catch (error) {
+    console.error(`Failed to process log ID ${unprocessedFileLog.id}:`, error);
+  }
+};
+
+const processUnprocessedFiles = async () => {
+  const unprocessedFileLogs = await ContractProcessingLog.findAll({
+    where: { isProcessed: false },
+  });
+
+  for (const fileLog of unprocessedFileLogs) {
+    await processSingleUnprocessedFile(fileLog);
+  }
+};
+
+
+
 module.exports = {
   listContracts,
   findById,
   approveContractById,
   createContract,
+  extractData,
+  processUnprocessedFiles,
 };
