@@ -87,7 +87,7 @@ const extractData = async (fileBuffer, mimeType) => {
   return data;
 };
 
-export const processSingleUnprocessedFile = async (unprocessedFileLog) => {
+const processSingleUnprocessedFile = async (unprocessedFileLog) => {
   try {
     const { buffer, mimeType } = await supabaseService.getFile(
       BUCKET_NAME,
@@ -123,12 +123,7 @@ const processUnprocessedFiles = async () => {
   }
 };
 
-const extractAndSaveContract = async (fileBuffer, mimeType, prompt) => {
-  const extractedData = await extractData(fileBuffer, mimeType, prompt);
-  console.log(extractedData);
-  const saved = await createContract(extractedData);
-  return saved;
-};
+
 
 module.exports = {
   listContracts,
@@ -137,5 +132,4 @@ module.exports = {
   createContract,
   extractData,
   processUnprocessedFiles,
-  extractAndSaveContract,
 };
