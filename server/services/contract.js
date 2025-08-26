@@ -13,7 +13,9 @@ const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'a
 
   let order = [['createdAt', 'DESC']];
   if (sortField && SORT_FIELD_MAP[sortField]) {
-    order = [[SORT_FIELD_MAP[sortField], (sortOrder || 'asc').toUpperCase() === 'DESC' ? 'DESC' : 'ASC']];
+    order = [
+      [SORT_FIELD_MAP[sortField], (sortOrder || 'asc').toUpperCase() === 'DESC' ? 'DESC' : 'ASC'],
+    ];
   }
 
   const { rows, count } = await Contract.findAndCountAll({
@@ -68,7 +70,20 @@ const createContract = async (payload) => {
 };
 
 const extractData = async (fileBuffer, mimeType) => {
-  const data = await processDocument(fileBuffer, mimeType, contractSchema, MODEL_NAME, contractsPrompt);
+  const businessPartners = await BusinessPartner.findAll({
+    attributes: ['id', 'name'],
+  });
+
+  const promptWithPartners = `${contractsPrompt}\nAvailable partners: ${JSON.stringify(businessPartners)}`;
+
+  const data = await processDocument(
+    fileBuffer,
+    mimeType,
+    contractSchema,
+    MODEL_NAME,
+    promptWithPartners
+  );
+
   return data;
 };
 
@@ -93,11 +108,19 @@ const processUnprocessedFiles = async () => {
 
 };
 
+const extractAndSaveContract = async (fileBuffer, mimeType, prompt) => {
+  const extractedData = await extractData(fileBuffer, mimeType, prompt);
+  console.log(extractedData);
+  const saved = await createContract(extractedData);
+  return saved;
+};
+
 module.exports = {
   listContracts,
   findById,
   approveContractById,
   createContract,
   extractData,
-  processUnprocessedFiles
+  processUnprocessedFiles,
+  extractAndSaveContract,
 };
