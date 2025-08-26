@@ -4,3 +4,7 @@ const USER_STATUS = Object.freeze({
   REJECTED: 3,
   DELETED: 4,
 });
+
+module.exports = {
+  USER_STATUS,
+};
