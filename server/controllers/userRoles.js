@@ -1,41 +1,41 @@
 const userRoleService = require('../services/userRoles');
 
-const getAllUserRoles = async (req, res) => {
+const getAllUserRoles = async (req, res, next) => {
     try {
         const result = await userRoleService.getAllUserRoles();
         res.json(result);
     } catch (error) {
-        res.status(error.statusCode || 500).json({ error: error.message });
+        next(error);
     }
 };
 
-const getUserRoleById = async (req, res) => {
+const getUserRoleById = async (req, res, next) => {
     try {
         const { id } = req.params;
         const result = await userRoleService.getUserRoleById(id);
         res.json(result);
     } catch (error) {
-        res.status(error.statusCode || 500).json({ error: error.message });
+        next(error);
     }
 };
 
-const createUserRole = async (req, res) => {
+const createUserRole = async (req, res, next) => {
     try {
         const { role } = req.body;
         const result = await userRoleService.createUserRole(role);
         res.json(result);
     } catch (error) {
-        res.status(error.statusCode || 500).json({ error: error.message });
+        next(error);
     }
 };
 
-const deleteUserRole = async (req, res) => {
+const deleteUserRole = async (req, res, next) => {
     try {
         const { id } = req.params;
         const result = await userRoleService.deleteUserRole(id);
         res.json(result);
     } catch (error) {
-        res.status(error.statusCode || 500).json({ error: error.message });
+        next(error);
     }
 };
 
