@@ -1,13 +1,9 @@
 const { Contract, BusinessPartner, Sequelize } = require('../models');
 const AppError = require('../utils/errorHandler');
-
-
-
-const normalize = (row) => {
-  const r = { ...row };
-  if (r.amount != null) r.amount = Number(r.amount);
-  return r;
-};
+const { processDocument } = require('./aiService');
+const contractSchema = require('../schemas/contract');
+const contractsPrompt = require('../prompts/contract');
+const MODEL_NAME = "gemini-2.5-flash-lite";
 
 const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
   const limit = Math.max(1, Number(perPage) || 10);
@@ -32,7 +28,7 @@ const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'a
     ],
   });
 
-  const data = rows.map((r) => normalize(r.get({ plain: true })));
+  const data = rows.map((r) => r.get({ plain: true }));
   return { data, total: count };
 };
 
@@ -47,7 +43,7 @@ const findById = async (id) => {
     ],
   });
   if (!contract) throw new AppError('Contract not found', 404);
-  return contract;
+  return contract.get({ plain: true });
 };
 
 const approveContractById = async (id, body, userId) => {
@@ -61,12 +57,17 @@ const approveContractById = async (id, body, userId) => {
     approvedBy: userId,
   });
 
-  return contract;
+  return contract.get({ plain: true });
 };
 
 const createContract = async (payload) => {
   const created = await Contract.create(payload);
-  return created;
+  return created.get({ plain: true });
+};
+
+const extractData = async (fileBuffer, mimeType) => {
+  const data = await processDocument(fileBuffer, mimeType, contractSchema, MODEL_NAME, contractsPrompt);
+  return data;
 };
 
 module.exports = {
@@ -74,4 +75,5 @@ module.exports = {
   findById,
   approveContractById,
   createContract,
+  extractData
 };

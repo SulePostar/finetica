@@ -1,10 +1,13 @@
 const { SalesInvoice, SalesInvoiceItem, BusinessPartner } = require('../models');
 const { processDocument } = require('./aiService');
+const { sequelize } = require('../config/db');
 const KIF_PROMPT = require('../prompts/Kif.js');
 const salesInvoiceSchema = require('../schemas/kifSchema');
 const AppError = require('../utils/errorHandler');
 
 const createKifFromAI = async (extractedData) => {
+    const transaction = await sequelize.transaction();
+
     try {
         const { items, ...invoiceData } = extractedData;
 
@@ -16,8 +19,8 @@ const createKifFromAI = async (extractedData) => {
             updatedAt: new Date(),
         };
 
-        // Create the sales invoice
-        const document = await SalesInvoice.create(documentData);
+        // Create the sales invoice within transaction
+        const document = await SalesInvoice.create(documentData, { transaction });
 
         // Create sales invoice items if they exist
         if (items && Array.isArray(items) && items.length > 0) {
@@ -28,8 +31,10 @@ const createKifFromAI = async (extractedData) => {
                 updatedAt: new Date(),
             }));
 
-            await SalesInvoiceItem.bulkCreate(itemsToCreate);
+            await SalesInvoiceItem.bulkCreate(itemsToCreate, { transaction });
         }
+
+        await transaction.commit();
 
         const responseData = {
             ...document.toJSON(),
@@ -38,6 +43,7 @@ const createKifFromAI = async (extractedData) => {
 
         return responseData;
     } catch (error) {
+        await transaction.rollback();
         console.error("Database Error:", error);
         throw new AppError('Failed to save KIF sales invoice to database', 500);
     }
@@ -45,6 +51,8 @@ const createKifFromAI = async (extractedData) => {
 
 // KIF-specific function to create sales invoice from manual data
 const createKifManually = async (invoiceData, userId) => {
+    const transaction = await sequelize.transaction();
+
     try {
         const { items, ...documentData } = invoiceData;
 
@@ -57,8 +65,8 @@ const createKifManually = async (invoiceData, userId) => {
             updatedAt: new Date(),
         };
 
-        // Create the sales invoice
-        const document = await SalesInvoice.create(finalDocumentData);
+        // Create the sales invoice within transaction
+        const document = await SalesInvoice.create(finalDocumentData, { transaction });
 
         // Create sales invoice items if they exist
         if (items && Array.isArray(items) && items.length > 0) {
@@ -69,10 +77,12 @@ const createKifManually = async (invoiceData, userId) => {
                 updatedAt: new Date(),
             }));
 
-            await SalesInvoiceItem.bulkCreate(itemsToCreate);
+            await SalesInvoiceItem.bulkCreate(itemsToCreate, { transaction });
         }
 
-        // Fetch the created invoice with its items
+        await transaction.commit();
+
+        // Fetch the created invoice with its items (outside transaction since it's committed)
         const createdInvoice = await SalesInvoice.findByPk(document.id, {
             include: [
                 {
@@ -88,6 +98,7 @@ const createKifManually = async (invoiceData, userId) => {
 
         return createdInvoice;
     } catch (error) {
+        await transaction.rollback();
         console.error("Manual Creation Error:", error);
         throw new AppError('Failed to create KIF sales invoice', 500);
     }
