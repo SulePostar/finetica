@@ -165,7 +165,7 @@ class BankTransactionBucketProcessingCLI {
                 return this.getProcessingSummary('No files found');
             }
 
-            const { unprocessedFiles, processedFiles } = await FileTracker.getUnprocessedFiles(
+            const { unprocessedFiles, processedFiles } = await this.fileTracker.getUnprocessedFiles(
                 bucketFiles,
                 forceReprocess
             );
@@ -359,6 +359,6 @@ class BankTransactionBucketProcessingCLI {
 module.exports = BankTransactionBucketProcessingCLI;
 
 if (require.main === module) {
-    const cli = new BankTransactionCLI();
-    cli.processAllFiles().then(stats => console.log('Processing stats:', stats));
+    const cli = new BankTransactionBucketProcessingCLI();
+    cli.run();
 }
