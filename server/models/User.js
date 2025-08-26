@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    static associate({ Role, UserStatus }) {
+    static associate({ Role, UserStatus, RefreshToken }) {
       User.belongsTo(Role, {
         foreignKey: 'roleId',
         as: 'role',
@@ -13,6 +13,12 @@ module.exports = (sequelize, DataTypes) => {
       User.belongsTo(UserStatus, {
         foreignKey: 'statusId',
         as: 'status',
+      });
+
+      User.hasMany(RefreshToken, {
+        foreignKey: 'userId',
+        as: 'refreshTokens',
+        onDelete: 'CASCADE',
       });
     }
   }

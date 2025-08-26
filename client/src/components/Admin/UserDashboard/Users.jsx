@@ -6,7 +6,7 @@ import makeCustomStyles from '../../Tables/DynamicTable.styles';
 import CIcon from '@coreui/icons-react';
 import { cilUser, cilPencil, cilTrash } from '@coreui/icons';
 
-import './UserDashboard.css';
+import './Users.css';
 import { colors } from '../../../styles/colors';
 
 import {
@@ -27,12 +27,12 @@ import {
   selectChangingRole,
 } from '../../../redux/users/usersSlice';
 
-import { SearchFilters, EditUserModal, DeleteUserModal, QuickChangeModal } from '../../index';
+import { SearchFilters, EditUserModal, ConfirmationModal, QuickChangeModal } from '../../index';
 
 import { filterUsers, getRoleName, getStatusBadge, isNewUser } from '../../../utilis/formatters';
 import notify from '../../../utilis/toastHelper';
 
-const UserDashboard = () => {
+const Users = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.profile);
 
@@ -143,12 +143,12 @@ const UserDashboard = () => {
     () => [
       {
         name: 'Name',
-        selector: (row) => row.fullName || row.email,
+        selector: (row) => row.fullName,
         sortable: true,
         width: '15%',
         cell: (row) => (
           <div>
-            {row.fullName || row.email}
+            {row.fullName}
             {isNewUser(row) && <span className="badge bg-success ms-2">New User</span>}
           </div>
         ),
@@ -269,8 +269,20 @@ const UserDashboard = () => {
               <SearchFilters
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
-                filterRole={filterRole}
-                onFilterRoleChange={setFilterRole}
+                filters={[
+                  {
+                    name: "role",
+                    label: "All Roles",
+                    options: [
+                      { value: "1", label: "Admin" },
+                      { value: "2", label: "User" },
+                    ],
+                  },
+                ]}
+                filterValues={{ role: filterRole }}
+                onFilterChange={(name, value) => {
+                  if (name === "role") setFilterRole(value);
+                }}
                 onRefresh={handleRefresh}
               />
             </div>
@@ -306,10 +318,15 @@ const UserDashboard = () => {
 
       {/* Delete User Modal */}
       {selectedUser && (
-        <DeleteUserModal
+        <ConfirmationModal
           visible={showDeleteModal}
           onCancel={() => setShowDeleteModal(false)}
           onConfirm={handleConfirmDelete}
+          title="Delete User"
+          body={`Are you sure you want to delete user "${selectedUser.fullName}"? This action cannot be undone.`}
+          cancelText="Cancel"
+          confirmText="Delete User"
+          confirmColor="danger"
           user={selectedUser}
           loading={deletingUser === selectedUser?.id}
           error={error}
@@ -333,4 +350,4 @@ const UserDashboard = () => {
   );
 };
 
-export default UserDashboard;
+export default Users;

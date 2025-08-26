@@ -25,7 +25,7 @@ const UserRow = ({
     <CTableRow key={user.id}>
       <CTableDataCell>{user.id}</CTableDataCell>
       <CTableDataCell>
-        {user.fullName || user.email}
+        {user.fullName}
         {isNew && (
           <CBadge color="warning" className="ms-2">
             New User
