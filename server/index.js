@@ -51,7 +51,7 @@ app.use('/api/auth', require('./routes/authentication'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/files', require('./routes/uploadedFiles'));
 app.use('/api/kif', kifRouter);
-app.use('/api', kufRouter);
+app.use('/api/kuf', kufRouter);
 app.use('/api/transactions', bankTransactionRouter);
 app.use('/api/admin', activityLogRouter);
 app.use(mailRoute);

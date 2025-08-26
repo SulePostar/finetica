@@ -53,14 +53,32 @@ class AuthService {
       status: 'success',
     });
 
-    // Send welcome email
     try {
-      await sendTemplatedEmail('welcome_email', user.email, {
-        userName: user.firstName
+      await sendTemplatedEmail('welcome_email', user.email, { userName: firstName });
+      // Log email success
+      await activityLogService.logActivity({
+        userId: user.id,
+        action: 'send_email',
+        entity: 'Email',
+        entityId: user.id,
+        details: { template: 'welcome_email', to: user.email },
+        ipAddress: clientInfo.ipAddress,
+        userAgent: clientInfo.userAgent,
+        status: 'success',
       });
-    } catch (emailError) {
-      console.error('Failed to send welcome email:', emailError);
-      // Don't fail registration if email fails
+    } catch (error) {
+      console.error('Failed to send welcome email:', error);
+      // Log email failure
+      await activityLogService.logActivity({
+        userId: user.id,
+        action: 'send_email',
+        entity: 'Email',
+        entityId: user.id,
+        details: { template: 'welcome_email', to: user.email, error: error.message },
+        ipAddress: clientInfo.ipAddress,
+        userAgent: clientInfo.userAgent,
+        status: 'failure',
+      });
     }
 
     return {
