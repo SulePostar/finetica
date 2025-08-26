@@ -2,9 +2,10 @@ const {
     getTransactions,
     getBankTransactionById,
     createBankTransactionManually,
-    approveBankTransaction,
+    approveBankTransactionById,
     editBankTransaction,
-    processBankTransaction
+    processBankTransaction,
+    processUnprocessedFiles
 } = require('../services/bankTransaction');
 
 const getBankTransactions = async (req, res, next) => {
@@ -55,9 +56,9 @@ const processTransaction = async (req, res, next) => {
 const approveTransaction = async (req, res) => {
     const { id: transactionId } = req.params;
     const { userId } = req.user;
-    const result = await approveBankTransaction(transactionId, userId);
+    console.log("Approving transaction:", transactionId, "by user:", userId);
+    const result = await approveBankTransactionById(transactionId, userId);
     res.json(result);
-
 };
 
 const updatedDocument = async (req, res) => {
@@ -72,11 +73,18 @@ const updatedDocument = async (req, res) => {
         res.status(500).json({ error: 'Failed to update bank transaction' });
     }
 }
+
+const processUnprocessed = async (req, res, next) => {
+    await processUnprocessedFiles();
+    res.status(200).json({ message: 'Processed' });
+};
+
 module.exports = {
     getBankTransactions,
     getTransactionById,
     processTransaction,
     createBankTransaction,
     approveTransaction,
-    updatedDocument
+    updatedDocument,
+    processUnprocessed
 };

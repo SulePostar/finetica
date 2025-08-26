@@ -1,44 +1,7 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-    class BankTransactionProcessedFile extends Model {
-        static associate(models) {
-            // Define associations here if needed in the future
-        }
-
-        /**
-         * Mark a file as processed
-         */
-        async markAsProcessed(errorMessage = null) {
-            return this.update({
-                processed: true,
-                processedAt: new Date(),
-                errorMessage: errorMessage
-            });
-        }
-
-        /**
-         * Mark a file as failed
-         */
-        async markAsFailed(errorMessage) {
-            return this.update({
-                processed: false,
-                errorMessage: errorMessage,
-                processedAt: new Date()
-            });
-        }
-
-        /**
-         * Reset processing status
-         */
-        async resetProcessing() {
-            return this.update({
-                processed: false,
-                processedAt: null,
-                errorMessage: null
-            });
-        }
-    }
+    class BankTransactionProcessedFile extends Model { }
 
     BankTransactionProcessedFile.init(
         {
@@ -53,7 +16,7 @@ module.exports = (sequelize) => {
                 unique: true,
                 field: 'file_name',
             },
-            processed: {
+            isProcessed: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: false,
@@ -76,16 +39,7 @@ module.exports = (sequelize) => {
             timestamps: true,
             createdAt: 'created_at',
             updatedAt: 'updated_at',
-            underscored: true,
-            indexes: [
-                {
-                    unique: true,
-                    fields: ['file_name']
-                },
-                {
-                    fields: ['processed']
-                }
-            ]
+            underscored: true
         }
     );
 

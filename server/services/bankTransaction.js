@@ -1,9 +1,13 @@
-const { BusinessPartner, TransactionCategory, Users, BankTransaction } = require('../models');
+const { BusinessPartner, TransactionCategory, Users, BankTransaction, BankTransactionProcessedFile } = require('../models');
 const { processDocument } = require('./aiService');
 const AppError = require('../utils/errorHandler');
 const BANK_TRANSACTIONS_PROMPT = require('../prompts/BankTransactions');
 const bankTransactionSchema = require('../schemas/bankTransactionSchema');
 const { sequelize } = require('../models');
+const MODEL_NAME = 'gemini-2.5-flash-lite';
+const BUCKET_NAME = 'transactions';
+const supabaseService = require('../utils/supabase/supabaseService');
+
 
 const getTransactions = async (query = {}) => {
     try {
@@ -143,19 +147,17 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
 };
 
 
-const approveBankTransaction = async (id, userId) => {
+const approveBankTransactionById = async (id, body, userId) => {
     try {
         const document = await BankTransaction.findByPk(id);
         if (!document) {
             throw new AppError('Bank transaction not found', 404);
         }
 
-        document.approvedAt = new Date();
-        document.approvedBy = userId;
+        await document.update({ ...body, approvedAt: new Date(), approvedBy: userId });
 
-        await document.save();
+        return document.get({ plain: true });
 
-        return document;
     } catch (error) {
         console.error("Approval Error:", error);
         throw new AppError('Failed to approve bank transaction', 500);
@@ -218,13 +220,62 @@ const processBankTransaction = async (fileBuffer, mimeType, model = "gemini-2.5-
     }
 };
 
+const extractData = async (fileBuffer, mimeType) => {
+    const businessPartners = await BusinessPartner.findAll({
+        attributes: ['id', 'name'],
+    });
+    const promptWithPartners = `${BANK_TRANSACTIONS_PROMPT}\nAvailable partners: ${JSON.stringify(businessPartners)}`;
+    const data = await processDocument(
+        fileBuffer,
+        mimeType,
+        bankTransactionSchema,
+        MODEL_NAME,
+        promptWithPartners
+    );
+    return data;
+};
+
+const processSingleUnprocessedFile = async (unprocessedFileLog) => {
+    try {
+        const { buffer, mimeType } = await supabaseService.getFile(
+            BUCKET_NAME,
+            unprocessedFileLog.filename
+        );
+        const extractedData = await extractData(buffer, mimeType);
+        await sequelize.transaction(async (t) => {
+            await BankTransaction.create(extractedData, { transaction: t });
+            await unprocessedFileLog.update(
+                {
+                    isProcessed: true,
+                    processedAt: new Date(),
+                },
+                { transaction: t }
+            );
+        });
+    } catch (error) {
+        console.error(`Failed to process log ID ${unprocessedFileLog.id}:`, error);
+    }
+};
+
+const processUnprocessedFiles = async () => {
+    const unprocessedFileLogs = await BankTransactionProcessedFile.findAll({
+        where: { isProcessed: false },
+    });
+    for (const fileLog of unprocessedFileLogs) {
+        await processSingleUnprocessedFile(fileLog);
+    }
+};
+
+
 
 module.exports = {
     getTransactions,
     getBankTransactionById,
     createBankTransactionFromAI,
     createBankTransactionManually,
-    approveBankTransaction,
+    approveBankTransactionById,
     editBankTransaction,
-    processBankTransaction
+    processBankTransaction,
+    processSingleUnprocessedFile,
+    processUnprocessedFiles
 };

@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
-      processed: {
+      is_processed: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false,

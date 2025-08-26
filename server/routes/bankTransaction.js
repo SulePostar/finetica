@@ -5,6 +5,7 @@ const {
     getTransactionById,
     processTransaction,
     createBankTransaction,
+    processUnprocessed,
     approveTransaction
 } = require('../controllers/bankTransaction');
 const { upload } = require('../services/aiService');
@@ -24,11 +25,12 @@ router.post('/',
 router.post('/process',
     isAuthenticated,
     upload.single('file'),
-    processTransaction
+    processUnprocessed
 );
 
 router.patch('/:id/approve',
     isAuthenticated,
+    validate(bankTransactionCreateSchema),
     approveTransaction
 );
 
