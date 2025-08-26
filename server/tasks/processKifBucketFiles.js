@@ -9,6 +9,7 @@ const SupabaseStorageService = require('../utils/supabase/supabaseStorage');
 const KifProcessor = require('../utils/kifProcessor');
 const FileTracker = require('../utils/fileTracker');
 const CliHelpers = require('../utils/cliHelpers');
+const { KIF_PROCESSING, EXIT_CODES } = require('../utils/constants');
 
 /**
  * Command line interface for KIF bucket processing
@@ -16,29 +17,43 @@ const CliHelpers = require('../utils/cliHelpers');
  */
 class KifBucketProcessingCLI {
     constructor() {
-        this.config = {
+        this.config = this.buildConfig();
+        this.validateConfig();
+
+        // Initialize services lazily
+        this._storageService = null;
+        this._kifProcessor = null;
+
+        this.stats = this.initializeStats();
+    }
+
+    /**
+     * Build configuration from environment variables
+     */
+    buildConfig() {
+        return {
             supabaseUrl: process.env.SUPABASE_URL,
             supabaseServiceKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
-            bucketName: 'kif',
-            aiModel: 'gemini-2.5-flash-lite',
-            processingDelay: 1000
+            bucketName: KIF_PROCESSING.BUCKET_NAME,
+            aiModel: KIF_PROCESSING.AI_MODEL,
+            processingDelay: KIF_PROCESSING.PROCESSING_DELAY
         };
+    }
 
+    /**
+     * Validate required configuration
+     */
+    validateConfig() {
         if (!this.config.supabaseUrl || !this.config.supabaseServiceKey) {
-            throw new Error('Supabase configuration missing');
+            throw new Error('Required Supabase configuration missing: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set');
         }
+    }
 
-        // Initialize services
-        this.storageService = new SupabaseStorageService({
-            supabase: {
-                url: this.config.supabaseUrl,
-                serviceKey: this.config.supabaseServiceKey
-            }
-        });
-
-        this.kifProcessor = new KifProcessor(this.config);
-
-        this.stats = {
+    /**
+     * Initialize statistics object
+     */
+    initializeStats() {
+        return {
             totalFiles: 0,
             processed: 0,
             errors: 0,
@@ -46,6 +61,31 @@ class KifBucketProcessingCLI {
             startTime: null,
             results: []
         };
+    }
+
+    /**
+     * Get storage service (lazy initialization)
+     */
+    get storageService() {
+        if (!this._storageService) {
+            this._storageService = new SupabaseStorageService({
+                supabase: {
+                    url: this.config.supabaseUrl,
+                    serviceKey: this.config.supabaseServiceKey
+                }
+            });
+        }
+        return this._storageService;
+    }
+
+    /**
+     * Get KIF processor (lazy initialization)
+     */
+    get kifProcessor() {
+        if (!this._kifProcessor) {
+            this._kifProcessor = new KifProcessor(this.config);
+        }
+        return this._kifProcessor;
     }
 
     /**
@@ -60,7 +100,7 @@ class KifBucketProcessingCLI {
             // Filter only PDF files with size > 0
             const pdfFiles = files.filter(file =>
                 file.name &&
-                file.name.toLowerCase().endsWith('.pdf') &&
+                file.name.toLowerCase().endsWith(KIF_PROCESSING.PDF_EXTENSION) &&
                 file.metadata &&
                 file.metadata.size > 0
             );
@@ -173,49 +213,45 @@ class KifBucketProcessingCLI {
             // Process files sequentially
             for (let i = 0; i < filesToProcess.length; i++) {
                 const file = filesToProcess[i];
+                let result;
 
                 try {
                     // Progress callback
-                    if (onProgress) {
-                        onProgress({
-                            current: i + 1,
-                            total: filesToProcess.length,
-                            fileName: file.name
-                        });
-                    }
+                    onProgress?.({
+                        current: i + 1,
+                        total: filesToProcess.length,
+                        fileName: file.name
+                    });
 
-                    const result = await this.processKifFile(file, {
+                    result = await this.processKifFile(file, {
                         userId,
                         includeExtractedData,
                         forceReprocess
                     });
 
-                    this.stats.results.push(result);
-
-                    if (result.success) {
-                        this.stats.processed++;
-                    } else {
-                        this.stats.errors++;
-                    }
-
-                    // File processed callback
-                    if (onFileProcessed) {
-                        onFileProcessed(result);
-                    }
-
-                    // Delay between files
-                    if (i < filesToProcess.length - 1) {
-                        await new Promise(resolve => setTimeout(resolve, this.config.processingDelay));
-                    }
-
                 } catch (error) {
                     Logger.error(`Unexpected error processing file ${file.name}: ${error.message}`);
-                    this.stats.errors++;
-                    this.stats.results.push({
+                    result = {
                         success: false,
                         fileName: file.name,
                         error: error.message
-                    });
+                    };
+                }
+
+                // Update stats and store result
+                this.stats.results.push(result);
+                if (result.success) {
+                    this.stats.processed++;
+                } else {
+                    this.stats.errors++;
+                }
+
+                // File processed callback
+                onFileProcessed?.(result);
+
+                // Delay between files (except for the last file)
+                if (i < filesToProcess.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, this.config.processingDelay));
                 }
             }
 
@@ -231,31 +267,23 @@ class KifBucketProcessingCLI {
     }
 
     /**
-     * Check service health
+     * Check service health by aggregating health checks from dependencies
      */
     async healthCheck() {
         try {
-            const checks = {
-                supabaseConnection: false,
-                bucketAccess: false,
-                databaseConnection: false,
-                aiService: false
-            };
+            const [processorChecks, databaseHealth] = await Promise.all([
+                this.kifProcessor.healthCheck(),
+                FileTracker.healthCheck()
+            ]);
 
-            // Test storage and processing services
-            const processorChecks = await this.kifProcessor.healthCheck();
-            checks.supabaseConnection = processorChecks.supabaseConnection;
-            checks.bucketAccess = processorChecks.bucketAccess;
-            checks.aiService = processorChecks.aiService;
-
-            // Test database connection
-            checks.databaseConnection = await FileTracker.healthCheck();
-
-            const isHealthy = Object.values(checks).every(check => check === true);
+            const isHealthy = processorChecks.healthy && databaseHealth;
 
             return {
                 healthy: isHealthy,
-                checks,
+                checks: {
+                    ...processorChecks.checks,
+                    databaseConnection: databaseHealth
+                },
                 timestamp: new Date().toISOString(),
                 config: {
                     bucketName: this.config.bucketName,
@@ -292,52 +320,25 @@ class KifBucketProcessingCLI {
     async getProcessingStatus() {
         return await FileTracker.getProcessingStatus();
     }
-    /**
-     * Parse command line arguments
-     */
-    parseArguments() {
-        return CliHelpers.parseArguments();
-    }
-
-    /**
-     * Display help information
-     */
-    showHelp() {
-        CliHelpers.showHelp();
-    }
-
-    /**
-     * Display processing summary
-     */
-    displaySummary(result) {
-        CliHelpers.displaySummary(result);
-    }
-
-    /**
-     * Display health check results
-     */
-    displayHealthCheck(health) {
-        CliHelpers.displayHealthCheck(health);
-    }
 
     /**
      * Run the CLI application
      */
     async run() {
         try {
-            const args = this.parseArguments();
+            const args = CliHelpers.parseArguments();
 
             if (args.help) {
-                this.showHelp();
-                return process.exit(0);
+                CliHelpers.showHelp();
+                return process.exit(EXIT_CODES.SUCCESS);
             }
 
             // Health check only
             if (args.healthCheck) {
                 Logger.info('Running health check...');
                 const health = await this.healthCheck();
-                this.displayHealthCheck(health);
-                return process.exit(health.healthy ? 0 : 1);
+                CliHelpers.displayHealthCheck(health);
+                return process.exit(health.healthy ? EXIT_CODES.SUCCESS : EXIT_CODES.ERROR);
             }
 
             // Reset processing status
@@ -345,25 +346,11 @@ class KifBucketProcessingCLI {
                 Logger.info('Resetting processing status for all files...');
                 const result = await this.resetAllProcessing();
                 console.log(`✅ ${result.message}`);
-                return process.exit(0);
+                return process.exit(EXIT_CODES.SUCCESS);
             }
 
             // Log configuration
-            if (args.dryRun) {
-                Logger.info('🔍 DRY RUN MODE: Will only list unprocessed files without processing them');
-            }
-
-            if (args.maxFiles) {
-                Logger.info(`📋 Processing limited to ${args.maxFiles} files`);
-            }
-
-            if (args.verbose) {
-                Logger.info('📢 Verbose mode enabled');
-            }
-
-            if (args.forceReprocess) {
-                Logger.info('🔄 Force reprocess mode enabled - will reprocess already processed files');
-            }
+            this.logConfiguration(args);
 
             // Setup progress callbacks for verbose mode
             const onProgress = CliHelpers.createProgressCallback(Logger, args.verbose);
@@ -380,15 +367,36 @@ class KifBucketProcessingCLI {
             });
 
             // Display results
-            this.displaySummary(result);
+            CliHelpers.displaySummary(result);
 
             // Exit with appropriate code
-            process.exit(result.errors > 0 ? 1 : 0);
+            process.exit(result.errors > 0 ? EXIT_CODES.ERROR : EXIT_CODES.SUCCESS);
 
         } catch (error) {
             Logger.error(`💥 Fatal error: ${error.message}`);
             console.error(error);
-            process.exit(1);
+            process.exit(EXIT_CODES.ERROR);
+        }
+    }
+
+    /**
+     * Log configuration based on arguments
+     */
+    logConfiguration(args) {
+        if (args.dryRun) {
+            Logger.info('🔍 DRY RUN MODE: Will only list unprocessed files without processing them');
+        }
+
+        if (args.maxFiles) {
+            Logger.info(`📋 Processing limited to ${args.maxFiles} files`);
+        }
+
+        if (args.verbose) {
+            Logger.info('📢 Verbose mode enabled');
+        }
+
+        if (args.forceReprocess) {
+            Logger.info('🔄 Force reprocess mode enabled - will reprocess already processed files');
         }
     }
 }

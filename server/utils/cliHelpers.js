@@ -1,3 +1,5 @@
+const { CLI_OPTIONS, DISPLAY_ICONS } = require('./constants');
+
 /**
  * CLI helper utilities for argument parsing and output formatting
  */
@@ -9,14 +11,14 @@ class CliHelpers {
     static parseArguments() {
         const args = process.argv.slice(2);
         return {
-            dryRun: args.includes('--dry-run') || args.includes('-d'),
-            maxFiles: args.find(arg => arg.startsWith('--max='))?.split('=')[1],
-            verbose: args.includes('--verbose') || args.includes('-v'),
-            help: args.includes('--help') || args.includes('-h'),
-            healthCheck: args.includes('--health'),
-            includeData: args.includes('--include-data'),
-            resetProcessing: args.includes('--reset-processing'),
-            forceReprocess: args.includes('--force')
+            dryRun: CLI_OPTIONS.DRY_RUN.some(opt => args.includes(opt)),
+            maxFiles: args.find(arg => arg.startsWith(CLI_OPTIONS.MAX_PREFIX))?.split('=')[1],
+            verbose: CLI_OPTIONS.VERBOSE.some(opt => args.includes(opt)),
+            help: CLI_OPTIONS.HELP.some(opt => args.includes(opt)),
+            healthCheck: args.includes(CLI_OPTIONS.HEALTH_CHECK[0]),
+            includeData: args.includes(CLI_OPTIONS.INCLUDE_DATA[0]),
+            resetProcessing: args.includes(CLI_OPTIONS.RESET_PROCESSING[0]),
+            forceReprocess: args.includes(CLI_OPTIONS.FORCE[0])
         };
     }
 
@@ -60,37 +62,56 @@ ENVIRONMENT VARIABLES:
      */
     static displaySummary(result) {
         console.log('\n=== PROCESSING SUMMARY ===');
-        console.log(`📊 Total files in bucket: ${result.totalFiles}`);
-        console.log(`✅ Successfully processed: ${result.processed}`);
-        console.log(`❌ Errors: ${result.errors}`);
-        console.log(`⏭️  Already processed (skipped): ${result.skipped}`);
-        console.log(`⏱️  Duration: ${result.duration}`);
-        console.log(`📈 Average processing time: ${result.averageProcessingTime}s per file`);
+        console.log(`${DISPLAY_ICONS.INFO} Total files in bucket: ${result.totalFiles}`);
+        console.log(`${DISPLAY_ICONS.SUCCESS} Successfully processed: ${result.processed}`);
+        console.log(`${DISPLAY_ICONS.ERROR} Errors: ${result.errors}`);
+        console.log(`${DISPLAY_ICONS.SKIP} Already processed (skipped): ${result.skipped}`);
+        console.log(`${DISPLAY_ICONS.TIME} Duration: ${result.duration}`);
+        console.log(`${DISPLAY_ICONS.PROGRESS} Average processing time: ${result.averageProcessingTime}s per file`);
 
         if (result.message) {
             console.log(`💬 Status: ${result.message}`);
         }
 
-        if (result.errors > 0) {
+        this.displayErrors(result);
+        this.displaySuccessful(result);
+        this.displayDryRun(result);
+    }
+
+    /**
+     * Display error details
+     */
+    static displayErrors(result) {
+        if (result.errors > 0 && result.failedFiles?.length > 0) {
             console.log('\n=== ERRORS ===');
             result.failedFiles.forEach(r => {
-                console.log(`❌ ${r.fileName}: ${r.error}`);
+                console.log(`${DISPLAY_ICONS.ERROR} ${r.fileName}: ${r.error}`);
             });
         }
+    }
 
-        if (result.processed > 0) {
+    /**
+     * Display successful processing details
+     */
+    static displaySuccessful(result) {
+        if (result.processed > 0 && result.successfulFiles?.length > 0) {
             console.log('\n=== SUCCESSFULLY PROCESSED ===');
             result.successfulFiles.forEach(r => {
                 const amount = r.totalAmount ? ` (${r.totalAmount} ${r.currency || ''})` : '';
-                console.log(`✅ ${r.fileName} -> Invoice #${r.invoiceNumber}${amount} (ID: ${r.invoiceId})`);
+                console.log(`${DISPLAY_ICONS.SUCCESS} ${r.fileName} -> Invoice #${r.invoiceNumber}${amount} (ID: ${r.invoiceId})`);
             });
         }
+    }
 
-        if (result.isDryRun && result.results.length > 0) {
+    /**
+     * Display dry run results
+     */
+    static displayDryRun(result) {
+        if (result.isDryRun && result.results?.length > 0) {
             console.log('\n=== FILES THAT WOULD BE PROCESSED ===');
             result.results.forEach(r => {
                 const sizeInfo = r.fileSize ? ` (${(r.fileSize / 1024 / 1024).toFixed(2)} MB)` : '';
-                console.log(`📄 ${r.fileName}${sizeInfo}`);
+                console.log(`${DISPLAY_ICONS.DOCUMENT} ${r.fileName}${sizeInfo}`);
             });
             console.log(`\n💡 To actually process these files, run without --dry-run flag`);
         }
@@ -101,24 +122,24 @@ ENVIRONMENT VARIABLES:
      */
     static displayHealthCheck(health) {
         console.log('\n=== HEALTH CHECK ===');
-        console.log(`🏥 Overall Status: ${health.healthy ? '✅ HEALTHY' : '❌ UNHEALTHY'}`);
+        console.log(`${DISPLAY_ICONS.HEALTH} Overall Status: ${health.healthy ? `${DISPLAY_ICONS.SUCCESS} HEALTHY` : `${DISPLAY_ICONS.ERROR} UNHEALTHY`}`);
         console.log(`🕐 Timestamp: ${health.timestamp}`);
 
         if (health.config) {
-            console.log(`📦 Bucket: ${health.config.bucketName}`);
-            console.log(`🤖 AI Model: ${health.config.aiModel}`);
+            console.log(`${DISPLAY_ICONS.CONFIG} Bucket: ${health.config.bucketName}`);
+            console.log(`${DISPLAY_ICONS.ROBOT} AI Model: ${health.config.aiModel}`);
         }
 
         if (health.checks) {
             console.log('\n📋 Component Checks:');
             Object.entries(health.checks).forEach(([component, status]) => {
-                const icon = status ? '✅' : '❌';
+                const icon = status ? DISPLAY_ICONS.SUCCESS : DISPLAY_ICONS.ERROR;
                 console.log(`  ${icon} ${component}: ${status ? 'OK' : 'FAILED'}`);
             });
         }
 
         if (health.error) {
-            console.log(`\n❌ Error: ${health.error}`);
+            console.log(`\n${DISPLAY_ICONS.ERROR} Error: ${health.error}`);
         }
     }
 
@@ -126,22 +147,26 @@ ENVIRONMENT VARIABLES:
      * Create progress callback for verbose mode
      */
     static createProgressCallback(Logger, verbose) {
-        return verbose ? (progress) => {
-            Logger.info(`📈 Progress: ${progress.current}/${progress.total} - Processing ${progress.fileName}`);
-        } : null;
+        if (!verbose) return null;
+
+        return (progress) => {
+            Logger.info(`${DISPLAY_ICONS.PROGRESS} Progress: ${progress.current}/${progress.total} - Processing ${progress.fileName}`);
+        };
     }
 
     /**
      * Create file processed callback for verbose mode
      */
     static createFileProcessedCallback(Logger, verbose) {
-        return verbose ? (result) => {
+        if (!verbose) return null;
+
+        return (result) => {
             if (result.success) {
-                Logger.success(`✅ Completed: ${result.fileName} (${result.processingTimeSeconds}s)`);
+                Logger.success(`${DISPLAY_ICONS.SUCCESS} Completed: ${result.fileName} (${result.processingTimeSeconds}s)`);
             } else {
-                Logger.error(`❌ Failed: ${result.fileName} - ${result.error}`);
+                Logger.error(`${DISPLAY_ICONS.ERROR} Failed: ${result.fileName} - ${result.error}`);
             }
-        } : null;
+        };
     }
 
     /**

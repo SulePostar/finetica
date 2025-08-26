@@ -20,9 +20,7 @@ class FileTracker {
 
                 // In force mode, get all files from tracking table regardless of processed status
                 const allTrackedFiles = await KifProcessedFile.findAll({
-                    where: {
-                        fileName: fileNames
-                    },
+                    where: { fileName: fileNames },
                     attributes: ['fileName', 'id', 'processedAt', 'errorMessage', 'processed']
                 });
 
@@ -39,42 +37,37 @@ class FileTracker {
                 };
             }
 
-            // Get files that are in tracking table but not yet processed
-            const unprocessedTrackedFiles = await KifProcessedFile.findAll({
-                where: {
-                    fileName: fileNames,
-                    processed: false
-                },
-                attributes: ['fileName', 'id', 'processedAt', 'errorMessage']
+            // Single query to get all tracked files with their status
+            const allTrackedFiles = await KifProcessedFile.findAll({
+                where: { fileName: fileNames },
+                attributes: ['fileName', 'id', 'processedAt', 'errorMessage', 'processed']
             });
 
-            // Get files that are already processed
-            const processedTrackedFiles = await KifProcessedFile.findAll({
-                where: {
-                    fileName: fileNames,
-                    processed: true
-                },
-                attributes: ['fileName', 'id', 'processedAt', 'errorMessage']
+            // Separate files by processing status
+            const processedFiles = [];
+            const unprocessedFileNames = new Set();
+
+            allTrackedFiles.forEach(file => {
+                if (file.processed) {
+                    processedFiles.push({
+                        fileName: file.fileName,
+                        id: file.id,
+                        processedAt: file.processedAt,
+                        errorMessage: file.errorMessage
+                    });
+                } else {
+                    unprocessedFileNames.add(file.fileName);
+                }
             });
 
-            const unprocessedFileNames = new Set(unprocessedTrackedFiles.map(file => file.fileName));
-
-            // Only include bucket files that exist in tracking table and are not processed
+            // Filter bucket files to only include unprocessed ones
             const unprocessedFiles = bucketFiles.filter(file =>
                 unprocessedFileNames.has(file.name)
             );
 
-            Logger.info(`Found ${unprocessedFiles.length} unprocessed files out of ${bucketFiles.length} bucket files (${unprocessedTrackedFiles.length} in tracking table)`);
+            Logger.info(`Found ${unprocessedFiles.length} unprocessed files out of ${bucketFiles.length} bucket files (${allTrackedFiles.length} in tracking table)`);
 
-            return {
-                unprocessedFiles,
-                processedFiles: processedTrackedFiles.map(f => ({
-                    fileName: f.fileName,
-                    id: f.id,
-                    processedAt: f.processedAt,
-                    errorMessage: f.errorMessage
-                }))
-            };
+            return { unprocessedFiles, processedFiles };
 
         } catch (error) {
             Logger.error(`Error checking processed files: ${error.message}`);
@@ -191,14 +184,18 @@ class FileTracker {
      */
     static async getProcessingStatus() {
         try {
-            const totalFiles = await KifProcessedFile.count();
-            const processedFiles = await KifProcessedFile.count({ where: { processed: true } });
-            const failedFiles = await KifProcessedFile.count({
-                where: {
-                    processed: false,
-                    errorMessage: { [require('sequelize').Op.ne]: null }
-                }
-            });
+            const { Op } = require('sequelize');
+
+            const [totalFiles, processedFiles, failedFiles] = await Promise.all([
+                KifProcessedFile.count(),
+                KifProcessedFile.count({ where: { processed: true } }),
+                KifProcessedFile.count({
+                    where: {
+                        processed: false,
+                        errorMessage: { [Op.ne]: null }
+                    }
+                })
+            ]);
 
             return {
                 totalFiles,
