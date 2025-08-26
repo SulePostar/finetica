@@ -1,6 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
-const Logger = require('../loggerSync');
+const Logger = require('../logger');
 const FileUtils = require('../fileUtils');
 
 /**
