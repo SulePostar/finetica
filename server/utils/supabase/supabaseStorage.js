@@ -1,6 +1,6 @@
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
-const Logger = require('../loggerSync');
+const Logger = require('../logger');
 const FileUtils = require('../fileUtils');
 
 /**
@@ -162,6 +162,27 @@ class SupabaseStorageService {
             return data;
         } catch (error) {
             Logger.error(`Error getting bucket info for ${bucketName}: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async getFile(bucketName, filePath) {
+        try {
+            const { data, error } = await this.supabase.storage
+                .from(bucketName)
+                .download(filePath);
+
+            if (error) {
+                throw new Error(`File download failed: ${error.message}`);
+            }
+
+            const buffer = await data.arrayBuffer();
+            return {
+                buffer,
+                mimeType: data.type,
+            }
+        } catch (error) {
+            Logger.error(`Error getting file ${filePath} from ${bucketName}: ${error.message}`);
             throw error;
         }
     }
