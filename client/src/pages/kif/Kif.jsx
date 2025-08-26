@@ -6,7 +6,7 @@ import UploadButton from '../../components/UploadButton/UploadButton';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useBucketName } from '../../lib/bucketUtils';
-import './Kif.styles.css';
+import './Kif.css';
 
 const Kif = () => {
   const navigate = useNavigate();
