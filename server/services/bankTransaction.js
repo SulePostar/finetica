@@ -28,8 +28,8 @@ const getTransactions = async (query = {}) => {
 
         const data = await BankTransaction.findAll({
             include: [
-                { model: BusinessPartner, required: false },
-                { model: TransactionCategory, required: false }
+                { model: BusinessPartner },
+                { model: TransactionCategory }
             ],
             order: [[sortField, sortOrder.toUpperCase()]],
             offset,
@@ -48,12 +48,12 @@ const getBankTransactionById = async (id) => {
     try {
         const document = await BankTransaction.findByPk(id, {
             include: [
-                { model: TransactionCategory, required: false },
-                { model: BusinessPartner, required: false },
-                { model: Users, required: false }
+                { model: TransactionCategory },
+                { model: BusinessPartner },
+                { model: Users }
             ]
         });
-        return document || null;
+        return document;
     } catch (error) {
         console.error("Fetch Document Error:", error);
         throw new AppError('Failed to fetch bank transaction document', 500);
@@ -86,7 +86,7 @@ const createBankTransactionFromAI = async (extractedData) => {
             await BankTransaction.bulkCreate(itemsToCreate, { transaction: t });
         }
 
-        await t.commit();
+        await t.commit(); // permanently save all the changes
 
         const responseData = {
             ...document.toJSON(),
@@ -95,7 +95,7 @@ const createBankTransactionFromAI = async (extractedData) => {
 
         return responseData;
     } catch (error) {
-        await t.rollback();
+        await t.rollback(); // cancel everything if an error happens.
         console.error("Database Error:", error);
         throw new AppError('Failed to save bank transaction to database', 500);
     }
@@ -130,8 +130,8 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
         // Fetch the full document including relations
         const createdData = await BankTransaction.findByPk(document.id, {
             include: [
-                { model: TransactionCategory, required: false },
-                { model: BusinessPartner, required: false }
+                { model: TransactionCategory },
+                { model: BusinessPartner }
             ],
             transaction: t,
         });
@@ -181,14 +181,14 @@ const editBankTransaction = async (id, updatedData) => {
         };
 
         // Update the transaction
-        const updatedDocument = await document.update(dataToUpdate);
+        await document.update(dataToUpdate);
 
         // Fetch with associations (TransactionCategories, BusinessPartners, Users)
         const updatedWithRelations = await BankTransaction.findByPk(id, {
             include: [
-                { model: TransactionCategory, required: false },
-                { model: BusinessPartner, required: false },
-                { model: Users, required: false }
+                { model: TransactionCategory },
+                { model: BusinessPartner },
+                { model: Users }
             ]
         });
 
@@ -265,8 +265,6 @@ const processUnprocessedFiles = async () => {
         await processSingleUnprocessedFile(fileLog);
     }
 };
-
-
 
 module.exports = {
     getTransactions,

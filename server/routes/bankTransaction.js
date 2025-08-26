@@ -3,7 +3,6 @@ const router = express.Router();
 const {
     getBankTransactions,
     getTransactionById,
-    processTransaction,
     createBankTransaction,
     processUnprocessed,
     approveTransaction
@@ -23,7 +22,7 @@ router.post('/',
 );
 
 router.post('/process',
-    isAuthenticated,
+    // isAuthenticated,
     upload.single('file'),
     processUnprocessed
 );

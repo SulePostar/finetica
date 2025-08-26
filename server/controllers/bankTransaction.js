@@ -10,7 +10,6 @@ const {
 
 const getBankTransactions = async (req, res, next) => {
     try {
-        // Pass the whole query object directly to the service
         const result = await getTransactions(req.query);
         res.json(result);
     } catch (error) {
@@ -22,11 +21,6 @@ const getBankTransactions = async (req, res, next) => {
 const getTransactionById = (req, res) => {
     const { id } = req.params;
     const document = getBankTransactionById(id);
-
-    if (!document) {
-        return res.status(404).json({ error: 'Bank Transaction document not found' });
-    }
-
     res.json(document);
 };
 
@@ -34,7 +28,6 @@ const createBankTransaction = async (req, res) => {
     try {
         const transactionData = req.body;
         const userId = req.user.userId;
-
         const result = await createBankTransactionManually(transactionData, userId);
         res.status(201).json(result);
     } catch (error) {
@@ -56,7 +49,6 @@ const processTransaction = async (req, res, next) => {
 const approveTransaction = async (req, res) => {
     const { id: transactionId } = req.params;
     const { userId } = req.user;
-    console.log("Approving transaction:", transactionId, "by user:", userId);
     const result = await approveBankTransactionById(transactionId, userId);
     res.json(result);
 };
