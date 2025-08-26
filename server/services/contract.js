@@ -91,8 +91,6 @@ const processUnprocessedFiles = async () => {
     processedAt: new Date(),
   });
 
-
-  console.log(extractedData);
 };
 
 module.exports = {
