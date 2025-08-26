@@ -1,9 +1,9 @@
 import React from 'react';
-import { AppHeader, AppSidebar } from '../../components/index';
+import { AppHeader, AppSidebar, UserDashboard } from '../../components/index';
 import Users from '../../components/Admin/UserDashboard/Users';
 import DefaultLayout from '../../layout/DefaultLayout'
 import { useSidebarWidth } from "../../hooks/useSidebarWidth";
-const AdminUserDashboard = () => {
+const UsersDashboard = () => {
   const sidebarWidth = useSidebarWidth();
   return (
     <DefaultLayout>
@@ -20,4 +20,4 @@ const AdminUserDashboard = () => {
     </DefaultLayout>
   );
 };
-export default AdminUserDashboard;
+export default UsersDashboard;

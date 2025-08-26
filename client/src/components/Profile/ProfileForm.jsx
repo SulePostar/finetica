@@ -77,7 +77,7 @@ const ProfileForm = () => {
 
       const payload = { ...formData, profileImage: profileImageUrl };
 
-      const res = await axios.put('http://localhost:4000/api/users/me', payload, {
+      const res = await axios.put(`http://localhost:4000/api/users/me`, payload, {
         headers: { Authorization: `Bearer ${localStorage.getItem('jwt_token')}` },
       });
 

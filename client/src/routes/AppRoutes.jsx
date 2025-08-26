@@ -7,7 +7,7 @@ import { Nav } from 'react-bootstrap';
 const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
-const AdminUserDashboard = React.lazy(() => import('../pages/Admin/UsersDashboard'));
+const UsersDashboard = React.lazy(() => import('../pages/Admin/UsersDashboard'));
 const Kif = React.lazy(() => import('../pages/kif/Kif'));
 const InvoiceDetails = React.lazy(() => import('../pages/InvoiceDetails/InvoiceDetails'));
 const Vat = React.lazy(() => import('../pages/vat/Vat'));
@@ -73,7 +73,7 @@ export default function AppRoutes() {
           path="/admin/users"
           element={
             <ProtectedRoute>
-              <AdminUserDashboard />
+              <UsersDashboard />
             </ProtectedRoute>
           }
         />
