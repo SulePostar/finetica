@@ -1,9 +1,69 @@
-const { SalesInvoice, SalesInvoiceItem, BusinessPartner } = require('../models');
+const { SalesInvoice, SalesInvoiceItem, BusinessPartner, KifProcessingLog } = require('../models');
 const { processDocument } = require('./aiService');
 const { sequelize } = require('../config/db');
 const KIF_PROMPT = require('../prompts/Kif.js');
 const salesInvoiceSchema = require('../schemas/kifSchema');
 const AppError = require('../utils/errorHandler');
+const supabaseService = require('../utils/supabase/supabaseService');
+const MODEL_NAME = 'gemini-2.5-flash-lite';
+const KIF_BUCKET_NAME = 'kif';
+
+const extractKifData = async (fileBuffer, mimeType) => {
+    const businessPartners = await BusinessPartner.findAll({
+        attributes: ['id', 'name'],
+    });
+
+    const promptWithPartners = `${KIF_PROMPT}\nAvailable partners: ${JSON.stringify(businessPartners.map(bp => bp.get({ plain: true })))}`;
+
+    const data = await processDocument(
+        fileBuffer,
+        mimeType,
+        salesInvoiceSchema,
+        MODEL_NAME,
+        promptWithPartners
+    );
+
+    return data;
+};
+
+const processSingleUnprocessedKifFile = async (fileLog) => {
+    try {
+        const { buffer, mimeType } = await supabaseService.getFile(
+            KIF_BUCKET_NAME,
+            fileLog.filename
+        );
+
+        const extractedData = await extractKifData(buffer, mimeType);
+
+        await sequelize.transaction(async (t) => {
+            await createKifFromAI(extractedData, { transaction: t });
+            await fileLog.update({
+                isProcessed: true,
+                processedAt: new Date(),
+                message: 'Processed successfully'
+            }, { transaction: t });
+        });
+    } catch (error) {
+        console.error(`Failed to process KIF file log ID ${fileLog.id}:`, error);
+        try {
+            await fileLog.update({
+                isProcessed: false,
+                processedAt: new Date(),
+                message: `Error: ${error.message}`.slice(0, 1000)
+            });
+        } catch (innerErr) {
+            console.error('Also failed to update KifProcessedFile after error:', innerErr);
+        }
+    }
+};
+
+const processUnprocessedKifFiles = async () => {
+    const unprocessed = await KifProcessingLog.findAll({ where: { isProcessed: false } });
+    for (const log of unprocessed) {
+        await processSingleUnprocessedKifFile(log);
+    }
+    return { processed: unprocessed.length };
+};
 
 const createKifFromAI = async (extractedData) => {
     const transaction = await sequelize.transaction();
@@ -296,4 +356,7 @@ module.exports = {
     processKif,
     createKifFromAI,
     approveKif,
+    extractKifData,
+    processSingleUnprocessedKifFile,
+    processUnprocessedKifFiles,
 };
