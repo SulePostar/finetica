@@ -14,8 +14,8 @@ const PIPELINES = {
   },
   contracts: {
     logModel: ContractProcessingLog,
-    extract: (buf, mime) => contractService.extractContractData(buf, mime),
-    persist: (data, t) => contractService.createContractFromAI(data, { transaction: t }),
+    extract: (buf, mime) => contractService.extractData(buf, mime),
+    persist: (data, t) => contractService.createContract(data, { transaction: t }),
     successMessage: 'Contract processed successfully'
   }
 };
