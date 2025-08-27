@@ -1,17 +1,16 @@
 const {
-    getPaginatedKifData,
+    getKifs,
     getKifById,
-    createKifManually,
-    processKifDocument,
-    approveKifDocument,
-    updateKifDocumentData
+    createKif,
+    processKif,
+    approveKif,
 } = require('../services/kif');
 
 const getKifData = async (req, res, next) => {
     try {
         const { page, perPage, sortField, sortOrder } = req.query;
 
-        const result = await getPaginatedKifData({
+        const result = await getKifs({
             page: parseInt(page),
             perPage: parseInt(perPage),
             sortField,
@@ -24,7 +23,7 @@ const getKifData = async (req, res, next) => {
     }
 };
 
-const getKifDataById = async (req, res, next) => {
+const getKif = async (req, res, next) => {
     try {
         const { id } = req.params;
 
@@ -40,7 +39,7 @@ const createKifInvoice = async (req, res, next) => {
         const invoiceData = req.body;
         const userId = req.user.userId;
 
-        const result = await createKifManually(invoiceData, userId);
+        const result = await createKif(invoiceData, userId);
 
         res.json(result)
     } catch (error) {
@@ -51,7 +50,7 @@ const createKifInvoice = async (req, res, next) => {
 const processKifInvoice = async (req, res, next) => {
     try {
         const { model } = req.body;
-        const result = await processKifDocument(req.file.buffer, req.file.mimetype, model);
+        const result = await processKif(req.file.buffer, req.file.mimetype, model);
 
         res.json(result);
     } catch (error) {
@@ -63,21 +62,9 @@ const approveKifInvoice = async (req, res, next) => {
     try {
         const { id: invoiceId } = req.params;
         const { userId } = req.user;
-
-        const result = await approveKifDocument(invoiceId, userId);
-
-        res.json(result)
-    } catch (error) {
-        next(error);
-    }
-};
-
-const updateKifInvoice = async (req, res, next) => {
-    try {
-        const { id: invoiceId } = req.params;
         const updatedData = req.body;
 
-        const result = await updateKifDocumentData(invoiceId, updatedData);
+        const result = await approveKif(invoiceId, updatedData, userId);
 
         res.json(result)
     } catch (error) {
@@ -87,9 +74,8 @@ const updateKifInvoice = async (req, res, next) => {
 
 module.exports = {
     getKifData,
-    getKifDataById,
+    getKif,
     createKifInvoice,
     processKifInvoice,
     approveKifInvoice,
-    updateKifInvoice
 };
