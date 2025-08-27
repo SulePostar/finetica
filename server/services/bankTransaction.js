@@ -152,24 +152,33 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
         throw new AppError('Failed to create bank transaction', 500);
     }
 };
-
-
-const approveBankTransactionById = async (id, body, userId) => {
+const approveBankTransaction = async (id, userId, updatedData = {}) => {
     try {
         const document = await BankTransaction.findByPk(id);
+
         if (!document) {
             throw new AppError('Bank transaction not found', 404);
         }
+        const { items, ...dataToUpdate } = updatedData;
 
-        await document.update({ ...body, approvedAt: new Date(), approvedBy: userId });
+        dataToUpdate.approvedAt = new Date();
+        dataToUpdate.approvedBy = userId;
 
-        return document.get({ plain: true });
+        await document.update(dataToUpdate);
+
+        return await BankTransaction.findByPk(id, {
+            include: [
+                { model: TransactionCategory, required: false },
+                { model: BusinessPartner, required: false },
+            ]
+        });
 
     } catch (error) {
-        console.error("Approval Error:", error);
-        throw new AppError('Failed to approve bank transaction', 500);
+        console.error("Approval and Edit Error:", error);
+        throw new AppError('Failed to approve and update bank transaction', 500);
     }
 };
+
 
 const editBankTransaction = async (id, updatedData) => {
     try {
@@ -179,31 +188,31 @@ const editBankTransaction = async (id, updatedData) => {
             throw new AppError('Bank transaction not found', 404);
         }
 
-        // Reset approval fields when editing
+        // Exclude unrelated fields
+        const { items, ...updateData } = updatedData;
+
         const dataToUpdate = {
-            ...updatedData,
+            ...updateData,
             approvedAt: null,
             approvedBy: null,
-            updatedAt: new Date(),
         };
 
-        // Update the transaction
+        // Update transaction
         await document.update(dataToUpdate);
 
-        // Fetch with associations (TransactionCategories, BusinessPartners, Users)
-        const updatedWithRelations = await BankTransaction.findByPk(id, {
+        // Return updated transaction with associations
+        return await BankTransaction.findByPk(id, {
             include: [
                 { model: TransactionCategory },
                 { model: BusinessPartner }
             ]
         });
-
-        return updatedWithRelations;
     } catch (error) {
         console.error("Update Error:", error);
         throw new AppError('Failed to update bank transaction', 500);
     }
 };
+
 
 const processBankTransaction = async (fileBuffer, mimeType, model = "gemini-2.5-flash-lite") => {
     try {

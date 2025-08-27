@@ -10,7 +10,8 @@ import '../../styles/shared/CommonStyles.css';
 import '../../styles/TablePages.css';
 import './BankTransactions.css';
 
-const Vat = () => {
+
+const BankTransactions = () => {
   const navigate = useNavigate();
   const bucketName = useBucketName();
   const sidebarWidth = useSidebarWidth();
@@ -18,16 +19,16 @@ const Vat = () => {
   const apiEndpoint = useMemo(() => `${API_BASE}/transactions/bank-transaction-data`, [API_BASE]);
 
   const handleView = useCallback((id) => {
-    navigate(`/vat/${id}`);
+    navigate(`/bank-transactions/${id}`);
   }, [navigate]);
 
   const handleApprove = useCallback((id) => {
-    navigate(`/vat/${id}/approve`);
+    navigate(`/bank-transactions/${id}/approve`);
   }, [navigate]);
 
   const handleDownload = useCallback((id) => {
     // TODO: Implement download functionality
-    console.log('Download VAT transaction:', id);
+    console.log('Download bank-transactions transaction:', id);
   }, []);
 
   const columns = [
@@ -122,15 +123,15 @@ const Vat = () => {
   return (
     <DefaultLayout>
       <div
-        className="table-page-outer vat-table-outer"
+        className="table-page-outer bank-transactions-table-outer"
         style={{
           marginLeft: sidebarWidth,
           width: `calc(100vw - ${sidebarWidth}px)`,
         }}
       >
-        <div className="vat-table-responsive">
+        <div className="bank-transactions-table-responsive">
           <DynamicTable
-            title="VAT - Bank Transactions"
+            title="Bank Transactions"
             columns={columns}
             apiEndpoint={apiEndpoint}
             uploadButton={<UploadButton bucketName={bucketName} />}
@@ -141,4 +142,4 @@ const Vat = () => {
   );
 };
 
-export default Vat;
+export default BankTransactions;

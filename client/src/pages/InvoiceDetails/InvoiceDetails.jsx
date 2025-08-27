@@ -18,6 +18,7 @@ import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ContractService from '../../services/contract';
 import KifService from '../../services/kif';
+import BankTransactionsService from '../../services/bankTransactions';
 
 const InvoiceDetails = () => {
   const { id } = useParams();
@@ -27,7 +28,7 @@ const InvoiceDetails = () => {
     if (location.pathname.includes('/kif/')) return 'kif';
     if (location.pathname.includes('/kuf/')) return 'kuf';
     if (location.pathname.includes('/contracts/')) return 'contract';
-    if (location.pathname.includes('/vat/')) return 'vat';
+    if (location.pathname.includes('/bank-transactions/')) return 'bank-transactions';
   };
   const documentType = getDocumentType();
   // Get appropriate service based on document type
@@ -37,6 +38,8 @@ const InvoiceDetails = () => {
         return KifService;
       case 'contract':
         return ContractService;
+      case 'bank-transactions':
+        return BankTransactionsService;
     }
   };
 

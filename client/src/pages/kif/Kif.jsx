@@ -76,13 +76,13 @@ const Kif = () => {
       style: { textAlign: 'right' },
     },
     {
-      name: 'VAT Period',
+      name: 'bank-transactions Period',
       selector: row => row.vatPeriod,
       sortable: true,
       width: '150px',
     },
     {
-      name: 'VAT Category',
+      name: 'bank-transactions Category',
       selector: row => row.vatCategory,
       sortable: true,
       width: '170px',
