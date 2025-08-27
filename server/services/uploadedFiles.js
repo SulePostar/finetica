@@ -1,7 +1,8 @@
-const { UploadedFile, User } = require('../models');
+const { UploadedFile, User, KifProcessingLog} = require('../models');
 const { Op } = require('sequelize');
 const supabaseService = require('../utils/supabase/supabaseService');
 const AppError = require('../utils/errorHandler');
+const { extractKifData, createKifFromAI } = require('./kif');
 
 class UploadedFilesService {
   /**
@@ -174,6 +175,168 @@ class UploadedFilesService {
   }
 
   /**
+ * Process document based on bucket type with unified approach
+ * @param {Buffer} fileBuffer - File buffer for processing
+ * @param {string} mimeType - MIME type of the file
+ * @param {string} bucketName - Storage bucket name
+ * @param {string} filename - Name of the uploaded file
+ * @returns {Promise<Object>} Processing result
+ */
+  async processDocumentByType(fileBuffer, mimeType, bucketName, filename) {
+    let processingLog = null;
+    let LogModel = null;
+
+    try {
+      // Determine the processing log model based on bucket type
+      switch (bucketName) {
+        case 'kif':
+          LogModel = KifProcessingLog;
+          break;
+        case 'contracts':
+          // TODO: Add ContractProcessingLog when it exists
+          LogModel = null;
+          break;
+        case 'kuf':
+          // TODO: Add KufProcessingLog when it exists
+          LogModel = null;
+          break;
+        default:
+          // No processing needed for other bucket types
+          return {
+            success: true,
+            message: `No processing required for bucket: ${bucketName}`,
+          };
+      }
+      // Create processing log entry if model exists
+      if (LogModel) {
+        processingLog = await LogModel.create({
+          filename: filename,
+          isProcessed: false,
+          processedAt: null,
+          message: 'Processing started'
+        });
+      }
+      // Process document based on bucket type
+      let result;
+      switch (bucketName) {
+        case 'kif':
+          // Use individual KIF methods from kif.js
+          const kifExtractedData = await extractKifData(fileBuffer, mimeType);
+          const kifInvoice = await createKifFromAI(kifExtractedData);
+          result = {
+            success: true,
+            data: kifInvoice
+          };
+          break;
+
+        case 'kuf':
+          throw new AppError('KUF processing not implemented yet', 501);
+          break;  
+
+        case 'contracts':
+          // TODO: Add contract processing when it exists
+          throw new AppError('Contract processing not implemented yet', 501);
+          break;
+
+        default:
+          throw new AppError(`Unsupported document type: ${bucketName}`, 400);
+      }
+      // Update processing log as successful if it exists
+      if (processingLog) {
+        await processingLog.update({
+          isProcessed: true,
+          processedAt: new Date(),
+          message: 'Processed successfully'
+        });
+      }
+      return {
+        success: true,
+        data: result.data,
+        processingLogId: processingLog?.id || null,
+      };
+    } catch (error) {
+      console.error(`${bucketName.toUpperCase()} processing failed:`, error);
+      // Update processing log with error if it exists
+      if (processingLog) {
+        try {
+          await processingLog.update({
+            isProcessed: false,
+            processedAt: new Date(),
+            message: `Error: ${error.message}`.slice(0, 1000)
+          });
+        } catch (updateError) {
+          console.error(`Failed to update ${bucketName} processing log after error:`, updateError);
+        }
+      }
+      // Throw error to prevent upload from continuing
+      throw new AppError(`${bucketName.toUpperCase()} processing failed: ${error.message}`, 500);
+    }
+  }
+
+  /**
+   * Handle file upload with parallel processing for supported document types
+   * @param {Object} file - Multer file object
+   * @param {string} bucketName - Storage bucket name
+   * @param {number} userId - ID of uploading user
+   * @param {string} description - Optional file description
+   * @returns {Promise<Object>} Upload result with processing result
+   */
+  async uploadFileWithProcessing(file, bucketName, userId, description = null) {
+    // Validate PDF format for document types that require it
+    const requiresPDF = ['kif', 'kuf', 'contracts'];
+    if (requiresPDF.includes(bucketName) && file.mimetype !== 'application/pdf') {
+      throw new AppError(`${bucketName.toUpperCase()} files must be PDF format`, 400);
+    }
+    // Start both operations in parallel
+    const [uploadResult, processingResult] = await Promise.allSettled([
+      // Upload to Supabase
+      supabaseService.uploadFile(file, null, bucketName),
+      // Process document based on bucket type
+      this.processDocumentByType(file.buffer, file.mimetype, bucketName, file.originalname)
+    ]);
+    // Check processing result first - if it failed, don't proceed with file record creation
+    if (processingResult.status === 'rejected') {
+      // If upload succeeded but processing failed, we should clean up the uploaded file
+      if (uploadResult.status === 'fulfilled' && uploadResult.value.success) {
+        console.warn(`Processing failed for uploaded file: ${uploadResult.value.fileName}. Manual cleanup may be required.`);
+      }
+      // Re-throw the processing error
+      throw processingResult.reason;
+    }
+    // Handle upload result
+    if (uploadResult.status === 'rejected' || !uploadResult.value.success) {
+      const error = uploadResult.status === 'rejected'
+        ? uploadResult.reason
+        : uploadResult.value.error;
+
+      if (uploadResult.value?.code === 'DUPLICATE') {
+        return {
+          success: false,
+          message: uploadResult.value.error,
+        };
+      }
+      throw new Error(`Upload failed: ${error}`);
+    }
+    // Both operations succeeded - create file record in database
+    const fileData = {
+      fileName: uploadResult.value.fileName,
+      fileUrl: uploadResult.value.publicUrl,
+      fileSize: file.size,
+      mimeType: file.mimetype,
+      uploadedBy: userId,
+      bucketName: bucketName,
+      description: description,
+    };
+    const createdFile = await this.createFileRecord(fileData);
+
+    return {
+      success: true,
+      data: createdFile,
+      processing: processingResult.value,
+    };
+  }
+
+  /**
    * Handle complete file upload process
    * @param {Object} file - Multer file object
    * @param {string} bucketName - Storage bucket name
@@ -186,6 +349,14 @@ class UploadedFilesService {
     if (!bucketValidation.isValid) {
       throw new AppError(bucketValidation.error, 400);
     }
+    // Check if this bucket type requires processing
+    const requiresProcessing = ['kif', 'kuf', 'contracts'].includes(bucketName);
+
+    if (requiresProcessing) {
+      // Use the unified processing upload method
+      return await this.uploadFileWithProcessing(file, bucketName, userId, description);
+    }
+    // For buckets that don't require processing, use simple upload
     const uploadResult = await supabaseService.uploadFile(file, null, bucketName);
     if (!uploadResult.success) {
       if (uploadResult.code === 'DUPLICATE') {
@@ -196,6 +367,7 @@ class UploadedFilesService {
       }
       throw new Error(`Upload failed: ${uploadResult.error}`);
     }
+    // Create file record in database
     const fileData = {
       fileName: uploadResult.fileName,
       fileUrl: uploadResult.publicUrl,
