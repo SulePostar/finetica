@@ -10,7 +10,7 @@ class BankTransactionsService {
     list(params) {
         return api.get(`/transactions/bank-transaction-data`, { params });
     }
-    create(payload) {
+    createBankTransaction(payload) {
         return api.post(`/transactions/bank-transaction-data`, payload);
     }
 }
