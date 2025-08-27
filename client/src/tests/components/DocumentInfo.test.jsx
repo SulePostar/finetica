@@ -151,7 +151,7 @@ describe('DocumentInfo Component', () => {
             expect(screen.getByText('Document Number:')).toBeInTheDocument();
             expect(screen.getByText('Supplier:')).toBeInTheDocument();
             expect(screen.getByText('Net Total:')).toBeInTheDocument();
-            expect(screen.getByText('VAT Amount:')).toBeInTheDocument();
+            expect(screen.getByText('bank-transactions Amount:')).toBeInTheDocument();
         });
 
         test('should format currency values correctly', () => {

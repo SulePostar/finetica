@@ -1,4 +1,4 @@
-/* Shared styles for table pages (KIF, KUF, VAT) */
+/* Shared styles for table pages (KIF, KUF, bank-transactions) */
 .table-page-outer {
   min-height: 100vh;
   display: flex;

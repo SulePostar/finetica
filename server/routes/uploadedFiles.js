@@ -22,17 +22,10 @@ router.post(
   fileUpload.single('file'),
   uploadedFilesController.uploadFile
 );
-router.delete('/storage/:id', isAuthenticated, hasRole(['admin']), uploadedFilesController.deleteFileFromStorage);
 
 // File management routes
-router.get('/stats', isAuthenticated, hasRole(['admin']), uploadedFilesController.getFileStats);
-router.get('/my-files', uploadedFilesController.getMyFiles);
 router.get('/', isAuthenticated, hasRole(['admin']), uploadedFilesController.getFiles);
-router.get('/:id', uploadedFilesController.getFile);
 router.post('/', isAuthenticated, hasRole(['admin']), uploadedFilesController.createFile);
-router.put('/:id', isAuthenticated, hasRole(['admin']), uploadedFilesController.updateFile);
-router.delete('/:id', isAuthenticated, hasRole(['admin']), uploadedFilesController.deleteFile);
-router.delete('/:id/permanent', isAuthenticated, hasRole(['admin']), uploadedFilesController.permanentDeleteFile);
 
 // Error handling
 router.use(handleUploadErrors);
