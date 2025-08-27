@@ -150,6 +150,40 @@ const createInvoice = async (payload) => {
   }
 };
 
+const createInvoiceFromAI = async (extractedData, options = {}) => {
+  const externalTx = options.transaction;
+  const tx = externalTx || await sequelize.transaction();
+  try {
+    const { items, ...invoiceData } = extractedData;
+    const document = await SalesInvoice.create({
+      ...invoiceData,
+      approvedAt: null,
+      approvedBy: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }, { transaction: tx });
+    if (Array.isArray(items) && items.length) {
+      await PurchaseInvoiceItem.bulkCreate(
+        items.map(it => ({
+          ...it,
+          invoiceId: document.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })),
+        { transaction: tx }
+      );
+    }
+    if (!externalTx) await tx.commit();
+    return {
+      ...document.toJSON(),
+      items: items || [],
+    };
+  } catch (error) {
+    if (!externalTx) await tx.rollback();
+    throw new AppError('Failed to save KUF purchase invoice to database', 500);
+  }
+};
+
 const processSingleUnprocessedFile = async (unprocessedFileLog) => {
   try {
     const { buffer, mimeType } = await supabaseService.getFile(
@@ -231,6 +265,7 @@ module.exports = {
   findById,
   approveInvoiceById,
   createInvoice,
+  createInvoiceFromAI,
   extractData,
   processUnprocessedFiles,
   updateInvoice,
