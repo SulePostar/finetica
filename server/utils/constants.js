@@ -6,5 +6,5 @@ const USER_STATUS = Object.freeze({
 });
 
 module.exports = {
-  USER_STATUS
+  USER_STATUS,
 };
