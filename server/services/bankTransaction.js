@@ -1,4 +1,4 @@
-const { BusinessPartner, TransactionCategory, BankTransaction, BankTransactionProcessedFile } = require('../models');
+const { BusinessPartner, TransactionCategory, BankTransaction, BankTransactionProcessingLog } = require('../models');
 const { processDocument } = require('./aiService');
 const AppError = require('../utils/errorHandler');
 const BANK_TRANSACTIONS_PROMPT = require('../prompts/BankTransactions');
@@ -152,7 +152,7 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
         throw new AppError('Failed to create bank transaction', 500);
     }
 };
-const approveBankTransaction = async (id, userId, updatedData = {}) => {
+const approveBankTransactionById = async (id, userId, updatedData = {}) => {
     try {
         const document = await BankTransaction.findByPk(id);
 
@@ -273,7 +273,7 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
 };
 
 const processUnprocessedFiles = async () => {
-    const unprocessedFileLogs = await BankTransactionProcessedFile.findAll({
+    const unprocessedFileLogs = await BankTransactionProcessingLog.findAll({
         where: { isProcessed: false },
     });
     for (const fileLog of unprocessedFileLogs) {

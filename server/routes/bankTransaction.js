@@ -19,7 +19,7 @@ router.post('/',
     createBankTransaction
 );
 router.post('/process',
-    isAuthenticated,
+    // isAuthenticated,
     upload.single('file'),
     processUnprocessed
 );
