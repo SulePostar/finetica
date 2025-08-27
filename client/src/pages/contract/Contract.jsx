@@ -2,13 +2,16 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
 import DynamicTable from '../../components/Tables/DynamicTable';
+import UploadButton from '../../components/UploadButton/UploadButton';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import DefaultLayout from '../../layout/DefaultLayout';
+import { useBucketName } from '../../lib/bucketUtils';
 import './Contract.css';
 
 const Contract = () => {
   const navigate = useNavigate();
   const sidebarWidth = useSidebarWidth();
+  const bucketName = useBucketName();
 
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
   const apiEndpoint = useMemo(() => `${API_BASE}/contracts`, [API_BASE]);
@@ -137,6 +140,7 @@ const Contract = () => {
             title="Contracts"
             columns={columns}
             apiEndpoint={apiEndpoint}
+            uploadButton={<UploadButton bucketName={bucketName} />}
           />
         </div>
       </div>

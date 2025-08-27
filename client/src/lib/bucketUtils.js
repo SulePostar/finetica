@@ -8,6 +8,7 @@ const ROUTE_TO_BUCKET_MAP = {
   '/kuf': 'kuf',
   '/transactions': 'transactions', // VAT page
   '/vat': 'transactions', // Alternative VAT page route
+  '/contracts': 'contracts',
 };
 
 /**
