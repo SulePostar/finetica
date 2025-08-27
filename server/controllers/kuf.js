@@ -1,81 +1,83 @@
 const {
-    getKufs,
-    getKufById,
-    createKuf,
-    processKuf,
-    approveKuf,
+  listInvoices,
+  findById,
+  approveInvoiceById,
+  createInvoice,
+  extractData,
+  updateInvoice,
 } = require('../services/kuf');
 
-const getKufData = async (req, res, next) => {
-    try {
-        const { page, perPage, sortField, sortOrder } = req.query;
-
-        const result = await getKufs({
-            page: parseInt(page),
-            perPage: parseInt(perPage),
-            sortField,
-            sortOrder,
-        });
-
-        res.json(result);
-    } catch (error) {
-        next(error);
-    }
+// Rename to match contract naming
+const getInvoiceData = async (req, res, next) => {
+  try {
+    const { page = 1, perPage = 10, sortField, sortOrder = 'asc' } = req.query;
+    const result = await listInvoices({
+      page: Number(page) || 1,
+      perPage: Number(perPage) || 10,
+      sortField,
+      sortOrder,
+    });
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
 };
 
-const getKuf = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-
-        const result = await getKufById(parseInt(id));
-        res.json(result);
-    } catch (error) {
-        next(error);
-    }
+const getInvoice = async (req, res, next) => {
+  try {
+    const invoice = await findById(Number(req.params.id));
+    res.json(invoice);
+  } catch (err) {
+    next(err);
+  }
 };
 
-const createKufInvoice = async (req, res, next) => {
-    try {
-        const invoiceData = req.body;
-        const userId = req.user.userId;
-
-        const result = await createKuf(invoiceData, userId);
-
-        res.json(result)
-    } catch (error) {
-        next(error);
-    }
+const approveInvoice = async (req, res, next) => {
+  try {
+    const userId = req.user?.userId;
+    const result = await approveInvoiceById(Number(req.params.id), userId);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
 };
 
-const processKufInvoice = async (req, res, next) => {
-    try {
-        const { model } = req.body;
-        const result = await processKuf(req.file.buffer, req.file.mimetype, model);
-
-        res.json(result);
-    } catch (error) {
-        next(error);
-    }
+const create = async (req, res, next) => {
+  try {
+    const created = await createInvoice(req.body);
+    res.status(201).json(created);
+  } catch (err) {
+    next(err);
+  }
 };
 
-const approveKufInvoice = async (req, res, next) => {
-    try {
-        const { id: invoiceId } = req.params;
-        const { userId } = req.user;
-        const updatedData = req.body;
+// Add missing controller function
+const update = async (req, res, next) => {
+  try {
+    const updated = await updateInvoice(Number(req.params.id), req.body);
+    res.json(updated);
+  } catch (err) {
+    next(err);
+  }
+};
 
-        const result = await approveKuf(invoiceId, updatedData, userId);
-
-        res.json(result)
-    } catch (error) {
-        next(error);
+const processDocument = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      throw new Error('No file provided');
     }
+    const data = await extractData(req.file.buffer, req.file.mimetype);
+    res.json(data);
+  } catch (err) {
+    next(err);
+  }
 };
 
 module.exports = {
-    getKufData,
-    getKuf,
-    createKufInvoice,
-    processKufInvoice,
-    approveKufInvoice,
+  getInvoiceData, // Updated name to match contract pattern
+  getInvoice,
+  approveInvoice,
+  create,
+  processDocument,
+  update // Added missing export
 };

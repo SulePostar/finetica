@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const {
-    getKufData,
-    getKuf,
-    createKufInvoice,
-    processKufInvoice,
-    approveKufInvoice,
+    getInvoiceData,
+    getInvoice,
+    create,
+    processDocument,
+    approveInvoice,
+    update,
 } = require('../controllers/kuf');
 const { upload } = require('../services/aiService');
 const isAuthenticated = require('../middleware/isAuthenticated');
@@ -15,24 +16,27 @@ const {
     kufInvoiceUpdateSchema,
 } = require('../schemas/kufJoiSchema');
 
-router.get('/', getKufData);
-router.get('/:id', getKuf);
+// Base routes (matching contract pattern)
+router.get('/', getInvoiceData);
+router.get('/:id', isAuthenticated, getInvoice);
+router.put('/:id/approve', isAuthenticated, approveInvoice);
+
 router.post('/',
     isAuthenticated,
     validate(kufInvoiceCreateSchema),
-    createKufInvoice
+    create
 );
 
 router.post('/process',
     isAuthenticated,
     upload.single('file'),
-    processKufInvoice
+    processDocument
 );
 
-router.patch('/:id/approve',
+router.put('/:id',
     isAuthenticated,
     validate(kufInvoiceUpdateSchema),
-    approveKufInvoice
+    update
 );
 
 module.exports = router;
