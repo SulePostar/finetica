@@ -6,7 +6,7 @@ class KufService {
     }
 
     approveKuf(id, payload) {
-        return api.patch(`/kuf/${id}/approve`, payload);
+        return api.put(`/kuf/${id}/approve`, payload);
     }
 
     listKuf(params) {
