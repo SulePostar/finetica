@@ -2,16 +2,13 @@ const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');
 const path = require('path');
 const mime = require('mime-types');
-
 class SupabaseService {
   constructor() {
     this.supabaseUrl = process.env.SUPABASE_URL;
     this.supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
     if (!this.supabaseUrl || !this.supabaseServiceKey) {
       throw new Error('Supabase configuration missing');
     }
-
     this.supabase = createClient(this.supabaseUrl, this.supabaseServiceKey, {
       auth: {
         autoRefreshToken: false,
@@ -19,7 +16,6 @@ class SupabaseService {
       },
     });
   }
-
   /**
    * Sanitize filename to remove special characters that aren't supported by Supabase
    * Converts Bosnian/Croatian/Serbian characters to Latin equivalents
@@ -30,7 +26,6 @@ class SupabaseService {
     if (!filename || typeof filename !== 'string') {
       return 'file';
     }
-
     const sanitized = filename
       // Replace special characters with their Latin equivalents
       .replace(/[ćĆ]/g, 'c')
@@ -54,10 +49,8 @@ class SupabaseService {
       .replace(/ß/g, 'ss')
       // Replace any remaining non-ASCII characters with underscore
       .replace(/[^\x00-\x7F]/g, '');
-
     return sanitized || 'file';
   }
-
   extractFileParts(fileBuffer, fileName, mimeType) {
     if (fileBuffer && fileBuffer.buffer && fileBuffer.originalname) {
       return {
@@ -72,7 +65,6 @@ class SupabaseService {
       mimeType,
     };
   }
-
   /**
    * Upload a file to Supabase storage
    * @param {Buffer|Object} fileBuffer - File buffer or multer file object
@@ -88,10 +80,8 @@ class SupabaseService {
         fileName,
         mimeType
       );
-
       let finalName = fileName || originalName;
       finalName = this.sanitizeFileName(finalName);
-
       const { data, error } = await this.supabase.storage
         .from(bucketName)
         .upload(finalName, buffer, {
@@ -99,7 +89,6 @@ class SupabaseService {
           cacheControl: '3600',
           upsert,
         });
-
       if (error) {
         if (error.message && error.message.includes('already exists')) {
           return {
@@ -110,9 +99,7 @@ class SupabaseService {
         }
         throw new Error(`Storage upload failed: ${error.message}`);
       }
-
       const { data: urlData } = this.supabase.storage.from(bucketName).getPublicUrl(data.path);
-
       return {
         success: true,
         path: data.path,
@@ -127,7 +114,6 @@ class SupabaseService {
       };
     }
   }
-
   /**
    * Upload profile image to Supabase storage
    * @param {Buffer|Object} fileBuffer - Image file buffer or multer file object
@@ -142,14 +128,12 @@ class SupabaseService {
       const sanitizedFirstName = this.sanitizeFileName(firstName).toLowerCase();
       const sanitizedLastName = this.sanitizeFileName(lastName).toLowerCase();
       const username = `${sanitizedFirstName}_${sanitizedLastName}`;
-
       let ext;
       if (fileBuffer && fileBuffer.originalname) {
         ext = fileBuffer.originalname.split('.').pop();
       } else {
         ext = fileExtension;
       }
-
       const finalName = `${username}.${ext}`;
       return await this.uploadFile(fileBuffer, finalName, 'user-images', mimeType, true);
     } catch (error) {
@@ -160,7 +144,6 @@ class SupabaseService {
       };
     }
   }
-
   /**
    * Uploads all valid files from a local folder to a Supabase storage bucket.
    *
@@ -170,22 +153,18 @@ class SupabaseService {
    */
   async uploadFolder(folderPath, bucketName, options = {}) {
     const files = fs.readdirSync(folderPath);
-
     for (const fileName of files) {
       const filePath = path.join(folderPath, fileName);
       const fileBuffer = fs.readFileSync(filePath);
       const mimeType = mime.lookup(filePath) || 'application/octet-stream';
       const fileSize = fileBuffer.length;
-
       // Validate file before upload
       const validation = this.validateFile(mimeType, fileSize, options);
       if (!validation.isValid) {
         console.log(`Skipping ${fileName}: ${validation.error}`);
         continue;
       }
-
       const result = await this.uploadFile(fileBuffer, fileName, bucketName, mimeType);
-
       if (result.success) {
         console.log(`Successfully uploaded: ${fileName}`);
       } else {
@@ -197,17 +176,14 @@ class SupabaseService {
       }
     }
   }
-
   async getFile(bucketName, filePath) {
     try {
       const { data, error } = await this.supabase.storage
         .from(bucketName)
         .download(filePath);
-
       if (error) {
         throw new Error(`File download failed: ${error.message}`);
       }
-
       const buffer = await data.arrayBuffer();
       return {
         buffer,
@@ -217,6 +193,10 @@ class SupabaseService {
       throw error;
     }
   }
+  async deleteFile(filePath, bucketName) {
+    const { error } = await this.supabase.storage.from(bucketName).remove([filePath]);
+    if (error) throw new Error(`Delete failed: ${error.message}`);
+    return { success: true };
+  }
 }
-
 module.exports = new SupabaseService();
