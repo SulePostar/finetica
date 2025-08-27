@@ -79,35 +79,6 @@ class FileUploadService {
   }
 
   /**
-   * Delete a file from storage (admin only)
-   * @param {number} fileId - The ID of the file to delete
-   * @returns {Promise<Object>} Delete result with backward compatibility
-   */
-  static async deleteFile(fileId) {
-    try {
-      const response = await api.delete(`/files/storage/${fileId}`);
-      return {
-        success: response.data.success,
-        error: response.data.success ? null : response.data.message || 'Delete failed',
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.response?.data?.message || error.message || 'Failed to delete file',
-      };
-    }
-  }
-
-  /**
-   * Delete a profile image (alias for deleteFile for backward compatibility)
-   * @param {number} fileId - The file ID to delete
-   * @returns {Promise<Object>} Delete result
-   */
-  static async deleteProfileImage(fileId) {
-    return this.deleteFile(fileId);
-  }
-
-  /**
    * Validate file before upload
    * @param {File} file - The file to validate
    * @param {Object} options - Validation options

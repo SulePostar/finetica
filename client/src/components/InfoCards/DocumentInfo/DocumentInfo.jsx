@@ -5,7 +5,7 @@ import {
 } from '../../../utilis/constants/InvoicesData';
 import DocInfoCard from '../DocInfoCard/DocInfoCard';
 import { CFormInput, CFormLabel, CBadge } from '@coreui/react';
-import '../DocumentInfo/DocumentInfo.css';
+import './DocumentInfo.css';
 
 const DocumentInfo = ({
     data,
@@ -18,12 +18,17 @@ const DocumentInfo = ({
 }) => {
     const fields = useMemo(() => DOCUMENT_FIELD_CONFIGS[type] || DOCUMENT_FIELD_CONFIGS.kuf, [type]);
 
+    // Helper function to get nested property values
+    const getNestedValue = (obj, path) => {
+        return path.split('.').reduce((current, key) => current?.[key], obj);
+    };
+
     const formattedFields = useMemo(() => {
         if (!data) return [];
         return fields.map(({ label, key }) => ({
             key,
             label,
-            value: data[key] ?? ''
+            value: getNestedValue(data, key) ?? ''
         }));
     }, [data, fields]);
 

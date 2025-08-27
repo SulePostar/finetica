@@ -17,49 +17,42 @@ import DocumentInfo from '../../components/InfoCards/DocumentInfo/DocumentInfo';
 import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ContractService from '../../services/contract';
-import {
-  createMockKifData,
-  createMockKufData,
-  createMockVatData,
-} from '../../utilis/constants/InvoicesData';
+import KifService from '../../services/kif';
+import BankTransactionsService from '../../services/bankTransactions';
+import KufService from '../../services/kuf';
 
 const InvoiceDetails = () => {
   const { id } = useParams();
   const location = useLocation();
-
   // Determine document type based on URL path
   const getDocumentType = () => {
     if (location.pathname.includes('/kif/')) return 'kif';
     if (location.pathname.includes('/kuf/')) return 'kuf';
     if (location.pathname.includes('/contracts/')) return 'contract';
-    if (location.pathname.includes('/vat/')) return 'vat';
+    if (location.pathname.includes('/bank-transactions/')) return 'bank-transactions';
   };
-
   const documentType = getDocumentType();
-
-  // Get appropriate mock data based on document type
-  const getMockData = () => {
+  // Get appropriate service based on document type
+  const getService = () => {
     switch (documentType) {
       case 'kif':
-        return createMockKifData(id);
+        return KifService;
+      case 'contract':
+        return ContractService;
+      case 'bank-transactions':
+        return BankTransactionsService;
       case 'kuf':
-        return createMockKufData(id);
-      case 'vat':
-        return createMockVatData(id);
+        return KufService;
     }
   };
 
-  const mockData = getMockData();
-
-  // For now hardcoded, this will come from an API call
-  const mockPdfUrl = 'https://pdfobject.com/pdf/sample.pdf';
+  const service = getService();
   const [formData, setFormData] = useState({});
   const [pdfUrl, setPdfUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isApproved, setIsApproved] = useState(false);
-
   const isApproveMode = location.pathname.includes('/approve');
 
   const computeApproved = (d) =>
@@ -68,16 +61,15 @@ const InvoiceDetails = () => {
   const fetchDocument = async (id, setFormData, setPdfUrl, setIsApproved, setLoading, setError) => {
     setLoading(true);
     setError(null);
-
     try {
-      const { data } = await ContractService.getById(id);
+      const { data } = await service.getKufById(id);
       setFormData(data);
       setPdfUrl(data.pdfUrl || 'https://pdfobject.com/pdf/sample.pdf');
       setIsApproved(computeApproved(data));
     } catch (err) {
       const msg = err?.response?.data?.message || err.message || 'Failed to load document';
       setError(msg);
-      console.error('GET /contracts/:id failed:', msg);
+      console.error(`GET /${documentType}/:id failed:`, msg);
     } finally {
       setLoading(false);
     }
@@ -90,7 +82,7 @@ const InvoiceDetails = () => {
 
   const handleApprove = async () => {
     try {
-      const { data } = await ContractService.approve(id, formData);
+      const { data } = await service.approveKuf(id, formData);
       setFormData(data);
       setIsApproved(computeApproved(data));
     } catch (err) {
@@ -104,7 +96,7 @@ const InvoiceDetails = () => {
     setIsEditing(false);
     setLoading(true);
     setError(null);
-    ContractService.getById(id)
+    service.getKufById(id)
       .then((res) => {
         setFormData(res.data);
         setIsApproved(computeApproved(res.data));
@@ -115,13 +107,15 @@ const InvoiceDetails = () => {
 
   const handleSave = async () => {
     try {
-      const { data } = await ContractService.approve(id, formData);
+      const approveResult = await service.approveKuf(id, formData);
+      const data = approveResult.data;
+
       setFormData(data);
       setIsApproved(computeApproved(data));
       setIsEditing(false);
     } catch (err) {
       console.error(
-        'Save (approve) failed:',
+        'Save failed:',
         err?.response?.status,
         err?.response?.data || err.message
       );
@@ -176,7 +170,6 @@ const InvoiceDetails = () => {
                 />
               )}
             </CCol>
-
             <CCol lg={8} className="mb-4">
               <CCard className="h-100 shadow-sm detail-card">
                 <CCardHeader>

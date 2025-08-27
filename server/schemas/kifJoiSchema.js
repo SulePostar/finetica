@@ -42,9 +42,9 @@ const kifInvoiceItemSchema = Joi.object({
     }),
 
     vatAmount: Joi.number().min(0).precision(2).required().messages({
-        'number.base': 'VAT amount must be a number',
-        'number.min': 'VAT amount cannot be negative',
-        'any.required': 'VAT amount is required',
+        'number.base': 'bank-transactions amount must be a number',
+        'number.min': 'bank-transactions amount cannot be negative',
+        'any.required': 'bank-transactions amount is required',
     }),
 
     grossSubtotal: Joi.number().min(0).precision(2).required().messages({
@@ -71,7 +71,7 @@ const kifInvoiceCreateSchema = Joi.object({
     }),
 
     vatPeriod: Joi.string().trim().allow(null, '').optional().messages({
-        'string.base': 'VAT period must be a string',
+        'string.base': 'bank-transactions period must be a string',
     }),
 
     invoiceDate: Joi.date().iso().allow(null).optional().messages({
@@ -100,7 +100,7 @@ const kifInvoiceCreateSchema = Joi.object({
     }),
 
     vatCategory: Joi.string().trim().allow(null, '').optional().messages({
-        'string.base': 'VAT category must be a string',
+        'string.base': 'bank-transactions category must be a string',
     }),
 
     sellerName: Joi.string().trim().min(2).allow(null, '').optional().messages({
@@ -109,7 +109,7 @@ const kifInvoiceCreateSchema = Joi.object({
     }),
 
     sellerVatNumber: Joi.string().trim().allow(null, '').optional().messages({
-        'string.base': 'Seller VAT number must be a string',
+        'string.base': 'Seller bank-transactions number must be a string',
     }),
 
     buyerName: Joi.string().trim().min(2).allow(null, '').optional().messages({
@@ -118,7 +118,7 @@ const kifInvoiceCreateSchema = Joi.object({
     }),
 
     buyerVatNumber: Joi.string().trim().allow(null, '').optional().messages({
-        'string.base': 'Buyer VAT number must be a string',
+        'string.base': 'Buyer bank-transactions number must be a string',
     }),
 
     note: Joi.string().trim().max(1000).allow(null, '').optional().messages({
@@ -150,7 +150,7 @@ const kifInvoiceUpdateSchema = Joi.object({
     }),
 
     vatPeriod: Joi.string().trim().allow(null, '').optional().messages({
-        'string.base': 'VAT period must be a string',
+        'string.base': 'bank-transactions period must be a string',
     }),
 
     invoiceDate: Joi.date().iso().allow(null).optional().messages({
@@ -178,7 +178,7 @@ const kifInvoiceUpdateSchema = Joi.object({
     }),
 
     vatCategory: Joi.string().trim().allow(null, '').optional().messages({
-        'string.base': 'VAT category must be a string',
+        'string.base': 'bank-transactions category must be a string',
     }),
 
     sellerName: Joi.string().trim().min(2).allow(null, '').optional().messages({
@@ -187,7 +187,7 @@ const kifInvoiceUpdateSchema = Joi.object({
     }),
 
     sellerVatNumber: Joi.string().trim().allow(null, '').optional().messages({
-        'string.base': 'Seller VAT number must be a string',
+        'string.base': 'Seller bank-transactions number must be a string',
     }),
 
     buyerName: Joi.string().trim().min(2).allow(null, '').optional().messages({
@@ -196,7 +196,7 @@ const kifInvoiceUpdateSchema = Joi.object({
     }),
 
     buyerVatNumber: Joi.string().trim().allow(null, '').optional().messages({
-        'string.base': 'Buyer VAT number must be a string',
+        'string.base': 'Buyer bank-transactions number must be a string',
     }),
 
     note: Joi.string().trim().max(1000).allow(null, '').optional().messages({
