@@ -34,7 +34,7 @@ const getInvoice = async (req, res, next) => {
 
 const approveInvoice = async (req, res, next) => {
   try {
-    const result = await approveInvoiceById(Number(req.body.id), req.body);
+    const result = await approveInvoiceById(Number(req.body.id), req.body, req.user.userId);
     res.json(result);
   } catch (err) {
     next(err);

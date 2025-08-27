@@ -80,7 +80,7 @@ const findById = async (id) => {
   }
 };
 
-const approveInvoiceById = async (id, body) => {
+const approveInvoiceById = async (id, body, userId) => {
   try {
     const invoice = await PurchaseInvoice.findByPk(id);
     if (!invoice) throw new AppError('Purchase invoice not found', 404);
@@ -89,7 +89,7 @@ const approveInvoiceById = async (id, body) => {
     await invoice.update({
       ...body,
       approvedAt: new Date(),
-      approvedBy: body.approvedBy,
+      approvedBy: userId,
     });
 
     return invoice.get({ plain: true });
