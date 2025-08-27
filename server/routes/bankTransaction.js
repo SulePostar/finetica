@@ -18,14 +18,4 @@ router.post('/',
     validate(bankTransactionCreateSchema),
     createBankTransaction
 );
-router.post('/process',
-    // isAuthenticated,
-    upload.single('file'),
-    processUnprocessed
-);
-router.patch('/:id/approve',
-    isAuthenticated,
-    validate(bankTransactionCreateSchema),
-    approveTransaction
-);
 module.exports = router;
