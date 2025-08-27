@@ -3,8 +3,8 @@ const {
   findById,
   approveInvoiceById,
   createInvoice,
-  extractData,
   updateInvoice,
+  processUnprocessedFiles,
 } = require('../services/kuf');
 
 // Rename to match contract naming
@@ -34,8 +34,7 @@ const getInvoice = async (req, res, next) => {
 
 const approveInvoice = async (req, res, next) => {
   try {
-    const userId = req.user?.userId;
-    const result = await approveInvoiceById(Number(req.params.id), userId);
+    const result = await approveInvoiceById(Number(req.body.id), req.body);
     res.json(result);
   } catch (err) {
     next(err);
@@ -61,12 +60,9 @@ const update = async (req, res, next) => {
   }
 };
 
-const processDocument = async (req, res, next) => {
+const processDocuments = async (req, res, next) => {
   try {
-    if (!req.file) {
-      throw new Error('No file provided');
-    }
-    const data = await extractData(req.file.buffer, req.file.mimetype);
+    const data = await processUnprocessedFiles();
     res.json(data);
   } catch (err) {
     next(err);
@@ -74,10 +70,10 @@ const processDocument = async (req, res, next) => {
 };
 
 module.exports = {
-  getInvoiceData, // Updated name to match contract pattern
+  getInvoiceData,
   getInvoice,
   approveInvoice,
   create,
-  processDocument,
-  update // Added missing export
+  processDocuments,
+  update
 };

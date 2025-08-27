@@ -12,7 +12,7 @@ const AppError = require('../utils/errorHandler');
 const supabaseService = require('../utils/supabase/supabaseService');
 
 const MODEL_NAME = 'gemini-2.5-flash-lite';
-const BUCKET_NAME = 'purchase-invoices';
+const BUCKET_NAME = 'kuf';
 
 const SORT_FIELD_MAP = {
   createdAt: 'created_at',
@@ -27,7 +27,7 @@ const listInvoices = async ({ page = 1, perPage = 10, sortField, sortOrder = 'as
     const limit = Math.max(1, Number(perPage) || 10);
     const offset = Math.max(0, ((Number(page) || 1) - 1) * limit);
 
-    let order = [['createdAt', 'DESC']];
+    let order = [['created_at', 'DESC']];
     if (sortField && SORT_FIELD_MAP[sortField]) {
       order = [[SORT_FIELD_MAP[sortField], (sortOrder || 'asc').toUpperCase()]];
     }
@@ -80,15 +80,16 @@ const findById = async (id) => {
   }
 };
 
-const approveInvoiceById = async (id, userId) => {
+const approveInvoiceById = async (id, body) => {
   try {
     const invoice = await PurchaseInvoice.findByPk(id);
     if (!invoice) throw new AppError('Purchase invoice not found', 404);
     if (invoice.approvedAt) throw new AppError('Invoice already approved', 400);
 
     await invoice.update({
+      ...body,
       approvedAt: new Date(),
-      approvedBy: userId,
+      approvedBy: body.approvedBy,
     });
 
     return invoice.get({ plain: true });
