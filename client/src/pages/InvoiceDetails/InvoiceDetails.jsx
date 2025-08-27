@@ -62,7 +62,7 @@ const InvoiceDetails = () => {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await service.getById(id);
+      const { data } = await service.getKufById(id);
       setFormData(data);
       setPdfUrl(data.pdfUrl || 'https://pdfobject.com/pdf/sample.pdf');
       setIsApproved(computeApproved(data));
@@ -82,7 +82,7 @@ const InvoiceDetails = () => {
 
   const handleApprove = async () => {
     try {
-      const { data } = await service.approve(id, formData);
+      const { data } = await service.approveKuf(id, formData);
       setFormData(data);
       setIsApproved(computeApproved(data));
     } catch (err) {
@@ -96,7 +96,7 @@ const InvoiceDetails = () => {
     setIsEditing(false);
     setLoading(true);
     setError(null);
-    service.getById(id)
+    service.getKufById(id)
       .then((res) => {
         setFormData(res.data);
         setIsApproved(computeApproved(res.data));
@@ -107,7 +107,7 @@ const InvoiceDetails = () => {
 
   const handleSave = async () => {
     try {
-      const approveResult = await service.approve(id, formData);
+      const approveResult = await service.approveKuf(id, formData);
       const data = approveResult.data;
 
       setFormData(data);

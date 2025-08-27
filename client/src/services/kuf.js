@@ -1,19 +1,19 @@
 import api from "./api";
 
 class KufService {
-    getById(id) {
+    getKufById(id) {
         return api.get(`/kuf/${id}`);
     }
 
-    approve(id, payload) {
-        return api.put(`/kuf/${id}/approve`, payload);
+    approveKuf(id, payload) {
+        return api.patch(`/kuf/${id}/approve`, payload);
     }
 
-    list(params) {
+    listKuf(params) {
         return api.get(`/kuf`, { params });
     }
 
-    create(payload) {
+    createKuf(payload) {
         return api.post(`/kuf`, payload);
     }
 }

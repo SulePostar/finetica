@@ -4,7 +4,6 @@ import storage from 'redux-persist/lib/storage';
 
 import userReducer from './redux/user/userSlice';
 
-
 import usersReducer from './redux/users/usersSlice';
 import authReducer from './redux/auth/authSlice';
 import sidebarReducer from './redux/sidebar/sidebarSlice';
