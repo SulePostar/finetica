@@ -27,13 +27,11 @@ const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'a
         model: BusinessPartner,
         as: 'businessPartner',
         attributes: ['id', 'name', 'shortName'],
-        required: false,
       },
     ],
   });
 
-  const data = rows.map((r) => r.get({ plain: true }));
-  return { data, total: count };
+  return { data: rows, total: count };
 };
 
 const findById = async (id) => {
@@ -47,7 +45,7 @@ const findById = async (id) => {
     ],
   });
   if (!contract) throw new AppError('Contract not found', 404);
-  return contract.get({ plain: true });
+  return contract;
 };
 
 const approveContractById = async (id, body, userId) => {
@@ -61,12 +59,12 @@ const approveContractById = async (id, body, userId) => {
     approvedBy: userId,
   });
 
-  return contract.get({ plain: true });
+  return contract;
 };
 
 const createContract = async (payload) => {
   const created = await Contract.create(payload);
-  return created.get({ plain: true });
+  return created;
 };
 
 const extractData = async (fileBuffer, mimeType) => {

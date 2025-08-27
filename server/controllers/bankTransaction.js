@@ -18,16 +18,21 @@ const getBankTransactions = async (req, res, next) => {
     }
 };
 
-const getTransactionById = (req, res) => {
-    const { id } = req.params;
-    const document = getBankTransactionById(id);
+const getTransactionById = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const document = await getBankTransactionById(id);
 
-    if (!document) {
-        return res.status(404).json({ error: 'Bank Transaction document not found' });
+        if (!document) {
+            return res.status(404).json({ error: 'Bank Transaction document not found' });
+        }
+
+        res.json(document);
+    } catch (error) {
+        next(error);
     }
-
-    res.json(document);
 };
+
 
 const createBankTransaction = async (req, res) => {
     try {
@@ -55,9 +60,8 @@ const processTransaction = async (req, res, next) => {
 const approveTransaction = async (req, res) => {
     const { id: transactionId } = req.params;
     const { userId } = req.user;
-    const result = await approveBankTransaction(transactionId, userId);
+    const result = await approveBankTransaction(transactionId, userId, req.body);
     res.json(result);
-
 };
 
 const updatedDocument = async (req, res) => {
@@ -72,11 +76,13 @@ const updatedDocument = async (req, res) => {
         res.status(500).json({ error: 'Failed to update bank transaction' });
     }
 }
+
 module.exports = {
     getBankTransactions,
     getTransactionById,
     processTransaction,
     createBankTransaction,
     approveTransaction,
-    updatedDocument
+    updatedDocument,
+    editBankTransaction
 };

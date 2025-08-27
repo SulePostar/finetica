@@ -22,9 +22,9 @@ const kufInvoiceItemSchema = Joi.object({
     }),
 
     vatAmount: Joi.number().min(0).precision(2).required().messages({
-        'number.base': 'VAT amount must be a number',
-        'number.min': 'VAT amount cannot be negative',
-        'any.required': 'VAT amount is required',
+        'number.base': 'bank-transactions amount must be a number',
+        'number.min': 'bank-transactions amount cannot be negative',
+        'any.required': 'bank-transactions amount is required',
     }),
 
     grossSubtotal: Joi.number().min(0).precision(2).required().messages({

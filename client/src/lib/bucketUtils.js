@@ -9,6 +9,8 @@ const ROUTE_TO_BUCKET_MAP = {
   '/transactions': 'transactions', // VAT page
   '/vat': 'transactions', // Alternative VAT page route
   '/contracts': 'contracts',
+  '/transactions': 'transactions', // bank-transactions page
+  '/bank-transactions': 'transactions', // Alternative bank-transactions page route
 };
 
 /**
