@@ -6,8 +6,8 @@ import { useLocation } from 'react-router-dom';
 const ROUTE_TO_BUCKET_MAP = {
   '/kif': 'kif',
   '/kuf': 'kuf',
-  '/transactions': 'transactions', // VAT page
-  '/vat': 'transactions', // Alternative VAT page route
+  '/transactions': 'transactions', // bank-transactions page
+  '/bank-transactions': 'transactions', // Alternative bank-transactions page route
 };
 
 /**
