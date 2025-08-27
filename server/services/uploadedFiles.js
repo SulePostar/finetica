@@ -1,7 +1,8 @@
-const { UploadedFile, User, KifProcessingLog } = require('../models');
+const { UploadedFile, User, KifProcessingLog, ContractProcessingLog } = require('../models');
 const { Op } = require('sequelize');
 const { sequelize } = require('../config/db');
 const kifService = require('../services/kif');
+const contractService = require('../services/contract');
 const supabaseService = require('../utils/supabase/supabaseService');
 const AppError = require('../utils/errorHandler');
 const PIPELINES = {
@@ -10,6 +11,12 @@ const PIPELINES = {
     extract: (buf, mime) => kifService.extractKifData(buf, mime),
     persist: (data, t) => kifService.createKifFromAI(data, { transaction: t }),
     successMessage: 'KIF processed successfully'
+  },
+  contracts: {
+    logModel: ContractProcessingLog,
+    extract: (buf, mime) => contractService.extractContractData(buf, mime),
+    persist: (data, t) => contractService.createContractFromAI(data, { transaction: t }),
+    successMessage: 'Contract processed successfully'
   }
 };
 class UploadedFilesService {
