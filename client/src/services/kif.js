@@ -13,7 +13,7 @@ class KifService {
         return api.get(`/kif`, { params });
     }
 
-    create(payload) {
+    createKif(payload) {
         return api.post(`/kif`, payload);
     }
 }

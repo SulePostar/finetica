@@ -87,11 +87,9 @@ const createKif = async (invoiceData, userId) => {
             include: [
                 {
                     model: SalesInvoiceItem,
-                    required: false
                 },
                 {
                     model: BusinessPartner,
-                    required: false
                 }
             ]
         });
@@ -176,12 +174,10 @@ const approveKif = async (documentId, updatedData = {}, userId) => {
         const completeDocument = await SalesInvoice.findByPk(documentId, {
             include: [
                 {
-                    model: SalesInvoiceItem,
-                    required: false
+                    model: SalesInvoiceItem
                 },
                 {
                     model: BusinessPartner,
-                    required: false,
                     attributes: ['id', 'name', 'vatNumber']
                 }
             ]
@@ -217,12 +213,10 @@ const getKifs = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' })
         const salesInvoices = await SalesInvoice.findAll({
             include: [
                 {
-                    model: SalesInvoiceItem,
-                    required: false
+                    model: SalesInvoiceItem
                 },
                 {
                     model: BusinessPartner,
-                    required: false,
                     attributes: ['id', 'name', 'vatNumber']
                 }
             ],
@@ -251,11 +245,9 @@ const getKifById = async (id) => {
             include: [
                 {
                     model: SalesInvoiceItem,
-                    required: false
                 },
                 {
                     model: BusinessPartner,
-                    required: false,
                     attributes: ['id', 'name', 'vatNumber']
                 }
             ]
