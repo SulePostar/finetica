@@ -1,4 +1,4 @@
-const { BusinessPartner, TransactionCategory, Users, BankTransaction, BankTransactionProcessedFile } = require('../models');
+const { BusinessPartner, TransactionCategory, BankTransaction, BankTransactionProcessedFile } = require('../models');
 const { processDocument } = require('./aiService');
 const AppError = require('../utils/errorHandler');
 const BANK_TRANSACTIONS_PROMPT = require('../prompts/BankTransactions');
@@ -46,19 +46,26 @@ const getTransactions = async (query = {}) => {
 
 const getBankTransactionById = async (id) => {
     try {
+        console.log("Fetching BankTransaction with id:", id);
+
         const document = await BankTransaction.findByPk(id, {
             include: [
                 { model: TransactionCategory },
-                { model: BusinessPartner },
-                { model: Users }
+                { model: BusinessPartner }
             ]
         });
-        return document;
+
+        if (!document) {
+            console.warn(`No BankTransaction found with id: ${id}`);
+            return null;
+        }
+        return document.toJSON();
     } catch (error) {
         console.error("Fetch Document Error:", error);
         throw new AppError('Failed to fetch bank transaction document', 500);
     }
 };
+
 
 const createBankTransactionFromAI = async (extractedData) => {
     const t = await sequelize.transaction();
@@ -187,8 +194,7 @@ const editBankTransaction = async (id, updatedData) => {
         const updatedWithRelations = await BankTransaction.findByPk(id, {
             include: [
                 { model: TransactionCategory },
-                { model: BusinessPartner },
-                { model: Users }
+                { model: BusinessPartner }
             ]
         });
 

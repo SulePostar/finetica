@@ -18,11 +18,16 @@ const getBankTransactions = async (req, res, next) => {
     }
 };
 
-const getTransactionById = (req, res) => {
-    const { id } = req.params;
-    const document = getBankTransactionById(id);
-    res.json(document);
+const getTransactionById = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const document = await getBankTransactionById(id);
+        res.json(document);
+    } catch (error) {
+        next(error);
+    }
 };
+
 
 const createBankTransaction = async (req, res) => {
     try {
