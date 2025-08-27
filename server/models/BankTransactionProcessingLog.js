@@ -1,9 +1,9 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-    class BankTransactionProcessedFile extends Model { }
+    class BankTransactionProcessingLog extends Model { }
 
-    BankTransactionProcessedFile.init(
+    BankTransactionProcessingLog.init(
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -35,8 +35,8 @@ module.exports = (sequelize) => {
         },
         {
             sequelize,
-            modelName: 'BankTransactionProcessedFile',
-            tableName: 'bank_transaction_processed_files',
+            modelName: 'BankTransactionProcessingLog',
+            tableName: 'bank_transaction_processing_logs',
             timestamps: true,
             createdAt: 'created_at',
             updatedAt: 'updated_at',
@@ -44,5 +44,5 @@ module.exports = (sequelize) => {
         }
     );
 
-    return BankTransactionProcessedFile;
+    return BankTransactionProcessingLog;
 };
