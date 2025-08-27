@@ -32,8 +32,8 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: 'VAT',
-    to: '/vat',
+    name: 'Bank Transactions',
+    to: '/bank-transactions',
     icon: cilCalculator,
   },
   {

@@ -6,107 +6,96 @@ import UploadButton from '../../components/UploadButton/UploadButton';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useBucketName } from '../../lib/bucketUtils';
-import './Kif.css';
+import '../../styles/shared/CommonStyles.css';
+import '../../styles/TablePages.css';
+import './BankTransactions.css';
 
-const Kif = () => {
+
+const BankTransactions = () => {
   const navigate = useNavigate();
   const bucketName = useBucketName();
   const sidebarWidth = useSidebarWidth();
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
-  const apiEndpoint = useMemo(() => `${API_BASE}/kif`, [API_BASE]);
+  const apiEndpoint = useMemo(() => `${API_BASE}/transactions/bank-transaction-data`, [API_BASE]);
 
   const handleView = useCallback((id) => {
-    navigate(`/kif/${id}`);
+    navigate(`/bank-transactions/${id}`);
   }, [navigate]);
 
   const handleApprove = useCallback((id) => {
-    navigate(`/kif/${id}/approve`);
+    navigate(`/bank-transactions/${id}/approve`);
   }, [navigate]);
 
   const handleDownload = useCallback((id) => {
     // TODO: Implement download functionality
-    console.log('Download KIF:', id);
+    console.log('Download bank-transactions transaction:', id);
   }, []);
 
   const columns = [
     {
-      name: 'Invoice ID',
+      name: 'Transaction ID',
       selector: row => row.id,
       sortable: true,
-      width: '140px',
     },
     {
-      name: 'Invoice Number',
-      selector: row => row.invoiceNumber,
+      name: 'Date',
+      selector: row => row.date,
       sortable: true,
-      width: '190px',
+      cell: row => row.date ? new Date(row.date).toLocaleDateString() : '—',
     },
     {
-      name: 'Invoice Type',
-      selector: row => row.invoiceType,
+      name: 'Direction',
+      selector: row => row.direction,
       sortable: true,
-      width: '160px',
+      cell: row => (
+        <span>
+          {row.direction === 'in' ? 'Expense' : 'Income'}
+        </span>
+      ),
     },
     {
-      name: 'Customer Name',
-      selector: row => row.customerName,
+      name: 'Category',
+      selector: row => row.TransactionCategory?.name,
       sortable: true,
-      width: '190px',
+      cell: row => row.TransactionCategory?.name || '—',
     },
     {
-      name: 'Invoice Date',
-      selector: row => row.invoiceDate,
+      name: 'Account Number',
+      selector: row => row.accountNumber,
       sortable: true,
-      width: '160px',
-      cell: row => row.invoiceDate ? new Date(row.invoiceDate).toLocaleDateString() : '—',
     },
     {
-      name: 'Due Date',
-      selector: row => row.dueDate,
+      name: 'Description',
+      selector: row => row.description,
       sortable: true,
-      width: '140px',
-      cell: row => row.dueDate ? new Date(row.dueDate).toLocaleDateString() : '—',
+      wrap: true,
     },
     {
-      name: 'Total Amount',
-      selector: row => row.totalAmount,
+      name: 'Invoice ID',
+      selector: row => row.invoiceId,
       sortable: true,
-      width: '170px',
-      cell: row => row.totalAmount ? `${parseFloat(row.totalAmount).toFixed(2)} KM` : '—',
+    },
+    {
+      name: 'Partner',
+      selector: row => row.BusinessPartner?.name,
+      sortable: true,
+      cell: row => row.BusinessPartner?.name || '—',
+    },
+    {
+      name: 'Amount',
+      selector: row => row.amount,
+      sortable: true,
+      cell: row => row.amount ? `${parseFloat(row.amount).toFixed(2)} KM` : '—',
       style: { textAlign: 'right' },
     },
     {
-      name: 'bank-transactions Period',
-      selector: row => row.vatPeriod,
-      sortable: true,
-      width: '150px',
-    },
-    {
-      name: 'bank-transactions Category',
-      selector: row => row.vatCategory,
-      sortable: true,
-      width: '170px',
-    },
-    {
-      name: 'Delivery Period',
-      selector: row => row.deliveryPeriod,
-      sortable: true,
-      width: '200px',
-    },
-    {
-      name: 'Bill Number',
-      selector: row => row.billNumber,
-      sortable: true,
-      width: '160px',
-    },
-    {
-      name: 'Approval Status',
+      name: 'Status',
       selector: row => {
         if (row.approvedAt || row.approvedBy) return 'Approved';
         return 'Pending';
       },
       sortable: true,
-      width: '190px',
+      width: '130px',
       cell: row => {
         const status = row.approvedAt || row.approvedBy ? 'Approved' : 'Pending';
         return (
@@ -118,7 +107,6 @@ const Kif = () => {
     },
     {
       name: 'Actions',
-      width: '140px',
       cell: row => (
         <ActionsDropdown
           row={row}
@@ -135,15 +123,15 @@ const Kif = () => {
   return (
     <DefaultLayout>
       <div
-        className="table-page-outer kif-table-outer"
+        className="table-page-outer bank-transactions-table-outer"
         style={{
           marginLeft: sidebarWidth,
           width: `calc(100vw - ${sidebarWidth}px)`,
         }}
       >
-        <div className="kif-table-responsive">
+        <div className="bank-transactions-table-responsive">
           <DynamicTable
-            title="KIF - Sales Invoices"
+            title="Bank Transactions"
             columns={columns}
             apiEndpoint={apiEndpoint}
             uploadButton={<UploadButton bucketName={bucketName} />}
@@ -154,4 +142,4 @@ const Kif = () => {
   );
 };
 
-export default Kif;
+export default BankTransactions;
