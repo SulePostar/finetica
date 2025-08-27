@@ -17,6 +17,7 @@ import DocumentInfo from '../../components/InfoCards/DocumentInfo/DocumentInfo';
 import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
 import DefaultLayout from '../../layout/DefaultLayout';
 import ContractService from '../../services/contract';
+import KifService from '../../services/kif';
 import KufService from '../../services/kuf';
 
 const InvoiceDetails = () => {
@@ -33,8 +34,12 @@ const InvoiceDetails = () => {
   // Get appropriate service based on document type
   const getService = () => {
     switch (documentType) {
+      case 'kif':
+        return KifService;
       case 'contract':
         return ContractService;
+      case 'vat':
+        return VatService;
       case 'kuf':
         return KufService;
     }
