@@ -1,6 +1,6 @@
-/* VAT Page-Specific Styles */
+/* bank-transactions Page-Specific Styles */
 
-div.table-page-outer.vat-table-outer {
+div.table-page-outer.bank-transactions-table-outer {
   padding: 5rem 5rem 2rem;
 }
 
@@ -32,19 +32,19 @@ div.table-page-outer.vat-table-outer {
 }
 
 /* Default styles - ensuring table can scroll horizontally */
-.vat-table-responsive .rdt_Table,
-.vat-table-responsive table {
+.bank-transactions-table-responsive .rdt_Table,
+.bank-transactions-table-responsive table {
   min-width: 1600px; /* This ensures horizontal scrolling */
   font-size: 1rem;
 }
 
 @media (min-width: 2000px) {
-  .vat-table-responsive {
+  .bank-transactions-table-responsive {
     margin: 3rem;
     height: 75vh;
   }
-  .vat-table-responsive .rdt_Table,
-  .vat-table-responsive table {
+  .bank-transactions-table-responsive .rdt_Table,
+  .bank-transactions-table-responsive table {
     min-width: 2000px;
     font-size: 1.05rem;
   }
@@ -55,12 +55,12 @@ div.table-page-outer.vat-table-outer {
 }
 
 @media (min-width: 2560px) {
-  .vat-table-responsive {
+  .bank-transactions-table-responsive {
     margin: 4rem;
     height: 80vh;
   }
-  .vat-table-responsive .rdt_Table,
-  .vat-table-responsive table {
+  .bank-transactions-table-responsive .rdt_Table,
+  .bank-transactions-table-responsive table {
     min-width: 2400px;
     font-size: 1.15rem;
   }
@@ -71,12 +71,12 @@ div.table-page-outer.vat-table-outer {
 }
 
 @media (min-width: 3440px) {
-  .vat-table-responsive {
+  .bank-transactions-table-responsive {
     margin: 5rem;
     height: 85vh;
   }
-  .vat-table-responsive .rdt_Table,
-  .vat-table-responsive table {
+  .bank-transactions-table-responsive .rdt_Table,
+  .bank-transactions-table-responsive table {
     min-width: 2800px;
     font-size: 1.25rem;
   }
@@ -87,24 +87,24 @@ div.table-page-outer.vat-table-outer {
 }
 
 @media (max-width: 900px) {
-  .vat-table-responsive {
+  .bank-transactions-table-responsive {
     margin: 1rem;
     height: 60vh;
   }
-  .vat-table-responsive .rdt_Table,
-  .vat-table-responsive table {
+  .bank-transactions-table-responsive .rdt_Table,
+  .bank-transactions-table-responsive table {
     min-width: 1400px;
     font-size: 0.85rem;
   }
 }
 
 @media (max-width: 600px) {
-  .vat-table-responsive {
+  .bank-transactions-table-responsive {
     margin: 0.5rem;
     height: 50vh;
   }
-  .vat-table-responsive .rdt_Table,
-  .vat-table-responsive table {
+  .bank-transactions-table-responsive .rdt_Table,
+  .bank-transactions-table-responsive table {
     min-width: 1200px;
     font-size: 0.78rem;
   }

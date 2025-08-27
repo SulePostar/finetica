@@ -25,8 +25,8 @@ const getDetailPageConfig = (pathname) => {
   if (pathname.startsWith('/kif/') && pathname !== '/kif') {
     return { route: '/kif', label: 'KIF' };
   }
-  if (pathname.startsWith('/vat/') && pathname !== '/vat') {
-    return { route: '/vat', label: 'VAT' };
+  if (pathname.startsWith('/bank-transactions/') && pathname !== '/bank-transactions') {
+    return { route: '/bank-transactions', label: 'Bank Transactions' };
   }
   if (pathname.startsWith('/contracts/') && pathname !== '/contracts') {
     return { route: '/contracts', label: 'CONTRACTS' };
