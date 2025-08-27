@@ -19,6 +19,7 @@ import notify from '../../utilis/toastHelper';
 import { colors } from '../../styles/colors';
 import './ProfileForm.css'
 import { useSidebarWidth } from '../../hooks/useSidebarWidth'; // <-- NEW
+const url = import.meta.env.VITE_API_BASE_URL
 
 const ProfileForm = () => {
   const dispatch = useDispatch();
@@ -77,7 +78,7 @@ const ProfileForm = () => {
 
       const payload = { ...formData, profileImage: profileImageUrl };
 
-      const res = await axios.put('http://localhost:4000/api/users/me', payload, {
+      const res = await axios.put(`${url}/users/me`, payload, {
         headers: { Authorization: `Bearer ${localStorage.getItem('jwt_token')}` },
       });
 
