@@ -41,8 +41,6 @@ const InvoiceDetails = () => {
         return ContractService;
       case 'bank-transactions':
         return BankTransactionsService;
-      case 'vat':
-        return VatService;
       case 'kuf':
         return KufService;
     }
