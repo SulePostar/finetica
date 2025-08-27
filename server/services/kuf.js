@@ -155,7 +155,7 @@ const createInvoiceFromAI = async (extractedData, options = {}) => {
   const tx = externalTx || await sequelize.transaction();
   try {
     const { items, ...invoiceData } = extractedData;
-    const document = await SalesInvoice.create({
+    const document = await PurchaseInvoice.create({
       ...invoiceData,
       approvedAt: null,
       approvedBy: null,
