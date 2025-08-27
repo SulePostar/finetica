@@ -1,8 +1,17 @@
-const { UploadedFile, User } = require('../models');
+const { UploadedFile, User, KifProcessingLog } = require('../models');
 const { Op } = require('sequelize');
+const { sequelize } = require('../config/db');
+const kifService = require('../services/kif');
 const supabaseService = require('../utils/supabase/supabaseService');
 const AppError = require('../utils/errorHandler');
-
+const PIPELINES = {
+  kif: {
+    logModel: KifProcessingLog,
+    extract: (buf, mime) => kifService.extractKifData(buf, mime),
+    persist: (data, t) => kifService.createKifFromAI(data, { transaction: t }),
+    successMessage: 'KIF processed successfully'
+  }
+};
 class UploadedFilesService {
   /**
    * Get allowed buckets for file uploads
@@ -11,7 +20,6 @@ class UploadedFilesService {
   getAllowedBuckets() {
     return ['kif', 'kuf', 'transactions', 'contracts', 'user-images'];
   }
-
   /**
    * Validate bucket name
    * @param {string} bucketName - Bucket name to validate
@@ -19,24 +27,20 @@ class UploadedFilesService {
    */
   validateBucket(bucketName) {
     const allowedBuckets = this.getAllowedBuckets();
-
     if (!bucketName) {
       return {
         isValid: false,
         error: 'Bucket name is required',
       };
     }
-
     if (!allowedBuckets.includes(bucketName)) {
       return {
         isValid: false,
         error: `Invalid bucket name. Allowed buckets: ${allowedBuckets.join(', ')}`,
       };
     }
-
     return { isValid: true };
   }
-
   /**
    * Prepare file data from request body and user info
    * @param {Object} requestBody - Request body containing file data
@@ -49,7 +53,6 @@ class UploadedFilesService {
       uploadedBy: userId,
     };
   }
-
   /**
    * Create a new file record in the database
    * @param {Object} fileData - File data object
@@ -70,7 +73,6 @@ class UploadedFilesService {
       throw new AppError(`Failed to create file record: ${error.message}`, 500);
     }
   }
-
   /**
    * Parse and validate query parameters for file listing
    * @param {Object} query - Raw query parameters from request
@@ -86,7 +88,6 @@ class UploadedFilesService {
       search: query.search,
     };
   }
-
   /**
    * Get all files with pagination and filters
    * @param {Object} options - Query options
@@ -101,19 +102,14 @@ class UploadedFilesService {
   async getFiles(options = {}) {
     try {
       const { page = 1, limit = 10, uploaded_by, bucket_name, is_active = true, search } = options;
-
       const offset = (page - 1) * limit;
       const where = { is_active };
-
-      // Add filters
       if (uploaded_by) {
         where.uploadedBy = uploaded_by;
       }
-
       if (bucket_name) {
         where.bucketName = bucket_name;
       }
-
       if (search) {
         where[Op.or] = [
           { file_name: { [Op.iLike]: `%${search}%` } },
@@ -121,7 +117,6 @@ class UploadedFilesService {
           { description: { [Op.iLike]: `%${search}%` } },
         ];
       }
-
       const { count, rows } = await UploadedFile.findAndCountAll({
         where,
         include: [
@@ -135,7 +130,6 @@ class UploadedFilesService {
         limit: parseInt(limit),
         offset: parseInt(offset),
       });
-
       return {
         files: rows,
         totalFiles: count,
@@ -148,7 +142,6 @@ class UploadedFilesService {
       throw new Error(`Failed to get files: ${error.message}`);
     }
   }
-
   /**
    * Handle complete profile image upload process
    * @param {Object} file - Multer file object
@@ -172,7 +165,6 @@ class UploadedFilesService {
       },
     };
   }
-
   /**
    * Handle complete file upload process
    * @param {Object} file - Multer file object
@@ -186,31 +178,101 @@ class UploadedFilesService {
     if (!bucketValidation.isValid) {
       throw new AppError(bucketValidation.error, 400);
     }
-    const uploadResult = await supabaseService.uploadFile(file, null, bucketName);
+    const pipeline = PIPELINES[bucketName];
+    if (!pipeline) {
+      throw new AppError(`No processing pipeline registered for bucket "${bucketName}"`, 400);
+    }
+    const uploadResult = await supabaseService.uploadFile(
+      file,
+      null,
+      bucketName,
+      undefined,
+      false
+    );
     if (!uploadResult.success) {
       if (uploadResult.code === 'DUPLICATE') {
-        return {
-          success: false,
-          message: uploadResult.error,
-        };
+        return { success: false, message: uploadResult.error };
       }
-      throw new Error(`Upload failed: ${uploadResult.error}`);
+      throw new AppError(`Upload failed: ${uploadResult.error}`, 400);
     }
-    const fileData = {
-      fileName: uploadResult.fileName,
-      fileUrl: uploadResult.publicUrl,
-      fileSize: file.size,
-      mimeType: file.mimetype,
-      uploadedBy: userId,
-      bucketName: bucketName,
-      description: description,
-    };
-    const createdFile = await this.createFileRecord(fileData);
-    return {
-      success: true,
-      data: createdFile,
-    };
+    const objectName = uploadResult.fileName;
+    let logRow;
+    try {
+      const [row, created] = await pipeline.logModel.findOrCreate({
+        where: { filename: objectName },
+        defaults: {
+          filename: objectName,
+          isProcessed: false,
+          processedAt: null,
+          message: 'Processing started',
+        },
+      });
+      if (!created) {
+        await row.update({
+          isProcessed: false,
+          processedAt: null,
+          message: 'Processing restarted',
+        });
+      }
+      logRow = row;
+    } catch (e) {
+      await supabaseService.deleteFile(objectName, bucketName);
+      throw new AppError(`Failed to create processing log: ${e.message}`, 500);
+    }
+    let extracted;
+    try {
+      extracted = await pipeline.extract(file.buffer, file.mimetype);
+    } catch (e) {
+      try {
+        await logRow.update({
+          isProcessed: false,
+          processedAt: new Date(),
+          message: `Extraction error: ${e.message}`.slice(0, 1000),
+        });
+      } finally {
+        await supabaseService.deleteFile(objectName, bucketName);
+      }
+      throw e;
+    }
+    try {
+      const result = await sequelize.transaction(async (t) => {
+        const domainEntity = await pipeline.persist(extracted, t);
+        const createdFile = await UploadedFile.create({
+          fileName: objectName,
+          fileUrl: uploadResult.publicUrl,
+          fileSize: file.size,
+          mimeType: file.mimetype,
+          uploadedBy: userId,
+          bucketName,
+          description,
+          isActive: true,
+        }, { transaction: t });
+        await logRow.update({
+          isProcessed: true,
+          processedAt: new Date(),
+          message: pipeline.successMessage,
+        }, { transaction: t });
+        return { createdFile, domainEntity };
+      });
+      return {
+        success: true,
+        data: {
+          file: result.createdFile,
+          processed: result.domainEntity,
+        },
+      };
+    } catch (e) {
+      try {
+        await logRow.update({
+          isProcessed: false,
+          processedAt: new Date(),
+          message: `Persistence error: ${e.message}`.slice(0, 1000),
+        });
+      } finally {
+        await supabaseService.deleteFile(objectName, bucketName);
+      }
+      throw new AppError(`Failed to save processed data: ${e.message}`, 500);
+    }
   }
 }
-
 module.exports = new UploadedFilesService();
