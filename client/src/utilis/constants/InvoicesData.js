@@ -6,18 +6,18 @@ export const DOCUMENT_FIELD_CONFIGS = {
     { label: 'Invoice Number', key: 'invoiceNumber' },
     { label: 'Bill Number', key: 'billNumber' },
     { label: 'Supplier', key: 'supplier_name' },
-    { label: 'Supplier ID', key: 'supplierId' },
-    { label: 'VAT Period', key: 'vatPeriod' },
-    { label: 'Invoice Type', key: 'invoiceType' },
-    { label: 'Invoice Date', key: 'invoiceDate' },
-    { label: 'Due Date', key: 'dueDate' },
-    { label: 'Received Date', key: 'receivedDate' },
-    { label: 'Net Total', key: 'netTotal' },
-    { label: 'Lump Sum', key: 'lumpSum' },
-    { label: 'VAT Amount', key: 'vatAmount' },
-    { label: 'Deductible VAT', key: 'deductibleVat' },
-    { label: 'Non-deductible VAT', key: 'nonDeductibleVat' },
-    { label: 'VAT Exempt Region', key: 'vatExemptRegion' },
+    { label: 'Supplier ID', key: 'supplier_id' },
+    { label: 'bank-transactions Period', key: 'vat_period' },
+    { label: 'Invoice Type', key: 'invoice_type' },
+    { label: 'Invoice Date', key: 'invoice_date' },
+    { label: 'Due Date', key: 'due_date' },
+    { label: 'Received Date', key: 'received_date' },
+    { label: 'Net Total', key: 'net_total' },
+    { label: 'Lump Sum', key: 'lump_sum' },
+    { label: 'bank-transactions Amount', key: 'vat_amount' },
+    { label: 'Deductible bank-transactions', key: 'deductible_vat' },
+    { label: 'Non-deductible bank-transactions', key: 'non_deductible_vat' },
+    { label: 'bank-transactions Exempt Region', key: 'vat_exempt_region' },
     { label: 'Note', key: 'note' },
     { label: 'Created', key: 'created_at' },
     { label: 'Updated', key: 'updated_at' },
@@ -27,13 +27,24 @@ export const DOCUMENT_FIELD_CONFIGS = {
     { label: 'Bill Number', key: 'billNumber' },
     { label: 'Customer', key: 'customerName' },
     { label: 'Customer ID', key: 'customerId' },
-    { label: 'VAT Period', key: 'vatPeriod' },
+    { label: 'bank-transactions Period', key: 'vatPeriod' },
     { label: 'Invoice Type', key: 'invoiceType' },
     { label: 'Invoice Date', key: 'invoiceDate' },
     { label: 'Due Date', key: 'dueDate' },
     { label: 'Delivery Period', key: 'deliveryPeriod' },
     { label: 'Total Amount', key: 'totalAmount' },
-    { label: 'VAT Category', key: 'vatCategory' },
+    { label: 'bank-transactions Category', key: 'vatCategory' },
+    { label: 'Invoice Number', key: 'invoiceNumber' },
+    { label: 'Bill Number', key: 'billNumber' },
+    { label: 'Customer', key: 'customerName' },
+    { label: 'Customer ID', key: 'customerId' },
+    { label: 'bank-transactions Period', key: 'vatPeriod' },
+    { label: 'Invoice Type', key: 'invoiceType' },
+    { label: 'Invoice Date', key: 'invoiceDate' },
+    { label: 'Due Date', key: 'dueDate' },
+    { label: 'Delivery Period', key: 'deliveryPeriod' },
+    { label: 'Total Amount', key: 'totalAmount' },
+    { label: 'bank-transactions Category', key: 'vatCategory' },
     { label: 'Note', key: 'note' },
     { label: 'Created', key: 'created_at' },
     { label: 'Updated', key: 'updated_at' },
@@ -53,15 +64,20 @@ export const DOCUMENT_FIELD_CONFIGS = {
     { label: 'Created', key: 'createdAt' },
     { label: 'Updated', key: 'updatedAt' },
   ],
-  vat: [
+  "bank-transactions": [
     { label: 'ID', key: 'id' },
-    { label: 'Product Name', key: 'name' },
-    { label: 'Amount', key: 'amount' },
-    { label: 'Price', key: 'price' },
     { label: 'Date', key: 'date' },
-    { label: 'Document Number', key: 'documentNumber' },
-    { label: 'Total Price', key: 'totalPrice' },
+    { label: 'Amount', key: 'amount' },
+    { label: 'Direction', key: 'direction' },
+    { label: 'Account Number', key: 'accountNumber' },
+    // { label: 'Description', key: 'description' },
+    { label: 'Invoice ID', key: 'invoiceId' },
+    { label: 'Partner Name', key: 'BusinessPartner.name' },
+    { label: 'Category', key: 'TransactionCategory.name' },
+    { label: 'Created at', key: 'created_at' },
+    { label: 'Updated at', key: 'updated_at' }
   ],
+
 };
 /**
  * Formats values based on their type and context
@@ -84,7 +100,7 @@ export const formatValue = (value, key, currency = 'BAM') => {
   if (
     key.includes('amount') ||
     key.includes('total') ||
-    key.includes('vat') ||
+    key.includes('bank-transactions') ||
     key.includes('sum')
   ) {
     if (typeof value === 'number') {
@@ -152,7 +168,7 @@ export const createMockVatData = (id = '1') => ({
   amount: 10,
   price: 25.5,
   date: '2025-08-10',
-  document_number: `VAT-${id}`,
+  document_number: `bank-transactions-${id}`,
   total_price: 25.5 * 10,
   status: 'pending',
   created_at: '2025-08-11',
