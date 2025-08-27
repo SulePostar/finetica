@@ -9,7 +9,7 @@ class UploadedFilesService {
    * @returns {Array<string>} Array of allowed bucket names
    */
   getAllowedBuckets() {
-    return ['kif', 'kuf', 'transactions'];
+    return ['kif', 'kuf', 'transactions', 'contracts'];
   }
 
   /**
