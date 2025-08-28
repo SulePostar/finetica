@@ -1,4 +1,4 @@
-const db = require('../models');
+const { BusinessPartner } = require('../models');
 const AppError = require('../utils/errorHandler');
 
 /**
@@ -8,9 +8,6 @@ const AppError = require('../utils/errorHandler');
  */
 const createBusinessPartner = async (partnerData) => {
     try {
-        // Get the BusinessPartner model
-        const BusinessPartner = db.BusinessPartner;
-
         // Create the business partner in the database
         const partner = await BusinessPartner.create(partnerData);
 
@@ -32,8 +29,6 @@ const createBusinessPartner = async (partnerData) => {
  */
 const getBusinessPartnerById = async (id) => {
     try {
-        const BusinessPartner = db.BusinessPartner;
-
         const partner = await BusinessPartner.findByPk(id);
 
         if (!partner) {
@@ -56,8 +51,6 @@ const getBusinessPartnerById = async (id) => {
  */
 const getAllBusinessPartners = async () => {
     try {
-        const BusinessPartner = db.BusinessPartner;
-
         const partners = await BusinessPartner.findAll({
             order: [['id', 'ASC']]
         });
@@ -71,8 +64,32 @@ const getAllBusinessPartners = async () => {
     }
 };
 
+const deactivateBusinessPartner = async (id) => {
+    const partner = await BusinessPartner.findByPk(id);
+
+    if (!partner) {
+        throw new AppError(`Business partner with ID ${id} not found`, 404);
+    }
+
+    if (partner.isActive === false) {
+        throw new AppError(`Business partner with ID ${id} is already inactive`, 400);
+    }
+
+    await partner.update(
+        { isActive: false },
+        { where: { id } }
+    );
+
+    return {
+        success: true,
+        message: 'Business partner deleted successfully'
+    };
+
+};
+
 module.exports = {
     createBusinessPartner,
     getBusinessPartnerById,
-    getAllBusinessPartners
+    getAllBusinessPartners,
+    deactivateBusinessPartner
 };
