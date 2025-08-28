@@ -2,6 +2,7 @@ const {
   createBusinessPartner,
   getBusinessPartnerById,
   getAllBusinessPartners,
+  deactivateBusinessPartner,
   updateBusinessPartnerById,
 } = require('../services/businessPartner');
 
@@ -59,6 +60,16 @@ const getPartner = async (req, res, next) => {
   }
 };
 
+const softDeletePartner = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await deactivateBusinessPartner(parseInt(id));
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const updateBusinessPartner = async (req, res, next) => {
   console.log(req.params);
   const { id } = req.params;
@@ -85,5 +96,6 @@ module.exports = {
   createNewBusinessPartner,
   getPartner,
   getAllPartners,
+  softDeletePartner,
   updateBusinessPartner,
 };
