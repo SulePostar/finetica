@@ -1,35 +1,15 @@
-const { createBusinessPartner, getBusinessPartnerById, getAllBusinessPartners } = require('../services/businessPartner');
+const { listBusinessPartners, getBusinessPartnerById, createBusinessPartner } = require('../services/businessPartner');
 
 /**
- * Create a new business partner
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
- */
-const createNewBusinessPartner = async (req, res, next) => {
-    try {
-        // Partner data is already validated by the validation middleware
-        const partnerData = req.body;
-
-        // Create the partner in the database and get formatted response
-        const result = await createBusinessPartner(partnerData);
-
-        // Return the result with a 201 status code
-        res.status(201).json(result);
-    } catch (error) {
-        next(error);
-    }
-};
-
-/**
- * Get all business partners
+ * Get all business partners with pagination
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
  */
 const getAllPartners = async (req, res, next) => {
     try {
-        const result = await getAllBusinessPartners();
+        // Prosledi req.query servisu da bi paginacija radila
+        const result = await listBusinessPartners(req.query);
         res.json(result);
     } catch (error) {
         next(error);
@@ -45,17 +25,31 @@ const getAllPartners = async (req, res, next) => {
 const getPartner = async (req, res, next) => {
     try {
         const { id } = req.params;
-
-        const result = await getBusinessPartnerById(parseInt(id));
-
+        const result = await getBusinessPartnerById(parseInt(id, 10));
         res.json(result);
     } catch (error) {
         next(error);
     }
 };
 
+/**
+ * Create a new business partner
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next middleware function
+ */
+const createNewBusinessPartner = async (req, res, next) => {
+    try {
+        const partnerData = req.body;
+        const result = await createBusinessPartner(partnerData);
+        res.status(201).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
-    createNewBusinessPartner,
+    getAllPartners,
     getPartner,
-    getAllPartners
+    createNewBusinessPartner,
 };

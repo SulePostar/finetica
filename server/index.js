@@ -53,7 +53,7 @@ app.use('/api/kuf', kufRouter);
 app.use('/api/transactions', bankTransactionRouter);
 app.use(mailRoute);
 app.use('/api/contracts', contractRouter);
-app.use('/api/business-partners', businessPartnerRouter);
+app.use('/api/partners', businessPartnerRouter);
 app.use('/drive', googleDriveRouter);
 app.use('/api/user-statuses', userStatusRouter);
 app.use('/api/user-roles', userRoleRouter);

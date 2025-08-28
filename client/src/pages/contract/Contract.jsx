@@ -128,6 +128,7 @@ const Contract = () => {
           row={row}
           onView={handleView}
           onApprove={() => handleApprove(row.id)}
+          onDownload={() => handleDownload(row.id)} 
           isApproved={Boolean(row.approvedAt || row.approvedBy || row.status === 'approved')}
           {...(row.approvedAt === null && { onApprove: () => handleApprove(row.id) })}
         />

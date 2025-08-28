@@ -1,78 +1,56 @@
-const db = require('../models');
+const { BusinessPartner } = require('../models');
 const AppError = require('../utils/errorHandler');
 
 /**
- * Create a new business partner in the database
- * @param {Object} partnerData - The business partner data
- * @returns {Promise<Object>} - Response object with success status, message and partner data
+ * Lista sve poslovne partnere sa paginacijom.
+ * @param {object} query - Query parametri iz URL-a (npr. page, perPage).
+ * @returns {Promise<{data: Array, total: number}>}
  */
-const createBusinessPartner = async (partnerData) => {
-    try {
-        // Get the BusinessPartner model
-        const BusinessPartner = db.BusinessPartner;
+const listBusinessPartners = async ({ page = 1, perPage = 10 }) => {
+    const limit = Math.max(1, Number(perPage) || 10);
+    const offset = Math.max(0, (Number(page) || 1) - 1) * limit;
 
-        // Create the business partner in the database
-        const partner = await BusinessPartner.create(partnerData);
+    // Koristimo findAndCountAll za paginaciju
+    const { rows, count } = await BusinessPartner.findAndCountAll({
+        offset,
+        limit,
+        order: [['created_at', 'DESC']],
+    });
 
-        // Return formatted response
-        return {
-            success: true,
-            message: 'Business partner created successfully',
-            data: partner
-        };
-    } catch (error) {
-        throw new AppError(`Failed to create business partner: ${error.message}`, 500);
-    }
+    // Vraćamo čiste objekte, a ne Sequelize instance
+    const data = rows.map((row) => row.get({ plain: true }));
+
+    return { data, total: count };
 };
 
 /**
- * Get a business partner by ID
- * @param {Number} id - The business partner ID
- * @returns {Promise<Object>} - Response object with success status and partner data
+ * Pronalazi partnera po ID-u.
+ * @param {Number} id - ID poslovnog partnera.
+ * @returns {Promise<Object>}
  */
 const getBusinessPartnerById = async (id) => {
-    try {
-        const BusinessPartner = db.BusinessPartner;
+    const partner = await BusinessPartner.findByPk(id);
 
-        const partner = await BusinessPartner.findByPk(id);
-
-        if (!partner) {
-            throw new AppError(`Business partner with ID ${id} not found`, 404);
-        }
-
-        return {
-            success: true,
-            data: partner
-        };
-    } catch (error) {
-        if (error instanceof AppError) {
-            throw error;
-        }
-        throw new AppError(`Failed to get business partner: ${error.message}`, 500);
+    if (!partner) {
+        throw new AppError(`Business partner with ID ${id} not found`, 404);
     }
-};/**
- * Get all business partners
- * @returns {Promise<Object>} - Response object with success status and partners data
+
+    // Vraćamo čist objekat
+    return partner.get({ plain: true });
+};
+
+/**
+ * Kreira novog poslovnog partnera.
+ * @param {Object} partnerData - Podaci za novog partnera.
+ * @returns {Promise<Object>}
  */
-const getAllBusinessPartners = async () => {
-    try {
-        const BusinessPartner = db.BusinessPartner;
-
-        const partners = await BusinessPartner.findAll({
-            order: [['id', 'ASC']]
-        });
-
-        return {
-            success: true,
-            data: partners
-        };
-    } catch (error) {
-        throw new AppError(`Failed to get business partners: ${error.message}`, 500);
-    }
+const createBusinessPartner = async (partnerData) => {
+    const partner = await BusinessPartner.create(partnerData);
+    return partner.get({ plain: true });
 };
 
 module.exports = {
-    createBusinessPartner,
+    listBusinessPartners,
     getBusinessPartnerById,
-    getAllBusinessPartners
+    createBusinessPartner,
 };
