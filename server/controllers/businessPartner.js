@@ -60,6 +60,7 @@ const getPartner = async (req, res, next) => {
 };
 
 const updateBusinessPartner = async (req, res, next) => {
+  console.log(req.params);
   const { id } = req.params;
   const updates = req.body;
 

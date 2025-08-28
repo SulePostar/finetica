@@ -72,13 +72,14 @@ const getAllBusinessPartners = async () => {
 };
 
 const updateBusinessPartnerById = async (id, updates) => {
+  const BusinessPartner = db.BusinessPartner;
+
   const partner = await BusinessPartner.findByPk(id);
 
   if (!partner) {
     return null;
   }
 
-  // Ažuriraj partnera
   await partner.update(updates);
 
   return partner;
