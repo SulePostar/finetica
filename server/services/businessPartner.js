@@ -84,8 +84,6 @@ const deactivateBusinessPartner = async (id) => {
 };
 
 const updateBusinessPartnerById = async (id, updates) => {
-  const BusinessPartner = db.BusinessPartner;
-
   const partner = await BusinessPartner.findByPk(id);
 
   if (!partner) {

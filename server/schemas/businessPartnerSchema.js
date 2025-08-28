@@ -90,7 +90,7 @@ const updateBusinessPartnerSchema = Joi.object({
 
   city: Joi.string().trim().allow(''),
 
-  postCode: Joi.string().trim().allow(''),
+  postalCode: Joi.string().trim().allow(''),
 
   country: Joi.string().trim().allow(''),
 
