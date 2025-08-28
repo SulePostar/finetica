@@ -124,7 +124,7 @@ const Contract = () => {
           onView={handleView}
           onApprove={() => handleApprove(row.id)}
           onDownload={handleDownload}
-          isApproved={Boolean(row.approved_at || row.approved_by || row.status === 'approved')}
+          isApproved={Boolean(row.approvedAt || row.approvedBy || row.status === 'Approved')}
         />
       ),
       ignoreRowClick: true,
