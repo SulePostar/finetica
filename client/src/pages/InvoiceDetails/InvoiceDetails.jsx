@@ -60,8 +60,12 @@ const InvoiceDetails = () => {
     setError(null);
     try {
       const { data } = await service.getById(id);
+      console.log('Fetched document data:', id);
+      console.log('PDF URL:', data.pdfUrl);
       setFormData(data);
+      console.log('PDF URL:', data.pdfUrl);
       setPdfUrl(data.pdfUrl || 'https://pdfobject.com/pdf/sample.pdf');
+      console.log('PDF URL:', data.pdfUrl);
       setIsApproved(computeApproved(data));
     } catch (err) {
       const msg = err?.response?.data?.message || err.message || 'Failed to load document';

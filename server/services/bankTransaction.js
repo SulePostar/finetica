@@ -5,8 +5,6 @@ const BANK_TRANSACTIONS_PROMPT = require('../prompts/BankTransactions');
 const bankTransactionSchema = require('../schemas/bankTransactionSchema');
 const { sequelize } = require('../models');
 const MODEL_NAME = 'gemini-2.5-flash-lite';
-const BUCKET_NAME = 'transactions';
-const supabaseService = require('../utils/supabase/supabaseService');
 
 
 const getTransactions = async (query = {}) => {
@@ -69,17 +67,23 @@ const getBankTransactionById = async (id) => {
 const createBankTransactionFromAI = async (extractedData) => {
     const t = await sequelize.transaction();
     try {
-        const { items, ...bankTransactionData } = extractedData;
+        const { items, ...bankTransactionData } = extractedData.data || extractedData;
 
-        const documentData = {
-            ...bankTransactionData,
-            approvedAt: null,
-            approvedBy: null,
-            createdAt: new Date(),
-            updatedAt: new Date(),
+        const dataToSave = {
+            date: bankTransactionData.date,
+            amount: parseFloat(bankTransactionData.amount),
+            direction: bankTransactionData.direction,
+            account_number: bankTransactionData.accountNumber,
+            description: bankTransactionData.description,
+            invoice_id: bankTransactionData.invoiceId ? String(bankTransactionData.invoiceId) : null,
+            partner_id: bankTransactionData.partnerId,
+            category_id: bankTransactionData.categoryId,
+            approved_at: bankTransactionData.approvedAt,
+            approved_by: bankTransactionData.approvedBy,
+            created_at: new Date(),
+            updated_at: new Date()
         };
-
-        const document = await BankTransaction.create(documentData, { transaction: t });
+        const document = await BankTransaction.create(dataToSave, { transaction: t });
 
         if (items && Array.isArray(items) && items.length > 0) {
             const itemsToCreate = items.map(item => ({
@@ -92,16 +96,14 @@ const createBankTransactionFromAI = async (extractedData) => {
             await BankTransaction.bulkCreate(itemsToCreate, { transaction: t });
         }
 
-        await t.commit(); // permanently save all the changes
+        await t.commit();
 
-        const responseData = {
+        return {
             ...document.toJSON(),
             items: items || []
         };
-
-        return responseData;
     } catch (error) {
-        await t.rollback(); // cancel everything if an error happens.
+        await t.rollback();
         console.error("Database Error:", error);
         throw new AppError('Failed to save bank transaction to database', 500);
     }
@@ -214,13 +216,7 @@ const editBankTransaction = async (id, updatedData) => {
 
 const processBankTransaction = async (fileBuffer, mimeType, fileName, model = "gemini-2.5-flash-lite") => {
     try {
-        const extractedData = await processDocument(
-            fileBuffer,
-            mimeType,
-            bankTransactionSchema,
-            model,
-            BANK_TRANSACTIONS_PROMPT
-        );
+        const extractedData = await extractData(fileBuffer, mimeType);
 
         const bankTransaction = await createBankTransactionFromAI(extractedData);
         await processUnprocessedFiles(fileName);
@@ -229,7 +225,9 @@ const processBankTransaction = async (fileBuffer, mimeType, fileName, model = "g
             data: bankTransaction
         };
     } catch (error) {
+        console.error('Error: ', error);
         throw new AppError('Failed to process Bank Transaction document', 500);
+
     }
 };
 
@@ -249,6 +247,7 @@ const extractData = async (fileBuffer, mimeType) => {
 };
 
 const processUnprocessedFiles = async (name) => {
+    console.log(`Marking file ${name} as processed in logs.`);
     try {
         await BankTransactionProcessingLog.update(
             {
@@ -256,7 +255,7 @@ const processUnprocessedFiles = async (name) => {
                 processedAt: new Date(),
             },
             {
-                where: { fileName: name },
+                where: { fileName: name }
             }
         );
         return { success: true, fileName: name };
@@ -266,6 +265,19 @@ const processUnprocessedFiles = async (name) => {
     }
 };
 
+const getUnprocessedFiles = async () => {
+    try {
+        const files = await BankTransactionProcessingLog.findAll({
+            where: { isProcessed: false },
+            attributes: ['fileName'], // only select the fileName column
+        });
+
+        return files.map(f => f.fileName);
+    } catch (error) {
+        console.error('Failed to fetch unprocessed files:', error);
+        throw new Error('Could not fetch unprocessed files');
+    }
+};
 
 module.exports = {
     getTransactions,
@@ -275,5 +287,6 @@ module.exports = {
     approveBankTransactionById,
     editBankTransaction,
     processBankTransaction,
-    processUnprocessedFiles
+    processUnprocessedFiles,
+    getUnprocessedFiles
 };

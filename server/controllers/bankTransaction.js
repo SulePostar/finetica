@@ -3,8 +3,7 @@ const {
     getBankTransactionById,
     createBankTransactionManually,
     approveBankTransactionById,
-    editBankTransaction,
-    processBankTransaction,
+    editBankTransaction
 } = require('../services/bankTransaction');
 
 const getBankTransactions = async (req, res, next) => {
@@ -39,23 +38,6 @@ const createBankTransaction = async (req, res) => {
     }
 };
 
-const processTransaction = async (req, res, next) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ error: 'No file uploaded' });
-        }
-
-        const { buffer, mimetype, originalname } = req.file;
-        const { model } = req.body;
-
-        const result = await processBankTransaction(buffer, mimetype, originalname, model);
-
-        res.json(result);
-    } catch (error) {
-        next(error);
-    }
-};
-
 const approveTransaction = async (req, res) => {
     const { id: transactionId } = req.params;
     const { userId } = req.user;
@@ -80,7 +62,6 @@ const updatedDocument = async (req, res) => {
 module.exports = {
     getBankTransactions,
     getTransactionById,
-    processTransaction,
     createBankTransaction,
     approveTransaction,
     updatedDocument

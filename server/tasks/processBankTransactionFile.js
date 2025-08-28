@@ -1,33 +1,47 @@
 const fs = require('fs');
 const path = require('path');
-const { processDocument, createBankTransactionFromAI, processUnprocessedFiles } = require('./services/bankTransaction');
-const bankTransactionSchema = require('../schemas/bankTransactionSchema');
-const BANK_TRANSACTIONS_PROMPT = require('../prompts/bankTransactionsPrompt');
-const AppError = require('./utils/errorHandler');
+const { processBankTransaction, processUnprocessedFiles, getUnprocessedFiles } = require('../services/bankTransaction');
+const mime = require('mime');
 
 const MODEL_NAME = 'gemini-2.5-flash-lite';
-const filePath = process.argv[2]; // pass file path as command line arg
-const model = process.argv[3] || MODEL_NAME;
+const folderPath = "./googleDriveDownloads/";
+const model = process.argv[2] || MODEL_NAME;
+const Logger = require('../utils/logger');
 
 (async () => {
     try {
-        const buffer = fs.readFileSync(path.resolve(filePath));
-        const mimeType = 'application/octet-stream'; // or set proper MIME if known
-        const fileName = path.basename(filePath);
+        const allFiles = fs.readdirSync(folderPath); // all files in folder
+        const unprocessedFiles = await getUnprocessedFiles();
+        Logger.info('Unprocessed files from DB: ' + JSON.stringify(unprocessedFiles));
 
-        console.log(`Processing file: ${fileName} with model: ${model}`);
+        // Filter folder files to only unprocessed ones
+        const filesToProcess = allFiles.filter(f => unprocessedFiles.includes(f));
 
-        const extractedData = await processDocument(buffer, mimeType, bankTransactionSchema, model, BANK_TRANSACTIONS_PROMPT);
-        const bankTransaction = await createBankTransactionFromAI(extractedData);
+        if (filesToProcess.length === 0) {
+            Logger.info('No unprocessed files found.');
+            process.exit(0);
+        }
 
-        console.log('Bank transaction created:', bankTransaction);
+        for (const file of filesToProcess) {
+            const filePath = path.join(folderPath, file);
+            const buffer = fs.readFileSync(filePath);
+            const mimeType = mime.getType(filePath) || 'application/pdf';
+            const fileName = path.basename(filePath);
 
-        await processUnprocessedFiles(fileName);
+            Logger.info(`Processing file: ${fileName}`);
 
-        console.log(`File ${fileName} processed successfully`);
+            try {
+                await processBankTransaction(buffer, mimeType, fileName, model);
+                await processUnprocessedFiles(fileName);
+                Logger.info(`File ${fileName} processed successfully`);
+            } catch (err) {
+                Logger.error(`Failed to process file ${fileName}:`, err);
+            }
+        }
+
         process.exit(0);
     } catch (error) {
-        console.error('Failed to process bank transaction file:', error);
+        Logger.error('Error reading folder or processing files:', error);
         process.exit(1);
     }
 })();

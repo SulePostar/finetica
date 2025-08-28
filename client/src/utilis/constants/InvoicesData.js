@@ -73,10 +73,14 @@ export const DOCUMENT_FIELD_CONFIGS = {
     { label: 'Account Number', key: 'accountNumber' },
     // { label: 'Description', key: 'description' },
     { label: 'Invoice ID', key: 'invoiceId' },
+    { label: 'Partner ID', key: 'BusinessPartner.id' },
     { label: 'Partner Name', key: 'BusinessPartner.name' },
+    { label: 'Category ID', key: 'TransactionCategory.id' },
     { label: 'Category', key: 'TransactionCategory.name' },
     { label: 'Created at', key: 'created_at' },
-    { label: 'Updated at', key: 'updated_at' }
+    { label: 'Updated at', key: 'updated_at' },
+    { label: 'Approved at', key: 'approved_at' },
+    { label: 'Approved by', key: 'approved_by' }
   ],
 
 };
