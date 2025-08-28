@@ -12,6 +12,7 @@ const DocumentDetails = React.lazy(() => import('../pages/DocumentDetails/Docume
 const BankTransactions = React.lazy(() => import('../pages/BankTransactions/BankTransactions'));
 const Kuf = React.lazy(() => import('../pages/kuf/Kuf'));
 const Contracts = React.lazy(() => import('../pages/contract/Contract'));
+const Partner = React.lazy(() => import('../pages/partner/Partner')); // 1. Uvezi Partner komponentu
 const ProfilePage = React.lazy(() => import('../pages/Profile/ProfilePage'));
 const GuestWrapper = React.lazy(() => import('../protectedRoutes/GuestWrapper'));
 const ForgotPasswordForm = React.lazy(() => import('../components/Login/ForgotPasswordForm'));
@@ -157,6 +158,24 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/partners"
+          element={
+            <ProtectedRoute>
+              <Partner />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/partners/:id"
+          element={
+            <ProtectedRoute>
+              <DocumentDetails />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/kif/:id/approve"
           element={
