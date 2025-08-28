@@ -5,7 +5,6 @@ const {
     approveBankTransactionById,
     editBankTransaction,
     processBankTransaction,
-    processUnprocessedFiles
 } = require('../services/bankTransaction');
 
 const getBankTransactions = async (req, res, next) => {
@@ -28,7 +27,6 @@ const getTransactionById = async (req, res, next) => {
     }
 };
 
-
 const createBankTransaction = async (req, res) => {
     try {
         const transactionData = req.body;
@@ -43,8 +41,15 @@ const createBankTransaction = async (req, res) => {
 
 const processTransaction = async (req, res, next) => {
     try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+
+        const { buffer, mimetype, originalname } = req.file;
         const { model } = req.body;
-        const result = await processBankTransaction(req.file.buffer, req.file.mimetype, model);
+
+        const result = await processBankTransaction(buffer, mimetype, originalname, model);
+
         res.json(result);
     } catch (error) {
         next(error);
@@ -71,10 +76,6 @@ const updatedDocument = async (req, res) => {
     }
 }
 
-const processUnprocessed = async (req, res, next) => {
-    await processUnprocessedFiles();
-    res.status(200).json({ message: 'Processed' });
-};
 
 module.exports = {
     getBankTransactions,
@@ -82,6 +83,5 @@ module.exports = {
     processTransaction,
     createBankTransaction,
     approveTransaction,
-    updatedDocument,
-    processUnprocessed
+    updatedDocument
 };

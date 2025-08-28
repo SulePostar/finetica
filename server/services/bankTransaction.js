@@ -66,7 +66,6 @@ const getBankTransactionById = async (id) => {
     }
 };
 
-
 const createBankTransactionFromAI = async (extractedData) => {
     const t = await sequelize.transaction();
     try {
@@ -152,6 +151,7 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
         throw new AppError('Failed to create bank transaction', 500);
     }
 };
+
 const approveBankTransactionById = async (id, userId, updatedData = {}) => {
     try {
         const document = await BankTransaction.findByPk(id);
@@ -178,7 +178,6 @@ const approveBankTransactionById = async (id, userId, updatedData = {}) => {
         throw new AppError('Failed to approve and update bank transaction', 500);
     }
 };
-
 
 const editBankTransaction = async (id, updatedData) => {
     try {
@@ -213,8 +212,7 @@ const editBankTransaction = async (id, updatedData) => {
     }
 };
 
-
-const processBankTransaction = async (fileBuffer, mimeType, model = "gemini-2.5-flash-lite") => {
+const processBankTransaction = async (fileBuffer, mimeType, fileName, model = "gemini-2.5-flash-lite") => {
     try {
         const extractedData = await processDocument(
             fileBuffer,
@@ -225,7 +223,7 @@ const processBankTransaction = async (fileBuffer, mimeType, model = "gemini-2.5-
         );
 
         const bankTransaction = await createBankTransactionFromAI(extractedData);
-
+        await processUnprocessedFiles(fileName);
         return {
             success: true,
             data: bankTransaction
@@ -250,36 +248,24 @@ const extractData = async (fileBuffer, mimeType) => {
     return data;
 };
 
-const processSingleUnprocessedFile = async (unprocessedFileLog) => {
+const processUnprocessedFiles = async (name) => {
     try {
-        const { buffer, mimeType } = await supabaseService.getFile(
-            BUCKET_NAME,
-            unprocessedFileLog.fileName
+        await BankTransactionProcessingLog.update(
+            {
+                isProcessed: true,
+                processedAt: new Date(),
+            },
+            {
+                where: { fileName: name },
+            }
         );
-        const extractedData = await extractData(buffer, mimeType);
-        await sequelize.transaction(async (t) => {
-            await createBankTransactionFromAI(extractedData, { transaction: t });
-            await unprocessedFileLog.update(
-                {
-                    isProcessed: true,
-                    processedAt: new Date(),
-                },
-                { transaction: t }
-            );
-        });
+        return { success: true, fileName: name };
     } catch (error) {
-        console.error(`Failed to process log ID ${unprocessedFileLog.id}:`, error);
+        console.error(`Failed to process file with name ${name}:`, error);
+        return { success: false, error: error.message };
     }
 };
 
-const processUnprocessedFiles = async () => {
-    const unprocessedFileLogs = await BankTransactionProcessingLog.findAll({
-        where: { isProcessed: false },
-    });
-    for (const fileLog of unprocessedFileLogs) {
-        await processSingleUnprocessedFile(fileLog);
-    }
-};
 
 module.exports = {
     getTransactions,
@@ -289,6 +275,5 @@ module.exports = {
     approveBankTransactionById,
     editBankTransaction,
     processBankTransaction,
-    processSingleUnprocessedFile,
     processUnprocessedFiles
 };
