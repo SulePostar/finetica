@@ -30,7 +30,7 @@ const Contract = () => {
     [navigate]
   );
 
-  const handleDownload = useCallback((id) => { }, []);
+  const handleDownload = useCallback((id) => {}, []);
 
   const columns = [
     {
@@ -112,9 +112,14 @@ const Contract = () => {
       name: 'Review Status',
       selector: (row) => row.status,
       sortable: true,
-      width: '190px',
-      cell: (row) => (row.approvedAt ? 'Approved' : 'Pending'),
+      width: '150px',
+      cell: (row) => (
+        <span className={`status-badge ${row.approvedAt ? 'active' : 'inactive'}`}>
+          {row.approvedAt ? 'Approved' : 'Pending'}
+        </span>
+      ),
     },
+
     {
       name: 'Actions',
       width: '140px',
@@ -123,8 +128,8 @@ const Contract = () => {
           row={row}
           onView={handleView}
           onApprove={() => handleApprove(row.id)}
-          onDownload={handleDownload}
-          isApproved={Boolean(row.approved_at || row.approved_by || row.status === 'approved')}
+          isApproved={Boolean(row.approvedAt || row.approvedBy || row.status === 'approved')}
+          {...(row.approvedAt === null && { onApprove: () => handleApprove(row.id) })}
         />
       ),
       ignoreRowClick: true,
