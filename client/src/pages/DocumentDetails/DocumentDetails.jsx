@@ -29,6 +29,7 @@ const DocumentDetails = () => {
     if (path.includes('/kuf/')) return 'kuf';
     if (path.includes('/contracts/')) return 'contract';
     if (path.includes('/bank-transactions/')) return 'bank-transactions';
+    if (path.includes('/partners/')) return 'partner';
     return null;
   }, [location.pathname]);
 

@@ -3,7 +3,7 @@ import BankTransactionsService from '../services/bankTransactions';
 import ContractService from '../services/contract';
 import KifService from '../services/kif';
 import KufService from '../services/kuf';
-
+import PartnerService from '../services/businessPartner';
 
 const documentServiceMap = {
     kif: {
@@ -21,6 +21,10 @@ const documentServiceMap = {
     'bank-transactions': {
         getById: BankTransactionsService.getById,
         update: BankTransactionsService.approve,
+    },
+    partner: {
+        getById: PartnerService.getById,
+        update: PartnerService.update,
     },
 };
 
@@ -47,9 +51,13 @@ export const useDocument = (documentType, id) => {
         setLoading(true);
         setError(null);
         try {
-            const { data } = await service.getById(id);
-            setFormData(data);
-            setPdfUrl(data.pdfUrl || 'https://pdfobject.com/pdf/sample.pdf');
+            const response = await service.getById(id);
+            let documentData = response.data; // default for most services
+            if (documentType === 'partner') {
+                documentData = response.data?.data ?? {}; // unwrap nested data
+            }
+            setFormData(documentData);
+            setPdfUrl(documentData.pdfUrl || 'https://pdfobject.com/pdf/sample.pdf');
         } catch (err) {
             const msg = err?.response?.data?.message || err.message || 'Failed to load document';
             setError(msg);

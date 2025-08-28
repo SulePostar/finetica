@@ -205,20 +205,6 @@ const Partner = () => {
             width: '200px',
         },
         {
-            name: 'Created At',
-            selector: (row) => row.createdAt,
-            sortable: true,
-            width: '160px',
-            cell: (row) => (row.created_at ? new Date(row.created_at).toLocaleDateString() : ''),
-        },
-        {
-            name: 'Updated At',
-            selector: (row) => row.updatedAt,
-            sortable: true,
-            width: '160px',
-            cell: (row) => (row.updated_at ? new Date(row.updated_at).toLocaleDateString() : ''),
-        },
-        {
             name: 'Actions',
             width: '140px',
             cell: (row) => (

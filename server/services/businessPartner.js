@@ -102,16 +102,20 @@ const updateBusinessPartnerById = async (id, updates) => {
   const partner = await BusinessPartner.findByPk(id);
 
   if (!partner) {
-    return null;
+    throw new AppError(`Business partner with ID ${id} not found`, 404);
   }
 
   await partner.update(updates);
 
-  return partner;
+  return {
+    success: true,
+    message: 'Business partner updated successfully',
+    data: partner,
+  };
 };
 
 module.exports = {
-  getAllBusinessPartners, 
+  getAllBusinessPartners,
   getBusinessPartnerById,
   createBusinessPartner,
   deactivateBusinessPartner,
