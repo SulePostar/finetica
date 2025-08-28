@@ -113,7 +113,7 @@ const Contract = () => {
       selector: (row) => row.status,
       sortable: true,
       width: '190px',
-      cell: (row) => (row.approvedAt ? 'approved' : 'pending'),
+      cell: (row) => (row.approvedAt ? 'Approved' : 'Pending'),
     },
     {
       name: 'Actions',
