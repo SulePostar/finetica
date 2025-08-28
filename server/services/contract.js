@@ -4,8 +4,28 @@ const { processDocument } = require('./aiService');
 const contractSchema = require('../schemas/contract');
 const contractsPrompt = require('../prompts/contract');
 const supabaseService = require('../utils/supabase/supabaseService');
+
 const MODEL_NAME = 'gemini-2.5-flash-lite';
 const BUCKET_NAME = 'contracts';
+
+const SORT_FIELD_MAP = {
+  id: 'id',
+  partnerId: 'partnerId',
+  contractNumber: 'contractNumber',
+  contractType: 'contractType',
+  description: 'description',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  isActive: 'isActive',
+  paymentTerms: 'paymentTerms',
+  currency: 'currency',
+  amount: 'amount',
+  signedAt: 'signedAt',
+  approvedAt: 'approvedAt',
+  approvedBy: 'approvedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+};
 
 const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
   const limit = Math.max(1, Number(perPage) || 10);

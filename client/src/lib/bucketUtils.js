@@ -8,6 +8,7 @@ const ROUTE_TO_BUCKET_MAP = {
   '/kuf': 'kuf',
   '/transactions': 'transactions', // bank-transactions page
   '/bank-transactions': 'transactions', // Alternative bank-transactions page route
+  '/contracts': 'contracts',
 };
 
 /**
