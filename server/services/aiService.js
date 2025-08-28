@@ -38,7 +38,7 @@ const processDocument = async (fileBuffer, mimeType, responseSchema, model, prom
             },
         });
 
-        const extractedData = JSON.parse(result.text);
+        const extractedData = extractJsonFromResponse(result.text);
 
         // Mark as not approved by default
         extractedData.approvedAt = null;
@@ -50,6 +50,13 @@ const processDocument = async (fileBuffer, mimeType, responseSchema, model, prom
         throw new AppError(`Failed to analyze document with AI: ${error.message}`, 500);
     }
 };
+
+
+const extractJsonFromResponse = (response) => {
+    const match = response.match(/```json\n([\s\S]*?)\n```/);
+    const jsonStr = match ? match[1].trim() : response.trim();
+    return JSON.parse(jsonStr);
+}
 
 module.exports = {
     upload,

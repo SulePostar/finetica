@@ -7,7 +7,7 @@ const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
 const Kif = React.lazy(() => import('../pages/kif/Kif'));
-const InvoiceDetails = React.lazy(() => import('../pages/InvoiceDetails/InvoiceDetails'));
+const DocumentDetails = React.lazy(() => import('../pages/DocumentDetails/DocumentDetails'));
 const BankTransactions = React.lazy(() => import('../pages/BankTransactions/BankTransactions'));
 const Kuf = React.lazy(() => import('../pages/kuf/Kuf'));
 const Contracts = React.lazy(() => import('../pages/contract/Contract'));
@@ -98,7 +98,7 @@ export default function AppRoutes() {
           path="/kif/:id"
           element={
             <ProtectedRoute>
-              <InvoiceDetails />
+              <DocumentDetails />
             </ProtectedRoute>
           }
         />
@@ -114,7 +114,7 @@ export default function AppRoutes() {
           path="/bank-transactions/:id"
           element={
             <ProtectedRoute>
-              <InvoiceDetails />
+              <DocumentDetails />
             </ProtectedRoute>
           }
         />
@@ -130,7 +130,7 @@ export default function AppRoutes() {
           path="/kuf/:id"
           element={
             <ProtectedRoute>
-              <InvoiceDetails />
+              <DocumentDetails />
             </ProtectedRoute>
           }
         />
@@ -154,7 +154,7 @@ export default function AppRoutes() {
           path="/contracts/:id"
           element={
             <ProtectedRoute>
-              <InvoiceDetails />
+              <DocumentDetails />
             </ProtectedRoute>
           }
         />
@@ -162,7 +162,7 @@ export default function AppRoutes() {
           path="/contracts/:id/approve"
           element={
             <ProtectedRoute>
-              <InvoiceDetails />
+              <DocumentDetails />
             </ProtectedRoute>
           }
         />
@@ -170,7 +170,7 @@ export default function AppRoutes() {
           path="/kif/:id/approve"
           element={
             <ProtectedRoute>
-              <InvoiceDetails />
+              <DocumentDetails />
             </ProtectedRoute>
           }
         />
@@ -178,7 +178,7 @@ export default function AppRoutes() {
           path="/kuf/:id/approve"
           element={
             <ProtectedRoute>
-              <InvoiceDetails />
+              <DocumentDetails />
             </ProtectedRoute>
           }
         />
@@ -186,7 +186,7 @@ export default function AppRoutes() {
           path="/bank-transactions/:id/approve"
           element={
             <ProtectedRoute>
-              <InvoiceDetails />
+              <DocumentDetails />
             </ProtectedRoute>
           }
         />
