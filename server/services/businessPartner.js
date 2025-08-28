@@ -2,55 +2,118 @@ const { BusinessPartner } = require('../models');
 const AppError = require('../utils/errorHandler');
 
 /**
- * Lista sve poslovne partnere sa paginacijom.
- * @param {object} query - Query parametri iz URL-a (npr. page, perPage).
- * @returns {Promise<{data: Array, total: number}>}
- */
-const listBusinessPartners = async ({ page = 1, perPage = 10 }) => {
-    const limit = Math.max(1, Number(perPage) || 10);
-    const offset = Math.max(0, (Number(page) || 1) - 1) * limit;
-
-    // Koristimo findAndCountAll za paginaciju
-    const { rows, count } = await BusinessPartner.findAndCountAll({
-        offset,
-        limit,
-        order: [['created_at', 'DESC']],
-    });
-
-    // Vraćamo čiste objekte, a ne Sequelize instance
-    const data = rows.map((row) => row.get({ plain: true }));
-
-    return { data, total: count };
-};
-
-/**
- * Pronalazi partnera po ID-u.
- * @param {Number} id - ID poslovnog partnera.
- * @returns {Promise<Object>}
- */
-const getBusinessPartnerById = async (id) => {
-    const partner = await BusinessPartner.findByPk(id);
-
-    if (!partner) {
-        throw new AppError(`Business partner with ID ${id} not found`, 404);
-    }
-
-    // Vraćamo čist objekat
-    return partner.get({ plain: true });
-};
-
-/**
- * Kreira novog poslovnog partnera.
- * @param {Object} partnerData - Podaci za novog partnera.
+ * Creates a new business partner.
+ * @param {Object} partnerData - Data for the new partner.
  * @returns {Promise<Object>}
  */
 const createBusinessPartner = async (partnerData) => {
+  try {
     const partner = await BusinessPartner.create(partnerData);
-    return partner.get({ plain: true });
+    return {
+      success: true,
+      message: 'Business partner created successfully',
+      data: partner,
+    };
+  } catch (error) {
+    throw new AppError(`Failed to create business partner: ${error.message}`, 500);
+  }
+};
+
+/**
+ * Get all business partners with pagination support.
+ * @param {object} query - Query object containing page and perPage.
+ * @returns {Promise<{data: Array, total: number}>} - Object with paginated data and total count.
+ */
+const getAllBusinessPartners = async ({ page = 1, perPage = 10 } = {}) => {
+  try {
+    const limit = Math.max(1, Number(perPage) || 10);
+    const offset = Math.max(0, (Number(page) || 1) - 1) * limit;
+
+    const { rows, count } = await BusinessPartner.findAndCountAll({
+      offset,
+      limit,
+      order: [['id', 'ASC']],
+    });
+
+    const data = rows.map((row) => row.get({ plain: true }));
+
+    return { data, total: count };
+  } catch (error) {
+    throw new AppError(`Failed to get business partners: ${error.message}`, 500);
+  }
+};
+
+/**
+ * Get a business partner by ID.
+ * @param {Number} id - The business partner ID.
+ * @returns {Promise<Object>}
+ */
+const getBusinessPartnerById = async (id) => {
+  try {
+    const partner = await BusinessPartner.findByPk(id);
+
+    if (!partner) {
+      throw new AppError(`Business partner with ID ${id} not found`, 404);
+    }
+
+    return {
+      success: true,
+      data: partner,
+    };
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw new AppError(`Failed to get business partner: ${error.message}`, 500);
+  }
+};
+
+/**
+ * Deactivates a business partner (soft delete).
+ * @param {Number} id - The business partner ID.
+ * @returns {Promise<Object>}
+ */
+const deactivateBusinessPartner = async (id) => {
+  const partner = await BusinessPartner.findByPk(id);
+
+  if (!partner) {
+    throw new AppError(`Business partner with ID ${id} not found`, 404);
+  }
+
+  if (partner.isActive === false) {
+    throw new AppError(`Business partner with ID ${id} is already inactive`, 400);
+  }
+
+  await partner.update({ isActive: false });
+
+  return {
+    success: true,
+    message: 'Business partner deleted successfully',
+  };
+};
+
+/**
+ * Updates a business partner by ID.
+ * @param {Number} id - The business partner ID.
+ * @param {Object} updates - The data to update.
+ * @returns {Promise<Object|null>}
+ */
+const updateBusinessPartnerById = async (id, updates) => {
+  const partner = await BusinessPartner.findByPk(id);
+
+  if (!partner) {
+    return null;
+  }
+
+  await partner.update(updates);
+
+  return partner;
 };
 
 module.exports = {
-    listBusinessPartners,
-    getBusinessPartnerById,
-    createBusinessPartner,
+  getAllBusinessPartners, 
+  getBusinessPartnerById,
+  createBusinessPartner,
+  deactivateBusinessPartner,
+  updateBusinessPartnerById,
 };
