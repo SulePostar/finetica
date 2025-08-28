@@ -6,7 +6,10 @@ const {
   getAllPartners,
 } = require('../controllers/businessPartner');
 const validate = require('../middleware/validation');
-const { createBusinessPartnerSchema } = require('../schemas/businessPartnerSchema');
+const {
+  createBusinessPartnerSchema,
+  updateBusinessPartnerSchema,
+} = require('../schemas/businessPartnerSchema');
 
 // Get all business partners
 router.get('/', getAllPartners);
