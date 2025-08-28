@@ -7,14 +7,11 @@ const AppError = require('../utils/errorHandler');
 const supabaseService = require('../utils/supabase/supabaseService');
 const MODEL_NAME = 'gemini-2.5-flash-lite';
 const KIF_BUCKET_NAME = 'kif';
-
 const extractKifData = async (fileBuffer, mimeType) => {
     const businessPartners = await BusinessPartner.findAll({
         attributes: ['id', 'name'],
     });
-
     const promptWithPartners = `${KIF_PROMPT}\nAvailable partners: ${JSON.stringify(businessPartners.map(bp => bp.get({ plain: true })))}`;
-
     const data = await processDocument(
         fileBuffer,
         mimeType,
@@ -22,19 +19,15 @@ const extractKifData = async (fileBuffer, mimeType) => {
         MODEL_NAME,
         promptWithPartners
     );
-
     return data;
 };
-
 const processSingleUnprocessedKifFile = async (fileLog) => {
     try {
         const { buffer, mimeType } = await supabaseService.getFile(
             KIF_BUCKET_NAME,
             fileLog.filename
         );
-
         const extractedData = await extractKifData(buffer, mimeType);
-
         await sequelize.transaction(async (t) => {
             await createKifFromAI(extractedData, { transaction: t });
             await fileLog.update({
@@ -56,7 +49,6 @@ const processSingleUnprocessedKifFile = async (fileLog) => {
         }
     }
 };
-
 const processUnprocessedKifFiles = async () => {
     const unprocessed = await KifProcessingLog.findAll({ where: { isProcessed: false } });
     for (const log of unprocessed) {
@@ -64,58 +56,44 @@ const processUnprocessedKifFiles = async () => {
     }
     return { processed: unprocessed.length };
 };
-
-const createKifFromAI = async (extractedData) => {
-    const transaction = await sequelize.transaction();
-
-    try {
-        const { items, ...invoiceData } = extractedData;
-
-        const documentData = {
-            ...invoiceData,
-            approvedAt: null,
-            approvedBy: null,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        };
-
-        // Create the sales invoice within transaction
-        const document = await SalesInvoice.create(documentData, { transaction });
-
-        // Create sales invoice items if they exist
-        if (items && Array.isArray(items) && items.length > 0) {
-            const itemsToCreate = items.map(item => ({
-                ...item,
-                invoiceId: document.id,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            }));
-
-            await SalesInvoiceItem.bulkCreate(itemsToCreate, { transaction });
-        }
-
-        await transaction.commit();
-
-        const responseData = {
-            ...document.toJSON(),
-            items: items || []
-        };
-
-        return responseData;
-    } catch (error) {
-        await transaction.rollback();
-        console.error("Database Error:", error);
-        throw new AppError('Failed to save KIF sales invoice to database', 500);
+const createKifFromAI = async (extractedData, options = {}) => {
+  const externalTx = options.transaction;
+  const tx = externalTx || await sequelize.transaction();
+  try {
+    const { items, ...invoiceData } = extractedData;
+    const document = await SalesInvoice.create({
+      ...invoiceData,
+      approvedAt: null,
+      approvedBy: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }, { transaction: tx });
+    if (Array.isArray(items) && items.length) {
+      await SalesInvoiceItem.bulkCreate(
+        items.map(it => ({
+          ...it,
+          invoiceId: document.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })),
+        { transaction: tx }
+      );
     }
+    if (!externalTx) await tx.commit();
+    return {
+      ...document.toJSON(),
+      items: items || [],
+    };
+  } catch (error) {
+    if (!externalTx) await tx.rollback();
+    throw new AppError('Failed to save KIF sales invoice to database', 500);
+  }
 };
-
 // KIF-specific function to create sales invoice from manual data
 const createKif = async (invoiceData, userId) => {
     const transaction = await sequelize.transaction();
-
     try {
         const { items, ...documentData } = invoiceData;
-
         const finalDocumentData = {
             ...documentData,
             approvedAt: null,
@@ -124,10 +102,8 @@ const createKif = async (invoiceData, userId) => {
             createdAt: new Date(),
             updatedAt: new Date(),
         };
-
         // Create the sales invoice within transaction
         const document = await SalesInvoice.create(finalDocumentData, { transaction });
-
         // Create sales invoice items if they exist
         if (items && Array.isArray(items) && items.length > 0) {
             const itemsToCreate = items.map(item => ({
@@ -136,12 +112,9 @@ const createKif = async (invoiceData, userId) => {
                 createdAt: new Date(),
                 updatedAt: new Date(),
             }));
-
             await SalesInvoiceItem.bulkCreate(itemsToCreate, { transaction });
         }
-
         await transaction.commit();
-
         // Fetch the created invoice with its items (outside transaction since it's committed)
         const createdInvoice = await SalesInvoice.findByPk(document.id, {
             include: [
@@ -153,7 +126,6 @@ const createKif = async (invoiceData, userId) => {
                 }
             ]
         });
-
         return createdInvoice;
     } catch (error) {
         await transaction.rollback();
@@ -161,23 +133,18 @@ const createKif = async (invoiceData, userId) => {
         throw new AppError('Failed to create KIF sales invoice', 500);
     }
 };
-
 // KIF-specific function to approve a sales invoice
 const approveKif = async (documentId, updatedData = {}, userId) => {
     try {
         const document = await SalesInvoice.findByPk(documentId);
-
         if (!document) {
             throw new AppError('KIF sales invoice not found', 404);
         }
-
         if (document.approvedAt) {
             throw new AppError('Invoice is already approved', 400);
         }
-
         // Extract items from the updated data if provided
         const { items, ...invoiceUpdateData } = updatedData;
-
         // Prepare data to update (including approval fields)
         const dataToUpdate = {
             ...invoiceUpdateData,
@@ -185,20 +152,16 @@ const approveKif = async (documentId, updatedData = {}, userId) => {
             approvedBy: userId,
             updatedAt: new Date(),
         };
-
         // Update the sales invoice
         const updatedDocument = await document.update(dataToUpdate);
-
         // Update sales invoice items if they exist
         if (items && Array.isArray(items)) {
             // Get existing items
             const existingItems = await SalesInvoiceItem.findAll({
                 where: { invoiceId: documentId }
             });
-
             const existingItemsMap = new Map(existingItems.map(item => [item.id, item]));
             const updatedItemIds = new Set();
-
             // Process each item in the update
             for (const item of items) {
                 if (item.id && existingItemsMap.has(item.id)) {
@@ -224,12 +187,10 @@ const approveKif = async (documentId, updatedData = {}, userId) => {
                 }
             }
         }
-
         // Fetch updated items to return
         const updatedItems = await SalesInvoiceItem.findAll({
             where: { invoiceId: documentId }
         });
-
         // Fetch the complete document with BusinessPartner relationship
         const completeDocument = await SalesInvoice.findByPk(documentId, {
             include: [
@@ -242,7 +203,6 @@ const approveKif = async (documentId, updatedData = {}, userId) => {
                 }
             ]
         });
-
         const documentData = completeDocument.toJSON();
         return {
             ...documentData,
@@ -253,22 +213,18 @@ const approveKif = async (documentId, updatedData = {}, userId) => {
         throw new AppError('Failed to approve KIF sales invoice', 500);
     }
 };
-
 const getKifs = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
     try {
         const offset = (page - 1) * perPage;
         const limit = parseInt(perPage);
-
         let orderOptions = [];
         if (sortField) {
             orderOptions = [[sortField, sortOrder.toUpperCase()]];
         } else {
             orderOptions = [['id', 'ASC']];
         }
-
         // Get total count
         const total = await SalesInvoice.count();
-
         // Get paginated data with associated items and business partner
         const salesInvoices = await SalesInvoice.findAll({
             include: [
@@ -284,7 +240,6 @@ const getKifs = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' })
             limit,
             offset
         });
-
         const transformedData = salesInvoices.map(invoice => {
             const invoiceData = invoice.toJSON();
             return {
@@ -292,13 +247,11 @@ const getKifs = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' })
                 customerName: invoiceData.BusinessPartner?.name || null
             };
         });
-
         return { data: transformedData, total };
     } catch (error) {
         throw new AppError('Failed to fetch KIF data', 500);
     }
 };
-
 const getKifById = async (id) => {
     try {
         const salesInvoice = await SalesInvoice.findByPk(id, {
@@ -312,11 +265,9 @@ const getKifById = async (id) => {
                 }
             ]
         });
-
         if (!salesInvoice) {
             throw new AppError('Sales invoice not found', 404);
         }
-
         const invoiceData = salesInvoice.toJSON();
         return {
             ...invoiceData,
@@ -326,7 +277,6 @@ const getKifById = async (id) => {
         throw new AppError('Failed to fetch KIF by ID', 500);
     }
 };
-
 // AI Document Process Service for KIF
 const processKif = async (fileBuffer, mimeType, model = "gemini-2.5-flash-lite") => {
     try {
@@ -337,9 +287,7 @@ const processKif = async (fileBuffer, mimeType, model = "gemini-2.5-flash-lite")
             model,
             KIF_PROMPT
         );
-
         const invoice = await createKifFromAI(extractedData);
-
         return {
             success: true,
             data: invoice
@@ -348,7 +296,6 @@ const processKif = async (fileBuffer, mimeType, model = "gemini-2.5-flash-lite")
         throw new AppError('Failed to process KIF document', 500);
     }
 };
-
 module.exports = {
     getKifs,
     getKifById,
