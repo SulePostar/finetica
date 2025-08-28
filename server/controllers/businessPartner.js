@@ -2,6 +2,7 @@ const {
   createBusinessPartner,
   getBusinessPartnerById,
   getAllBusinessPartners,
+  updateBusinessPartnerById,
 } = require('../services/businessPartner');
 
 /**
@@ -67,15 +68,13 @@ const updateBusinessPartner = async (req, res, next) => {
       return res.status(400).json({ message: 'No data provided for update' });
     }
 
-    const partner = await BusinessPartner.findByPk(id);
+    const updatedPartner = await updateBusinessPartnerById(id, updates);
 
-    if (!partner) {
+    if (!updatedPartner) {
       return res.status(404).json({ message: 'Business partner not found' });
     }
 
-    await partner.update(updates);
-
-    res.status(200).json(partner);
+    res.status(200).json(updatedPartner);
   } catch (error) {
     next(error);
   }
