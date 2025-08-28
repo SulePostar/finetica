@@ -48,16 +48,6 @@ const DocumentDetails = () => {
     handleCancel,
   } = useDocument(documentType, id);
 
-  <ActionButtons
-    isApproveMode={isApproveMode}
-    isEditing={isEditing}
-    isApproved={isApproved}
-    handleSave={handleSave}
-    handleCancel={handleCancel}
-    handleApprove={handleApprove}
-    handleEdit={handleEdit}
-  />;
-
   const cardTitle = isApproveMode
     ? 'Approve Document'
     : `View ${documentType?.toUpperCase() || 'Document'} Details`;
