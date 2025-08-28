@@ -34,4 +34,5 @@ Rules:
 - If a field is missing in the PDF, return null.
 - Do NOT invent data, only extract what is present.
 - Always return **valid JSON only**, no extra text outside the JSON.
+- The "supplierId" must match one of the provided business partners.
 `;
