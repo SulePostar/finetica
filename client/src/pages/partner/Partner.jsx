@@ -1,4 +1,5 @@
-import { useCallback, useMemo } from 'react';
+import { CButton, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle } from '@coreui/react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
 import DynamicTable from '../../components/Tables/DynamicTable';
@@ -9,6 +10,9 @@ import './Partner.css';
 const Partner = () => {
     const navigate = useNavigate();
     const sidebarWidth = useSidebarWidth();
+
+    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+    const [partnerToDelete, setPartnerToDelete] = useState(null);
 
     const API_BASE = import.meta.env.VITE_API_BASE_URL;
     const apiEndpoint = useMemo(() => `${API_BASE}/partners`, [API_BASE]);
@@ -28,10 +32,30 @@ const Partner = () => {
     );
 
     const handleDelete = useCallback((id) => {
-        if (window.confirm(`Are you sure you want to delete partner with ID ${id}?`)) {
-            console.log('Deleting partner:', id);
-        }
+        setPartnerToDelete(id);
+        setDeleteModalVisible(true);
     }, []);
+
+    const confirmDelete = useCallback(async () => {
+        if (!partnerToDelete) return;
+
+        try {
+            const response = await fetch(`${apiEndpoint}/${partnerToDelete}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete partner');
+            }
+
+            console.log('Successfully deleted partner:', partnerToDelete);
+        } catch (error) {
+            console.error('Error deleting partner:', error);
+        } finally {
+            setDeleteModalVisible(false);
+            setPartnerToDelete(null);
+        }
+    }, [partnerToDelete, apiEndpoint]);
 
     const columns = [
         {
@@ -223,6 +247,27 @@ const Partner = () => {
                     <DynamicTable title="Partners" columns={columns} apiEndpoint={apiEndpoint} />
                 </div>
             </div>
+
+            <CModal
+                alignment="center"
+                visible={deleteModalVisible}
+                onClose={() => setDeleteModalVisible(false)}
+            >
+                <CModalHeader>
+                    <CModalTitle>Confirm Deletion</CModalTitle>
+                </CModalHeader>
+                <CModalBody>
+                    Are you sure you want to delete partner with ID: {partnerToDelete}? This action cannot be undone.
+                </CModalBody>
+                <CModalFooter>
+                    <CButton color="secondary" onClick={() => setDeleteModalVisible(false)}>
+                        Cancel
+                    </CButton>
+                    <CButton color="danger" onClick={confirmDelete}>
+                        Delete
+                    </CButton>
+                </CModalFooter>
+            </CModal>
         </DefaultLayout>
     );
 };
