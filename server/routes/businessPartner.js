@@ -4,6 +4,7 @@ const {
   createNewBusinessPartner,
   getPartner,
   getAllPartners,
+  updateBusinessPartner,
 } = require('../controllers/businessPartner');
 const validate = require('../middleware/validation');
 const {
