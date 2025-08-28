@@ -1,7 +1,6 @@
 import { cilFile } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import {
-  CButton,
   CCard,
   CCardBody,
   CCardHeader,
@@ -14,10 +13,11 @@ import {
 import { useMemo } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
+import ActionButtons from '../../components/ActionButtons/ActionButtons';
 import DocumentInfo from '../../components/InfoCards/DocumentInfo/DocumentInfo';
 import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
+import { useDocument } from '../../hooks/useDocuments';
 import DefaultLayout from '../../layout/DefaultLayout';
-import { useDocument } from "../../hooks/useDocuments"
 
 const DocumentDetails = () => {
   const { id } = useParams();
@@ -48,29 +48,15 @@ const DocumentDetails = () => {
     handleCancel,
   } = useDocument(documentType, id);
 
-  const renderActionButtons = () => {
-    if (!isApproveMode) return null;
-
-    if (isEditing) {
-      return (
-        <div className="w-100 d-flex justify-content-center mt-3 gap-2">
-          <CButton color="primary" onClick={handleSave}>Save</CButton>
-          <CButton color="danger" onClick={handleCancel}>Cancel</CButton>
-        </div>
-      );
-    }
-
-    return (
-      <div className="w-100 d-flex justify-content-center mt-3 gap-2">
-        <CButton color="success" onClick={handleApprove} disabled={isApproved}>
-          {isApproved ? 'Approved' : 'Approve'}
-        </CButton>
-        {!isApproved && (
-          <CButton color="secondary" onClick={handleEdit}>Edit</CButton>
-        )}
-      </div>
-    );
-  };
+  <ActionButtons
+    isApproveMode={isApproveMode}
+    isEditing={isEditing}
+    isApproved={isApproved}
+    handleSave={handleSave}
+    handleCancel={handleCancel}
+    handleApprove={handleApprove}
+    handleEdit={handleEdit}
+  />;
 
   const cardTitle = isApproveMode
     ? 'Approve Document'
@@ -94,7 +80,17 @@ const DocumentDetails = () => {
                   loading={loading}
                   error={error}
                   onChange={setFormData}
-                  actions={renderActionButtons()}
+                  actions={
+                    <ActionButtons
+                      isApproveMode={isApproveMode}
+                      isEditing={isEditing}
+                      isApproved={isApproved}
+                      handleSave={handleSave}
+                      handleCancel={handleCancel}
+                      handleApprove={handleApprove}
+                      handleEdit={handleEdit}
+                    />
+                  }
                 />
               )}
             </CCol>
