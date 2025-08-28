@@ -1,7 +1,14 @@
-const { UploadedFile, User, KifProcessingLog, ContractProcessingLog } = require('../models');
+const {
+  UploadedFile,
+  User,
+  KifProcessingLog,
+  KufProcessingLog,
+  ContractProcessingLog,
+} = require('../models');
 const { Op } = require('sequelize');
 const { sequelize } = require('../config/db');
 const kifService = require('../services/kif');
+const kufService = require('../services/kuf');
 const contractService = require('../services/contract');
 const supabaseService = require('../utils/supabase/supabaseService');
 const AppError = require('../utils/errorHandler');
@@ -10,14 +17,20 @@ const PIPELINES = {
     logModel: KifProcessingLog,
     extract: (buf, mime) => kifService.extractKifData(buf, mime),
     persist: (data, t) => kifService.createKifFromAI(data, { transaction: t }),
-    successMessage: 'KIF processed successfully'
+    successMessage: 'KIF processed successfully',
+  },
+  kuf: {
+    logModel: KufProcessingLog,
+    extract: (buf, mime) => kufService.extractData(buf, mime),
+    persist: (data, t) => kufService.createInvoiceFromAI(data, { transaction: t }),
+    successMessage: 'KUF processed successfully',
   },
   contracts: {
     logModel: ContractProcessingLog,
     extract: (buf, mime) => contractService.extractData(buf, mime),
     persist: (data, t) => contractService.createContract(data, { transaction: t }),
-    successMessage: 'Contract processed successfully'
-  }
+    successMessage: 'Contract processed successfully',
+  },
 };
 class UploadedFilesService {
   /**
@@ -63,12 +76,12 @@ class UploadedFilesService {
   /**
    * Create a new file record in the database
    * @param {Object} fileData - File data object
-  * @param {string} fileData.fileName - File name in storage
-  * @param {string} fileData.fileUrl - Full URL to the file
-  * @param {number} fileData.fileSize - File size in bytes
-  * @param {string} fileData.mimeType - MIME type of the file
-  * @param {string} fileData.bucketName - Storage bucket name
-  * @param {number} fileData.uploadedBy - User ID who uploaded the file
+   * @param {string} fileData.fileName - File name in storage
+   * @param {string} fileData.fileUrl - Full URL to the file
+   * @param {number} fileData.fileSize - File size in bytes
+   * @param {string} fileData.mimeType - MIME type of the file
+   * @param {string} fileData.bucketName - Storage bucket name
+   * @param {number} fileData.uploadedBy - User ID who uploaded the file
    * @param {string} fileData.description - Optional description
    * @returns {Promise<Object>} Created file record
    */
@@ -189,13 +202,7 @@ class UploadedFilesService {
     if (!pipeline) {
       throw new AppError(`No processing pipeline registered for bucket "${bucketName}"`, 400);
     }
-    const uploadResult = await supabaseService.uploadFile(
-      file,
-      null,
-      bucketName,
-      undefined,
-      false
-    );
+    const uploadResult = await supabaseService.uploadFile(file, null, bucketName, undefined, false);
     if (!uploadResult.success) {
       if (uploadResult.code === 'DUPLICATE') {
         return { success: false, message: uploadResult.error };
@@ -244,21 +251,27 @@ class UploadedFilesService {
     try {
       const result = await sequelize.transaction(async (t) => {
         const domainEntity = await pipeline.persist(extracted, t);
-        const createdFile = await UploadedFile.create({
-          fileName: objectName,
-          fileUrl: uploadResult.publicUrl,
-          fileSize: file.size,
-          mimeType: file.mimetype,
-          uploadedBy: userId,
-          bucketName,
-          description,
-          isActive: true,
-        }, { transaction: t });
-        await logRow.update({
-          isProcessed: true,
-          processedAt: new Date(),
-          message: pipeline.successMessage,
-        }, { transaction: t });
+        const createdFile = await UploadedFile.create(
+          {
+            fileName: objectName,
+            fileUrl: uploadResult.publicUrl,
+            fileSize: file.size,
+            mimeType: file.mimetype,
+            uploadedBy: userId,
+            bucketName,
+            description,
+            isActive: true,
+          },
+          { transaction: t }
+        );
+        await logRow.update(
+          {
+            isProcessed: true,
+            processedAt: new Date(),
+            message: pipeline.successMessage,
+          },
+          { transaction: t }
+        );
         return { createdFile, domainEntity };
       });
       return {
