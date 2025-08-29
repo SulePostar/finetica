@@ -175,7 +175,14 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="/partners/:id/edit"
+          element={
+            <ProtectedRoute>
+              <DocumentDetails />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/kif/:id/approve"
           element={

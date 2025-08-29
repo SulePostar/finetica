@@ -68,13 +68,12 @@ const updateBusinessPartner = async (req, res, next) => {
   const updates = req.body;
 
   try {
-    if (Object.keys(updates).length === 0) {
+    if (!updates || Object.keys(updates).length === 0) {
       return res.status(400).json({ message: 'No data provided for update' });
     }
-    const updatedPartner = await updateBusinessPartnerById(id, updates);
-    if (!updatedPartner) {
-      return res.status(404).json({ message: 'Business partner not found' });
-    }
+
+    const updatedPartner = await updateBusinessPartnerById(parseInt(id), updates);
+
     res.status(200).json(updatedPartner);
   } catch (error) {
     next(error);

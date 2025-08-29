@@ -23,6 +23,6 @@ router.get('/:id', getPartner);
 // Create a new business partner
 router.post('/', validate(createBusinessPartnerSchema), createNewBusinessPartner);
 router.delete('/:id', isAuthenticated, deletePartner);
-router.patch('/:id', validate(updateBusinessPartnerSchema), updateBusinessPartner);
+router.put('/:id', validate(updateBusinessPartnerSchema), updateBusinessPartner);
 
 module.exports = router;
