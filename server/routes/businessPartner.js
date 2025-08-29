@@ -1,16 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const {
-  createNewBusinessPartner,
-  getPartner,
-  getAllPartners,
-  softDeletePartner,
-  updateBusinessPartner,
+    createNewBusinessPartner,
+    getPartner,
+    getAllPartners,
+    deletePartner,
+    updateBusinessPartner,
 } = require('../controllers/businessPartner');
 const validate = require('../middleware/validation');
 const {
-  createBusinessPartnerSchema,
-  updateBusinessPartnerSchema,
+    createBusinessPartnerSchema,
+    updateBusinessPartnerSchema,
 } = require('../schemas/businessPartnerSchema');
 const isAuthenticated = require('../middleware/isAuthenticated');
 
@@ -22,7 +22,7 @@ router.get('/:id', getPartner);
 
 // Create a new business partner
 router.post('/', validate(createBusinessPartnerSchema), createNewBusinessPartner);
-router.delete('/:id', isAuthenticated, softDeletePartner);
+router.delete('/:id', isAuthenticated, deletePartner);
 router.patch('/:id', validate(updateBusinessPartnerSchema), updateBusinessPartner);
 
 module.exports = router;
