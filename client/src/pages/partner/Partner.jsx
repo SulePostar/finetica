@@ -122,6 +122,7 @@ const Partner = () => {
                     onEdit={() => handleEdit(row.id)}
                     onDelete={row.isActive ? () => handleDelete(row) : null}
                     disableDelete={!row.isActive}
+                    isSaved={row.updated_at && new Date(row.updated_at) > new Date(row.created_at)}
                 />
             ),
             ignoreRowClick: true,

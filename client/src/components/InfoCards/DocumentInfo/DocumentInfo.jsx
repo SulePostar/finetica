@@ -74,6 +74,8 @@ const DocumentInfo = ({
         );
     }
 
+    // console.log("data: ", data)
+
     return (
         <DocInfoCard title={cardTitle}>
             <div
@@ -103,6 +105,7 @@ const DocumentInfo = ({
                                 aria-labelledby={`label-${key}`}
                             />
                         ) : (
+
                             <CBadge
                                 className="info-value"
                                 aria-labelledby={`label-${key}`}

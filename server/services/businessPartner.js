@@ -106,7 +106,7 @@ const updateBusinessPartnerById = async (id, updates) => {
   }
 
   await partner.update(updates);
-
+  await partner.reload();
   return {
     success: true,
     message: 'Business partner updated successfully',
