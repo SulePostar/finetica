@@ -106,6 +106,7 @@ module.exports = (sequelize) => {
       createdAt: 'created_at',
       updatedAt: 'updated_at',
       underscored: true,
+      paranoid: true,
     }
   );
 
