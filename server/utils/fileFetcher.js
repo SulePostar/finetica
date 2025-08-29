@@ -12,7 +12,7 @@ const { SOURCES } = require('./constants');
  */
 
 async function getFileSource(category, fileName, source = 'local') {
-    const config = SOURCES[category];
+    const config = SOURCES[category];   // goes inside of local folder (./googleDriveDownloads) or supabase bucket (e.g. 'transactions' )
     if (!config) {
         throw new Error(`Unknown category: ${category}`);
     }

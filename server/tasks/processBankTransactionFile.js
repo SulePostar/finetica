@@ -21,16 +21,15 @@ const Logger = require('../utils/logger');
                 try {
                     ({ buffer, mimeType } = await getFileSource(category, fileName, 'supabase'));
                 } catch (supabaseErr) {
-                    Logger.warn(`Supabase fetch failed for ${fileName}, falling back to local: ${supabaseErr.message}`);
                     ({ buffer, mimeType } = await getFileSource(category, fileName, 'local'));
                 }
 
                 await processBankTransaction(buffer, mimeType, fileName);
                 await processUnprocessedFiles(fileName);
 
-                Logger.info(`✅ File ${fileName} processed successfully`);
+                Logger.success(`File ${fileName} processed successfully`);
             } catch (err) {
-                Logger.error(`❌ Failed to process file ${fileName}:`, err);
+                Logger.error(`No file found: ${fileName}:`, err);
             }
         }
 
