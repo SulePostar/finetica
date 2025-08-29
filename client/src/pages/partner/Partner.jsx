@@ -42,15 +42,14 @@ const Partner = () => {
   const confirmDelete = useCallback(async () => {
     if (!partnerToDelete) return;
 
-    console.log('Deleting partner ID:', partnerToDelete.id);
-
     try {
       const response = await fetch(`${apiEndpoint}/${partnerToDelete.id}`, {
-        method: 'DELETE',
+        method: 'DELETE',   // ✅ not DELETE
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`,
         },
+        body: JSON.stringify({ isActive: false }),  // ✅ soft delete
       });
 
       if (!response.ok) {
@@ -58,7 +57,6 @@ const Partner = () => {
         throw new Error(`Failed to delete partner: ${text}`);
       }
 
-      console.log('Successfully deleted partner:', partnerToDelete.id);
       setReloadTable(prev => !prev);
     } catch (error) {
       console.error('Error deleting partner:', error);
@@ -120,7 +118,7 @@ const Partner = () => {
           row={row}
           onView={() => handleView(row.id)}
           onEdit={() => handleEdit(row.id)}
-          onDelete={row.isActive ? () => handleDelete(row) : null}
+          onDelete={(row.isActive ? () => handleDelete(row) : null)}
           disableDelete={!row.isActive}
           isSaved={row.updated_at && new Date(row.updated_at) > new Date(row.created_at)}
         />
@@ -140,7 +138,7 @@ const Partner = () => {
         }}
       >
         <div className="partner-table-responsive">
-          <DynamicTable title="Partners" columns={columns} apiEndpoint={apiEndpoint} reload={reloadTable} />
+          <DynamicTable title="Partners" columns={columns} apiEndpoint={apiEndpoint} reloadTable={reloadTable} />
         </div>
       </div>
 

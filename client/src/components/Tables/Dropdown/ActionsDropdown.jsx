@@ -49,7 +49,6 @@ const ActionsDropdown = ({
             <Dropdown.Item
               onClick={() => onDelete(row.id)}
               className="text-danger"
-              disabled={isSaved}
             >
               Delete
             </Dropdown.Item>

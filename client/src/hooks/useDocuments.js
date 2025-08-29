@@ -28,7 +28,7 @@ const documentServiceMap = {
     },
 };
 
-export const useDocument = (documentType, id, onSaveCallback) => { // Add onSaveCallback parameter
+export const useDocument = (documentType, id, onSaveCallback) => {
     const [formData, setFormData] = useState({});
     const [pdfUrl, setPdfUrl] = useState(null);
     const [loading, setLoading] = useState(true);

@@ -4,7 +4,7 @@ import DataTable from 'react-data-table-component';
 import makeCustomStyles from './DynamicTable.styles';
 import './DynamicTable.css';
 
-const DynamicTable = ({ title, columns, apiEndpoint, onRowClick, uploadButton }) => {
+const DynamicTable = ({ title, columns, apiEndpoint, onRowClick, uploadButton, reloadTable }) => {
     const [data, setData] = useState([]);
     const [totalRows, setTotalRows] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -57,7 +57,7 @@ const DynamicTable = ({ title, columns, apiEndpoint, onRowClick, uploadButton })
 
     useEffect(() => {
         fetchData();
-    }, [page, perPage, sortField, sortOrder]);
+    }, [page, perPage, sortField, sortOrder, reloadTable]);
 
     return (
         <div style={containerStyle}><Card className="my-4 shadow-sm border-0 bg-light dark:bg-dark">
