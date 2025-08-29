@@ -121,7 +121,6 @@ const Partner = () => {
         />
       ),
       ignoreRowClick: true,
-      allowOverflow: true,
     },
   ];
 
