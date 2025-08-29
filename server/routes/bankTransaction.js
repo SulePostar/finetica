@@ -3,14 +3,13 @@ const router = express.Router();
 const {
     getBankTransactions,
     getTransactionById,
-    processTransaction,
     createBankTransaction,
     approveTransaction
 } = require('../controllers/bankTransaction');
-const { upload } = require('../services/aiService');
 const isAuthenticated = require('../middleware/isAuthenticated');
 const validate = require('../middleware/validation');
-const { bankTransactionCreateSchema } = require('../schemas/bankTransactionJoi');
+const { bankTransactionCreateSchema, bankTransactionIdSchema } = require('../schemas/bankTransactionJoi');
+
 router.get('/bank-transaction-data', getBankTransactions);
 router.get('/bank-transaction-data/:id', getTransactionById);
 router.post('/',
@@ -18,13 +17,10 @@ router.post('/',
     validate(bankTransactionCreateSchema),
     createBankTransaction
 );
-router.post('/process',
-    isAuthenticated,
-    upload.single('file'),
-    processTransaction
-);
 router.patch('/:id/approve',
     isAuthenticated,
+    validate(bankTransactionIdSchema),
     approveTransaction
 );
+
 module.exports = router;

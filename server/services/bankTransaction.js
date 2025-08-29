@@ -1,9 +1,11 @@
-const { BusinessPartner, TransactionCategory, Users, BankTransaction } = require('../models');
+const { BusinessPartner, TransactionCategory, BankTransaction, BankTransactionProcessingLog } = require('../models');
 const { processDocument } = require('./aiService');
 const AppError = require('../utils/errorHandler');
 const BANK_TRANSACTIONS_PROMPT = require('../prompts/BankTransactions');
 const bankTransactionSchema = require('../schemas/bankTransactionSchema');
 const { sequelize } = require('../models');
+const MODEL_NAME = 'gemini-2.5-flash-lite';
+
 
 const getTransactions = async (query = {}) => {
     try {
@@ -24,8 +26,8 @@ const getTransactions = async (query = {}) => {
 
         const data = await BankTransaction.findAll({
             include: [
-                { model: BusinessPartner, required: false },
-                { model: TransactionCategory, required: false }
+                { model: BusinessPartner },
+                { model: TransactionCategory }
             ],
             order: [[sortField, sortOrder.toUpperCase()]],
             offset,
@@ -42,36 +44,46 @@ const getTransactions = async (query = {}) => {
 
 const getBankTransactionById = async (id) => {
     try {
+        console.log("Fetching BankTransaction with id:", id);
+
         const document = await BankTransaction.findByPk(id, {
             include: [
-                { model: TransactionCategory, required: false },
-                { model: BusinessPartner, required: false }
-                // add Users here if the association exists
+                { model: TransactionCategory },
+                { model: BusinessPartner }
             ]
         });
 
-        return document || null;
+        if (!document) {
+            console.warn(`No BankTransaction found with id: ${id}`);
+            return null;
+        }
+        return document.toJSON();
     } catch (error) {
         console.error("Fetch Document Error:", error);
         throw new AppError('Failed to fetch bank transaction document', 500);
     }
 };
 
-
 const createBankTransactionFromAI = async (extractedData) => {
     const t = await sequelize.transaction();
     try {
-        const { items, ...bankTransactionData } = extractedData;
+        const { items, ...bankTransactionData } = extractedData.data || extractedData;
 
-        const documentData = {
-            ...bankTransactionData,
-            approvedAt: null,
-            approvedBy: null,
-            createdAt: new Date(),
-            updatedAt: new Date(),
+        const dataToSave = {
+            date: bankTransactionData.date,
+            amount: parseFloat(bankTransactionData.amount),
+            direction: bankTransactionData.direction,
+            account_number: bankTransactionData.accountNumber,
+            description: bankTransactionData.description,
+            invoice_id: bankTransactionData.invoiceId ? String(bankTransactionData.invoiceId) : null,
+            partner_id: bankTransactionData.partnerId,
+            category_id: bankTransactionData.categoryId,
+            approved_at: bankTransactionData.approvedAt,
+            approved_by: bankTransactionData.approvedBy,
+            created_at: new Date(),
+            updated_at: new Date()
         };
-
-        const document = await BankTransaction.create(documentData, { transaction: t });
+        const document = await BankTransaction.create(dataToSave, { transaction: t });
 
         if (items && Array.isArray(items) && items.length > 0) {
             const itemsToCreate = items.map(item => ({
@@ -86,12 +98,10 @@ const createBankTransactionFromAI = async (extractedData) => {
 
         await t.commit();
 
-        const responseData = {
+        return {
             ...document.toJSON(),
             items: items || []
         };
-
-        return responseData;
     } catch (error) {
         await t.rollback();
         console.error("Database Error:", error);
@@ -128,8 +138,8 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
         // Fetch the full document including relations
         const createdData = await BankTransaction.findByPk(document.id, {
             include: [
-                { model: TransactionCategory, required: false },
-                { model: BusinessPartner, required: false }
+                { model: TransactionCategory },
+                { model: BusinessPartner }
             ],
             transaction: t,
         });
@@ -143,7 +153,8 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
         throw new AppError('Failed to create bank transaction', 500);
     }
 };
-const approveBankTransaction = async (id, userId, updatedData = {}) => {
+
+const approveBankTransactionById = async (id, userId, updatedData = {}) => {
     try {
         const document = await BankTransaction.findByPk(id);
 
@@ -170,7 +181,6 @@ const approveBankTransaction = async (id, userId, updatedData = {}) => {
     }
 };
 
-
 const editBankTransaction = async (id, updatedData) => {
     try {
         const document = await BankTransaction.findByPk(id);
@@ -194,8 +204,8 @@ const editBankTransaction = async (id, updatedData) => {
         // Return updated transaction with associations
         return await BankTransaction.findByPk(id, {
             include: [
-                { model: TransactionCategory, required: false },
-                { model: BusinessPartner, required: false },
+                { model: TransactionCategory },
+                { model: BusinessPartner }
             ]
         });
     } catch (error) {
@@ -204,35 +214,79 @@ const editBankTransaction = async (id, updatedData) => {
     }
 };
 
-
-const processBankTransaction = async (fileBuffer, mimeType, model = "gemini-2.5-flash-lite") => {
+const processBankTransaction = async (fileBuffer, mimeType, fileName, model = "gemini-2.5-flash-lite") => {
     try {
-        const extractedData = await processDocument(
-            fileBuffer,
-            mimeType,
-            bankTransactionSchema,
-            model,
-            BANK_TRANSACTIONS_PROMPT
-        );
+        const extractedData = await extractData(fileBuffer, mimeType);
 
         const bankTransaction = await createBankTransactionFromAI(extractedData);
-
+        await processUnprocessedFiles(fileName);
         return {
             success: true,
             data: bankTransaction
         };
     } catch (error) {
+        console.error('Error: ', error);
         throw new AppError('Failed to process Bank Transaction document', 500);
+
     }
 };
 
+const extractData = async (fileBuffer, mimeType) => {
+    const businessPartners = await BusinessPartner.findAll({
+        attributes: ['id', 'name'],
+    });
+    const promptWithPartners = `${BANK_TRANSACTIONS_PROMPT}\nAvailable partners: ${JSON.stringify(businessPartners)}`;
+    const data = await processDocument(
+        fileBuffer,
+        mimeType,
+        bankTransactionSchema,
+        MODEL_NAME,
+        promptWithPartners
+    );
+    return data;
+};
+
+const processUnprocessedFiles = async (name) => {
+    console.log(`Marking file ${name} as processed in logs.`);
+    try {
+        await BankTransactionProcessingLog.update(
+            {
+                isProcessed: true,
+                processedAt: new Date(),
+            },
+            {
+                where: { fileName: name }
+            }
+        );
+        return { success: true, fileName: name };
+    } catch (error) {
+        console.error(`Failed to process file with name ${name}:`, error);
+        return { success: false, error: error.message };
+    }
+};
+
+const getUnprocessedFiles = async () => {
+    try {
+        const files = await BankTransactionProcessingLog.findAll({
+            where: { isProcessed: false },
+            attributes: ['fileName'], // only select the fileName column
+        });
+
+        return files.map(f => f.fileName);
+    } catch (error) {
+        console.error('Failed to fetch unprocessed files:', error);
+        throw new Error('Could not fetch unprocessed files');
+    }
+};
 
 module.exports = {
     getTransactions,
     getBankTransactionById,
     createBankTransactionFromAI,
     createBankTransactionManually,
-    approveBankTransaction,
+    approveBankTransactionById,
     editBankTransaction,
-    processBankTransaction
+    processBankTransaction,
+    processUnprocessedFiles,
+    getUnprocessedFiles
 };
