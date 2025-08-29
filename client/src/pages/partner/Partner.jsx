@@ -152,7 +152,7 @@ const Partner = () => {
                     <CModalTitle>Confirm Deletion</CModalTitle>
                 </CModalHeader>
                 <CModalBody>
-                    Are you sure you want to delete partner with ID: {partnerToDelete?.id}? This action cannot be undone.
+                    Are you sure you want to delete this partner? This action cannot be undone.
                 </CModalBody>
                 <CModalFooter>
                     <CButton color="secondary" onClick={() => setDeleteModalVisible(false)}>
