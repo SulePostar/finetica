@@ -73,18 +73,14 @@ const getBusinessPartnerById = async (id) => {
  * @param {Number} id - The business partner ID.
  * @returns {Promise<Object>}
  */
-const deactivateBusinessPartner = async (id) => {
+const deleteBusinessPartner = async (id) => {
   const partner = await BusinessPartner.findByPk(id);
 
   if (!partner) {
     throw new AppError(`Business partner with ID ${id} not found`, 404);
   }
 
-  if (partner.isActive === false) {
-    throw new AppError(`Business partner with ID ${id} is already inactive`, 400);
-  }
-
-  await partner.update({ isActive: false });
+  await partner.destroy();
 
   return {
     success: true,
@@ -118,6 +114,6 @@ module.exports = {
   getAllBusinessPartners,
   getBusinessPartnerById,
   createBusinessPartner,
-  deactivateBusinessPartner,
+  deleteBusinessPartner,
   updateBusinessPartnerById,
 };
