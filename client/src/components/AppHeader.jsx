@@ -19,6 +19,9 @@ import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
 
 //Returns route and label for a detail page, or null if not a detail page
 const getDetailPageConfig = (pathname) => {
+  if (pathname.startsWith('/partners/') && pathname !== '/partners') {
+    return { route: '/partners', label: 'PARTNERS' };
+  }
   if (pathname.startsWith('/kuf/') && pathname !== '/kuf') {
     return { route: '/kuf', label: 'KUF' };
   }
@@ -33,6 +36,7 @@ const getDetailPageConfig = (pathname) => {
   }
   return null;
 };
+
 
 const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const headerRef = useRef();
