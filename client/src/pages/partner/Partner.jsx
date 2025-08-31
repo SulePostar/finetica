@@ -44,12 +44,12 @@ const Partner = () => {
 
     try {
       const response = await fetch(`${apiEndpoint}/${partnerToDelete.id}`, {
-        method: 'DELETE',   // ✅ not DELETE
+        method: 'DELETE',   
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`,
         },
-        body: JSON.stringify({ isActive: false }),  // ✅ soft delete
+        body: JSON.stringify({ isActive: false }),  
       });
 
       if (!response.ok) {
@@ -120,11 +120,9 @@ const Partner = () => {
           onEdit={() => handleEdit(row.id)}
           onDelete={(row.isActive ? () => handleDelete(row) : null)}
           disableDelete={!row.isActive}
-          isSaved={row.updated_at && new Date(row.updated_at) > new Date(row.created_at)}
         />
       ),
-      ignoreRowClick: true,
-      allowOverflow: true,
+    ignoreRowClick: true,
     }
   ];
 
