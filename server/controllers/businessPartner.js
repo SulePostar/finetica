@@ -2,7 +2,7 @@ const {
   getAllBusinessPartners,
   getBusinessPartnerById,
   createBusinessPartner,
-  deleteBusinessPartner,
+  updateBusinessPartnerStatus,
   updateBusinessPartnerById,
 } = require('../services/businessPartner');
 
@@ -53,10 +53,11 @@ const getPartner = async (req, res, next) => {
   }
 };
 
-const deletePartner = async (req, res, next) => {
+const updatePartnerStatus = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await deleteBusinessPartner(parseInt(id));
+    const { isActive } = req.body;
+    const result = await updateBusinessPartnerStatus(parseInt(id), isActive);
     res.json(result);
   } catch (error) {
     next(error);
@@ -84,6 +85,6 @@ module.exports = {
   createNewBusinessPartner,
   getPartner,
   getAllPartners,
-  deletePartner,
+  updatePartnerStatus,
   updateBusinessPartner,
 };
