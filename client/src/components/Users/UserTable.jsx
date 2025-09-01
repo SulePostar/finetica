@@ -13,6 +13,10 @@ const UserTable = ({
   isDeleting,
   isChangingStatus,
   isChangingRole,
+  roles = [],
+  statuses = [],
+  rolesLoading = false,
+  statusesLoading = false,
 }) => {
   return (
     <CTable hover responsive>
@@ -40,6 +44,10 @@ const UserTable = ({
             isDeleting={isDeleting}
             isChangingStatus={isChangingStatus}
             isChangingRole={isChangingRole}
+            roles={roles}
+            statuses={statuses}
+            rolesLoading={rolesLoading}
+            statusesLoading={statusesLoading}
           />
         ))}
       </CTableBody>
