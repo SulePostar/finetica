@@ -1,47 +1,11 @@
 import { CBadge } from '@coreui/react';
-
-/**
- * Role mapping constants for user roles.
- * Maps role IDs to their display names.
- *
- * @type {Object.<number, string>}
- */
-export const ROLES = {
-  1: 'Admin',
-  2: 'User',
-};
-
-/**
- * Status mapping constants for user statuses.
- * Maps status IDs to their display names.
- *
- * @type {Object.<number, string>}
- */
-export const STATUSES = {
-  1: 'Pending',
-  2: 'Approved',
-  3: 'Rejected',
-  4: 'Deleted',
-};
-
-/**
- * Status color mapping for UI badges.
- * Maps status IDs to their corresponding color classes.
- *
- * @type {Object.<number, string>}
- */
-export const STATUS_COLORS = {
-  1: 'warning',
-  2: 'success',
-  3: 'danger',
-  4: 'secondary',
-};
+import { capitalizeFirst } from '../helpers/capitalizeFirstLetter';
 
 /**
  * Gets the display name for a user's role.
  *
  * First checks if the user has a role object with a name property.
- * If not, falls back to mapping the roleId to a display name.
+ * If not, falls back to mapping the roleId to a display name from dynamic roles.
  * Handles null/undefined users gracefully.
  *
  * @param {Object} user - The user object containing role information.
@@ -56,7 +20,7 @@ export const getRoleName = (user, roles = []) => {
   if (!user) return 'Unknown';
 
   if (user.role && user.role.name) {
-    return user.role.name.charAt(0).toUpperCase() + user.role.name.slice(1); //Function to capitalize the first letter of the role name should be used here
+    return capitalizeFirst(user.role.name);
   }
 
   const roleId = user.role_id || user.roleId;
@@ -65,18 +29,18 @@ export const getRoleName = (user, roles = []) => {
   // Try to find role in dynamic roles first
   const dynamicRole = roles.find((r) => r.id === roleId);
   if (dynamicRole) {
-    return dynamicRole.name.charAt(0).toUpperCase() + dynamicRole.name.slice(1); //Function to capitalize the first letter of the role name should be used here
+    return capitalizeFirst(dynamicRole.role);
   }
 
-  // Fallback to hardcoded roles
-  return ROLES[roleId] || 'No Role';
+  // Fallback to a generic message if no role found
+  return 'No Role';
 };
 
 /**
  * Gets the display name for a status by its ID.
  *
- * Supports both hardcoded statuses and dynamic statuses from API.
- * Falls back to hardcoded mapping if dynamic statuses are not provided.
+ * Supports dynamic statuses from API.
+ * Falls back to a generic message if dynamic statuses are not provided.
  *
  * @param {number} statusId - The status ID to look up.
  * @param {Array} statuses - Optional array of dynamic statuses from API.
@@ -88,18 +52,18 @@ export const getStatusName = (statusId, statuses = []) => {
   // Try to find status in dynamic statuses first
   const dynamicStatus = statuses.find((s) => s.id === statusId);
   if (dynamicStatus) {
-    return dynamicStatus.name.charAt(0).toUpperCase() + dynamicStatus.name.slice(1);
+    return capitalizeFirst(dynamicStatus.status);
   }
 
-  // Fallback to hardcoded statuses
-  return STATUSES[statusId] || 'Unknown';
+  // Fallback to a generic message if no status found
+  return 'Unknown';
 };
 
 /**
  * Gets the display name for a role by its ID.
  *
- * Supports both hardcoded roles and dynamic roles from API.
- * Falls back to hardcoded mapping if dynamic roles are not provided.
+ * Supports dynamic roles from API.
+ * Falls back to a generic message if dynamic roles are not provided.
  *
  * @param {number} roleId - The role ID to look up.
  * @param {Array} roles - Optional array of dynamic roles from API.
@@ -111,18 +75,18 @@ export const getRoleNameById = (roleId, roles = []) => {
   // Try to find role in dynamic roles first
   const dynamicRole = roles.find((r) => r.id === roleId);
   if (dynamicRole) {
-    return dynamicRole.name.charAt(0).toUpperCase() + dynamicRole.name.slice(1); //Function to capitalize the first letter of the role name should be used here
+    return capitalizeFirst(dynamicRole.role);
   }
 
-  // Fallback to hardcoded roles
-  return ROLES[roleId] || 'No Role Assigned';
+  // Fallback to a generic message if no role found
+  return 'No Role Assigned';
 };
 
 /**
  * Creates a colored badge component for displaying user status.
  *
  * Uses CoreUI's CBadge component with appropriate colors based on status.
- * Supports both hardcoded statuses and dynamic statuses from API.
+ * Supports dynamic statuses from API.
  *
  * @param {number} statusId - The status ID to create a badge for.
  * @param {Array} statuses - Optional array of dynamic statuses from API.
@@ -130,7 +94,16 @@ export const getRoleNameById = (roleId, roles = []) => {
  */
 export const getStatusBadge = (statusId, statuses = []) => {
   const statusName = getStatusName(statusId, statuses);
-  const color = STATUS_COLORS[statusId] || 'info';
+
+  // Dynamic color mapping based on status name
+  let color = 'info';
+  if (statusName.toLowerCase().includes('approved')) {
+    color = 'success';
+  } else if (statusName.toLowerCase().includes('rejected') || statusName.toLowerCase().includes('deleted')) {
+    color = 'danger';
+  } else if (statusName.toLowerCase().includes('pending')) {
+    color = 'warning';
+  }
 
   return <CBadge color={color}>{statusName}</CBadge>;
 };
@@ -211,7 +184,9 @@ export const filterUsers = (users, searchTerm, filterRole) => {
       searchText.includes(searchTerm.toLowerCase()) ||
       user.email?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesRole = !filterRole || (user.role_id || user.roleId) === parseInt(filterRole);
+    // Handle role filtering - support both roleId and role_id formats
+    const matchesRole = !filterRole ||
+      (user.role_id || user.roleId) === parseInt(filterRole);
 
     return matchesSearch && matchesRole;
   });

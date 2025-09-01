@@ -81,7 +81,28 @@ export const DOCUMENT_FIELD_CONFIGS = {
     { label: 'Approved at', key: 'approved_at' },
     { label: 'Approved by', key: 'approved_by' }
   ],
-
+  partner: [
+    { label: 'Name', key: 'name' },
+    { label: 'Short Name', key: 'shortName' },
+    { label: 'Country Code', key: 'countryCode' },
+    { label: 'VAT Number', key: 'vatNumber' },
+    { label: 'Tax ID', key: 'taxId' },
+    { label: 'Registration Number', key: 'registrationNumber' },
+    { label: 'VAT Registered', key: 'isVatRegistered' },
+    { label: 'Address', key: 'address' },
+    { label: 'City', key: 'city' },
+    { label: 'Postal Code', key: 'postalCode' },
+    { label: 'Email', key: 'email' },
+    { label: 'Phone', key: 'phone' },
+    { label: 'IBAN', key: 'iban' },
+    { label: 'Bank Name', key: 'bankName' },
+    { label: 'SWIFT Code', key: 'swiftCode' },
+    { label: 'Default Currency', key: 'defaultCurrency' },
+    { label: 'Language Code', key: 'languageCode' },
+    { label: 'Payment Terms', key: 'paymentTerms' },
+    { label: 'Status', key: 'isActive' },
+    { label: 'Note', key: 'note' },
+  ]
 };
 /**
  * Formats values based on their type and context

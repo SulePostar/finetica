@@ -22,6 +22,7 @@ import DefaultLayout from '../../layout/DefaultLayout';
 const DocumentDetails = () => {
   const { id } = useParams();
   const location = useLocation();
+  const onSaveCallback = location.state?.onSave;
 
   const documentType = useMemo(() => {
     const path = location.pathname;
@@ -29,10 +30,13 @@ const DocumentDetails = () => {
     if (path.includes('/kuf/')) return 'kuf';
     if (path.includes('/contracts/')) return 'contract';
     if (path.includes('/bank-transactions/')) return 'bank-transactions';
+    if (path.includes('/partners/')) return 'partner';
     return null;
   }, [location.pathname]);
 
   const isApproveMode = location.pathname.includes('/approve');
+
+  const isEditMode = location.pathname.includes('/edit');
 
   const {
     formData,
@@ -42,15 +46,18 @@ const DocumentDetails = () => {
     error,
     isEditing,
     isApproved,
+    isSaved,
     handleApprove,
     handleSave,
     handleEdit,
     handleCancel,
-  } = useDocument(documentType, id);
+  } = useDocument(documentType, id, onSaveCallback);
 
-  const cardTitle = isApproveMode
-    ? 'Approve Document'
-    : `View ${documentType?.toUpperCase() || 'Document'} Details`;
+  const cardTitle = isEditMode
+    ? 'Edit Document'
+    : isApproveMode
+      ? 'Approve Document'
+      : `View ${documentType?.toUpperCase() || 'Document'} Details`;
 
   return (
     <DefaultLayout>
@@ -66,7 +73,7 @@ const DocumentDetails = () => {
                 <DocumentInfo
                   data={formData}
                   type={documentType}
-                  editable={isApproveMode && isEditing}
+                  editable={((isApproveMode && isEditing) || (!isSaved && isEditMode))}
                   loading={loading}
                   error={error}
                   onChange={setFormData}
@@ -74,11 +81,14 @@ const DocumentDetails = () => {
                     <ActionButtons
                       isApproveMode={isApproveMode}
                       isEditing={isEditing}
+                      isEditMode={isEditMode}
                       isApproved={isApproved}
                       handleSave={handleSave}
                       handleCancel={handleCancel}
                       handleApprove={handleApprove}
                       handleEdit={handleEdit}
+                      documentType={documentType}
+                      isSaved={isSaved}
                     />
                   }
                 />

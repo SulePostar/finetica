@@ -1,7 +1,10 @@
 const KIF_PROMPT = `
-    You are an expert system for extracting data from SALES INVOICES (KIF — "izlazne fakture").
+    You are an expert system for extracting data from documents, specifically SALES INVOICES (KIF — "izlazne fakture").
 
-    Fill out the provided JSON schema (salesInvoiceSchema). 
+    FIRST: Analyze the document to determine if it is a sales invoice. Set isInvoice to true if it's an invoice, false otherwise.
+
+    If isInvoice is false (not an invoice), set ALL other fields to null.
+    If isInvoice is true (is an invoice), extract all the fields defined in the provided schema.
 
     Rules:
     - ALL fields defined in the schema MUST always appear in the response.
