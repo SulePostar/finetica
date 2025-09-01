@@ -16,11 +16,10 @@ const Partner = () => {
   const [partnerToDelete, setPartnerToDelete] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [refetchFunction, setRefetchFunction] = useState(null);
 
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
   const apiEndpoint = useMemo(() => `${API_BASE}/partners`, [API_BASE]);
-
-  const [reloadTable, setReloadTable] = useState(false);
 
   const handleView = useCallback(
     (id) => {
@@ -56,15 +55,35 @@ const Partner = () => {
     setError('');
 
     try {
-      await PartnerService.deactivate(partnerToDelete.id);
-      setReloadTable(prev => !prev);
+      const response = await fetch(`${apiEndpoint}/${partnerToDelete.id}`, {
+        method: 'PATCH',  
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`,
+        },
+        body: JSON.stringify({ isActive: false }), 
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Failed to deactivate partner: ${text}`);
+      }
+      
+      if (refetchFunction) {
+        await refetchFunction();
+      }
+      
+      handleCloseModal();
     } catch (error) {
       console.error("Error deactivating partner:", error);
-    } finally {
-      setDeleteModalVisible(false);
-      setPartnerToDelete(null);
+      setError('Failed to delete partner. Please try again.');
+      setLoading(false);
     }
-  }, [partnerToDelete]);
+  }, [partnerToDelete, refetchFunction, handleCloseModal, apiEndpoint]);
+
+  const handleRefetchCallback = useCallback((fetchFn) => {
+    setRefetchFunction(() => fetchFn);
+  }, []);
 
   const columns = [
     { name: 'ID', selector: row => row.id, sortable: true, width: '100px' },
@@ -136,7 +155,12 @@ const Partner = () => {
         }}
       >
         <div className="partner-table-responsive">
-          <DynamicTable title="Partners" columns={columns} apiEndpoint={apiEndpoint} reloadTable={reloadTable} />
+          <DynamicTable 
+            title="Partners" 
+            columns={columns} 
+            apiEndpoint={apiEndpoint}
+            onRefetch={handleRefetchCallback} 
+          />
         </div>
       </div>
 
