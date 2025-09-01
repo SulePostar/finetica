@@ -198,42 +198,42 @@ async function stop() {
 }
 async function syncFiles(drive) {
     try {
-        // Find the "finetica" folder
         const fineticaFolderId = await findFineticaFolderId(drive);
-        if (!fineticaFolderId) {
-            console.log('⚠️ "finetica" folder not found in Google Drive');
-            return;
-        }
-
-        // List files from the "finetica" folder
-        const response = await drive.files.list({
-            pageSize: 50,
-            fields: 'files(id, name, modifiedTime, mimeType, size)',
-            q: `'${fineticaFolderId}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed=false`,
-            orderBy: 'modifiedTime desc'
+        const subfoldersResponse = await drive.files.list({
+            q: `'${fineticaFolderId}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed=false`,
+            fields: 'files(id, name)',
         });
 
-        const files = response.data.files;
+        const subfolders = subfoldersResponse.data.files;
 
-        let downloadedCount = 0;
-        let skippedCount = 0;
+        for (const folder of subfolders) {
+            const localSubfolder = path.join(this.downloadPath, folder.name);
+            if (!fs.existsSync(localSubfolder)) {
+                fs.mkdirSync(localSubfolder, { recursive: true });
+            }
 
-        for (const file of files) {
-            try {
-                const result = await downloadOrExportFile(drive, file, this.downloadPath);
-                if (result.downloaded) {
-                    downloadedCount++;
-                } else {
-                    skippedCount++;
+            const response = await drive.files.list({
+                pageSize: 50,
+                fields: 'files(id, name, modifiedTime, mimeType, size)',
+                q: `'${folder.id}' in parents and mimeType != 'application/vnd.google-apps.folder' and trashed=false`,
+                orderBy: 'modifiedTime desc'
+            });
+
+            const files = response.data.files;
+
+            for (const file of files) {
+                try {
+                    await downloadOrExportFile(drive, file, localSubfolder);
+                } catch (err) {
+                    console.error(`❌ Failed to process ${file.name} in ${folder.name}:`, err.message);
                 }
-            } catch (err) {
-                console.error(`❌ Failed to process ${file.name}:`, err.message);
             }
         }
     } catch (error) {
         console.error('❌ Error syncing files:', error.message);
     }
 }
+
 async function getStatus() {
     return {
         isRunning: this.isRunning,
