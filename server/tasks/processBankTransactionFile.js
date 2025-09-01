@@ -21,7 +21,7 @@ const Logger = require('../utils/logger');
                 try {
                     ({ buffer, mimeType } = await getFileSource(category, fileName, 'supabase'));
                 } catch (supabaseErr) {
-                    ({ buffer, mimeType } = await getFileSource(category, fileName, 'local'));
+                    throw new Error(`Failed to fetch file from supabase: ${supabaseErr.message}`);
                 }
 
                 await processBankTransaction(buffer, mimeType, fileName);

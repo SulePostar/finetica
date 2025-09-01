@@ -23,6 +23,7 @@
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
+    "file-type": "^21.0.0",
     "googleapis": "^154.1.0",
     "imapflow": "^1.0.193",
     "joi": "^17.13.3",
