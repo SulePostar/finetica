@@ -6,6 +6,7 @@ import DynamicTable from '../../components/Tables/DynamicTable';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import DefaultLayout from '../../layout/DefaultLayout';
 import './Partner.css';
+import PartnerService from '../../services/businessPartner';
 
 const Partner = () => {
   const navigate = useNavigate();
@@ -43,29 +44,17 @@ const Partner = () => {
     if (!partnerToDelete) return;
 
     try {
-      const response = await fetch(`${apiEndpoint}/${partnerToDelete.id}`, {
-        method: 'DELETE',   
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`,
-        },
-        body: JSON.stringify({ isActive: false }),  
-      });
+      await PartnerService.deactivate(partnerToDelete.id);
 
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Failed to delete partner: ${text}`);
-      }
-
+      // Reload the table after successful "delete"
       setReloadTable(prev => !prev);
     } catch (error) {
-      console.error('Error deleting partner:', error);
+      console.error("Error deactivating partner:", error);
     } finally {
       setDeleteModalVisible(false);
       setPartnerToDelete(null);
     }
-  }, [partnerToDelete, apiEndpoint]);
-
+  }, [partnerToDelete]);
 
   const columns = [
     { name: 'ID', selector: row => row.id, sortable: true, width: '100px' },
@@ -123,7 +112,7 @@ const Partner = () => {
           isSaved={row.updated_at && new Date(row.updated_at) > new Date(row.created_at)}
         />
       ),
-    ignoreRowClick: true,
+      ignoreRowClick: true,
     }
   ];
 
@@ -150,8 +139,8 @@ const Partner = () => {
           <CModalTitle>Confirm Deletion</CModalTitle>
         </CModalHeader>
         <CModalBody>
-            Are you sure you want to delete partner 
-            <strong> {partnerToDelete?.name}</strong>? This action cannot be undone.
+          Are you sure you want to delete partner
+          <strong> {partnerToDelete?.name}</strong>? This action cannot be undone.
         </CModalBody>
         <CModalFooter>
           <CButton color="secondary" onClick={() => setDeleteModalVisible(false)}>
