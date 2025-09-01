@@ -12,6 +12,7 @@ const Logger = require('../utils/logger');
             process.exit(0);
         }
         Logger.success(`Processed ${processed} unprocessed KIF file${processed === 1 ? '' : 's'} successfully.`);
+        Logger.info('Note: Non-invoice documents are marked as processed but not saved to database.');
 
         if (remaining > 0) {
             Logger.warn(`${remaining} KIF file${remaining === 1 ? '' : 's'} remain unprocessed.`);
