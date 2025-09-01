@@ -3,6 +3,7 @@ const { Type } = require("@google/genai");
 const purchaseInvoiceSchema = {
     type: Type.OBJECT,
     properties: {
+        isPurchaseInvoice: { type: Type.BOOLEAN },
         vatPeriod: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
         invoiceType: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
         invoiceNumber: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
@@ -38,6 +39,7 @@ const purchaseInvoiceSchema = {
         }
     },
     required: [
+        'isPurchaseInvoice',
         'invoiceNumber',
         'invoiceType',
         'vatPeriod',
