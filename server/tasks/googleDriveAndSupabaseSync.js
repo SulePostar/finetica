@@ -59,68 +59,76 @@ const categoryModelMap = {
                 Logger.info(`No files found in folder for category '${category}'.`);
                 continue;
             }
-            for (const file of files) {
-                try {
-                    // Map 'bank_transactions' category to 'transactions' bucket
-                    const bucketName = category === 'bank_transactions' ? 'transactions' : category;
-                    const supabasePath = file.name; // Upload to root of bucket
+            // Parallelize file processing with concurrency limit
+            const CONCURRENCY = 5;
+            const fileChunks = [];
+            for (let i = 0; i < files.length; i += CONCURRENCY) {
+                fileChunks.push(files.slice(i, i + CONCURRENCY));
+            }
+            for (const chunk of fileChunks) {
+                await Promise.all(chunk.map(async (file) => {
+                    try {
+                        // Map 'bank_transactions' category to 'transactions' bucket
+                        const bucketName = category === 'bank_transactions' ? 'transactions' : category;
+                        const supabasePath = file.name; // Upload to root of bucket
 
-                    // Check if file already exists in Supabase
-                    const { data: existingFiles, error: listError } = await supabase.storage.from(bucketName).list('', { search: file.name });
-                    if (listError) {
-                        Logger.error(`Failed to list files in Supabase: ${listError.message}`);
-                        continue;
-                    }
-                    const fileExists = existingFiles && existingFiles.some(f => f.name === file.name);
-                    if (fileExists) {
-                        Logger.info(`${file.name} already exists in Supabase, skipping upload.`);
-                    } else {
-                        // Download file from Google Drive to temp
-                        const destDir = path.join(__dirname, 'temp', category);
-                        fs.mkdirSync(destDir, { recursive: true });
-                        const destPath = path.join(destDir, file.name);
-                        const dest = fs.createWriteStream(destPath);
-                        await new Promise((resolve, reject) => {
-                            drive.files.get({ fileId: file.id, alt: 'media' }, { responseType: 'stream' }, (err, res) => {
-                                if (err) return reject(err);
-                                res.data
-                                    .on('end', resolve)
-                                    .on('error', reject)
-                                    .pipe(dest);
-                            });
-                        });
-                        const fileBuffer = fs.readFileSync(destPath);
-                        const { error: uploadError } = await supabase.storage.from(bucketName).upload(supabasePath, fileBuffer, { upsert: false });
-                        if (uploadError) {
-                            Logger.error(`Failed to upload ${file.name} to Supabase: ${uploadError.message}`);
-                            fs.unlinkSync(destPath);
-                            continue;
+                        // Check if file already exists in Supabase
+                        const { data: existingFiles, error: listError } = await supabase.storage.from(bucketName).list('', { search: file.name });
+                        if (listError) {
+                            Logger.error(`Failed to list files in Supabase: ${listError.message}`);
+                            return;
                         }
-                        fs.unlinkSync(destPath);
-                        Logger.success(`Uploaded ${file.name} to Supabase bucket ${bucketName}.`);
-                    }
-
-                    // Log to processing table (skip if already exists)
-                    const Model = categoryModelMap[category];
-                    if (Model) {
-                        const logExists = await Model.findOne({ where: { fileName: file.name } });
-                        if (!logExists) {
-                            await Model.create({
-                                fileName: file.name,
-                                isProcessed: false,
-                                processedAt: null,
-                                errorMessage: null
-                            });
-                            Logger.success(`Logged ${file.name} to ${category} processing log.`);
+                        const fileExists = existingFiles && existingFiles.some(f => f.name === file.name);
+                        if (fileExists) {
+                            Logger.info(`${file.name} already exists in Supabase, skipping upload.`);
                         } else {
-                            Logger.info(`Log for ${file.name} already exists, skipping log insert.`);
+                            // Download file from Google Drive to temp
+                            const destDir = path.join(__dirname, 'temp', category);
+                            fs.mkdirSync(destDir, { recursive: true });
+                            const destPath = path.join(destDir, file.name);
+                            const dest = fs.createWriteStream(destPath);
+                            await new Promise((resolve, reject) => {
+                                drive.files.get({ fileId: file.id, alt: 'media' }, { responseType: 'stream' }, (err, res) => {
+                                    if (err) return reject(err);
+                                    res.data
+                                        .on('end', resolve)
+                                        .on('error', reject)
+                                        .pipe(dest);
+                                });
+                            });
+                            const fileBuffer = fs.readFileSync(destPath);
+                            const { error: uploadError } = await supabase.storage.from(bucketName).upload(supabasePath, fileBuffer, { upsert: false });
+                            if (uploadError) {
+                                Logger.error(`Failed to upload ${file.name} to Supabase: ${uploadError.message}`);
+                                fs.unlinkSync(destPath);
+                                return;
+                            }
+                            fs.unlinkSync(destPath);
+                            Logger.success(`Uploaded ${file.name} to Supabase bucket ${bucketName}.`);
                         }
-                    } else {
-                        Logger.error(`No model found for category '${category}'.`);
+
+                        // Log to processing table (skip if already exists)
+                        const Model = categoryModelMap[category];
+                        if (Model) {
+                            const logExists = await Model.findOne({ where: { fileName: file.name } });
+                            if (!logExists) {
+                                await Model.create({
+                                    fileName: file.name,
+                                    isProcessed: false,
+                                    processedAt: null,
+                                    errorMessage: null
+                                });
+                                Logger.success(`Logged ${file.name} to ${category} processing log.`);
+                            } else {
+                                Logger.info(`Log for ${file.name} already exists, skipping log insert.`);
+                            }
+                        } else {
+                            Logger.error(`No model found for category '${category}'.`);
+                        }
+                    } catch (err) {
+                        Logger.error(`Error processing file ${file.name}: ${err.message}`);
                     }
-                } catch (err) {
-                    Logger.error(`Error processing file ${file.name}: ${err.message}`);
-                }
+                }));
             }
         }
 
