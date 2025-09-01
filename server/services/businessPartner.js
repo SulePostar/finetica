@@ -94,19 +94,21 @@ const deleteBusinessPartner = async (id) => {
  * @param {Object} updates - The data to update.
  * @returns {Promise<Object|null>}
  */
-const updateBusinessPartnerById = async (id, updates) => {
-  const partner = await BusinessPartner.findByPk(id);
 
-  if (!partner) {
+const updateBusinessPartnerById = async (id, updates) => {
+  const [updatedCount, updatedPartners] = await BusinessPartner.update(updates, {
+    where: { id },
+    returning: true,
+  });
+
+  if (updatedCount === 0 || updatedPartners.length === 0) {
     throw new AppError(`Business partner with ID ${id} not found`, 404);
   }
 
-  await partner.update(updates);
-  await partner.reload();
   return {
     success: true,
     message: 'Business partner updated successfully',
-    data: partner,
+    data: updatedPartners[0],
   };
 };
 
