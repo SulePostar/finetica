@@ -1,3 +1,4 @@
+const { is } = require('zod/v4/locales');
 const { BusinessPartner } = require('../models');
 const AppError = require('../utils/errorHandler');
 
@@ -73,18 +74,15 @@ const getBusinessPartnerById = async (id) => {
  * @param {Number} id - The business partner ID.
  * @returns {Promise<Object>}
  */
-const deleteBusinessPartner = async (id) => {
-  const partner = await BusinessPartner.findByPk(id);
-
-  if (!partner) {
-    throw new AppError(`Business partner with ID ${id} not found`, 404);
-  }
-
-  await partner.destroy();
+const updateBusinessPartnerStatus = async (id, isActive) => {
+  await BusinessPartner.update(
+    { isActive },
+    { where: { id } }
+  );
 
   return {
     success: true,
-    message: 'Business partner deleted successfully',
+    message: 'Business partner status updated successfully',
   };
 };
 
@@ -114,6 +112,6 @@ module.exports = {
   getAllBusinessPartners,
   getBusinessPartnerById,
   createBusinessPartner,
-  deleteBusinessPartner,
+  updateBusinessPartnerStatus,
   updateBusinessPartnerById,
 };
