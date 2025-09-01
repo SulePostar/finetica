@@ -3,6 +3,7 @@ const { Type } = require("@google/genai");
 const salesInvoiceSchema = {
     type: Type.OBJECT,
     properties: {
+        isInvoice: { type: Type.BOOLEAN },
         invoiceNumber: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
         invoiceType: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
         billNumber: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
@@ -46,6 +47,7 @@ const salesInvoiceSchema = {
         }
     },
     required: [
+        'isInvoice',
         'invoiceNumber',
         'invoiceType',
         'billNumber',
