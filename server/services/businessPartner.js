@@ -1,78 +1,119 @@
-const db = require('../models');
+const { is } = require('zod/v4/locales');
+const { BusinessPartner } = require('../models');
 const AppError = require('../utils/errorHandler');
 
 /**
- * Create a new business partner in the database
- * @param {Object} partnerData - The business partner data
- * @returns {Promise<Object>} - Response object with success status, message and partner data
+ * Creates a new business partner.
+ * @param {Object} partnerData - Data for the new partner.
+ * @returns {Promise<Object>}
  */
 const createBusinessPartner = async (partnerData) => {
-    try {
-        // Get the BusinessPartner model
-        const BusinessPartner = db.BusinessPartner;
-
-        // Create the business partner in the database
-        const partner = await BusinessPartner.create(partnerData);
-
-        // Return formatted response
-        return {
-            success: true,
-            message: 'Business partner created successfully',
-            data: partner
-        };
-    } catch (error) {
-        throw new AppError(`Failed to create business partner: ${error.message}`, 500);
-    }
+  try {
+    const partner = await BusinessPartner.create(partnerData);
+    return {
+      success: true,
+      message: 'Business partner created successfully',
+      data: partner,
+    };
+  } catch (error) {
+    throw new AppError(`Failed to create business partner: ${error.message}`, 500);
+  }
 };
 
 /**
- * Get a business partner by ID
- * @param {Number} id - The business partner ID
- * @returns {Promise<Object>} - Response object with success status and partner data
+ * Get all business partners with pagination support.
+ * @param {object} query - Query object containing page and perPage.
+ * @returns {Promise<{data: Array, total: number}>} - Object with paginated data and total count.
+ */
+const getAllBusinessPartners = async ({ page = 1, perPage = 10 } = {}) => {
+  try {
+    const limit = Math.max(1, Number(perPage) || 10);
+    const offset = Math.max(0, (Number(page) || 1) - 1) * limit;
+
+    const { rows, count } = await BusinessPartner.findAndCountAll({
+      offset,
+      limit,
+      order: [['id', 'ASC']],
+    });
+
+    const data = rows.map((row) => row.get({ plain: true }));
+
+    return { data, total: count };
+  } catch (error) {
+    throw new AppError(`Failed to get business partners: ${error.message}`, 500);
+  }
+};
+
+/**
+ * Get a business partner by ID.
+ * @param {Number} id - The business partner ID.
+ * @returns {Promise<Object>}
  */
 const getBusinessPartnerById = async (id) => {
-    try {
-        const BusinessPartner = db.BusinessPartner;
+  try {
+    const partner = await BusinessPartner.findByPk(id);
 
-        const partner = await BusinessPartner.findByPk(id);
-
-        if (!partner) {
-            throw new AppError(`Business partner with ID ${id} not found`, 404);
-        }
-
-        return {
-            success: true,
-            data: partner
-        };
-    } catch (error) {
-        if (error instanceof AppError) {
-            throw error;
-        }
-        throw new AppError(`Failed to get business partner: ${error.message}`, 500);
+    if (!partner) {
+      throw new AppError(`Business partner with ID ${id} not found`, 404);
     }
-};/**
- * Get all business partners
- * @returns {Promise<Object>} - Response object with success status and partners data
+
+    return {
+      success: true,
+      data: partner,
+    };
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw new AppError(`Failed to get business partner: ${error.message}`, 500);
+  }
+};
+
+/**
+ * Deactivates a business partner (soft delete).
+ * @param {Number} id - The business partner ID.
+ * @returns {Promise<Object>}
  */
-const getAllBusinessPartners = async () => {
-    try {
-        const BusinessPartner = db.BusinessPartner;
+const updateBusinessPartnerStatus = async (id, isActive) => {
+  await BusinessPartner.update(
+    { isActive },
+    { where: { id } }
+  );
 
-        const partners = await BusinessPartner.findAll({
-            order: [['id', 'ASC']]
-        });
+  return {
+    success: true,
+    message: 'Business partner status updated successfully',
+  };
+};
 
-        return {
-            success: true,
-            data: partners
-        };
-    } catch (error) {
-        throw new AppError(`Failed to get business partners: ${error.message}`, 500);
-    }
+/**
+ * Updates a business partner by ID.
+ * @param {Number} id - The business partner ID.
+ * @param {Object} updates - The data to update.
+ * @returns {Promise<Object|null>}
+ */
+
+const updateBusinessPartnerById = async (id, updates) => {
+  const [updatedCount, updatedPartners] = await BusinessPartner.update(updates, {
+    where: { id },
+    returning: true,
+  });
+
+  if (updatedCount === 0 || updatedPartners.length === 0) {
+    throw new AppError(`Business partner with ID ${id} not found`, 404);
+  }
+
+  return {
+    success: true,
+    message: 'Business partner updated successfully',
+    data: updatedPartners[0],
+  };
 };
 
 module.exports = {
-    createBusinessPartner,
-    getBusinessPartnerById,
-    getAllBusinessPartners
+  getAllBusinessPartners,
+  getBusinessPartnerById,
+  createBusinessPartner,
+  updateBusinessPartnerStatus,
+  updateBusinessPartnerById,
 };

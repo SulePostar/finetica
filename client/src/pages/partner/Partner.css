@@ -1,0 +1,110 @@
+div.table-page-outer.partner-table-outer {
+  padding: 5rem 5rem 2rem;
+}
+
+.status-badge {
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.status-badge.active {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge.inactive {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+[data-coreui-theme='dark'] .status-badge.active {
+  background-color: #065f46;
+  color: #d1fae5;
+}
+
+[data-coreui-theme='dark'] .status-badge.inactive {
+  background-color: #991b1b;
+  color: #fee2e2;
+}
+
+@media (min-width: 2000px) {
+  .contract-table-responsive {
+    margin: 3rem;
+    height: 75vh;
+  }
+  
+  .contract-table-responsive .rdt_Table,
+  .contract-table-responsive table {
+    min-width: 2200px;
+    font-size: 1.05rem;
+  }
+  
+  .status-badge {
+    font-size: 1rem;
+    padding: 0.4rem 0.85rem;
+  }
+}
+
+@media (min-width: 2560px) {
+  .contract-table-responsive {
+    margin: 4rem;
+    height: 80vh;
+  }
+  
+  .contract-table-responsive .rdt_Table,
+  .contract-table-responsive table {
+    min-width: 2800px;
+    font-size: 1.15rem;
+  }
+  
+  .status-badge {
+    font-size: 1.1rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
+@media (min-width: 3440px) {
+  .contract-table-responsive {
+    margin: 5rem;
+    height: 85vh;
+  }
+  
+  .contract-table-responsive .rdt_Table,
+  .contract-table-responsive table {
+    min-width: 3200px;
+    font-size: 1.25rem;
+  }
+  
+  .status-badge {
+    font-size: 1.15rem;
+    padding: 0.6rem 1.1rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .contract-table-responsive {
+    margin: 1rem;
+    height: 60vh;
+  }
+  
+  .contract-table-responsive .rdt_Table,
+  .contract-table-responsive table {
+    min-width: 900px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .contract-table-responsive {
+    margin: 0.5rem;
+    height: 50vh;
+  }
+  
+  .contract-table-responsive .rdt_Table,
+  .contract-table-responsive table {
+    min-width: 600px;
+    font-size: 0.78rem;
+  }
+}
