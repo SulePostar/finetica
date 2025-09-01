@@ -4,7 +4,15 @@ import DataTable from 'react-data-table-component';
 import makeCustomStyles from './DynamicTable.styles';
 import './DynamicTable.css';
 
-const DynamicTable = ({ title, columns, apiEndpoint, onRowClick, uploadButton }) => {
+const DynamicTable = ({ 
+    title, 
+    columns, 
+    apiEndpoint, 
+    onRowClick, 
+    uploadButton, 
+    reloadTable,
+    onRefetch 
+}) => {
     const [data, setData] = useState([]);
     const [totalRows, setTotalRows] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -56,48 +64,54 @@ const DynamicTable = ({ title, columns, apiEndpoint, onRowClick, uploadButton })
     };
 
     useEffect(() => {
+        if (onRefetch) {
+            onRefetch(fetchData);
+        }
+    }, [onRefetch]);
+
+    useEffect(() => {
         fetchData();
-    }, [page, perPage, sortField, sortOrder]);
+    }, [page, perPage, sortField, sortOrder, reloadTable]);
 
     return (
-        <div style={containerStyle}><Card className="my-4 shadow-sm border-0 bg-light dark:bg-dark">
-            <Card.Body className="p-4">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                    <Card.Title style={titleStyle}>{title}</Card.Title>
-                    {uploadButton && (
-                        <div className="table-upload-button">
-                            {uploadButton}
-                        </div>
-                    )}
-                </div>
-                <DataTable
-                    columns={columns}
-                    data={data}
-                    progressPending={loading}
-                    progressComponent={<Spinner animation="border" />}
-                    pagination
-                    paginationServer
-                    paginationTotalRows={totalRows}
-                    onChangeRowsPerPage={(newPerPage) => {
-                        setPerPage(newPerPage);
-                        setPage(1);
-                    }}
-                    onChangePage={(p) => setPage(p)}
-                    onSort={(col, dir) => {
-                        setSortField(col.sortField || col.selector?.name || col.selector);
-                        setSortOrder(dir);
-                    }}
-                    onRowClicked={onRowClick}
-                    sortServer
-                    highlightOnHover
-                    responsive
-                    customStyles={customStyles}
-                    pointerOnHover
-                />
-            </Card.Body>
-        </Card>
+        <div style={containerStyle}>
+            <Card className="my-4 shadow-sm border-0 bg-light dark:bg-dark">
+                <Card.Body className="p-4">
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <Card.Title style={titleStyle}>{title}</Card.Title>
+                        {uploadButton && (
+                            <div className="table-upload-button">
+                                {uploadButton}
+                            </div>
+                        )}
+                    </div>
+                    <DataTable
+                        columns={columns}
+                        data={data}
+                        progressPending={loading}
+                        progressComponent={<Spinner animation="border" />}
+                        pagination
+                        paginationServer
+                        paginationTotalRows={totalRows}
+                        onChangeRowsPerPage={(newPerPage) => {
+                            setPerPage(newPerPage);
+                            setPage(1);
+                        }}
+                        onChangePage={(p) => setPage(p)}
+                        onSort={(col, dir) => {
+                            setSortField(col.sortField || col.selector?.name || col.selector);
+                            setSortOrder(dir);
+                        }}
+                        onRowClicked={onRowClick}
+                        sortServer
+                        highlightOnHover
+                        responsive
+                        customStyles={customStyles}
+                        pointerOnHover
+                    />
+                </Card.Body>
+            </Card>
         </div>
-
     );
 };
 
