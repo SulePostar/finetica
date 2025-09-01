@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Table, Button, Modal, Form, Card } from 'react-bootstrap';
+import { capitalizeFirst } from '../../helpers/capitalizeFirstLetter';
 
 const RolesStatusesTable = ({ title, data, nameKey, onAdd, onDelete }) => {
     const [showModal, setShowModal] = useState(false);
@@ -26,7 +27,7 @@ const RolesStatusesTable = ({ title, data, nameKey, onAdd, onDelete }) => {
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>{nameKey.charAt(0).toUpperCase() + nameKey.slice(1)}</th>
+                                <th>{capitalizeFirst(nameKey)}</th>
                             </tr>
                         </thead>
                         <tbody>

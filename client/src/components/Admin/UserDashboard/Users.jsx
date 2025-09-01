@@ -5,6 +5,7 @@ import DataTable from 'react-data-table-component';
 import makeCustomStyles from '../../Tables/DynamicTable.styles';
 import CIcon from '@coreui/icons-react';
 import { cilUser, cilPencil, cilTrash } from '@coreui/icons';
+import { capitalizeFirst } from '../../../helpers/capitalizeFirstLetter';
 
 import './Users.css';
 import { colors } from '../../../styles/colors';
@@ -27,6 +28,18 @@ import {
   selectChangingRole,
 } from '../../../redux/users/usersSlice';
 
+import {
+  fetchRoles,
+  selectRoles,
+  selectRolesLoading,
+} from '../../../redux/roles/rolesSlice';
+
+import {
+  fetchStatuses,
+  selectStatuses,
+  selectStatusesLoading,
+} from '../../../redux/statuses/statusesSlice';
+
 import { SearchFilters, EditUserModal, ConfirmationModal, QuickChangeModal } from '../../index';
 
 import { filterUsers, getRoleName, getStatusBadge, isNewUser } from '../../../utilis/formatters';
@@ -45,6 +58,12 @@ const Users = () => {
   const changingStatus = useSelector(selectChangingStatus);
   const changingRole = useSelector(selectChangingRole);
 
+  // New selectors for roles and statuses
+  const roles = useSelector(selectRoles);
+  const rolesLoading = useSelector(selectRolesLoading);
+  const statuses = useSelector(selectStatuses);
+  const statusesLoading = useSelector(selectStatusesLoading);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
@@ -58,6 +77,8 @@ const Users = () => {
 
   useEffect(() => {
     dispatch(fetchUsers());
+    dispatch(fetchRoles());
+    dispatch(fetchStatuses());
   }, [dispatch]);
 
   useEffect(() => {
@@ -166,7 +187,7 @@ const Users = () => {
       },
       {
         name: 'Role',
-        selector: (row) => getRoleName(row),
+        selector: (row) => getRoleName(row, roles),
         sortable: true,
         width: '12.5%',
       },
@@ -175,7 +196,7 @@ const Users = () => {
         selector: (row) => row.statusId,
         sortable: true,
         width: '12.5%',
-        cell: (row) => getStatusBadge(row.statusId),
+        cell: (row) => getStatusBadge(row.statusId, statuses),
       },
       {
         name: 'Actions',
@@ -192,12 +213,17 @@ const Users = () => {
                   value={row.statusId}
                   onChange={(e) => handleQuickStatusChange(row.id, parseInt(e.target.value))}
                   title="Change Status"
-                  disabled={changingStatus}
+                  disabled={changingStatus || statusesLoading}
                 >
-                  <option value={1}>Pending</option>
-                  <option value={2}>Approved</option>
-                  <option value={3}>Rejected</option>
-                  <option value={4}>Deleted</option>
+                  {statusesLoading ? (
+                    <option>Loading...</option>
+                  ) : (
+                    statuses.map((status) => (
+                      <option key={status.id} value={status.id}>
+                        {capitalizeFirst(status.status)}
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
               <div className="user-dashboard-role-dropdown-wrapper">
@@ -206,10 +232,18 @@ const Users = () => {
                   value={row.roleId || row.role_id || ''}
                   onChange={(e) => handleQuickRoleChange(row.id, parseInt(e.target.value))}
                   title="Change Role"
-                  disabled={changingRole}
+                  disabled={changingRole || rolesLoading}
                 >
-                  <option value={1}>Admin</option>
-                  <option value={2}>User</option>
+                  <option value="">No Role</option>
+                  {rolesLoading ? (
+                    <option>Loading...</option>
+                  ) : (
+                    roles.map((role) => (
+                      <option key={role.id} value={role.id}>
+                        {capitalizeFirst(role.role)}
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
               <button
@@ -240,6 +274,10 @@ const Users = () => {
       deletingUser,
       changingStatus,
       changingRole,
+      roles,
+      statuses,
+      rolesLoading,
+      statusesLoading,
       handleEditUser,
       handleQuickStatusChange,
       handleQuickRoleChange,
@@ -274,8 +312,14 @@ const Users = () => {
                     name: "role",
                     label: "All Roles",
                     options: [
-                      { value: "1", label: "Admin" },
-                      { value: "2", label: "User" },
+                      { value: "", label: "All Roles" },
+                      ...(rolesLoading
+                        ? [{ value: "loading", label: "Loading..." }]
+                        : roles.map((role) => ({
+                          value: role.id.toString(),
+                          label: capitalizeFirst(role.role),
+                        }))
+                      ),
                     ],
                   },
                 ]}
