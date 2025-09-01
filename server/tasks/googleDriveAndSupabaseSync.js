@@ -110,10 +110,10 @@ const categoryModelMap = {
                         // Log to processing table (skip if already exists)
                         const Model = categoryModelMap[category];
                         if (Model) {
-                            const logExists = await Model.findOne({ where: { fileName: file.name } });
+                            const logExists = await Model.findOne({ where: { filename: file.name } });
                             if (!logExists) {
                                 await Model.create({
-                                    fileName: file.name,
+                                    filename: file.name,
                                     isProcessed: false,
                                     processedAt: null,
                                     errorMessage: null
