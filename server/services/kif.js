@@ -29,11 +29,12 @@ const processSingleUnprocessedKifFile = async (fileLog) => {
         );
         const extractedData = await extractKifData(buffer, mimeType);
         await sequelize.transaction(async (t) => {
-            await createKifFromAI(extractedData, { transaction: t });
+            const result = await createKifFromAI(extractedData, { transaction: t });
+            const message = result.isInvoice ? 'Processed successfully' : 'Document is not an invoice - skipped';
             await fileLog.update({
                 isProcessed: true,
                 processedAt: new Date(),
-                message: 'Processed successfully'
+                message: message
             }, { transaction: t });
         });
     } catch (error) {
@@ -57,37 +58,45 @@ const processUnprocessedKifFiles = async () => {
     return { processed: unprocessed.length };
 };
 const createKifFromAI = async (extractedData, options = {}) => {
-  const externalTx = options.transaction;
-  const tx = externalTx || await sequelize.transaction();
-  try {
-    const { items, ...invoiceData } = extractedData;
-    const document = await SalesInvoice.create({
-      ...invoiceData,
-      approvedAt: null,
-      approvedBy: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }, { transaction: tx });
-    if (Array.isArray(items) && items.length) {
-      await SalesInvoiceItem.bulkCreate(
-        items.map(it => ({
-          ...it,
-          invoiceId: document.id,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        })),
-        { transaction: tx }
-      );
+    const externalTx = options.transaction;
+    const tx = externalTx || await sequelize.transaction();
+    try {
+        const { items, isInvoice, ...invoiceData } = extractedData;
+
+        // If it's not an invoice, don't create a database record
+        if (!isInvoice) {
+            if (!externalTx) await tx.commit();
+            return { isInvoice: false, message: 'Document is not an invoice' };
+        }
+
+        const document = await SalesInvoice.create({
+            ...invoiceData,
+            approvedAt: null,
+            approvedBy: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        }, { transaction: tx });
+        if (Array.isArray(items) && items.length) {
+            await SalesInvoiceItem.bulkCreate(
+                items.map(it => ({
+                    ...it,
+                    invoiceId: document.id,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                })),
+                { transaction: tx }
+            );
+        }
+        if (!externalTx) await tx.commit();
+        return {
+            ...document.toJSON(),
+            items: items || [],
+            isInvoice: true,
+        };
+    } catch (error) {
+        if (!externalTx) await tx.rollback();
+        throw new AppError('Failed to save KIF sales invoice to database', 500);
     }
-    if (!externalTx) await tx.commit();
-    return {
-      ...document.toJSON(),
-      items: items || [],
-    };
-  } catch (error) {
-    if (!externalTx) await tx.rollback();
-    throw new AppError('Failed to save KIF sales invoice to database', 500);
-  }
 };
 // KIF-specific function to create sales invoice from manual data
 const createKif = async (invoiceData, userId) => {
