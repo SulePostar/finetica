@@ -1,8 +1,8 @@
-import { CButton, CModal, CModalBody, CModalFooter, CModalHeader, CModalTitle } from '@coreui/react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
 import DynamicTable from '../../components/Tables/DynamicTable';
+import ConfirmationModal from '../../components/Modals/ConfirmationModal';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import DefaultLayout from '../../layout/DefaultLayout';
 import './Partner.css';
@@ -13,6 +13,8 @@ const Partner = () => {
 
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [partnerToDelete, setPartnerToDelete] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
   const apiEndpoint = useMemo(() => `${API_BASE}/partners`, [API_BASE]);
@@ -33,23 +35,33 @@ const Partner = () => {
     [navigate]
   );
 
-  // Store full row for modal
   const handleDelete = useCallback((row) => {
     setPartnerToDelete(row);
     setDeleteModalVisible(true);
+    setError(''); 
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setDeleteModalVisible(false);
+    setPartnerToDelete(null);
+    setLoading(false);
+    setError('');
   }, []);
 
   const confirmDelete = useCallback(async () => {
     if (!partnerToDelete) return;
 
+    setLoading(true);
+    setError('');
+
     try {
       const response = await fetch(`${apiEndpoint}/${partnerToDelete.id}`, {
-        method: 'DELETE',   
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`,
         },
-        body: JSON.stringify({ isActive: false }),  
+        body: JSON.stringify({ isActive: false }),
       });
 
       if (!response.ok) {
@@ -58,13 +70,13 @@ const Partner = () => {
       }
 
       setReloadTable(prev => !prev);
-    } catch (error) {
-      console.error('Error deleting partner:', error);
-    } finally {
-      setDeleteModalVisible(false);
-      setPartnerToDelete(null);
+      handleCloseModal(); 
+    } catch (err) {
+      console.error('Error deleting partner:', err);
+      setError('An error occurred while deleting the partner.');
+      setLoading(false); 
     }
-  }, [partnerToDelete, apiEndpoint]);
+  }, [partnerToDelete, apiEndpoint, handleCloseModal]);
 
 
   const columns = [
@@ -141,31 +153,17 @@ const Partner = () => {
         </div>
       </div>
 
-      <CModal
-        alignment="center"
+      <ConfirmationModal
         visible={deleteModalVisible}
-        onClose={() => setDeleteModalVisible(false)}
-      >
-        <CModalHeader>
-          <CModalTitle>Confirm Deletion</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-            Are you sure you want to delete partner 
-            <strong> {partnerToDelete?.name}</strong>? This action cannot be undone.
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => setDeleteModalVisible(false)}>
-            Cancel
-          </CButton>
-          <CButton
-            color="danger"
-            onClick={confirmDelete}
-            disabled={!partnerToDelete?.isActive} // disabled if inactive
-          >
-            Delete
-          </CButton>
-        </CModalFooter>
-      </CModal>
+        onCancel={handleCloseModal}
+        onConfirm={confirmDelete}
+        title="Confirm Deletion"
+        body={`Are you sure you want to delete partner ${partnerToDelete?.name}? This action cannot be undone.`}
+        confirmText="Delete"
+        confirmColor="danger"
+        loading={loading}
+        error={error}
+      />
     </DefaultLayout>
   );
 };
