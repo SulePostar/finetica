@@ -11,7 +11,7 @@ const purchaseInvoiceSchema = require('../schemas/kufSchema');
 const AppError = require('../utils/errorHandler');
 const supabaseService = require('../utils/supabase/supabaseService');
 
-const MODEL_NAME = 'gemini-2.5-flash-lite';
+const MODEL_NAME = 'gemini-2.5-flash';
 const BUCKET_NAME = 'kuf';
 
 const SORT_FIELD_MAP = {
@@ -193,15 +193,20 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
     const extractedData = await extractData(buffer, mimeType);
 
     await sequelize.transaction(async (t) => {
-      const invoice = await createInvoice(extractedData, { transaction: t });
+      if (extractedData.isPurchaseInvoice) {
+        await createInvoice(extractedData, { transaction: t });
+      } else {
+        console.log(`File ${unprocessedFileLog.filename} is not a purchase invoice, skipping invoice creation.`);
+      }
+
       await unprocessedFileLog.update(
         {
           isProcessed: true,
           processedAt: new Date(),
+          message: extractedData.isPurchaseInvoice ? 'KUF processed successfully' : 'Not a purchase invoice'
         },
         { transaction: t }
       );
-      return invoice;
     });
   } catch (error) {
     console.error(`Failed to process log ID ${unprocessedFileLog.id}:`, error);
