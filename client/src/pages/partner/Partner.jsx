@@ -6,6 +6,7 @@ import ConfirmationModal from '../../components/Modals/ConfirmationModal';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import DefaultLayout from '../../layout/DefaultLayout';
 import './Partner.css';
+import PartnerService from '../../services/businessPartner';
 
 const Partner = () => {
   const navigate = useNavigate();
@@ -55,29 +56,15 @@ const Partner = () => {
     setError('');
 
     try {
-      const response = await fetch(`${apiEndpoint}/${partnerToDelete.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`,
-        },
-        body: JSON.stringify({ isActive: false }),
-      });
-
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Failed to delete partner: ${text}`);
-      }
-
+      await PartnerService.deactivate(partnerToDelete.id);
       setReloadTable(prev => !prev);
-      handleCloseModal(); 
-    } catch (err) {
-      console.error('Error deleting partner:', err);
-      setError('An error occurred while deleting the partner.');
-      setLoading(false); 
+    } catch (error) {
+      console.error("Error deactivating partner:", error);
+    } finally {
+      setDeleteModalVisible(false);
+      setPartnerToDelete(null);
     }
-  }, [partnerToDelete, apiEndpoint, handleCloseModal]);
-
+  }, [partnerToDelete]);
 
   const columns = [
     { name: 'ID', selector: row => row.id, sortable: true, width: '100px' },
@@ -135,7 +122,7 @@ const Partner = () => {
           isSaved={row.updated_at && new Date(row.updated_at) > new Date(row.created_at)}
         />
       ),
-    ignoreRowClick: true,
+      ignoreRowClick: true,
     }
   ];
 

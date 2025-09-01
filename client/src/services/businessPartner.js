@@ -23,7 +23,9 @@ class PartnerService {
 
     // Deactivate (soft delete) partner by ID
     deactivate(id) {
-        return api.delete(`/partners/${id}`);
+        return api.delete(`/partners/${id}`, {
+            data: { isActive: false }
+        });
     }
 }
 
