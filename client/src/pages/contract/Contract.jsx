@@ -30,14 +30,15 @@ const Contract = () => {
     [navigate]
   );
 
-  const handleDownload = useCallback((id) => {}, []);
+  const handleDownload = useCallback((id) => { }, []);
 
   const columns = [
     {
-      name: 'Partner ID',
-      selector: (row) => row.partnerId,
+      name: 'Partner Name',
+      selector: (row) => row.businessPartner?.name,
       sortable: true,
-      width: '140px',
+      width: '200px',
+      cell: (row) => row.businessPartner?.name,
     },
     {
       name: 'Contract Number',
@@ -128,7 +129,7 @@ const Contract = () => {
           row={row}
           onView={handleView}
           onApprove={() => handleApprove(row.id)}
-          onDownload={() => handleDownload(row.id)} 
+          onDownload={() => handleDownload(row.id)}
           isApproved={Boolean(row.approvedAt || row.approvedBy || row.status === 'approved')}
           {...(row.approvedAt === null && { onApprove: () => handleApprove(row.id) })}
         />
