@@ -34,14 +34,15 @@ const Contract = () => {
     [navigate]
   );
 
-  const handleDownload = useCallback((id) => {}, []);
+  const handleDownload = useCallback((id) => { }, []);
 
   const columns = [
     {
-      name: 'Partner ID',
-      selector: (row) => row.partnerId,
+      name: 'Partner Name',
+      selector: (row) => row.businessPartner?.name,
       sortable: true,
-      width: '140px',
+      width: '200px',
+      cell: (row) => row.businessPartner?.name,
     },
     {
       name: 'Contract Number',

@@ -7,6 +7,11 @@ const createContractSchema = Joi.object({
         'any.required': 'Partner ID is required',
     }),
 
+    partnerName: Joi.string().trim().optional().messages({
+        'string.base': 'Partner name must be a string',
+        'string.empty': 'Partner name cannot be empty',
+    }),
+
     contractNumber: Joi.string().trim().max(50).required().messages({
         'string.base': 'Contract number must be a string',
         'string.empty': 'Contract number is required',
