@@ -1,6 +1,6 @@
 const path = require('path');
 const dotenv = require('dotenv');
-const Logger = require('../utils/loggerSync');
+const Logger = require('../utils/logger');
 
 // Load environment variables
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
@@ -47,12 +47,18 @@ class ConfigManager {
             folders: {
                 kif: process.env.GOOGLE_DRIVE_KIF_FOLDER_ID,
                 kuf: process.env.GOOGLE_DRIVE_KUF_FOLDER_ID,
-                transactions: process.env.GOOGLE_DRIVE_TRANSACTIONS_FOLDER_ID
+                bank_transactions: process.env.GOOGLE_DRIVE_TRANSACTIONS_FOLDER_ID,
+                contracts: process.env.GOOGLE_DRIVE_CONTRACTS_FOLDER_ID
             },
             sync: {
                 batchSize: parseInt(process.env.SYNC_BATCH_SIZE) || 5,
                 retryAttempts: parseInt(process.env.RETRY_ATTEMPTS) || 3,
-                fileSizeLimitMB: parseInt(process.env.FILE_SIZE_LIMIT_MB) || 50
+                fileSizeLimitMB: parseInt(process.env.FILE_SIZE_LIMIT_MB) || 50,
+                tableMappings: {
+                    kif: 'kif_processing_logs',
+                    kuf: 'KufLog',
+                    bank_transactions: 'bank_transaction_processing_logs'
+                }
             }
         };
     }

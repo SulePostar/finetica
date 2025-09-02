@@ -10,11 +10,10 @@ module.exports = (sequelize) => {
                 autoIncrement: true,
                 primaryKey: true,
             },
-            fileName: {
+            filename: {
                 type: DataTypes.STRING,
                 allowNull: false,
                 unique: true,
-                field: 'file_name',
             },
             isProcessed: {
                 type: DataTypes.BOOLEAN,
