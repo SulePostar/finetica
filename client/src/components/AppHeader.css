@@ -1,3 +1,10 @@
+/* Dropdown icon colors for theme */
+.dropdown-icon-dark {
+  color: #fff !important;
+}
+.dropdown-icon-light {
+  color: #565656 !important;
+}
 /* Header Toggle Button - Always Visible */
 .header-toggler {
   position: relative;
@@ -29,25 +36,17 @@
 }
 
 /* Main Header Styles */
+
 .app-header {
   width: 100%;
   margin-left: 0;
   z-index: 1040;
-  transition: none;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   height: 64px;
   min-height: 64px;
   position: fixed;
   top: 0;
   left: 0;
-  background-color: var(--cui-sidebar-bg);
-}
-
-.app-header.header-dark {
-  background-color: var(--cui-sidebar-bg);
-}
-
-.app-header.header-light {
-  background-color: rgb(255, 255, 255);
 }
 
 /* Header Container Styles */
@@ -56,32 +55,32 @@
   min-height: 64px;
   display: flex;
   align-items: center;
-  transition: margin-left 0.3s ease-in-out;
+  transition: margin-left 0.3s ease-in-out, background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
   width: 100%;
-}
-
-.header-container-fluid.header-dark {
-  background-color: #432e62df;
-}
-
-.header-container-fluid.header-light {
-  background-color: #ffffff;
-  border-bottom: solid 1px #d9d9d9;
+  border-bottom: 1px solid var(--cui-sidebar-border-color);
+  background-color: var(--cui-sidebar-bg);
+  color: var(--cui-sidebar-color);
 }
 
 /* Back Button Styles */
+
 .back-button {
-  border: 1px solid var(--cui-border-color);
+  border: 1px solid var(--cui-sidebar-active-color);
   border-radius: 6px;
   padding: 8px 12px;
   background-color: transparent;
-  color: var(--cui-body-color);
+  color: var(--cui-sidebar-color);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   font-size: 0.875rem;
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+.back-icon {
+  color: var(--cui-sidebar-active-color) !important;
 }
 
 .back-button:hover {
@@ -93,6 +92,7 @@
 }
 
 /* Header Toggle Button Styles */
+
 .header-toggle-btn {
   border: none;
   border-radius: 6px;
@@ -102,7 +102,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  color: var(--cui-sidebar-color);
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+.header-menu-icon {
+  color: var(--cui-sidebar-icon-color) !important;
 }
 
 .header-toggle-btn.toggle-dark {
@@ -178,6 +183,7 @@
 }
 
 /* Fixed Right Navigation */
+
 .fixed-header-nav {
   position: fixed;
   top: 0;
@@ -187,16 +193,9 @@
   display: flex;
   align-items: center;
   padding: 0 1rem;
-  transition: background-color 0.3s ease;
-}
-
-/* Ensure fixed nav adapts to theme changes */
-[data-coreui-theme='dark'] .fixed-header-nav {
-  background-color: #432e62df;
-}
-
-[data-coreui-theme='light'] .fixed-header-nav {
-  background-color: #ffffff;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  background-color: var(--cui-sidebar-bg);
+  color: var(--cui-sidebar-color);
 }
 
 /* Responsive adjustments for smaller screens */
@@ -204,10 +203,4 @@
   .fixed-header-nav {
     display: none;
   }
-}
-
-/* Ensure dropdowns appear correctly */
-.fixed-header-nav .dropdown-menu {
-  right: 0;
-  left: auto;
 }

@@ -60,14 +60,18 @@ body {
   --cui-sidebar-hover-bg: #ede9fe; // Replace with your desired color
   --cui-sidebar-active-color: #5850a6; // Replace with your desired color
   --cui-sidebar-icon-color: #565656; // Replace with your desired color
+  --cui-sidebar-border-color: #efefefef; // Replace with your desired color
+  --cui-sidebar-title-color: #bebebe; // Replace with your desired color
 }
 
 [data-coreui-theme='dark'] {
-  --cui-sidebar-color: #fefefe;
-  --cui-sidebar-bg: #000000;
+  --cui-sidebar-color: #bebebe;
+  --cui-sidebar-bg: #212631;
   --cui-sidebar-hover-bg: #2a2b47;
   --cui-sidebar-active-color: #c193f7;
-  --cui-sidebar-icon-color: #fefefe;
+  --cui-sidebar-icon-color: #bebebe;
+  --cui-sidebar-border-color: #1a1a1d;
+  --cui-sidebar-title-color: #c193f7; // Replace with your desired color
 }
 
 @include color-mode(dark) {

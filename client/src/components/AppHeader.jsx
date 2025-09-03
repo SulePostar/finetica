@@ -75,16 +75,13 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
     <>
       <CHeader
         position="fixed"
-        className={`p-0 header app-header ${isDarkMode ? 'header-dark' : 'header-light'}`}
-        data-coreui-theme={isDarkMode ? 'dark' : 'light'}
+        className="p-0 header app-header"
         ref={headerRef}
       >
         <CContainer
           fluid
-          className={`px-4 header-container-fluid ${isDarkMode ? 'header-dark' : 'header-light'}`}
-          style={{
-            marginLeft: `${headerMargin}px`,
-          }}
+          className="px-4 header-container-fluid"
+          style={{ marginLeft: `${headerMargin}px` }}
         >
           {detailPage ? (
             <CButton
@@ -92,18 +89,18 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
               onClick={() => navigate(detailPage.route)}
               className="ms-n3 back-button"
             >
-              <CIcon icon={cilArrowLeft} className="me-2" />
+              <CIcon icon={cilArrowLeft} className="me-2 back-icon" />
               Back to {detailPage.label}
             </CButton>
           ) : (
             <CHeaderToggler
               onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
-              className={`ms-n3 header-toggle-btn ${isDarkMode ? 'toggle-dark' : 'toggle-light'}`}
+              className="ms-n3 header-toggle-btn"
             >
               <CIcon
                 icon={cilMenu}
                 size="lg"
-                className={isDarkMode ? 'menu-icon-dark' : 'menu-icon-light'}
+                className="header-menu-icon"
               />
             </CHeaderToggler>
           )}
@@ -116,13 +113,13 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
         <CHeaderNav className="fixed-header-nav-gap">
           <CDropdown variant="nav-item" placement="bottom-end">
             <CDropdownToggle caret={false} className="bg-transparent border-0">
-              {colorMode === 'dark' && <CIcon icon={cilMoon} size="lg" style={{ color: '#FFFFFF' }} />}
-              {colorMode === 'light' && <CIcon icon={cilSun} size="lg" style={{ color: '#565656' }} />}
+              {colorMode === 'dark' && <CIcon icon={cilMoon} size="lg" className="dropdown-icon-dark" />}
+              {colorMode === 'light' && <CIcon icon={cilSun} size="lg" className="dropdown-icon-light" />}
               {colorMode === 'auto' && (
                 <CIcon
                   icon={cilContrast}
                   size="lg"
-                  className={isDarkMode ? 'text-white' : 'text-dark'}
+                  className={isDarkMode ? 'dropdown-icon-dark' : 'dropdown-icon-light'}
                 />
               )}
             </CDropdownToggle>

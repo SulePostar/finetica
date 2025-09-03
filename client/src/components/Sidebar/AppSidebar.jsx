@@ -77,13 +77,15 @@ const AppSidebar = ({ isDarkMode }) => {
     <CSidebar
       className={`sidebar ${sidebarShow ? 'show' : ''} ${unfoldable ? 'sidebar-unfoldable' : ''
         }`}
-      colorScheme={isDarkMode ? 'dark' : 'light'}
+      // colorScheme is handled by CoreUI theme, no need for manual prop
       position="fixed"
       unfoldable={unfoldable}
       visible={sidebarShow}
       style={{
         zIndex: unfoldable && isHovered ? 1060 : 1050,
-        borderRight: isDarkMode ? '1px solid #3a2a4d' : '1px solid #efefefef',
+        borderRight: '1px solid var(--cui-sidebar-border-color, #efefefef)',
+        backgroundColor: 'var(--cui-sidebar-bg)',
+        color: 'var(--cui-sidebar-color)',
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -91,11 +93,7 @@ const AppSidebar = ({ isDarkMode }) => {
       {/* Logo */}
       <div className="sidebar-logo">
         <img
-          src={
-            isDarkMode
-              ? '/symphonypurple.png'
-              : '/symphonypurple.png'
-          }
+          src={'/symphonypurple.png'}
           alt="Logo"
         />
       </div>
@@ -132,7 +130,7 @@ const AppSidebar = ({ isDarkMode }) => {
         <div className="d-none d-lg-flex justify-content-between align-items-center px-3 py-2">
           <div
             className="fw-semibold small"
-            style={{ color: isDarkMode ? '#fff' : '#212529' }}
+            style={{ color: 'var(--cui-sidebar-color, #212529)' }}
           >
             Google Drive
           </div>
@@ -141,14 +139,10 @@ const AppSidebar = ({ isDarkMode }) => {
             style={{
               backgroundColor: driveConnected
                 ? colors.success.background
-                : isDarkMode
-                  ? colors.white
-                  : colors.textPrimary,
+                : 'var(--cui-sidebar-bg, #ede9fe)',
               color: driveConnected
                 ? colors.success.text
-                : isDarkMode
-                  ? colors.error.text
-                  : colors.textPrimary,
+                : 'var(--cui-sidebar-color, #212529)',
             }}
           >
             {driveConnected ? 'Connected' : 'Disconnected'}

@@ -6,13 +6,13 @@
   height: 100vh !important;
   font-family: 'Poppins', sans-serif !important;
   font-weight: 300 !important;
-  transition: transform 0.3s ease-in-out !important;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Hide when closed */
 .sidebar:not(.show) {
   transform: translateX(-100%) !important;
-  transition: ease-in-out 0.3s !important;
+  transition: ease-in-out 0.2s ease !important;
 }
 .sidebar.show {
   transform: translateX(0) !important;
@@ -30,7 +30,7 @@
   max-width: 100%;
   max-height: 90px;
   object-fit: contain;
-  transition: all 0.3s ease-in-out;
+  transition: all 0.2s ease;
 }
 
 /* Links */
@@ -38,7 +38,7 @@
   color: var(--cui-sidebar-color) !important;
 }
 .sidebar .nav-title {
-  color: var(--cui-sidebar-active-color) !important; /* Custom purple for section titles */
+  color: var(--cui-sidebar-title-color) !important; /* Custom purple for section titles */
   font-weight: 600;
   letter-spacing: 0.5px;
 }
@@ -49,16 +49,15 @@
   align-items: center;
   color: var(--cui-sidebar-color) !important;
   background-color: var(--cui-sidebar-bg) !important;
-  transition: background 0.2s, color 0.2s;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 .sidebar .nav-link:hover,
 .sidebar .nav-link.active {
   background-color: var(--cui-sidebar-hover-bg) !important;
   color: var(--cui-sidebar-active-color) !important;
 }
-.sidebar .nav-link,
-.sidebar .nav-icon {
-  transition: color 0.2s;
+.sidebar .nav-link .nav-icon {
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
   color: var(--cui-sidebar-icon-color) !important;
 }
 .sidebar .nav-link:hover .nav-icon,
