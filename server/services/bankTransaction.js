@@ -162,8 +162,6 @@ const approveBankTransactionById = async (id, userId, updatedData = {}) => {
             throw new AppError('Bank transaction not found', 404);
         }
         const { items, ...dataToUpdate } = updatedData;
-        console.log("Approving BankTransaction with data:", dataToUpdate);
-        console.log("userId:", userId);
 
         const mergedData = {
             ...document.toJSON(),

@@ -45,6 +45,7 @@ const DocumentInfo = ({
 
     const cardTitle = getCardTitle(type);
 
+
     if (loading) {
         return (
             <DocInfoCard

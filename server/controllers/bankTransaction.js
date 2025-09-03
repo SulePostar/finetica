@@ -42,7 +42,6 @@ const approveTransaction = async (req, res) => {
     const { id: transactionId } = req.params;
     const { userId } = req.user;
     const result = await approveBankTransactionById(transactionId, userId, req.body);
-    console.log("farecare", req.body);
     res.json(result);
 };
 
