@@ -288,5 +288,6 @@ module.exports = {
     editBankTransaction,
     processBankTransaction,
     processUnprocessedFiles,
-    getUnprocessedFiles
+    getUnprocessedFiles,
+    extractData
 };
