@@ -187,15 +187,3 @@ export const createMockKifData = (id = '1') => ({
   createdAt: '2024-01-15T10:30:00Z',
   updatedAt: '2024-01-15T14:45:00Z',
 });
-export const createMockVatData = (id = '1') => ({
-  id,
-  name: 'Product A',
-  amount: 10,
-  price: 25.5,
-  date: '2025-08-10',
-  document_number: `bank-transactions-${id}`,
-  total_price: 25.5 * 10,
-  status: 'pending',
-  created_at: '2025-08-11',
-  updated_at: '2025-08-12',
-});

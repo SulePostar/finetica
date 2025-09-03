@@ -157,16 +157,22 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
 const approveBankTransactionById = async (id, userId, updatedData = {}) => {
     try {
         const document = await BankTransaction.findByPk(id);
-
+        console.log("Found BankTransaction:", document);
         if (!document) {
             throw new AppError('Bank transaction not found', 404);
         }
         const { items, ...dataToUpdate } = updatedData;
+        console.log("Approving BankTransaction with data:", dataToUpdate);
+        console.log("userId:", userId);
 
-        dataToUpdate.approvedAt = new Date();
-        dataToUpdate.approvedBy = userId;
+        const mergedData = {
+            ...document.toJSON(),
+            ...dataToUpdate,
+            approvedAt: new Date(),
+            approvedBy: userId
+        };
 
-        await document.update(dataToUpdate);
+        await document.update(mergedData);
 
         return await BankTransaction.findByPk(id, {
             include: [
@@ -182,6 +188,7 @@ const approveBankTransactionById = async (id, userId, updatedData = {}) => {
 };
 
 const editBankTransaction = async (id, updatedData) => {
+    console.log("poziva se");
     try {
         const document = await BankTransaction.findByPk(id);
 
@@ -200,6 +207,7 @@ const editBankTransaction = async (id, updatedData) => {
 
         // Update transaction
         await document.update(dataToUpdate);
+        console.log("poziva se");
 
         // Return updated transaction with associations
         return await BankTransaction.findByPk(id, {
