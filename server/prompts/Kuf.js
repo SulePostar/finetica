@@ -51,7 +51,7 @@ PASS 1 — Positive evidence near the HEADER (top region):
 - Company name next to/near a logo at the top.
 - Tax/registration identifiers adjacent to the name: VAT/PDV/UID/USt-IdNr/JIB/PIB/MB.
 - Full postal address and contact info near the header.
-- “Bill To”, “Buyer”, “Kupac”, “Rechnungsempfänger” is NOT the supplier (that’s the customer).
+- “Bill To”, “Buyer”, “Kupac”, “Rechnungsempfänger” is NOT the supplier (that's the customer).
 
 PASS 2 — Exclusions (avoid banks/payment rails & unrelated orgs):
 - DO NOT treat BANKS or PAYMENT SERVICES as the supplier just because they appear in payment sections. Exclude names near or inside blocks labeled: "IBAN", "BIC", "SWIFT", "Konto", "Payment details", "Zahlungsinformationen", "Poziv na broj".
@@ -78,10 +78,37 @@ You will be provided ONE array of business partners at runtime (JSON) with objec
   • If no sufficiently clear match → set "supplierId": null.
 - NEVER invent an id not present in the provided array.
 
+INVOIE TYPE
+- Look for labels: "Type", "Invoice Type", "Vrsta", "Tip", "Art", "Rechnungsart".
+- Common types: "Faktura", "Račun", "Kreditna faktura", "Gutschrift", "Storno", "Korektivna faktura", "Proforma", "Angebot", "Ponuda".
+- If multiple candidates, pick the most prominently displayed one.
+- If there is "Invoice" displayed in the header do not return "Faktura" or something else. Do not invent types.
+- If you find "Račun za ...", "Faktura za ...", or similar, return only the word "Račun" or "Faktura" as the type, and not the full phrase.
+
+NOTE
+- Look for labels: "Note", "Napomena", "Bemerkung", "Anmerkung", "Comment".
+- If multiple candidates, concat them with \n.
+- If there is mentioning of previous debpts/credits, include that in the note.
+
+BILL NUMBER
+- "billNumber" is a secondary reference number sometimes used for internal tracking.
+- Look for labels: "Bill No.", "Bill Number", "Broj računa", "Broj fakture", "Rechnungsnummer".
+- Bill number is NOT a "Transaction number" or "Broj transakcije".
+- Bill number is often near but distinct from the main invoice number.
+- You may not find bill number; in that case, set to null.
+- It will most likely be a different format than the invoice number.
+- If multiple candidates, pick the one closest to the invoice number.
+
+LUMP SUM
+- Lump sum is a single total amount covering all items/services without detailed line itemization.
+- Look for labels: "Lump sum", "Total", "Pauschalbetrag", "Pauschale", "Ukupno", "Sveukupno", "Iznos".
+- Lump sum is not a fee or tax component ("tax", "fee", "Taksa", "Porez").
+- If no specific lump sum is found, try to find "Total" or "Ukupno" or try to calculate the Net total value with VAT value and compare what you get with something else in the file. Then if they match or are close, use that value. Else set to null.
+- If you find amount for previous debpts/credits, add that value to the lump sum and compare it with another value in the file. If they match or are close, use that value. Else use another value in the file or set to null.
+
 TOTALS & VAT
 - Use printed totals if present; do not compute missing totals unless clearly derivable from explicit VAT rates and amounts in the document.
 - "deductibleVat" and "nonDeductibleVat" should ONLY be set if the invoice explicitly distinguishes them; otherwise leave null.
-- "lumpSum" should only be used when an explicit lump-sum amount is presented separate from itemization.
 
 DATE FIELDS
 - "invoiceDate": look for Invoice Date / Datum računa / Rechnungsdatum.
