@@ -37,6 +37,7 @@ const DocumentInfo = ({
             case 'contract': return 'Contract Information';
             case 'kif': return 'KIF (Sales Invoice) Information';
             case 'kuf': return 'KUF (Purchase Invoice) Information';
+            case 'partner': return 'Business Partner Information';
             default: return 'Document Information';
         }
     };
@@ -73,6 +74,8 @@ const DocumentInfo = ({
         );
     }
 
+    // console.log("data: ", data)
+
     return (
         <DocInfoCard title={cardTitle}>
             <div
@@ -102,6 +105,7 @@ const DocumentInfo = ({
                                 aria-labelledby={`label-${key}`}
                             />
                         ) : (
+
                             <CBadge
                                 className="info-value"
                                 aria-labelledby={`label-${key}`}

@@ -1,5 +1,9 @@
 import { CNavItem, CNavTitle, CNavGroup } from '@coreui/react';
+<<<<<<< HEAD
 import { cilHome, cilFile, cilBank, cilSettings, cilUser, cilShieldAlt, cilTag } from '@coreui/icons';
+=======
+import { cilHome, cilListNumbered, cilList, cilCalculator, cilSpeedometer, cilDescription, cilSettings, cilPeople, cilShieldAlt, cilBriefcase } from '@coreui/icons';
+>>>>>>> 8ec2384b08b4b32e4e3ae0ac747f3a9f1876c714
 
 const _nav = [
   {
@@ -35,6 +39,12 @@ const _nav = [
     name: 'Bank Transactions',
     to: '/bank-transactions',
     icon: cilBank,
+  },
+  {
+    component: CNavItem,
+    name: 'Partners',
+    to: '/partners',
+    icon: cilBriefcase,
   },
   {
     component: CNavTitle,

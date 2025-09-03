@@ -3,6 +3,7 @@ import { CTableRow, CTableDataCell, CButton, CFormSelect, CBadge } from '@coreui
 import CIcon from '@coreui/icons-react';
 import { cilPencil, cilTrash } from '@coreui/icons';
 import { getRoleName, getStatusBadge, isNewUser } from '../../utilis/formatters';
+import { capitalizeFirst } from '../../helpers/capitalizeFirstLetter';
 
 const UserRow = ({
   user,
@@ -15,9 +16,13 @@ const UserRow = ({
   isDeleting,
   isChangingStatus,
   isChangingRole,
+  roles = [],
+  statuses = [],
+  rolesLoading = false,
+  statusesLoading = false,
 }) => {
-  const roleName = getRoleName(user);
-  const statusBadge = getStatusBadge(user.statusId);
+  const roleName = getRoleName(user, roles);
+  const statusBadge = getStatusBadge(user.statusId, statuses);
   const isSelf = user.id === currentUser?.id;
   const isNew = isNewUser(user);
 
@@ -51,12 +56,17 @@ const UserRow = ({
             onChange={(e) => onQuickStatus(user.id, parseInt(e.target.value))}
             style={{ width: 'auto', minWidth: '100px' }}
             title="Change Status"
-            disabled={isChangingStatus}
+            disabled={isChangingStatus || statusesLoading}
           >
-            <option value={1}>Pending</option>
-            <option value={2}>Approved</option>
-            <option value={3}>Rejected</option>
-            <option value={4}>Deleted</option>
+            {statusesLoading ? (
+              <option>Loading...</option>
+            ) : (
+              statuses.map((status) => (
+                <option key={status.id} value={status.id}>
+                  {capitalizeFirst(status.status)}
+                </option>
+              ))
+            )}
           </CFormSelect>
           <CFormSelect
             size="sm"
@@ -64,11 +74,18 @@ const UserRow = ({
             onChange={(e) => onQuickRole(user.id, parseInt(e.target.value))}
             style={{ width: 'auto', minWidth: '100px' }}
             title="Change Role"
-            disabled={isChangingRole}
+            disabled={isChangingRole || rolesLoading}
           >
             <option value="">No Role</option>
-            <option value={2}>Admin</option>
-            <option value={3}>User</option>
+            {rolesLoading ? (
+              <option>Loading...</option>
+            ) : (
+              roles.map((role) => (
+                <option key={role.id} value={role.id}>
+                  {capitalizeFirst(role.role)}
+                </option>
+              ))
+            )}
           </CFormSelect>
           <CButton
             size="sm"
