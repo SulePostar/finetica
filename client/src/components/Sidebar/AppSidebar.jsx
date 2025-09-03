@@ -83,7 +83,7 @@ const AppSidebar = ({ isDarkMode }) => {
       visible={sidebarShow}
       style={{
         zIndex: unfoldable && isHovered ? 1060 : 1050,
-        backgroundColor: isDarkMode ? '#432e62df' : '#fff',
+        borderRight: isDarkMode ? '1px solid #3a2a4d' : '1px solid #efefefef',
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -93,7 +93,7 @@ const AppSidebar = ({ isDarkMode }) => {
         <img
           src={
             isDarkMode
-              ? '/SymphonyLogoDarkTheme.jpeg'
+              ? '/symphonypurple.png'
               : '/symphonypurple.png'
           }
           alt="Logo"

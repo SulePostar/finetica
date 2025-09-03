@@ -112,8 +112,8 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
         <CHeaderNav className="fixed-header-nav-gap">
           <CDropdown variant="nav-item" placement="bottom-end">
             <CDropdownToggle caret={false} className="bg-transparent border-0">
-              {colorMode === 'dark' && <CIcon icon={cilMoon} size="lg" className="text-white" />}
-              {colorMode === 'light' && <CIcon icon={cilSun} size="lg" className="text-dark" />}
+              {colorMode === 'dark' && <CIcon icon={cilMoon} size="lg" style={{ color: '#FFFFFF' }} />}
+              {colorMode === 'light' && <CIcon icon={cilSun} size="lg" style={{ color: '#565656' }} />}
               {colorMode === 'auto' && (
                 <CIcon
                   icon={cilContrast}

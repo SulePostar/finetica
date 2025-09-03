@@ -39,10 +39,11 @@
   position: fixed;
   top: 0;
   left: 0;
+  background-color: var(--cui-sidebar-bg);
 }
 
 .app-header.header-dark {
-  background-color: #432e62df;
+  background-color: var(--cui-sidebar-bg);
 }
 
 .app-header.header-light {
@@ -126,7 +127,7 @@
 }
 
 .menu-icon-light {
-  color: #000000;
+  color: #565656;
 }
 
 /* Flex spacer */
@@ -187,18 +188,15 @@
   align-items: center;
   padding: 0 1rem;
   transition: background-color 0.3s ease;
-  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Ensure fixed nav adapts to theme changes */
 [data-coreui-theme='dark'] .fixed-header-nav {
   background-color: #432e62df;
-  border-color: var(--cui-border-color-translucent);
 }
 
 [data-coreui-theme='light'] .fixed-header-nav {
-  background-color: #bfaee5ff;
-  border-color: var(--cui-border-color);
+  background-color: #ffffff;
 }
 
 /* Responsive adjustments for smaller screens */
