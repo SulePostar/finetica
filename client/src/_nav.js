@@ -1,12 +1,12 @@
 import { CNavItem, CNavTitle, CNavGroup } from '@coreui/react';
-import { cilHome, cilListNumbered, cilList, cilCalculator, cilSpeedometer, cilDescription, cilSettings, cilPeople, cilShieldAlt } from '@coreui/icons';
+import { cilHome, cilFile, cilBank, cilSettings, cilUser, cilShieldAlt, cilTag } from '@coreui/icons';
 
 const _nav = [
   {
     component: CNavItem,
-    name: 'FINETICA',
+    name: 'Finetica',
     to: '/',
-    icon: cilSpeedometer,
+    icon: cilHome,
   },
   {
     component: CNavTitle,
@@ -16,25 +16,25 @@ const _nav = [
     component: CNavItem,
     name: 'Contracts',
     to: '/contracts',
-    icon: cilDescription,
+    icon: cilFile,
   },
   {
     component: CNavItem,
     name: 'KIF',
     to: '/kif',
-    icon: cilListNumbered,
+    icon: cilTag,
   },
   {
     component: CNavItem,
     name: 'KUF',
     to: '/kuf',
-    icon: cilList,
+    icon: cilTag,
   },
   {
     component: CNavItem,
     name: 'Bank Transactions',
     to: '/bank-transactions',
-    icon: cilCalculator,
+    icon: cilBank,
   },
   {
     component: CNavTitle,
@@ -51,7 +51,7 @@ const _nav = [
         component: CNavItem,
         name: 'Users',
         to: '/admin/users',
-        icon: cilPeople,
+        icon: cilUser,
       },
       {
         component: CNavItem,

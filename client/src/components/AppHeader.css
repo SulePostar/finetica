@@ -46,7 +46,7 @@
 }
 
 .app-header.header-light {
-  background-color: #bfaee5ff;
+  background-color: rgb(255, 255, 255);
 }
 
 /* Header Container Styles */
@@ -64,7 +64,8 @@
 }
 
 .header-container-fluid.header-light {
-  background-color: #bfaee5ff;
+  background-color: #ffffff;
+  border-bottom: solid 1px #d9d9d9;
 }
 
 /* Back Button Styles */
@@ -83,7 +84,7 @@
 }
 
 .back-button:hover {
-  background-color: var(--cui-light);
+  background-color: #ede9fe;
 }
 
 [data-coreui-theme='dark'] .back-button:hover {
