@@ -157,7 +157,6 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
 const approveBankTransactionById = async (id, userId, updatedData = {}) => {
     try {
         const document = await BankTransaction.findByPk(id);
-        console.log("Found BankTransaction:", document);
         if (!document) {
             throw new AppError('Bank transaction not found', 404);
         }
@@ -186,7 +185,6 @@ const approveBankTransactionById = async (id, userId, updatedData = {}) => {
 };
 
 const editBankTransaction = async (id, updatedData) => {
-    console.log("poziva se");
     try {
         const document = await BankTransaction.findByPk(id);
 
@@ -205,7 +203,6 @@ const editBankTransaction = async (id, updatedData) => {
 
         // Update transaction
         await document.update(dataToUpdate);
-        console.log("poziva se");
 
         // Return updated transaction with associations
         return await BankTransaction.findByPk(id, {

@@ -8,7 +8,7 @@ const {
 } = require('../controllers/bankTransaction');
 const isAuthenticated = require('../middleware/isAuthenticated');
 const validate = require('../middleware/validation');
-const { bankTransactionCreateSchema, bankTransactionIdSchema, bankTransactionUpdateSchema } = require('../schemas/bankTransactionJoi');
+const { bankTransactionCreateSchema, bankTransactionUpdateSchema } = require('../schemas/bankTransactionJoi');
 
 router.get('/bank-transaction-data', getBankTransactions);
 router.get('/bank-transaction-data/:id', getTransactionById);
