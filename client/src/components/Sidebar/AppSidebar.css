@@ -5,7 +5,7 @@
   left: 0 !important;
   height: 100vh !important;
   font-family: 'Poppins', sans-serif !important;
-  font-weight: 300 !important;
+  font-weight: 400 !important;
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -39,7 +39,7 @@
 }
 .sidebar .nav-title {
   color: var(--cui-sidebar-title-color) !important; /* Custom purple for section titles */
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.5px;
 }
 
@@ -47,14 +47,15 @@
   position: relative;
   display: flex;
   align-items: center;
-  color: var(--cui-sidebar-color) !important;
+  color: var(--cui-sidebar-icon-color) !important;
   background-color: var(--cui-sidebar-bg) !important;
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  font-weight: 400;
 }
 .sidebar .nav-link:hover,
 .sidebar .nav-link.active {
   background-color: var(--cui-sidebar-hover-bg) !important;
-  color: var(--cui-sidebar-active-color) !important;
+  color: var(--cui-sidebar-active-color-text) !important;
 }
 .sidebar .nav-link .nav-icon {
   transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
@@ -62,7 +63,7 @@
 }
 .sidebar .nav-link:hover .nav-icon,
 .sidebar .nav-link.active .nav-icon {
-  color: var(--cui-sidebar-active-color) !important;
+  color: var(--cui-sidebar-active-color-text) !important;
 }
 
 /* Purple line */
