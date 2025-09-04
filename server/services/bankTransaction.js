@@ -255,10 +255,10 @@ const processUnprocessedFiles = async (name) => {
                 processedAt: new Date(),
             },
             {
-                where: { fileName: name }
+                where: { filename: name }
             }
         );
-        return { success: true, fileName: name };
+        return { success: true, filename: name };
     } catch (error) {
         console.error(`Failed to process file with name ${name}:`, error);
         return { success: false, error: error.message };
@@ -269,10 +269,10 @@ const getUnprocessedFiles = async () => {
     try {
         const files = await BankTransactionProcessingLog.findAll({
             where: { isProcessed: false },
-            attributes: ['fileName'], // only select the fileName column
+            attributes: ['filename'], // only select the filename column
         });
 
-        return files.map(f => f.fileName);
+        return files.map(f => f.filename);
     } catch (error) {
         console.error('Failed to fetch unprocessed files:', error);
         throw new Error('Could not fetch unprocessed files');
@@ -288,5 +288,6 @@ module.exports = {
     editBankTransaction,
     processBankTransaction,
     processUnprocessedFiles,
-    getUnprocessedFiles
+    getUnprocessedFiles,
+    extractData
 };

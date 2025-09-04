@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const mime = require('mime');
-const supabaseService = require('./supabase/supabaseService');
 const { SOURCES } = require('./constants');
 
 /**
@@ -11,24 +10,16 @@ const { SOURCES } = require('./constants');
  * @param {string} source - 'local' or 'supabase'
  */
 
-async function getFileSource(category, fileName, source = 'local') {
+async function getFileSource(category, fileName, source = 'supabase') {
     const config = SOURCES[category];   // goes inside of local folder (./googleDriveDownloads) or supabase bucket (e.g. 'transactions' )
     if (!config) {
         throw new Error(`Unknown category: ${category}`);
     }
 
-    if (source === 'local') {
+    if (source === 'supabase') {
         const filePath = path.join(config.localFolder, fileName);
         const buffer = fs.readFileSync(filePath);
-        const mimeType = mime.getType(filePath) || 'application/pdf';
-        return { buffer, mimeType, fileName, category };
-    }
-
-    if (source === 'supabase') {
-        const { buffer, mimeType } = await supabaseService.getFile(
-            config.supabaseBucket,
-            fileName
-        );
+        const mimeType = mime.getType(filePath);
         return { buffer, mimeType, fileName, category };
     }
 
