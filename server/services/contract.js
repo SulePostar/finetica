@@ -112,7 +112,6 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
       unprocessedFileLog.filename
     );
     const extractedData = await extractData(buffer, mimeType);
-    console.log("Filename: ", unprocessedFileLog.filename);
     await sequelize.transaction(async (t) => {
       await Contract.create({ ...extractedData, filename: unprocessedFileLog.filename }, { transaction: t });
       await unprocessedFileLog.update(
