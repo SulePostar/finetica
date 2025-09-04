@@ -5,7 +5,7 @@ module.exports = (sequelize) => {
     static associate({ BusinessPartner, SalesInvoiceItem, User }) {
       this.belongsTo(BusinessPartner, { foreignKey: 'customerId' });
       this.hasMany(SalesInvoiceItem, { foreignKey: 'invoiceId' });
-      this.belongsTo(User, { foreignKey: 'approvedBy'});
+      this.belongsTo(User, { foreignKey: 'approvedBy' });
     }
   }
 
@@ -73,6 +73,11 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: true,
         field: 'approved_by',
+      },
+      fileName: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        field: 'file_name',
       },
     },
     {
