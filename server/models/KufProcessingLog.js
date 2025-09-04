@@ -15,6 +15,11 @@ module.exports = (sequelize) => {
                 allowNull: false,
                 defaultValue: false,
             },
+            isValid: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: true,
+            },
             processedAt: {
                 type: DataTypes.DATE,
                 allowNull: true,
