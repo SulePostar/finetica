@@ -65,7 +65,8 @@ const findById = async (id) => {
     ],
   });
   if (!contract) throw new AppError('Contract not found', 404);
-  return contract;
+  const pdfUrl = await supabaseService.getSignedUrl(BUCKET_NAME, contract.filename);
+  return { ...contract.toJSON(), pdfUrl };
 };
 
 const approveContractById = async (id, body, userId) => {
