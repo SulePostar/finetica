@@ -63,54 +63,37 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
     return () => document.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const getHeaderMargin = () => {
-    if (!sidebarShow) return 0;
-    return sidebarUnfoldable ? 56 : 240;
-  };
-
-  const headerMargin = getHeaderMargin();
+  const isMobile = window.innerWidth < 768;
 
   return (
-    <>
-      <CHeader
-        position="fixed"
-        className={`p-0 header app-header ${isDarkMode ? 'bg-dark-purple' : 'bg-light-purple'}`}
-        data-coreui-theme={isDarkMode ? 'dark' : 'light'}
-        ref={headerRef}
-      >
-        <CContainer
-          fluid
-          className={`px-4 d-flex align-items-center ${isDarkMode ? 'bg-dark-purple' : 'bg-light-purple'}`}
-          style={{
-            marginLeft: `${headerMargin}px`,
-          }}
+    <CContainer
+      fluid
+      className={`px-4 d-flex align-items-center h-64 ${isDarkMode ? 'bg-dark-purple' : 'bg-light-purple'}`}
+      style={{
+        marginLeft: `${!isMobile && sidebarShow ? (sidebarUnfoldable ? 56 : 240) : 0}px`,
+      }}
+    >
+      {detailPage ? (
+        <CButton
+          variant="outline"
+          onClick={() => navigate(detailPage.route)}
+          className="ms-n3 border rounded-pill px-3 py-2 d-flex align-items-center"
         >
-          {detailPage ? (
-            <CButton
-              variant="outline"
-              onClick={() => navigate(detailPage.route)}
-              className="ms-n3 border rounded-pill px-3 py-2 d-flex align-items-center"
-            >
-              <CIcon icon={cilArrowLeft} className="me-2" />
-              Back to {detailPage.label}
-            </CButton>
-          ) : (
-            <CHeaderToggler
-              onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
-              className={`ms-n3 border-0 rounded ${isDarkMode ? 'text-white hover-dark' : 'text-dark hover-light'}`}
-            >
-              <CIcon
-                icon={cilMenu}
-                size="lg"
-              />
-            </CHeaderToggler>
-          )}
-          <CHeaderNav className="d-none d-md-flex" />
-          <div className="flex-grow-1"></div>
-        </CContainer>
-      </CHeader>
+          <CIcon icon={cilArrowLeft} className="me-2" />
+          Back to {detailPage.label}
+        </CButton>
+      ) : (
+        <CHeaderToggler
+          onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
+          className={`ms-n3 border-0 rounded ${isDarkMode ? 'text-white hover-dark' : 'text-dark hover-light'}`}
+        >
+          <CIcon icon={cilMenu} size="lg" />
+        </CHeaderToggler>
+      )}
 
-      <div className="position-fixed top-0 end-0 z-index-1060 h-64 d-flex align-items-center p-4">
+      <div className="flex-grow-1"></div>
+
+      <div className="position-fixed z-index-1060 top-0 end-0 h-64 d-flex align-items-center px-4">
         <CHeaderNav className="d-flex gap-3">
           <CDropdown variant="nav-item" placement="bottom-end">
             <CDropdownToggle caret={false} className="bg-transparent border-0">
@@ -127,28 +110,28 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
             <CDropdownMenu className={isDarkMode ? 'dropdown-menu-dark' : ''}>
               <CDropdownItem
                 active={colorMode === 'light'}
-                className="d-flex align-items-center"
                 as="button"
                 type="button"
                 onClick={() => setColorMode('light')}
+                className="d-flex align-items-center"
               >
                 <CIcon className="me-2" icon={cilSun} size="lg" /> Light
               </CDropdownItem>
               <CDropdownItem
                 active={colorMode === 'dark'}
-                className="d-flex align-items-center"
                 as="button"
                 type="button"
                 onClick={() => setColorMode('dark')}
+                className="d-flex align-items-center"
               >
                 <CIcon className="me-2" icon={cilMoon} size="lg" /> Dark
               </CDropdownItem>
               <CDropdownItem
                 active={colorMode === 'auto'}
-                className="d-flex align-items-center"
                 as="button"
                 type="button"
                 onClick={() => setColorMode('auto')}
+                className="d-flex align-items-center"
               >
                 <CIcon className="me-2" icon={cilContrast} size="lg" /> Auto
               </CDropdownItem>
@@ -157,7 +140,8 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
           <AppHeaderDropdown isDarkMode={isDarkMode} />
         </CHeaderNav>
       </div>
-    </>
+    </CContainer>
+
   );
 };
 
