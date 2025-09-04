@@ -31,6 +31,11 @@ module.exports = (sequelize) => {
                 allowNull: true,
                 field: 'error_message',
             },
+            is_valid: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: true,
+            },
         },
         {
             sequelize,
