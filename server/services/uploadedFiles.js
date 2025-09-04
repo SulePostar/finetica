@@ -258,7 +258,7 @@ class UploadedFilesService {
     }
     try {
       const result = await sequelize.transaction(async (t) => {
-        const domainEntity = await pipeline.persist(extracted, t);
+        const domainEntity = await pipeline.persist({ ...extracted, filename: objectName }, t);
         const createdFile = await UploadedFile.create(
           {
             fileName: objectName,
