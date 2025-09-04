@@ -95,6 +95,10 @@ const bankTransactionUpdateSchema = Joi.object({
         'number.integer': 'Category ID must be an integer',
     }),
 
+    is_valid: Joi.boolean().optional().messages({
+        'boolean.base': 'Is valid must be a boolean',
+    }),
+
     approved_at: Joi.date().iso().optional().messages({
         'date.base': 'Approved date must be a valid date',
         'date.format': 'Approved date must be in ISO format',
