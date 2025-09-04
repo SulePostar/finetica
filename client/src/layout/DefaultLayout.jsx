@@ -60,8 +60,8 @@ const DefaultLayout = ({ children }) => {
         </div>
 
         <div className="flex-grow-1 d-flex flex-column">
-          <div className="page-content flex-grow-1 overflow-auto">
-            <Container fluid className="p-3">
+          <div className="flex-grow-1 overflow-auto">
+            <Container fluid className="px-0 p-3">
               {children}
             </Container>
           </div>

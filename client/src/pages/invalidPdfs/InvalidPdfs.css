@@ -1,14 +1,25 @@
-.table-page-outer {
-    min-height: 100vh;
+:root {
+    --color-primary: #8367deff;
+    --color-primary-hover: #5b3cc4;
+    --color-white: #ffffff;
 }
 
 .nav-link {
     color: var(--cui-body-color) !important;
 }
 
-.nav-link.active {
-    background-color: var(--cui-primary-bg) !important;
-    color: var(--cui-primary-color) !important;
+.custom-card-header .nav-link.active,
+.custom-card-header .nav-link.active:hover,
+.custom-card-header .nav-link.active:focus {
+    background-color: var(--color-primary) !important;
+    color: var(--color-white) !important;
+}
+
+/* Hover for inactive tabs */
+.custom-card-header .nav-link:not(.active):hover,
+.custom-card-header .nav-link:not(.active):focus {
+    background-color: var(--color-primary-hover) !important;
+    color: var(--color-white) !important;
 }
 
 .custom-card-header {
@@ -23,4 +34,12 @@
 
 .nav-fill.flex-nowrap.overflow-auto {
     -webkit-overflow-scrolling: touch;
+}
+
+.custom-card-title {
+    margin-bottom: 0px;
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    color: var(--cui-primary);
+    font-family: 'Segoe UI', sans-serif !important;
 }

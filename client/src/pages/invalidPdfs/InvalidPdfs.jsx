@@ -10,6 +10,8 @@ import {
     CTabPane,
     CRow,
     CCol,
+    CCardText,
+    CCardTitle
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
 import { cilCalculator, cilWallet, cilFolderOpen, cilDescription } from "@coreui/icons";
@@ -23,14 +25,23 @@ const InvalidPdfs = () => {
 
     return (
         <DefaultLayout>
-            <div className="table-page-outer d-flex justify-content-center align-items-start align-items-md-center py-3 py-md-0"
+            <div
+                className="table-page-outer"
                 style={{
                     marginLeft: sidebarWidth,
                     width: `calc(100vw - ${sidebarWidth}px)`,
-                }}>
+                    padding: '20px 60px',
+                }}
+            >
                 <CRow className="justify-content-center w-100 mx-0">
-                    <CCol xs={12} sm={8} md={10} lg={10} xl={12}>
+                    <CCol xs={12} sm={10} lg={12}>
                         <CCard className="shadow-sm border-0 rounded-3 custom-card">
+                            {/* Title */}
+                            <CCardHeader className="p-3">
+                                <CCardTitle className="custom-card-title">Invalid PDFs</CCardTitle>
+                            </CCardHeader>
+
+                            {/* Tabs */}
                             <CCardHeader className="custom-card-header p-0">
                                 <CNav variant="tabs" role="tablist" className="nav-fill flex-nowrap overflow-auto">
                                     <CNavItem>
@@ -40,7 +51,7 @@ const InvalidPdfs = () => {
                                             className="px-2 px-md-3 text-nowrap"
                                         >
                                             <CIcon icon={cilCalculator} className="me-0 me-md-2" />
-                                            <span className="d-none d-sm-inline">Bank Transactions</span>
+                                            Bank Transactions
                                         </CNavLink>
                                     </CNavItem>
                                     <CNavItem>
@@ -50,7 +61,7 @@ const InvalidPdfs = () => {
                                             className="px-2 px-md-3 text-nowrap"
                                         >
                                             <CIcon icon={cilWallet} className="me-0 me-md-2" />
-                                            <span className="d-none d-sm-inline">KIF</span>
+                                            KIF
                                         </CNavLink>
                                     </CNavItem>
                                     <CNavItem>
@@ -60,7 +71,7 @@ const InvalidPdfs = () => {
                                             className="px-2 px-md-3 text-nowrap"
                                         >
                                             <CIcon icon={cilFolderOpen} className="me-0 me-md-2" />
-                                            <span className="d-none d-sm-inline">KUF</span>
+                                            KUF
                                         </CNavLink>
                                     </CNavItem>
                                     <CNavItem>
@@ -70,24 +81,25 @@ const InvalidPdfs = () => {
                                             className="px-2 px-md-3 text-nowrap"
                                         >
                                             <CIcon icon={cilDescription} className="me-0 me-md-2" />
-                                            <span className="d-none d-sm-inline">Contracts</span>
+                                            Contracts
                                         </CNavLink>
                                     </CNavItem>
                                 </CNav>
                             </CCardHeader>
+
                             <CCardBody className="p-3 p-md-4">
                                 <CTabContent>
                                     <CTabPane visible={activeKey === 1} className="fade">
-                                        <p>Here you can view and manage your bank transactions.</p>
+                                        <CCardText>List and manage bank transactions here.</CCardText>
                                     </CTabPane>
                                     <CTabPane visible={activeKey === 2} className="fade">
-                                        <p>Details and management of KIF.</p>
+                                        <CCardText>List and manage KIF here.</CCardText>
                                     </CTabPane>
                                     <CTabPane visible={activeKey === 3} className="fade">
-                                        <p>Details and management of KUF.</p>
+                                        <CCardText>List and manage KUF here.</CCardText>
                                     </CTabPane>
                                     <CTabPane visible={activeKey === 4} className="fade">
-                                        <p>List and manage contracts here.</p>
+                                        <CCardText>List and manage contracts here.</CCardText>
                                     </CTabPane>
                                 </CTabContent>
                             </CCardBody>
