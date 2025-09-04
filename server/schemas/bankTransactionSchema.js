@@ -11,6 +11,7 @@ const bankTransactionSchema = {
         invoiceId: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
         partnerId: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
         categoryId: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
+        is_valid: { type: Type.BOOLEAN },
         approvedAt: { anyOf: [{ type: Type.DATE }, { type: Type.STRING }, { type: Type.NULL }] },
         approvedBy: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] }
     },
@@ -23,6 +24,7 @@ const bankTransactionSchema = {
         'invoiceId',
         'partnerId',
         'categoryId',
+        'is_valid',
         'approvedAt',
         'approvedBy'
     ]
