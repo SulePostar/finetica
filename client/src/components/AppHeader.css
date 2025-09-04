@@ -1,209 +1,35 @@
-/* Header Toggle Button - Always Visible */
-.header-toggler {
-  position: relative;
-  z-index: 1060;
-  transition: all 0.3s ease-in-out;
+/* Custom color classes */
+.bg-dark-purple {
+  background-color: #432e62df !important;
 }
 
-/* Ensure toggle button stays visible when sidebar is hidden */
-.ms-n3 {
-  position: relative;
-  z-index: 1060;
-  transition: all 0.3s ease-in-out;
+.bg-light-purple {
+  background-color: #bfaee5ff !important;
 }
 
-/* Header responsive behavior */
-.header-container {
-  position: fixed !important;
-  top: 0;
-  z-index: 1050;
-  transition: all 0.3s ease-in-out;
+/* Hover effects */
+.hover-dark:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Header positioning adjustments */
-.header-follows-sidebar {
-  position: fixed !important;
-  top: 0;
-  z-index: 1050;
-  transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
+.hover-light:hover {
+  background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Main Header Styles */
-.app-header {
-  width: 100%;
-  margin-left: 0;
-  z-index: 1040;
-  transition: none;
-  height: 64px;
-  min-height: 64px;
-  position: fixed;
-  top: 0;
-  left: 0;
+/* Fixed header height utility */
+.h-64 {
+  height: 64px !important;
 }
 
-.app-header.header-dark {
-  background-color: #432e62df;
-}
-
-.app-header.header-light {
-  background-color: #bfaee5ff;
-}
-
-/* Header Container Styles */
-.header-container-fluid {
-  height: 64px;
-  min-height: 64px;
-  display: flex;
-  align-items: center;
-  transition: margin-left 0.3s ease-in-out;
-  width: 100%;
-}
-
-.header-container-fluid.header-dark {
-  background-color: #432e62df;
-}
-
-.header-container-fluid.header-light {
-  background-color: #bfaee5ff;
-}
-
-/* Back Button Styles */
-.back-button {
-  border: 1px solid var(--cui-border-color);
-  border-radius: 6px;
-  padding: 8px 12px;
-  background-color: transparent;
-  color: var(--cui-body-color);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  font-size: 0.875rem;
-}
-
-.back-button:hover {
-  background-color: var(--cui-light);
-}
-
-[data-coreui-theme='dark'] .back-button:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Header Toggle Button Styles */
-.header-toggle-btn {
-  border: none;
-  border-radius: 6px;
-  padding: 10px;
-  background-color: transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s ease;
-}
-
-.header-toggle-btn.toggle-dark {
-  color: #ffffff;
-}
-
-.header-toggle-btn.toggle-light {
-  color: #000000;
-}
-
-.header-toggle-btn:hover.toggle-dark {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.header-toggle-btn:hover.toggle-light {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-/* Menu Icon Styles */
-.menu-icon-dark {
-  color: #ffffff;
-}
-
-.menu-icon-light {
-  color: #000000;
-}
-
-/* Flex spacer */
-.flex-spacer {
-  flex-grow: 1;
-}
-
-/* Fixed Header Nav Gap */
-.fixed-header-nav-gap {
-  gap: 1rem;
-}
-
-/* Sidebar Animation Support */
-.sidebar-hidden {
-  transform: translateX(-100%);
-  transition: transform 0.3s ease-in-out;
-}
-
-.sidebar-visible {
-  transform: translateX(0);
-  transition: transform 0.3s ease-in-out;
-}
-
-.sidebar-collapsed {
-  width: 56px !important;
-  transition: width 0.3s ease-in-out;
-}
-
-.sidebar-expanded {
-  width: 240px !important;
-  transition: width 0.3s ease-in-out;
-}
-
-/* Main content adjustment when sidebar changes */
-.main-content-expanded {
-  margin-left: 0 !important;
-  transition: margin-left 0.3s ease-in-out;
-}
-
-.main-content-normal {
-  margin-left: 240px;
-  transition: margin-left 0.3s ease-in-out;
-}
-
-.main-content-collapsed {
-  margin-left: 56px;
-  transition: margin-left 0.3s ease-in-out;
-}
-
-/* Fixed Right Navigation */
-.fixed-header-nav {
-  position: fixed;
-  top: 0;
-  right: 0;
-  z-index: 1060;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  padding: 0 1rem;
-  transition: background-color 0.3s ease;
-  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Ensure fixed nav adapts to theme changes */
-[data-coreui-theme='dark'] .fixed-header-nav {
-  background-color: #432e62df;
-  border-color: var(--cui-border-color-translucent);
-}
-
-[data-coreui-theme='light'] .fixed-header-nav {
-  background-color: #bfaee5ff;
-  border-color: var(--cui-border-color);
+/* Z-index utility */
+.z-index-1060 {
+  z-index: 1060 !important;
 }
 
 /* Responsive adjustments for smaller screens */
 @media (max-width: 768px) {
-  .fixed-header-nav {
-    display: none;
+  .position-fixed.top-0.end-0 {
+    display: none !important;
   }
 }
 

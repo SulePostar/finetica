@@ -1,0 +1,26 @@
+.table-page-outer {
+    min-height: 100vh;
+}
+
+.nav-link {
+    color: var(--cui-body-color) !important;
+}
+
+.nav-link.active {
+    background-color: var(--cui-primary-bg) !important;
+    color: var(--cui-primary-color) !important;
+}
+
+.custom-card-header {
+    background-color: var(--cui-card-cap-bg) !important;
+    color: var(--cui-card-cap-color) !important;
+}
+
+.custom-card {
+    background-color: var(--cui-card-bg) !important;
+    color: var(--cui-body-color) !important;
+}
+
+.nav-fill.flex-nowrap.overflow-auto {
+    -webkit-overflow-scrolling: touch;
+}
