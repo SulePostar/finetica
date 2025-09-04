@@ -60,7 +60,7 @@ module.exports = (sequelize) => {
       fileName: {
         type: DataTypes.STRING,
         allowNull: false,
-        field: 'fileName',
+        field: 'file_name',
       },
     },
     {

@@ -31,10 +31,11 @@ module.exports = (sequelize) => {
                 allowNull: true,
                 field: 'error_message',
             },
-            is_valid: {
+            isValid: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: true,
+                field: 'is_valid'
             },
         },
         {

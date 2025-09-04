@@ -9,8 +9,8 @@ module.exports = {
       defaultValue: true,
     });
 
-    // Add fileName column to bank_transactions
-    await queryInterface.addColumn('bank_transactions', 'fileName', {
+    // Add file_name column to bank_transactions
+    await queryInterface.addColumn('bank_transactions', 'file_name', {
       type: Sequelize.STRING,
       allowNull: true,
     });
@@ -19,6 +19,6 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     // Remove both columns if migration is rolled back
     await queryInterface.removeColumn('bank_transaction_processing_logs', 'is_valid');
-    await queryInterface.removeColumn('bank_transactions', 'fileName');
+    await queryInterface.removeColumn('bank_transactions', 'file_name');
   }
 };
