@@ -57,6 +57,11 @@ module.exports = (sequelize) => {
         allowNull: true,
         field: 'approved_by',
       },
+      fileName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        field: 'file_name',
+      },
     },
     {
       sequelize,
