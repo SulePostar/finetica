@@ -72,12 +72,12 @@ const findById = async (id) => {
     });
 
     if (!invoice) throw new AppError('Purchase invoice not found', 404);
-    const pdfUrl = await supabaseService.getSignedUrl(BUCKET_NAME, PurchaseInvoice.filename);
+    const pdfUrl = await supabaseService.getSignedUrl(BUCKET_NAME, invoice.filename);
     return { ...invoice.toJSON(), pdfUrl };
   } catch (error) {
     if (error instanceof AppError) throw error;
     console.error('Error in findById:', error);
-    throw new AppError('Failed to fetch invoice', 500);
+    throw new AppError('Failed to fetch invoice' + error, 500);
   }
 };
 
@@ -97,7 +97,7 @@ const approveInvoiceById = async (id, body, userId) => {
   } catch (error) {
     if (error instanceof AppError) throw error;
     console.error('Error in approveInvoiceById:', error);
-    throw new AppError('Failed to approve invoice', 500);
+    throw new AppError('Failed to approve invoice' + error, 500);
   }
 };
 
@@ -123,7 +123,7 @@ const extractData = async (fileBuffer, mimeType) => {
     return data;
   } catch (error) {
     console.error('Error in extractData:', error);
-    throw new AppError('Failed to extract data from document', 500);
+    throw new AppError('Failed to extract data from document' + error, 500);
   }
 };
 
@@ -147,18 +147,15 @@ const createInvoice = async (payload) => {
   } catch (error) {
     await transaction.rollback();
     console.error('Error in createInvoice:', error);
-    throw new AppError('Failed to create invoice', 500);
+    throw new AppError('Failed to create invoice' + error, 500);
   }
 };
 
 const createInvoiceFromAI = async (extractedData, options = {}) => {
   const externalTx = options.transaction;
   const tx = externalTx || await sequelize.transaction();
-  console.log('5555555555555555');
   try {
     const { items, ...invoiceData } = extractedData;
-    console.log('invoiceData', invoiceData);
-    console.log('6666666666666666');
     const document = await PurchaseInvoice.create({
       ...invoiceData,
       approvedAt: null,
@@ -166,8 +163,6 @@ const createInvoiceFromAI = async (extractedData, options = {}) => {
       createdAt: new Date(),
       updatedAt: new Date(),
     }, { transaction: tx });
-    console.log('document', document);
-    console.log('7777777777777777');
     if (Array.isArray(items) && items.length) {
       await PurchaseInvoiceItem.bulkCreate(
         items.map(it => ({
@@ -180,38 +175,31 @@ const createInvoiceFromAI = async (extractedData, options = {}) => {
       );
     }
     if (!externalTx) await tx.commit();
-    console.log('8888888888888888');
     return {
       ...document.toJSON(),
       items: items || [],
     };
   } catch (error) {
-    console.error("❌ Sequelize error:", error);
-    console.log('9999999999999999');
     if (!externalTx) await tx.rollback();
-    throw new AppError('Failed to save KUF purchase invoice to database', 500);
+    throw new AppError('Failed to save KUF purchase invoice to database ' + error, 500);
   }
 };
 
 const processSingleUnprocessedFile = async (unprocessedFileLog) => {
   try {
-    console.log('1111111111111111', unprocessedFileLog.fileName);
     const { buffer, mimeType } = await supabaseService.getFile(
       BUCKET_NAME,
-      unprocessedFileLog.fileName
+      unprocessedFileLog.filename
     );
     const extractedData = await extractData(buffer, mimeType);
 
     await sequelize.transaction(async (t) => {
-      console.log('2222222222222222');
       if (extractedData.isPurchaseInvoice) {
-        console.log(`Creating invoice from ${unprocessedFileLog.fileName}`);
-        await createInvoice({ ...extractedData, fileName: unprocessedFileLog.fileName }, { transaction: t });
+        await createInvoice({ ...extractedData, filename: unprocessedFileLog.filename }, { transaction: t });
       } else {
-        console.log(`File ${unprocessedFileLog.fileName} is not a purchase invoice, skipping invoice creation.`);
+        console.log(`File ${unprocessedFileLog.filename} is not a purchase invoice, skipping invoice creation.`);
       }
 
-      console.log('3333333333333333');
       await unprocessedFileLog.update(
         {
           isProcessed: true,
@@ -220,14 +208,18 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
         },
         { transaction: t }
       );
-      console.log('4444444444444444');
     });
   } catch (error) {
     console.error(`Failed to process log ID ${unprocessedFileLog.id}:`, error);
-    await unprocessedFileLog.update({
-      isProcessed: false,
-      message: error.message
-    });
+    try {
+      await unprocessedFileLog.update({
+        isProcessed: false,
+        message: error.message
+      });
+    }
+    catch (updateError) {
+      console.error(`Also failed to update log ID ${unprocessedFileLog.id}:`, updateError);
+    }
   }
 };
 
@@ -237,12 +229,23 @@ const processUnprocessedFiles = async () => {
       where: { isProcessed: false },
     });
 
+    let processed = 0;
+    let failed = 0;
+
     for (const fileLog of unprocessedFileLogs) {
-      await processSingleUnprocessedFile(fileLog);
+      try {
+        await processSingleUnprocessedFile(fileLog);
+        processed++;
+      } catch (err) {
+        failed++;
+        console.error(`❌ Failed processing fileLog ID ${fileLog.id}:`, err);
+      }
     }
+
+    return { processed, failed };
   } catch (error) {
     console.error('Error in processUnprocessedFiles:', error);
-    throw new AppError('Failed to process unprocessed files', 500);
+    throw new AppError('Failed to process unprocessed files' + error, 500);
   }
 };
 
@@ -275,7 +278,7 @@ const updateInvoice = async (id, updatedData) => {
     await transaction.rollback();
     if (error instanceof AppError) throw error;
     console.error('Error in updateInvoice:', error);
-    throw new AppError('Failed to update invoice', 500);
+    throw new AppError('Failed to update invoice' + error, 500);
   }
 };
 
