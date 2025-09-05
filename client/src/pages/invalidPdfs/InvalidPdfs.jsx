@@ -48,7 +48,7 @@ const InvalidPdfs = () => {
 
     const logColumns = [
         {
-            name: 'Filename',
+            name: 'File Name',
             selector: (row) => row.filename,
             sortable: true,
             wrap: true,
@@ -190,7 +190,7 @@ const InvalidPdfs = () => {
                     <CModalHeader>
                         <CModalTitle>{selectedRow?.filename || "Document Details"}</CModalTitle>
                     </CModalHeader>
-                    <CModalBody className='h-70'>
+                    <CModalBody>
                         {selectedRow && (
                             <InvalidPdfDetails id={selectedRow.id} type={selectedRow.type} />
                         )}

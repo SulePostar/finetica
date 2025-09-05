@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     CSpinner,
     CRow,
@@ -12,9 +12,11 @@ import {
     CButton,
     CListGroup,
     CListGroupItem,
+    CCardText,
 } from "@coreui/react";
 import CIcon from "@coreui/icons-react";
-import { cilPencil, cilTrash, cilSave, cilX } from "@coreui/icons";
+import { cilPencil, cilTrash } from "@coreui/icons";
+import { PdfViewer } from "../PdfViewer/PdfViewer";
 
 const InvalidPdfDetails = ({ id, type }) => {
     const [doc, setDoc] = useState(null);
@@ -62,7 +64,6 @@ const InvalidPdfDetails = ({ id, type }) => {
         setIsEditing(false);
     };
     const handleSave = () => {
-        // Normally call PUT/PATCH API
         setDoc(formData);
         setIsEditing(false);
     };
@@ -74,7 +75,7 @@ const InvalidPdfDetails = ({ id, type }) => {
 
     if (loading) {
         return (
-            <div className="d-flex justify-content-center align-items-center h-100">
+            <div className="d-flex justify-content-center align-items-center vh-100">
                 <CSpinner color="primary" />
             </div>
         );
@@ -85,68 +86,61 @@ const InvalidPdfDetails = ({ id, type }) => {
     }
 
     return (
-        <CRow className="h-100 g-0">
+        <CRow className="g-0">
             {/* PDF Viewer */}
-            <CCol md={8} className="border-end">
-                <embed
-                    src={`${API_BASE}/files/${doc.filename}`}
-                    type="application/pdf"
-                    className="w-100 h-100"
-                />
+            <CCol md={8} className="border-end bg-light d-flex align-items-center justify-content-center">
+                {doc.pdfUrl ? <PdfViewer pdfUrl={doc.pdfUrl} /> : <div>No PDF available</div>}
             </CCol>
-
             {/* Document Info Panel */}
-            <CCol md={4} className="p-3">
-                <CCard className="h-100 shadow-sm">
-                    <CCardHeader className="d-flex justify-content-between align-items-center">
-                        <span className="fw-semibold">{doc.filename}</span>
+            <CCol md={4} className="bg-white">
+                <CCard className="border-0 shadow-sm rounded-3">
+                    <CCardHeader className="d-flex justify-content-center align-items-center bg-white border-bottom">
                         <div className="d-flex gap-2">
                             {isEditing ? (
                                 <>
-                                    <CButton
-                                        color="success"
-                                        size="sm"
-                                        onClick={handleSave}
-                                        title="Save"
-                                    >
-                                        <CIcon icon={cilSave} />
+                                    <CButton color="success" size="sm" onClick={handleSave}>
+                                        Save
                                     </CButton>
-                                    <CButton
-                                        color="secondary"
-                                        size="sm"
-                                        onClick={handleCancel}
-                                        title="Cancel"
-                                    >
-                                        <CIcon icon={cilX} />
+                                    <CButton color="secondary" size="sm" onClick={handleCancel}>
+                                        Cancel
                                     </CButton>
                                 </>
                             ) : (
                                 <>
-                                    <CButton
-                                        color="info"
-                                        size="sm"
-                                        onClick={handleEdit}
-                                        title="Edit"
-                                    >
-                                        <CIcon icon={cilPencil} />
+                                    <CButton color="secondary" size="sm" onClick={handleEdit}>
+                                        <CIcon icon={cilPencil} className="me-1" />
+                                        Edit
                                     </CButton>
-                                    <CButton
-                                        color="danger"
-                                        size="sm"
-                                        onClick={handleDelete}
-                                        title="Delete"
-                                    >
-                                        <CIcon icon={cilTrash} />
+                                    <CButton color="danger" size="sm" onClick={handleDelete}>
+                                        <CIcon icon={cilTrash} className="me-1" />
+                                        Delete
                                     </CButton>
                                 </>
                             )}
                         </div>
                     </CCardHeader>
 
-                    <CCardBody className="p-0">
+                    <CCardBody>
+                        <CCardText className="mb-2 text-muted">Document Information</CCardText>
                         <CListGroup flush>
+                            {/* File Name */}
                             <CListGroupItem>
-                                <span className="fw-bold me-2">Description:</span>
+                                <small className="text-muted d-block">File Name</small>
+                                {isEditing ? (
+                                    <CFormInput
+                                        value={formData.filename || ""}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, filename: e.target.value })
+                                        }
+                                    />
+                                ) : (
+                                    doc.filename
+                                )}
+                            </CListGroupItem>
+
+                            {/* Message */}
+                            <CListGroupItem>
+                                <small className="text-muted d-block">Message</small>
                                 {isEditing ? (
                                     <CFormInput
                                         value={formData.message || ""}
@@ -159,22 +153,9 @@ const InvalidPdfDetails = ({ id, type }) => {
                                 )}
                             </CListGroupItem>
 
+                            {/* Status */}
                             <CListGroupItem>
-                                <span className="fw-bold me-2">Category:</span>
-                                {isEditing ? (
-                                    <CFormInput
-                                        value={formData.category || ""}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, category: e.target.value })
-                                        }
-                                    />
-                                ) : (
-                                    doc.category || "-"
-                                )}
-                            </CListGroupItem>
-
-                            <CListGroupItem>
-                                <span className="fw-bold me-2">Status:</span>
+                                <small className="text-muted d-block">Status</small>
                                 {isEditing ? (
                                     <CFormSelect
                                         value={formData.isValid ? "valid" : "invalid"}
@@ -195,40 +176,41 @@ const InvalidPdfDetails = ({ id, type }) => {
                                 )}
                             </CListGroupItem>
 
+                            {/* Processed */}
                             <CListGroupItem>
-                                <span className="fw-bold me-2">Upload Date:</span>
-                                {new Date(doc.createdAt).toLocaleDateString()}
-                            </CListGroupItem>
-
-                            <CListGroupItem>
-                                <span className="fw-bold me-2">File Size:</span>
-                                {doc.size || "-"}
-                            </CListGroupItem>
-
-                            <CListGroupItem>
-                                <span className="fw-bold me-2">Tags:</span>
+                                <small className="text-muted d-block">Processed</small>
                                 {isEditing ? (
-                                    <CFormInput
-                                        value={formData.tags?.join(", ") || ""}
+                                    <CFormSelect
+                                        value={formData.isProcessed ? "yes" : "no"}
                                         onChange={(e) =>
                                             setFormData({
                                                 ...formData,
-                                                tags: e.target.value.split(",").map((t) => t.trim()),
+                                                isProcessed: e.target.value === "yes",
                                             })
                                         }
-                                        placeholder="Enter tags, separated by commas"
-                                    />
+                                    >
+                                        <option value="yes">Yes</option>
+                                        <option value="no">No</option>
+                                    </CFormSelect>
+                                ) : doc.isProcessed ? (
+                                    <CBadge color="success">Yes</CBadge>
                                 ) : (
-                                    doc.tags?.map((t, i) => (
-                                        <CBadge
-                                            key={i}
-                                            color="secondary"
-                                            className="me-1 text-dark bg-light"
-                                        >
-                                            {t}
-                                        </CBadge>
-                                    ))
+                                    <CBadge color="danger">No</CBadge>
                                 )}
+                            </CListGroupItem>
+
+                            {/* Processed At */}
+                            <CListGroupItem>
+                                <small className="text-muted d-block">Processed At</small>
+                                {doc.processedAt
+                                    ? new Date(doc.processedAt).toLocaleString()
+                                    : "-"}
+                            </CListGroupItem>
+
+                            {/* Created At */}
+                            <CListGroupItem>
+                                <small className="text-muted d-block">Created At</small>
+                                {new Date(doc.createdAt).toLocaleString()}
                             </CListGroupItem>
                         </CListGroup>
                     </CCardBody>

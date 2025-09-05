@@ -38,6 +38,12 @@ const Contract = () => {
 
   const columns = [
     {
+      name: 'File Name',
+      selector: (row) => row.filename,
+      sortable: true,
+      width: '200px',
+    },
+    {
       name: 'Partner Name',
       selector: (row) => row.businessPartner?.name,
       sortable: true,
