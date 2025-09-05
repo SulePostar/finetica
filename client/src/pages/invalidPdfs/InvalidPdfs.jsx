@@ -108,80 +108,83 @@ const InvalidPdfs = () => {
                 }}
             >
                 <CRow className="justify-content-center w-100 mx-0">
-                    <CCol xs={12} sm={12} md={12} lg={10} xl={12}>
-                        <CCard className="shadow-sm border-0 rounded-3 custom-card">
-                            {/* Title */}
-                            <CCardHeader className="p-3">
-                                <CCardTitle className="custom-card-title">Invalid PDFs</CCardTitle>
-                            </CCardHeader>
+                    <CCol xs={12}>
+                        <div className="invalid-pdfs-container">
 
-                            {/* Tabs */}
-                            <CCardHeader className="custom-card-header p-0">
-                                <CNav variant="tabs" role="tablist" className="nav-fill flex-column flex-md-row">
-                                    <CNavItem>
-                                        <CNavLink
-                                            active={activeKey === 1}
-                                            onClick={() => setActiveKey(1)}
-                                            className="px-2 px-md-3 text-nowrap"
-                                        >
-                                            <CIcon icon={cilCalculator} className="me-0 me-md-2" />
-                                            Bank Transactions
-                                        </CNavLink>
-                                    </CNavItem>
-                                    <CNavItem>
-                                        <CNavLink
-                                            active={activeKey === 2}
-                                            onClick={() => setActiveKey(2)}
-                                            className="px-2 px-md-3 text-nowrap"
-                                        >
-                                            <CIcon icon={cilWallet} className="me-0 me-md-2" />
-                                            KIF
-                                        </CNavLink>
-                                    </CNavItem>
-                                    <CNavItem>
-                                        <CNavLink
-                                            active={activeKey === 3}
-                                            onClick={() => setActiveKey(3)}
-                                            className="px-2 px-md-3 text-nowrap"
-                                        >
-                                            <CIcon icon={cilFolderOpen} className="me-0 me-md-2" />
-                                            KUF
-                                        </CNavLink>
-                                    </CNavItem>
-                                    <CNavItem>
-                                        <CNavLink
-                                            active={activeKey === 4}
-                                            onClick={() => setActiveKey(4)}
-                                            className="px-2 px-md-3 text-nowrap"
-                                        >
-                                            <CIcon icon={cilDescription} className="me-0 me-md-2" />
-                                            Contracts
-                                        </CNavLink>
-                                    </CNavItem>
-                                </CNav>
-                            </CCardHeader>
+                            <CCard className="shadow-sm border-0 rounded-3 custom-card">
+                                {/* Title */}
+                                <CCardHeader className="p-3">
+                                    <CCardTitle className="custom-card-title">Invalid PDFs</CCardTitle>
+                                </CCardHeader>
 
-                            <CCardBody className="p-3 p-md-4">
-                                <CTabContent>
-                                    <CTabPane visible={activeKey === 1} className="fade">
-                                        <DynamicTable columns={logColumns} apiEndpoint={endpoints.bank} />
-                                    </CTabPane>
-                                    <CTabPane visible={activeKey === 2} className="fade">
-                                        <DynamicTable columns={logColumns} apiEndpoint={endpoints.kif} />
-                                    </CTabPane>
-                                    <CTabPane visible={activeKey === 3} className="fade">
-                                        <DynamicTable columns={logColumns} apiEndpoint={endpoints.kuf} />
-                                    </CTabPane>
-                                    <CTabPane visible={activeKey === 4} className="fade">
-                                        <DynamicTable
-                                            columns={logColumns}
-                                            apiEndpoint={endpoints.contracts}
-                                            onRowClick={handleRowClick}
-                                        />
-                                    </CTabPane>
-                                </CTabContent>
-                            </CCardBody>
-                        </CCard>
+                                {/* Tabs */}
+                                <CCardHeader className="custom-card-header p-0">
+                                    <CNav variant="tabs" role="tablist" className="nav-fill flex-column flex-md-row">
+                                        <CNavItem>
+                                            <CNavLink
+                                                active={activeKey === 1}
+                                                onClick={() => setActiveKey(1)}
+                                                className="px-2 px-md-3 text-nowrap"
+                                            >
+                                                <CIcon icon={cilCalculator} className="me-0 me-md-2" />
+                                                Bank Transactions
+                                            </CNavLink>
+                                        </CNavItem>
+                                        <CNavItem>
+                                            <CNavLink
+                                                active={activeKey === 2}
+                                                onClick={() => setActiveKey(2)}
+                                                className="px-2 px-md-3 text-nowrap"
+                                            >
+                                                <CIcon icon={cilWallet} className="me-0 me-md-2" />
+                                                KIF
+                                            </CNavLink>
+                                        </CNavItem>
+                                        <CNavItem>
+                                            <CNavLink
+                                                active={activeKey === 3}
+                                                onClick={() => setActiveKey(3)}
+                                                className="px-2 px-md-3 text-nowrap"
+                                            >
+                                                <CIcon icon={cilFolderOpen} className="me-0 me-md-2" />
+                                                KUF
+                                            </CNavLink>
+                                        </CNavItem>
+                                        <CNavItem>
+                                            <CNavLink
+                                                active={activeKey === 4}
+                                                onClick={() => setActiveKey(4)}
+                                                className="px-2 px-md-3 text-nowrap"
+                                            >
+                                                <CIcon icon={cilDescription} className="me-0 me-md-2" />
+                                                Contracts
+                                            </CNavLink>
+                                        </CNavItem>
+                                    </CNav>
+                                </CCardHeader>
+
+                                <CCardBody className="p-3 p-md-4">
+                                    <CTabContent>
+                                        <CTabPane visible={activeKey === 1} className="fade">
+                                            <DynamicTable columns={logColumns} apiEndpoint={endpoints.bank} />
+                                        </CTabPane>
+                                        <CTabPane visible={activeKey === 2} className="fade">
+                                            <DynamicTable columns={logColumns} apiEndpoint={endpoints.kif} />
+                                        </CTabPane>
+                                        <CTabPane visible={activeKey === 3} className="fade">
+                                            <DynamicTable columns={logColumns} apiEndpoint={endpoints.kuf} />
+                                        </CTabPane>
+                                        <CTabPane visible={activeKey === 4} className="fade">
+                                            <DynamicTable
+                                                columns={logColumns}
+                                                apiEndpoint={endpoints.contracts}
+                                                onRowClick={handleRowClick}
+                                            />
+                                        </CTabPane>
+                                    </CTabContent>
+                                </CCardBody>
+                            </CCard>
+                        </div>
                     </CCol>
                 </CRow>
 

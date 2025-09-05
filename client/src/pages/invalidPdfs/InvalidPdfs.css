@@ -43,3 +43,9 @@
     color: var(--cui-primary);
     font-family: 'Segoe UI', sans-serif !important;
 }
+
+.invalid-pdfs-container {
+    max-width: 2000px;
+    margin: 0 auto;
+    width: 100%;
+}
