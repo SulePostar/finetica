@@ -130,7 +130,10 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
 
 const processUnprocessedFiles = async () => {
   const unprocessedFileLogs = await ContractProcessingLog.findAll({
-    where: { isProcessed: false },
+    where: {
+      isProcessed: false,
+      isValid: true
+    },
   });
 
   for (const fileLog of unprocessedFileLogs) {
