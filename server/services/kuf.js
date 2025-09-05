@@ -197,6 +197,14 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
       if (extractedData.isPurchaseInvoice) {
         await createInvoice({ ...extractedData, filename: unprocessedFileLog.filename }, { transaction: t });
       } else {
+        unprocessedFileLog.update(
+          {
+            isProcessed: true,
+            processedAt: new Date(),
+            message: 'Not a purchase invoice',
+            isValid: false
+          },
+          { transaction: t });
         console.log(`File ${unprocessedFileLog.filename} is not a purchase invoice, skipping invoice creation.`);
       }
 
