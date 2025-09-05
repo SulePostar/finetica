@@ -43,3 +43,7 @@
     color: var(--cui-primary);
     font-family: 'Segoe UI', sans-serif !important;
 }
+
+.h-70 {
+    height: 70vh !important;
+}

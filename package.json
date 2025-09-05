@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@coreui/icons": "^3.0.1",
+    "@coreui/icons-react": "^2.3.0",
+    "lucide-react": "^0.542.0"
+  }
+}
