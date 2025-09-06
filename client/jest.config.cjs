@@ -1,12 +1,21 @@
 module.exports = {
-    testEnvironment: 'jsdom',
-    setupFilesAfterEnv: ['./src/tests/setupTests.js'],
-    transform: {
-        '^.+\\.jsx?$': 'babel-jest',
-    },
-    moduleFileExtensions: ['js', 'jsx'],
-    moduleNameMapper: {
-        // ako imaš asset fajlove (css, slike itd.)
-        '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    },
+  testEnvironment: "jsdom",
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  transform: {
+    "^.+\\.(js|jsx)$": "babel-jest"
+  },
+  moduleNameMapper: {
+    "\\.(css|scss|sass)$": "identity-obj-proxy"
+  },
+  transformIgnorePatterns: [
+    "node_modules/(?!(.*\\.mjs$|.*\\.js$|.*\\.jsx$))"
+  ],
+  globals: {
+    "import.meta": {
+      env: {
+        VITE_API_BASE_URL: "http://localhost:4000/api"
+      }
+    }
+  }
 };
+
