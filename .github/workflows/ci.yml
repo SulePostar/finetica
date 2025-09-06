@@ -1,0 +1,69 @@
+# Naziv cijelog procesa, vidljiv na GitHubu
+name: Build and Test Project
+
+# Okidači: Kada se ovaj proces pokreće
+on:
+  # 1. Na svaki 'push' na 'main' granu
+  push:
+    branches: ['main']
+  # 2. Na svaki 'pull request' otvoren prema 'main' grani
+  pull_request:
+    branches: ['main']
+
+# Poslovi (jobs) koji će se izvršiti
+jobs:
+  # --- POSAO #1: TESTIRANJE BACKENDA ---
+  test-backend:
+    name: Test Backend (Server)
+    runs-on: ubuntu-latest # Koristi virtualnu mašinu s Ubuntu Linuxom
+
+    steps:
+      # Korak 1.1: Preuzimanje koda iz repozitorija
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      # Korak 1.2: Postavljanje Node.js okruženja
+      - name: Setup Node.js for server
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # OBAVEZNO: Upišite verziju Node.js-a koju koristite za backend
+          cache: 'npm'
+          cache-dependency-path: server/package-lock.json
+
+      # Korak 1.3: Instalacija ovisnosti za backend
+      - name: Install server dependencies
+        run: npm install
+        working-directory: ./server # Ključno: izvršava naredbu u 'server' folderu
+
+      # Korak 1.4: Pokretanje testova za backend
+      - name: Run server tests
+        run: npm test
+        working-directory: ./server # Ključno: izvršava naredbu u 'server' folderu
+
+  # --- POSAO #2: TESTIRANJE FRONTENDA ---
+  test-frontend:
+    name: Test Frontend (Client)
+    runs-on: ubuntu-latest # Također se izvršava na Ubuntu mašini
+
+    steps:
+      # Korak 2.1: Preuzimanje koda iz repozitorija
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      # Korak 2.2: Postavljanje Node.js okruženja
+      - name: Setup Node.js for client
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22' # OBAVEZNO: Upišite verziju Node.js-a koju koristite za frontend
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      # Korak 2.3: Instalacija ovisnosti za frontend
+      - name: Install client dependencies
+        run: npm install
+        working-directory: ./client # Ključno: izvršava naredbu u 'client' folderu
+
+      # Korak 2.4: Pokretanje testova za frontend
+      - name: Run client tests
+        run: npm test
+        working-directory: ./client # Ključno: izvršava naredbu u 'client' folderu
