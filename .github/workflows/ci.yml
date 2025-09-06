@@ -5,10 +5,10 @@ name: Build and Test Project
 on:
   # 1. Na svaki 'push' na 'main' granu
   push:
-    branches: ['main']
+    branches: ['master']
   # 2. Na svaki 'pull request' otvoren prema 'main' grani
   pull_request:
-    branches: ['main']
+    branches: ['master']
 
 # Poslovi (jobs) koji će se izvršiti
 jobs:
