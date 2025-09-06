@@ -37,7 +37,7 @@ finetica/
 
 ```bash
 cd server
-npm test                    # Run all tests once
+npm test                   # Run all tests once
 npm run test:watch         # Run tests in watch mode
 npm run test:coverage      # Run tests with coverage report
 npm run test:verbose       # Run tests with detailed output
