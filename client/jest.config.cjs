@@ -1,16 +1,12 @@
 module.exports = {
     testEnvironment: 'jsdom',
-    setupFilesAfterEnv: ['<rootDir>/src/tests/setupTests.js'],
+    setupFilesAfterEnv: ['./src/tests/setupTests.js'],
+    transform: {
+        '^.+\\.jsx?$': 'babel-jest',
+    },
+    moduleFileExtensions: ['js', 'jsx'],
     moduleNameMapper: {
+        // ako imaš asset fajlove (css, slike itd.)
         '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-        '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/src/tests/__mocks__/fileMock.js',
     },
-    transform: {
-        '^.+\\.jsx?$': 'babel-jest',
-    },
-    testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-    transform: {
-        '^.+\\.jsx?$': 'babel-jest',
-    },
-
 };

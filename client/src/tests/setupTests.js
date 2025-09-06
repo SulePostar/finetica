@@ -1,16 +1,15 @@
 import '@testing-library/jest-dom';
-import '@testing-library/jest-dom';
 import { TextEncoder, TextDecoder } from 'util';
 
+// globalni TextEncoder/TextDecoder
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
-globalThis.import = {
+
+global.import = {
     meta: {
         env: {
-            VITE_API_BASE_URL: 'http://localhost:4000/api',
+            VITE_API_BASE_URL: 'http://localhost:3400/api',
         },
     },
 };
-
-

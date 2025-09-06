@@ -5,7 +5,7 @@ import { renderWithProviders } from '../testUtils';
 import * as InvoicesData from '../../utilis/constants/InvoicesData';
 
 // Mock the dependencies with proper ESM shape
-jest.mock('../../components/InfoCards/DocumentInfo', () => ({
+jest.mock('../../components/InfoCards/DocumentInfo/DocumentInfo', () => ({
     __esModule: true,
     default: ({ data, type, loading, error }) => (
         <div data-testid="document-info">
