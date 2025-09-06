@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-echo "Running tests before push..."
-npm test --prefix server && npm test --prefix client
+echo "--- HUSKY PRE-PUSH SKRIPTA SE POKRENULA! ---"
+echo "--- AKO VIDITE OVU PORUKU, HOOK RADI. ---"
+echo "--- PUSH ĆE SADA BITI NAMJERNO PREKINUT. ---"
+
+# Namjerno prekidamo push da potvrdimo da se skripta izvršava
+exit 1
