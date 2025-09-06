@@ -1,13 +1,12 @@
-export default {
-    testEnvironment: 'jsdom', // za React testove
-    transform: {
-        '^.+\\.jsx?$': 'babel-jest', // Babel transformacija za JS/JSX
-    },
+module.exports = {
+    testEnvironment: 'jsdom',
+    setupFilesAfterEnv: ['<rootDir>/src/tests/setupTests.js'],
     moduleNameMapper: {
-        '\\.(css|scss|sass)$': 'identity-obj-proxy', // mock za CSS
-        '^@/(.*)$': '<rootDir>/src/$1', // ako koristiš @ alias za src
+        '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+        '\\.(jpg|jpeg|png|gif|svg)$': '<rootDir>/src/tests/__mocks__/fileMock.js',
     },
-    setupFilesAfterEnv: ['@testing-library/jest-dom'], // za jest-dom matchere
-    setupFiles: ['<rootDir>/src/setupTests.js'], // mock import.meta.env
-    transformIgnorePatterns: ['/node_modules/'], // ignoriše node_modules
+    transform: {
+        '^.+\\.jsx?$': 'babel-jest',
+    },
+    testPathIgnorePatterns: ['/node_modules/', '/dist/'],
 };
