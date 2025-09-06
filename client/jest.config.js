@@ -1,32 +1,13 @@
 export default {
-    testEnvironment: 'jsdom',
-    setupFilesAfterEnv: ['<rootDir>/src/tests/setup.js'],
-    collectCoverage: false,
-    moduleNameMapper: {
-        '^@/(.*)$': '<rootDir>/src/$1',
-        '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-        '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/src/tests/__mocks__/fileMock.js'
-    },
+    testEnvironment: 'jsdom', // za React testove
     transform: {
-        '^.+\\.(js|jsx)$': 'babel-jest'
+        '^.+\\.jsx?$': 'babel-jest', // Babel transformacija za JS/JSX
     },
-    collectCoverageFrom: [
-        'src/**/*.{js,jsx}',
-        '!src/index.js',
-        '!src/main.jsx',
-        '!src/tests/**',
-        '!src/**/*.test.{js,jsx}',
-        '!src/**/*.spec.{js,jsx}'
-    ],
-    testMatch: [
-        '<rootDir>/src/**/__tests__/**/*.{js,jsx}',
-        '<rootDir>/src/**/*.{test,spec}.{js,jsx}'
-    ],
-    moduleFileExtensions: ['js', 'jsx', 'json'],
-    verbose: true,
-    clearMocks: true,
-    resetMocks: false,
-    restoreMocks: false,
-    testTimeout: 5000,
-    errorOnDeprecated: true,
+    moduleNameMapper: {
+        '\\.(css|scss|sass)$': 'identity-obj-proxy', // mock za CSS
+        '^@/(.*)$': '<rootDir>/src/$1', // ako koristiš @ alias za src
+    },
+    setupFilesAfterEnv: ['@testing-library/jest-dom'], // za jest-dom matchere
+    setupFiles: ['<rootDir>/src/setupTests.js'], // mock import.meta.env
+    transformIgnorePatterns: ['/node_modules/'], // ignoriše node_modules
 };
