@@ -39,6 +39,7 @@ export const DOCUMENT_FIELD_CONFIGS = {
     { label: 'Updated', key: 'updated_at' },
   ],
   contract: [
+    { label: 'File Name', key: 'filename' },
     { label: 'Partner ID', key: 'partnerId' },
     { label: 'Contract Number', key: 'contractNumber' },
     { label: 'Contract Type', key: 'contractType' },
