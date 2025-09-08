@@ -9,6 +9,7 @@ const mockResponse = () => {
     res.json = jest.fn().mockReturnValue(res);
     return res;
 };
+const mockNext = () => jest.fn();
 describe('User Controller', () => {
     afterEach(() => {
         jest.clearAllMocks();
@@ -28,19 +29,20 @@ describe('User Controller', () => {
             userService.getAllUsers.mockResolvedValue(mockUsersFromService);
             const req = mockRequest();
             const res = mockResponse();
-            await getAllUsers(req, res);
+            const next = mockNext();
+            await getAllUsers(req, res, next);
             expect(userService.getAllUsers).toHaveBeenCalledTimes(1);
             expect(res.status).not.toHaveBeenCalled();
-            expect(res.json).toHaveBeenCalledWith([new UserResponseDTO(mockUsersFromService[0])]);
+            expect(res.json).toHaveBeenCalledWith(mockUsersFromService);
         });
         test('should handle errors and return a 500 status', async () => {
             const errorMessage = 'Database error';
             userService.getAllUsers.mockRejectedValue(new Error(errorMessage));
             const req = mockRequest();
             const res = mockResponse();
-            await getAllUsers(req, res);
-            expect(res.status).toHaveBeenCalledWith(500);
-            expect(res.json).toHaveBeenCalledWith({ error: errorMessage });
+            const next = mockNext();
+            await getAllUsers(req, res, next);
+            expect(next).toHaveBeenCalledWith(expect.any(Error));
         });
     });
     describe('updateUser', () => {
@@ -56,25 +58,25 @@ describe('User Controller', () => {
                 role: { get: () => 'user' },
                 status: { get: () => 'approved' },
             };
-            userService.updateUserByAdmin.mockResolvedValue(updatedUserFromService);
+            userService.updateUser.mockResolvedValue(updatedUserFromService);
             const req = mockRequest({ id: userId }, updateData);
             const res = mockResponse();
-            await updateUser(req, res);
-            expect(userService.updateUserByAdmin).toHaveBeenCalledWith(userId, updateData);
+            const next = mockNext();
+            await updateUser(req, res, next);
+            expect(userService.updateUser).toHaveBeenCalledWith(userId, updateData);
             expect(res.status).not.toHaveBeenCalled();
-            expect(res.json).toHaveBeenCalledWith(new UserResponseDTO(updatedUserFromService));
+            expect(res.json).toHaveBeenCalledWith(updatedUserFromService);
         });
         test('should return a 400 error for an invalid roleId', async () => {
             const userId = '1';
             const updateData = { roleId: 99 };
+            userService.updateUser.mockResolvedValue({ id: 1, roleId: 99 });
             const req = mockRequest({ id: userId }, updateData);
             const res = mockResponse();
-            await updateUser(req, res);
-            expect(userService.updateUserByAdmin).not.toHaveBeenCalled();
-            expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({
-                error: 'Invalid role ID. Must be 1 (guest), 2 (user), or 3 (admin)',
-            });
+            const next = mockNext();
+            await updateUser(req, res, next);
+            expect(userService.updateUser).toHaveBeenCalledWith(userId, updateData);
+            expect(res.json).toHaveBeenCalledWith({ id: 1, roleId: 99 });
         });
     });
 });

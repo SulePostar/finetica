@@ -1,7 +1,15 @@
 {
+<<<<<<< HEAD
   "dependencies": {
     "@coreui/icons": "^3.0.1",
     "@coreui/icons-react": "^2.3.0",
     "lucide-react": "^0.542.0"
+=======
+  "scripts": {
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+>>>>>>> 743d3a8f36bbfb4f20220d614890dcae6622aea2
   }
 }
