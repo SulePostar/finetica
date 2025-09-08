@@ -1,21 +1,19 @@
-const { google } = require('googleapis'); // oficijelna biblioteka za Google API
-const dotenv = require('dotenv');
-dotenv.config();
+const { google } = require('googleapis');
+const path = require('path');
 
-const oauth2Client = new google.auth.OAuth2(
-    process.env.CLIENT_ID,
-    process.env.CLIENT_SECRET,
-    process.env.REDIRECT_URI
-);
+// Load the service account key
+const keyFile = path.join(__dirname, '../googleDriveAccess.json');
+
+const auth = new google.auth.GoogleAuth({
+    keyFile,
+    scopes: ['https://www.googleapis.com/auth/drive.readonly'], // or full access
+});
 
 function createDriveClient() {
     return google.drive({
-        version: 'v3', // najnovija verzija Google Drive API-ja 
-        auth: oauth2Client, // koristi se prethodno definisani OAuth2 klijent za autentifikovane pozive
+        version: 'v3',
+        auth,
     });
 }
 
-module.exports = {
-    oauth2Client,
-    createDriveClient,
-};
+module.exports = { createDriveClient };
