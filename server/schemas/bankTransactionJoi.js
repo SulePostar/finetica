@@ -73,7 +73,7 @@ const bankTransactionUpdateSchema = Joi.object({
         'string.base': 'Direction must be a string',
     }),
 
-    accountNumber: Joi.string().trim().optional().messages({
+    account_number: Joi.string().trim().optional().messages({
         'string.base': 'Account number must be a string',
     }),
 
@@ -81,26 +81,30 @@ const bankTransactionUpdateSchema = Joi.object({
         'string.base': 'Description must be a string',
     }),
 
-    invoiceId: Joi.string().trim().optional().messages({
+    invoice_id: Joi.string().trim().optional().messages({
         'string.base': 'Invoice ID must be a string',
     }),
 
-    partnerId: Joi.number().integer().optional().messages({
+    partner_id: Joi.number().integer().optional().messages({
         'number.base': 'Partner ID must be a number',
         'number.integer': 'Partner ID must be an integer',
     }),
 
-    categoryId: Joi.number().integer().optional().messages({
+    category_id: Joi.number().integer().optional().messages({
         'number.base': 'Category ID must be a number',
         'number.integer': 'Category ID must be an integer',
     }),
 
-    approvedAt: Joi.date().iso().optional().messages({
+    is_valid: Joi.boolean().optional().messages({
+        'boolean.base': 'Is valid must be a boolean',
+    }),
+
+    approved_at: Joi.date().iso().optional().messages({
         'date.base': 'Approved date must be a valid date',
         'date.format': 'Approved date must be in ISO format',
     }),
 
-    approvedBy: Joi.number().integer().optional().messages({
+    approved_by: Joi.number().integer().optional().messages({
         'number.base': 'Approved by must be a number',
         'number.integer': 'Approved by must be an integer',
     }),

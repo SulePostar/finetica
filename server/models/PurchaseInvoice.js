@@ -16,6 +16,11 @@ module.exports = (sequelize) => {
         autoIncrement: true,
         primaryKey: true,
       },
+      fileName: {
+        type: DataTypes.STRING,
+        field: 'file_name',
+        allowNull: false,
+      },
       vatPeriod: {
         type: DataTypes.STRING,
         field: 'vat_period',

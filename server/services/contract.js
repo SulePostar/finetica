@@ -65,7 +65,8 @@ const findById = async (id) => {
     ],
   });
   if (!contract) throw new AppError('Contract not found', 404);
-  return contract;
+  const pdfUrl = await supabaseService.getSignedUrl(BUCKET_NAME, contract.filename);
+  return { ...contract.toJSON(), pdfUrl };
 };
 
 const approveContractById = async (id, body, userId) => {
@@ -112,9 +113,8 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
       unprocessedFileLog.filename
     );
     const extractedData = await extractData(buffer, mimeType);
-
     await sequelize.transaction(async (t) => {
-      await Contract.create(extractedData, { transaction: t });
+      await Contract.create({ ...extractedData, filename: unprocessedFileLog.filename }, { transaction: t });
       await unprocessedFileLog.update(
         {
           isProcessed: true,
