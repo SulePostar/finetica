@@ -9,8 +9,9 @@ import {
 import CIcon from '@coreui/icons-react'
 import { cilCloudDownload } from '@coreui/icons'
 
-import navigation from '../../_nav'
+import { useFilteredNavigation } from '../../hooks/useFilteredNavigation'
 import { AppSidebarNav } from './AppSidebarNav'
+import SidebarDriveStatus from './SidebarDriveStatus'
 import './AppSidebar.css'
 import { colors } from '../../styles/colors'
 import { setDriveConnected } from '../../redux/sidebar/sidebarSlice'
@@ -53,25 +54,8 @@ const AppSidebar = ({ isDarkMode }) => {
     }
   }, [sidebarShow])
 
-  // Filter navigation based on role + collapse state
-  const filteredNav = navigation
-    .map((item) => {
-      const isAdmin = userRole === 'admin'
-      if (item.adminOnly && !isAdmin) return null
-
-      if (item.component?.displayName === 'CNavGroup') {
-        const filteredItems = (item.items || []).filter(
-          (child) => !child.adminOnly || isAdmin
-        )
-        if (unfoldable && !isHovered) {
-          return { ...item, items: [] }
-        }
-        return filteredItems.length ? { ...item, items: filteredItems } : null
-      }
-
-      return item
-    })
-    .filter(Boolean)
+  // Use custom hook for filtered navigation
+  const filteredNav = useFilteredNavigation(isHovered)
 
   return (
     <CSidebar
@@ -92,63 +76,14 @@ const AppSidebar = ({ isDarkMode }) => {
     >
       {/* Logo */}
       <div className="sidebar-logo">
-        <img
-          src={'/symphonypurple.png'}
-          alt="Logo"
-        />
+        <img src={'/symphonypurple.png'} alt="Logo" />
       </div>
 
       {/* Navigation */}
       <AppSidebarNav items={filteredNav} />
 
       {/* Google Drive status */}
-      {unfoldable && !isHovered ? (
-        <div className="d-none d-lg-flex justify-content-center align-items-center p-3">
-          <div
-            className="d-flex align-items-center justify-content-center"
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: 6,
-              backgroundColor: driveConnected
-                ? colors.success.background
-                : colors.error.background,
-            }}
-          >
-            <CIcon
-              icon={cilCloudDownload}
-              style={{
-                color: driveConnected
-                  ? colors.success.text
-                  : colors.error.text,
-                fontSize: 16,
-              }}
-            />
-          </div>
-        </div>
-      ) : (
-        <div className="d-none d-lg-flex justify-content-between align-items-center px-3 py-2">
-          <div
-            className="fw-semibold small"
-            style={{ color: 'var(--cui-sidebar-color, #212529)' }}
-          >
-            Google Drive
-          </div>
-          <CBadge
-            size="sm"
-            style={{
-              backgroundColor: driveConnected
-                ? colors.success.background
-                : 'var(--cui-sidebar-bg, #ede9fe)',
-              color: driveConnected
-                ? colors.success.text
-                : 'var(--cui-sidebar-color, #212529)',
-            }}
-          >
-            {driveConnected ? 'Connected' : 'Disconnected'}
-          </CBadge>
-        </div>
-      )}
+      <SidebarDriveStatus unfoldable={unfoldable} isHovered={isHovered} driveConnected={driveConnected} />
 
       {/* Footer */}
       <CSidebarFooter className="d-none d-lg-flex justify-content-center align-items-center p-3">
