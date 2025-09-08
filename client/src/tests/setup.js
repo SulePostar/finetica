@@ -1,133 +1,86 @@
 import '@testing-library/jest-dom';
 import { TextEncoder, TextDecoder } from 'util';
 
-// =============================================================================
-// ENVIRONMENT POLYFILLS
-// =============================================================================
-
+// Polyfills
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
-// =============================================================================
-// BROWSER API MOCKS
-// =============================================================================
-
-// Mock window.matchMedia for responsive design tests
+// matchMedia, IntersectionObserver, ResizeObserver mocks
 Object.defineProperty(window, 'matchMedia', {
     writable: true,
-    value: jest.fn().mockImplementation(query => ({
+    value: jest.fn().mockImplementation(() => ({
         matches: false,
-        media: query,
-        onchange: null,
         addEventListener: jest.fn(),
         removeEventListener: jest.fn(),
-        dispatchEvent: jest.fn(),
     })),
 });
 
-// Mock IntersectionObserver for component visibility tests
-global.IntersectionObserver = class IntersectionObserver {
+global.IntersectionObserver = class {
     constructor() { }
     disconnect() { }
     observe() { }
     unobserve() { }
 };
 
-// Mock ResizeObserver for component resize tests
-global.ResizeObserver = class ResizeObserver {
-    constructor(callback) { }
+global.ResizeObserver = class {
+    constructor() { }
     disconnect() { }
     observe() { }
     unobserve() { }
 };
 
-// =============================================================================
-// LIBRARY MOCKS
-// =============================================================================
+// **import.meta.env mock**
+if (!global.import) global.import = {};
+if (!global.import.meta) global.import.meta = {};
+if (!global.import.meta.env) global.import.meta.env = {};
+global.import.meta.env.VITE_API_BASE_URL = 'http://localhost:4000/api';
 
-// Mock React Router
+
+// React Router
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useNavigate: jest.fn(() => jest.fn()),
-    useLocation: jest.fn(() => ({
-        pathname: '/test',
-        search: '',
-        hash: '',
-        state: null,
-    })),
+    useLocation: jest.fn(() => ({ pathname: '/test', search: '', hash: '', state: null })),
     useParams: jest.fn(() => ({})),
+    BrowserRouter: ({ children }) => children,
+    MemoryRouter: ({ children }) => children,
 }));
 
-// Mock Redux store with comprehensive state
+// Redux
 const mockState = {
-    auth: {
-        user: null,
-        isAuthenticated: false,
-        loading: false,
-        error: null
-    },
-    // Add other common state slices as needed
-    ui: {
-        theme: 'light',
-        sidebarOpen: false
-    }
+    auth: { user: null, isAuthenticated: false, loading: false, error: null },
+    user: { profile: null, loading: false, error: null },
+    users: { users: [], loading: false, error: null, success: false },
+    roles: { roles: [], loading: false, error: null, success: false },
+    statuses: { statuses: [], loading: false, error: null, success: false },
+    ui: { theme: 'light', sidebarOpen: false },
 };
 
 jest.mock('react-redux', () => ({
     ...jest.requireActual('react-redux'),
-    useSelector: jest.fn((selector) => {
-        try {
-            return selector(mockState);
-        } catch (error) {
-            console.warn('Selector failed, returning fallback:', error.message);
-            return mockState.auth;
-        }
-    }),
+    useSelector: jest.fn(selector => selector(mockState)),
     useDispatch: jest.fn(() => jest.fn()),
     Provider: ({ children }) => children,
-    connect: jest.fn(() => (component) => component),
+    connect: jest.fn(() => component => component),
 }));
 
-// Mock axios with comprehensive HTTP client
-jest.mock('axios', () => {
-    const mAxios = {
+// Axios
+jest.mock('axios', () => ({
+    get: jest.fn(() => Promise.resolve({ data: {} })),
+    post: jest.fn(() => Promise.resolve({ data: {} })),
+    put: jest.fn(() => Promise.resolve({ data: {} })),
+    delete: jest.fn(() => Promise.resolve({ data: {} })),
+    patch: jest.fn(() => Promise.resolve({ data: {} })),
+    create: jest.fn(() => ({
         get: jest.fn(() => Promise.resolve({ data: {} })),
         post: jest.fn(() => Promise.resolve({ data: {} })),
         put: jest.fn(() => Promise.resolve({ data: {} })),
         delete: jest.fn(() => Promise.resolve({ data: {} })),
         patch: jest.fn(() => Promise.resolve({ data: {} })),
-        interceptors: {
-            request: { use: jest.fn(), eject: jest.fn() },
-            response: { use: jest.fn(), eject: jest.fn() }
-        }
-    };
-    return {
-        create: jest.fn(() => mAxios),
-        ...mAxios,
-    };
-});
-
-// Mock Supabase with auth and database operations
-jest.mock('@supabase/supabase-js', () => ({
-    createClient: jest.fn(() => ({
-        auth: {
-            signInWithPassword: jest.fn(() => Promise.resolve({ data: { user: null }, error: null })),
-            signUp: jest.fn(() => Promise.resolve({ data: { user: null }, error: null })),
-            signOut: jest.fn(() => Promise.resolve({ error: null })),
-            getUser: jest.fn(() => Promise.resolve({ data: { user: null }, error: null })),
-        },
-        from: jest.fn(() => ({
-            select: jest.fn(() => Promise.resolve({ data: [], error: null })),
-            insert: jest.fn(() => Promise.resolve({ data: [], error: null })),
-            update: jest.fn(() => Promise.resolve({ data: [], error: null })),
-            delete: jest.fn(() => Promise.resolve({ data: [], error: null })),
-        }))
-    }))
+        interceptors: { request: { use: jest.fn(), eject: jest.fn() }, response: { use: jest.fn(), eject: jest.fn() } },
+    })),
+    interceptors: { request: { use: jest.fn(), eject: jest.fn() }, response: { use: jest.fn(), eject: jest.fn() } },
 }));
 
-// =============================================================================
-// TEST UTILITIES
-// =============================================================================
-
-// Export mock state for tests that need to manipulate it
+// Export mockState za testove koji ga trebaju
 export { mockState };
