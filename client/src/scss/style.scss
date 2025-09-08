@@ -63,6 +63,7 @@ body {
   --cui-sidebar-icon-color: #565656; // Replace with your desired color
   --cui-sidebar-border-color: #efefefef; // Replace with your desired color
   --cui-sidebar-title-color: #bebebe; // Replace with your desired color
+  --cui-table-hover-bg: #ede9fe; // Replace with your desired color
 }
 
 [data-coreui-theme='dark'] {
@@ -74,6 +75,7 @@ body {
   --cui-sidebar-icon-color: #9f9f9f;
   --cui-sidebar-border-color: #1a1a1d;
   --cui-sidebar-title-color: #5850a6; // Replace with your desired color
+  --cui-table-hover-bg: #313643;
 }
 
 @include color-mode(dark) {
