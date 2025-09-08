@@ -27,7 +27,6 @@ import { cilPlus, cilTrash, cilPencil, cilCheck, cilX } from '@coreui/icons';
 import { capitalizeFirst } from '../../helpers/capitalizeFirstLetter';
 import ConfirmationModal from '../Modals/ConfirmationModal';
 import notify from '../../utilis/toastHelper';
-import './EntityManagementTable.css';
 
 
 const EntityManagementTable = ({
