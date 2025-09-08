@@ -83,10 +83,32 @@ const approveContractById = async (id, body, userId) => {
   return contract;
 };
 
-const createContract = async (payload) => {
-  const created = await Contract.create(payload);
-  return created;
-};
+const createContract = async (contractData) => {
+  const { isValidContract, ...contractPayload } = contractData;
+
+  if (!isValidContract) {
+    console.log(contractPayload);
+    await ContractProcessingLog.create({
+      isProcessed: true,
+      isValid: false,
+      filename: contractPayload.filename,
+    });
+  } else {
+    await sequelize.transaction(async (t) => {
+      const created = await Contract.create({ contractPayload }, { transaction: t });
+      await ContractProcessingLog.create(
+        {
+          isProcessed: false,
+          filename: contractPayload.filename,
+        },
+        { transaction: t }
+      );
+      return created;
+
+    });
+
+  };
+}
 
 const extractData = async (fileBuffer, mimeType) => {
   const businessPartners = await BusinessPartner.findAll({
