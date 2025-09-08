@@ -29,7 +29,7 @@ const processSingleUnprocessedKifFile = async (fileLog) => {
         );
         const extractedData = await extractKifData(buffer, mimeType);
         await sequelize.transaction(async (t) => {
-            const result = await createKifFromAI(extractedData, { transaction: t });
+            const result = await createKifFromAI(extractedData, { transaction: t, filename: fileLog.filename });
             const message = result.isInvoice ? 'Processed successfully' : 'Document is not an invoice - skipped';
             await fileLog.update({
                 isProcessed: true,
@@ -59,9 +59,12 @@ const processUnprocessedKifFiles = async () => {
 };
 const createKifFromAI = async (extractedData, options = {}) => {
     const externalTx = options.transaction;
+    const { filename } = options;
     const tx = externalTx || await sequelize.transaction();
     try {
-        const { items, isInvoice, ...invoiceData } = extractedData;
+        const { items, isInvoice, filename: dataFilename, ...invoiceData } = extractedData;
+        // Use filename from options first, then from extractedData
+        const file_name = filename || dataFilename;
 
         // If it's not an invoice, don't create a database record
         if (!isInvoice) {
@@ -71,6 +74,7 @@ const createKifFromAI = async (extractedData, options = {}) => {
 
         const document = await SalesInvoice.create({
             ...invoiceData,
+            fileName: file_name,
             approvedAt: null,
             approvedBy: null,
             createdAt: new Date(),
@@ -278,9 +282,11 @@ const getKifById = async (id) => {
             throw new AppError('Sales invoice not found', 404);
         }
         const invoiceData = salesInvoice.toJSON();
+        const pdfUrl = invoiceData.fileName ? await supabaseService.getSignedUrl(KIF_BUCKET_NAME, invoiceData.fileName) : null;
         return {
             ...invoiceData,
-            customerName: invoiceData.BusinessPartner?.name || null
+            customerName: invoiceData.BusinessPartner?.name || null,
+            pdfUrl
         };
     } catch (error) {
         throw new AppError('Failed to fetch KIF by ID', 500);
