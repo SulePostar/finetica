@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   CSidebar,
@@ -21,10 +21,14 @@ const AppSidebar = ({ isDarkMode }) => {
   const unfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
   const userRole = useSelector((state) => state.user.profile.roleName);
-
   const driveConnected = useSelector((state) => state.sidebar.driveConnected);
-  const [isHovered, setIsHovered] = useState(false);
 
+  const [isHovered, setIsHovered] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== 'undefined' ? window.innerWidth : 1200
+  );
+
+  // Check Google Drive connection
   const checkDriveConnection = async () => {
     try {
       const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
@@ -46,71 +50,92 @@ const AppSidebar = ({ isDarkMode }) => {
   }, []);
 
   useEffect(() => {
-    if (sidebarShow && window.innerWidth <= 768) {
+    if (sidebarShow && windowWidth <= 768) {
       document.body.classList.add('sidebar-open');
     } else {
       document.body.classList.remove('sidebar-open');
     }
-  }, [sidebarShow]);
+  }, [sidebarShow, windowWidth]);
 
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  const filteredNav = navigation
-    .map((item) => {
-      const isAdmin = userRole === 'admin';
+  const filteredNav = useMemo(() => {
+    if (!navigation || !Array.isArray(navigation)) return [];
 
-      if (item.component?.displayName === 'CNavGroup' && item.items) {
-        if (item.adminOnly && !isAdmin) return null;
+    return navigation
+      .map((item) => {
+        const isAdmin = userRole === 'admin';
+        if (!item.component) return null;
 
-        // ukloni sub-iteme kad je sidebar skraćen i nije hoverovan
-        if (unfoldable && !isHovered) {
+        if (item.component.displayName === 'CNavGroup' && item.items) {
+          if (item.adminOnly && !isAdmin) return null;
 
-          return {
-            component: item.component,
-            name: item.name,
-            icon: item.icon,
-            adminOnly: item.adminOnly,
+          if ((unfoldable && !isHovered) || windowWidth <= 576) {
+            return { ...item, items: [] };
+          }
 
-            items: [],
-          };
+          const filteredItems = item.items.filter(
+            (child) => !child.adminOnly || isAdmin
+          );
+          if (filteredItems.length === 0) return null;
+          return { ...item, items: filteredItems };
         }
 
-        const filteredItems = item.items.filter(
-          (child) => !child.adminOnly || isAdmin
-        );
-        if (filteredItems.length === 0) return null;
-        return { ...item, items: filteredItems };
-      }
+        if (item.component.displayName === 'CNavTitle') {
+          if (item.adminOnly && !isAdmin) return null;
+          return item;
+        }
 
-      if (item.component?.displayName === 'CNavTitle') {
         if (item.adminOnly && !isAdmin) return null;
         return item;
-      }
+      })
+      .filter(Boolean);
+  }, [userRole, unfoldable, isHovered, windowWidth]);
 
-      if (item.adminOnly && !isAdmin) return null;
-      return item;
-    })
-    .filter(Boolean);
+  const handleNavItemClick = () => {
+    if (windowWidth < 768) {
+      dispatch({ type: 'set', sidebarShow: false });
+    }
+  };
 
   return (
     <>
       <CSidebar
-        className={`border-end sidebar ${sidebarShow ? 'show' : ''} ${unfoldable ? 'sidebar-unfoldable' : ''} ${unfoldable && isHovered ? 'sidebar-hover-expanded' : ''}`}
-        colorScheme={isDarkMode ? 'dark' : 'light'}
-        position="fixed"
+        className={`
+          sidebar border-end
+          position-fixed top-0 start-0 vh-100
+          ${sidebarShow ? 'show' : ''}
+          ${unfoldable ? 'sidebar-unfoldable' : ''}
+        `}
+        data-bs-theme={isDarkMode ? 'dark' : 'light'}
         unfoldable={unfoldable}
         visible={sidebarShow}
-        style={{
-          zIndex: unfoldable && isHovered ? 1060 : 1050,
-          transition: 'z-index 0.1s ease',
-          backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff',
-        }}
+        onClick={handleNavItemClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        style={{
+          zIndex: unfoldable && isHovered ? 1060 : 1050,
+          backgroundColor: isDarkMode ? '#432e62df' : '#bfaee5ff',
+          width:
+            windowWidth <= 576
+              ? '100%' // mobile fullscreen
+              : unfoldable && !isHovered
+                ? '56px' // collapsed
+                : '240px', // expanded
+        }}
       >
         {/* Logo */}
-        <div className="sidebar-logo">
+        <div className="sidebar-logo d-flex align-items-center justify-content-center py-2">
           <img
-            src={isDarkMode ? '/SymphonyLogoDarkTheme.jpeg' : '/SymphonyLogoLightTheme.jpeg'}
+            src={
+              isDarkMode
+                ? '/SymphonyLogoDarkTheme.jpeg'
+                : '/SymphonyLogoLightTheme.jpeg'
+            }
             alt="Logo"
           />
         </div>
@@ -119,53 +144,34 @@ const AppSidebar = ({ isDarkMode }) => {
 
         {/* Google Drive Status */}
         {unfoldable && !isHovered ? (
-          // collapsed sidebar - pokaže samo ikonu sa obojenom pozadinom
-          <div
-            className="border-top d-none d-lg-flex justify-content-center align-items-center p-3"
-            style={{
-              backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
-            }}
-          >
+          <div className="border-top d-none d-lg-flex justify-content-center align-items-center p-3">
             <div
-              className="d-flex align-items-center justify-content-center"
+              className="d-flex align-items-center justify-content-center rounded"
               style={{
                 width: '32px',
                 height: '32px',
-                borderRadius: '6px',
                 backgroundColor: driveConnected
                   ? colors.success.background
                   : colors.error.background,
-                transition: 'background-color 0.3s ease',
               }}
             >
               <CIcon
                 icon={cilCloudDownload}
                 style={{
-                  color: driveConnected
-                    ? colors.success.text
-                    : colors.error.text,
+                  color: driveConnected ? colors.success.text : colors.error.text,
                   fontSize: '16px',
                 }}
               />
             </div>
           </div>
         ) : (
-          // Expanded sidebar - show text and badge
-          <div
-            className="border-top d-none d-lg-flex justify-content-between align-items-center px-3 py-2"
-            style={{
-              backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
-            }}
-          >
+          <div className="border-top d-none d-lg-flex justify-content-between align-items-center px-3 py-2">
             <div
-              className="fw-semibold small"
-              style={{
-                color: isDarkMode ? '#ffffff' : '#212529',
-              }}
+              className="fw-semibold small text-body"
+              style={{ color: isDarkMode ? '#fff' : '#212529' }}
             >
               Google Drive
             </div>
-
             <CBadge
               size="sm"
               style={{
@@ -195,9 +201,16 @@ const AppSidebar = ({ isDarkMode }) => {
           />
         </CSidebarFooter>
       </CSidebar>
+
+      {/* Mobile fullscreen backdrop */}
+      {sidebarShow && windowWidth <= 576 && (
+        <div
+          className="sidebar-backdrop position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-25"
+          onClick={() => dispatch({ type: 'set', sidebarShow: false })}
+        />
+      )}
     </>
   );
 };
-
 
 export default React.memo(AppSidebar);

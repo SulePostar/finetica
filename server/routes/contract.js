@@ -7,6 +7,9 @@ const approveContractSchema = require('../schemas/approveContract');
 
 router.get('/', getContractData);
 router.put('/:id/approve', isAuthenticated, validate(approveContractSchema), approveContract);
-router.get('/:id', isAuthenticated, getContract);
+// router.get('/:id', isAuthenticated, getContract);
+
+router.get('/:id', getContract);
+
 
 module.exports = router;
