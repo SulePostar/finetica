@@ -85,14 +85,13 @@ const InvalidPdfs = () => {
             name: 'Processed At',
             selector: (row) => row.processedAt,
             sortable: true,
-            width: '200px',
+            width: '150px',
             cell: (row) => (row.processedAt ? new Date(row.processedAt).toLocaleString() : '-'),
         },
         {
             name: 'Created At',
             selector: (row) => row.createdAt,
             sortable: true,
-            width: '200px',
             cell: (row) => new Date(row.createdAt).toLocaleString(),
         },
     ];
@@ -104,7 +103,6 @@ const InvalidPdfs = () => {
                 style={{
                     marginLeft: sidebarWidth,
                     width: `calc(100vw - ${sidebarWidth}px)`,
-                    padding: '50px 60px',
                 }}
             >
                 <CRow className="justify-content-center w-100 mx-0">

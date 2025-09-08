@@ -32,3 +32,16 @@
   white-space: normal;
   word-break: break-word;
 }
+
+[data-coreui-theme="dark"] .card,
+.dark-mode .card {
+  background-color: var(--cui-body-bg-dark, #212529);
+  color: var(--cui-body-color, #f8f9fa);
+  border-color: var(--cui-border-color-dark, #495057);
+}
+
+[data-coreui-theme="dark"] .card-body,
+.dark-mode .card-body {
+  background-color: inherit;
+  color: inherit;
+}
