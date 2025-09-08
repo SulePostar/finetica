@@ -112,9 +112,18 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
       BUCKET_NAME,
       unprocessedFileLog.filename
     );
-    const extractedData = await extractData(buffer, mimeType);
+    const { isValidContract, ...contractData } = await extractData(buffer, mimeType);
+
+    if (isValidContract === false) {
+      await unprocessedFileLog.update({ isValid: false });
+      return;
+    }
+
     await sequelize.transaction(async (t) => {
-      await Contract.create({ ...extractedData, filename: unprocessedFileLog.filename }, { transaction: t });
+      await Contract.create(
+        { ...contractData, filename: unprocessedFileLog.filename },
+        { transaction: t }
+      );
       await unprocessedFileLog.update(
         {
           isProcessed: true,
