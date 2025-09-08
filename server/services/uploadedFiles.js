@@ -4,12 +4,14 @@ const {
   KifProcessingLog,
   KufProcessingLog,
   ContractProcessingLog,
+  BankTransactionProcessingLog
 } = require('../models');
 const { Op } = require('sequelize');
 const { sequelize } = require('../config/db');
 const kifService = require('../services/kif');
 const kufService = require('../services/kuf');
 const contractService = require('../services/contract');
+const bankTransactionService = require('../services/bankTransaction');
 const supabaseService = require('../utils/supabase/supabaseService');
 const AppError = require('../utils/errorHandler');
 const activityLogService = require('./activityLogService');
@@ -31,6 +33,12 @@ const PIPELINES = {
     extract: (buf, mime) => contractService.extractData(buf, mime),
     persist: (data, t) => contractService.createContract(data, { transaction: t }),
     successMessage: 'Contract processed successfully',
+  },
+  transactions: {
+    logModel: BankTransactionProcessingLog,
+    extract: (buf, mime) => bankTransactionService.extractData(buf, mime),
+    persist: (data, t) => bankTransactionService.createBankTransactionFromAI(data, { transaction: t }),
+    successMessage: 'Transaction processed successfully',
   },
 };
 class UploadedFilesService {
@@ -251,7 +259,7 @@ class UploadedFilesService {
     }
     try {
       const result = await sequelize.transaction(async (t) => {
-        const domainEntity = await pipeline.persist(extracted, t);
+        const domainEntity = await pipeline.persist({ ...extracted, filename: objectName }, t);
         const createdFile = await UploadedFile.create(
           {
             fileName: objectName,
