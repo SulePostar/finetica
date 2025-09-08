@@ -198,5 +198,15 @@ class SupabaseService {
     if (error) throw new Error(`Delete failed: ${error.message}`);
     return { success: true };
   }
+
+  async getSignedUrl(bucketName, filePath, expiresIn = 120) {
+    const { data, error } = await this.supabase.storage
+      .from(bucketName)
+      .createSignedUrl(filePath, expiresIn);
+    if (error) {
+      throw new Error(`Failed to create signed URL: ${error.message}`);
+    }
+    return data.signedUrl;
+  }
 }
 module.exports = new SupabaseService();

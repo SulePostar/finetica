@@ -61,6 +61,9 @@ module.exports = (sequelize) => {
       approvedBy: {
         type: DataTypes.INTEGER,
       },
+      filename: {
+        type: DataTypes.STRING
+      }
     },
     {
       sequelize,
