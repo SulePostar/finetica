@@ -11,6 +11,7 @@ const BUCKET_NAME = 'contracts';
 const SORT_FIELD_MAP = {
   id: 'id',
   partnerId: 'partnerId',
+  partnerName: 'partnerName',
   contractNumber: 'contractNumber',
   contractType: 'contractType',
   description: 'description',
@@ -46,7 +47,7 @@ const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'a
       {
         model: BusinessPartner,
         as: 'businessPartner',
-        attributes: ['id', 'name', 'shortName'],
+        attributes: ['id', 'name'],
       },
     ],
   });
@@ -137,8 +138,6 @@ const processUnprocessedFiles = async () => {
     await processSingleUnprocessedFile(fileLog);
   }
 };
-
-
 
 module.exports = {
   listContracts,

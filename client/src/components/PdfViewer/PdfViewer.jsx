@@ -2,72 +2,70 @@ import { useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+import { CButton } from '@coreui/react';
+
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/build/pdf.worker.min.mjs',
     import.meta.url,
 ).toString();
 
-
 export const PdfViewer = ({ pdfUrl }) => {
     const [numPages, setNumPages] = useState(null);
     const [pageNumber, setPageNumber] = useState(1);
 
-    function onDocumentLoadSuccess({ numPages }) {
+    const onDocumentLoadSuccess = ({ numPages }) => {
         setNumPages(numPages);
         setPageNumber(1);
-    }
+    };
 
-    function changePage(offset) {
-        setPageNumber(prevPageNumber => prevPageNumber + offset);
-    }
-
-    function previousPage() {
-        changePage(-1);
-    }
-
-    function nextPage() {
-        changePage(1);
-    }
+    const changePage = (offset) => setPageNumber((prev) => prev + offset);
+    const previousPage = () => changePage(-1);
+    const nextPage = () => changePage(1);
 
     return (
-        <div className="shadow-sm border rounded">
+        <div className="shadow-sm border rounded overflow-hidden">
 
-            <div className="d-flex justify-content-center bg-light">
+            {/* PDF Display */}
+            <div className="d-flex justify-content-center bg-light p-3 overflow-auto">
                 <Document
                     file={pdfUrl}
                     onLoadSuccess={onDocumentLoadSuccess}
-                    loading={<div className="p-5">Loading PDF...</div>}
+                    loading={<div className="p-5 text-center">Loading PDF...</div>}
                 >
-                    <Page pageNumber={pageNumber} />
+                    {/* Set width to 100% so it fits container, maxWidth limits to desktop size */}
+                    <Page
+                        pageNumber={pageNumber}
+                        width={Math.min(window.innerWidth * 0.95, 800)}
+                    />
                 </Document>
             </div>
 
-            <div className="d-flex justify-content-center align-items-center py-2">
-
-                <button
-                    type="button"
-                    className="btn btn-secondary btn-sm mx-1"
+            {/* Controls */}
+            <div className="d-flex justify-content-center align-items-center py-2 flex-wrap">
+                <CButton
+                    color="secondary"
+                    size="sm"
+                    className="mx-1 my-1"
                     disabled={pageNumber <= 1}
                     onClick={previousPage}
                 >
                     &larr; Previous
-                </button>
+                </CButton>
 
-
-                <span className="fw-bold mx-3">
+                <span className="fw-bold mx-3 my-1">
                     Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
                 </span>
 
-
-                <button
-                    type="button"
-                    className="btn btn-secondary btn-sm mx-1"
+                <CButton
+                    color="secondary"
+                    size="sm"
+                    className="mx-1 my-1"
                     disabled={pageNumber >= numPages}
                     onClick={nextPage}
                 >
                     Next &rarr;
-                </button>
+                </CButton>
             </div>
         </div>
-    )
+    );
 };

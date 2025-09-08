@@ -33,6 +33,7 @@ const contractSchema = Joi.object({
 
     signedAt: Joi.date().iso().optional(),
 
+    filename: Joi.string().optional().allow(''),
 });
 
 module.exports = contractSchema;

@@ -1,48 +1,24 @@
-/* Layout Styles for Sidebar and Header Separation */
-.app-layout {
-  width: 100%;
-  min-height: 100vh;
-  position: relative;
+[data-coreui-theme="dark"] .sidebar-container,
+.dark-mode .sidebar-container {
+  background: var(--cui-sidebar-bg-dark, #2f3349);
+  border-right-color: var(--cui-border-color-dark, #495057);
 }
 
-.sidebar-container {
-  background: var(--cui-sidebar-bg, #fff);
-  border-right: 1px solid var(--cui-border-color, #d8dbe0);
-}
-
-.main-content-wrapper {
-  width: 100%;
-  position: relative;
+[data-coreui-theme="dark"] .header-container,
+.dark-mode .header-container {
+  background: var(--cui-body-bg-dark, #212529);
 }
 
 .header-container {
-  width: 100%;
   position: sticky;
   top: 0;
   z-index: 1020;
-  background: var(--cui-body-bg, #fff);
-  /* border-bottom: 1px solid var(--cui-border-color, #d8dbe0); */
 }
 
-.page-content {
-  width: 100%;
-  padding: 0;
+.sidebar-container {
+  transition: width 0.3s ease;
 }
 
-/* Ensure sidebar and header don't overlap */
-.sidebar-container + .main-content-wrapper .header-container {
-  margin-left: 0;
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .sidebar-container {
-    /*background: var(--cui-sidebar-bg-dark, #2f3349);*/
-    /* border-right-color: var(--cui-border-color-dark, #495057); */
-  }
-
-  .header-container {
-   /* background: var(--cui-body-bg-dark, #212529);*/
-    /* border-bottom-color: var(--cui-border-color-dark, #495057); */
-  }
+.main-content-wrapper {
+  transition: margin-left 0.3s ease;
 }

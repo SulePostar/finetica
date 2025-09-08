@@ -11,10 +11,21 @@ const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
 });
 
+function checkIfPdf(buf) {
+    if (!buf || buf.length < 5) return false;
+    const first5 = Buffer.isBuffer(buf)
+        ? buf.subarray(0, 5).toString()
+        : Buffer.from(buf).subarray(0, 5).toString();
+    return first5 === '%PDF-';
+}
+
 const processDocument = async (fileBuffer, mimeType, responseSchema, model, prompt) => {
-    if (mimeType !== "application/pdf") {
-        throw new AppError("Invalid file type. Only PDF files are allowed.", 400);
-    }
+    const lower = (mimeType || '').toLowerCase();
+    const pdfByMime = lower === 'application/pdf' || lower.includes('pdf');
+    const pdfByMagic = checkIfPdf(fileBuffer);
+    const isPdf = pdfByMime || pdfByMagic;
+
+    if (!isPdf) throw new AppError('Invalid file type. Only PDF files are allowed.', 400);
 
     const contents = [
         {

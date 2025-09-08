@@ -1,9 +1,8 @@
-import { CRow, useColorModes } from '@coreui/react';
-import { useEffect, useState } from 'react';
+import { useColorModes } from '@coreui/react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { Col, Container } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import { AppHeader, AppSidebar } from '../components/index';
-import makeLayoutStyles from './DefaultLayout.styles';
 import './DefaultLayout.css';
 
 const DefaultLayout = ({ children }) => {
@@ -11,54 +10,61 @@ const DefaultLayout = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const sidebarShow = useSelector((state) => state.ui.sidebarShow);
   const sidebarUnfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
-  const styles = makeLayoutStyles();
 
-  useEffect(() => {
+  const checkDarkMode = useCallback(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)');
-    const checkDarkMode = () => {
-      const dark = colorMode === 'dark' || (colorMode === 'auto' && media.matches);
-      setIsDarkMode(dark);
-    };
-    checkDarkMode();
-    media.addEventListener('change', checkDarkMode);
-    return () => media.removeEventListener('change', checkDarkMode);
+    const dark = colorMode === 'dark' || (colorMode === 'auto' && media.matches);
+    setIsDarkMode(dark);
+
+    // Update data attribute for CSS selectors
+    document.documentElement.setAttribute('data-coreui-theme', dark ? 'dark' : 'light');
+    if (dark) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
   }, [colorMode]);
 
-  // Calculate sidebar width based on state
-  const getSidebarWidth = () => {
-    if (!sidebarShow) return 0;
-    return sidebarUnfoldable ? 56 : 240; // 56px for collapsed, 240px for expanded
-  };
+  useEffect(() => {
+    checkDarkMode();
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    media.addEventListener('change', checkDarkMode);
 
-  const sidebarWidth = getSidebarWidth();
+    return () => media.removeEventListener('change', checkDarkMode);
+  }, [checkDarkMode]);
+
+  const sidebarWidth = useMemo(() => {
+    if (!sidebarShow) return 0;
+    return sidebarUnfoldable ? 56 : 240;
+  }, [sidebarShow, sidebarUnfoldable]);
 
   return (
-    <div className="app-layout">
-      {/* Independent Sidebar */}
-      <AppSidebar isDarkMode={isDarkMode} />
+    <div className="d-flex flex-column min-vh-100">
+      <div
+        className={`sidebar-container ${!sidebarShow ? 'd-none' : ''} ${sidebarUnfoldable ? 'collapsed' : ''}`}
+        style={{ width: sidebarShow ? `${sidebarWidth}px` : 0 }}
+      >
+        <AppSidebar isDarkMode={isDarkMode} />
+      </div>
 
-      {/* Main Content Area with Header */}
       <div
         className="main-content-wrapper"
-        style={{
-          minHeight: '100vh'
-        }}
+        style={{ '--sidebar-width': `${sidebarWidth}px` }}
       >
-        {/* Separate Header */}
-        <div className="header-container" style={{
-          position: 'relative',
-          zIndex: 1040,
-          backgroundColor: 'var(--cui-body-bg)',
-          margin: 0,
-          padding: 0
-        }}>
-          <AppHeader isDarkMode={isDarkMode} colorMode={colorMode} setColorMode={setColorMode} />
-        </div>        {/* Page Content */}
-        <div className="page-content">
-          <CRow className="mb-2 mx-5"></CRow>
-          <Container fluid as="main" className={styles.mainContent.className}>
-            {children}
-          </Container>
+        <div className="header-container">
+          <AppHeader
+            isDarkMode={isDarkMode}
+            colorMode={colorMode}
+            setColorMode={setColorMode}
+          />
+        </div>
+
+        <div className="flex-grow-1 d-flex flex-column">
+          <div className="flex-grow-1 overflow-auto">
+            <Container fluid className="px-0 p-3">
+              {children}
+            </Container>
+          </div>
         </div>
       </div>
     </div>
