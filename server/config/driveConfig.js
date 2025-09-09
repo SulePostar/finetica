@@ -1,7 +1,6 @@
 const { google } = require('googleapis');
 const path = require('path');
 
-// Load the service account key
 const keyFile = path.join(__dirname, '../googleDriveAccess.json');
 
 const auth = new google.auth.GoogleAuth({
