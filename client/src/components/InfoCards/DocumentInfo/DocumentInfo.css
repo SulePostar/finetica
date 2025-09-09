@@ -9,9 +9,9 @@
 }
 /* CSS Custom Properties for better maintainability */
 :root {
-  --document-info-bg: #f8fafc;
+  --document-info-bg: #f9f9f9;
   --document-info-border: #d8d3e4ff;
-  --document-info-hover-bg: #e9f2ff;
+  --document-info-hover-bg: #ede9fe;
   --info-row-border: #e4e4e4;
   --text-primary: #111;
   --text-muted: #6c757d;
@@ -25,18 +25,32 @@
   --spacing-md: 1rem;
   --spacing-lg: 1.25rem;
   --spacing-xl: 1.5rem;
+  --info-text: #6c757d;
+  --border-color: #5856d6;
+  --detail-card-bg: #f8fafc;
 }
 
 [data-coreui-theme='dark'] {
-  --document-info-bg: #23272f;
+  --document-info-bg: #212631;
   --document-info-hover-bg: #2a3140;
   --info-row-border: #404040;
   --text-primary: #d8d3e4ff;
   --text-muted: var(--cui-secondary-color);
+  --border-color: #5850a6;
+  --detail-card-bg: #2a3140;
+}
+
+.detail-card {
+  background: var(--detail-card-bg);
+  border: var(--border-color) 1px solid;
+  border-radius: 12px;
+  color: var(--text-primary);
 }
 
 .document-info-list {
   background: var(--document-info-bg);
+  border-left: var(--border-color) 5px solid;
+  border-radius: 20%;
 }
 
 .info-row:hover,
@@ -47,7 +61,7 @@
   outline-offset: 2px;
 }
 
-.info-label {
+.info-row {
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: 0.02em;
@@ -58,7 +72,7 @@
 
 .info-value {
   color: var(--text-primary);
-  font-weight: 500;
+  font-weight: 400;
   text-align: right;
   max-width: 60%;
   word-break: break-word;

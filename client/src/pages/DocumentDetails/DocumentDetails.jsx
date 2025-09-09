@@ -18,6 +18,7 @@ import DocumentInfo from '../../components/InfoCards/DocumentInfo/DocumentInfo';
 import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
 import { useDocument } from '../../hooks/useDocuments';
 import DefaultLayout from '../../layout/DefaultLayout';
+import '../../styles/shared/CommonStyles.css';
 
 import ItemsTable from '../../components/ItemsTable/ItemsTable';
 
@@ -101,7 +102,7 @@ const DocumentDetails = () => {
               {!loading && (documentType === 'kif' || documentType === 'kuf') && Array.isArray(formData?.items) && (
                 <button
                   type="button"
-                  className="btn btn-outline-primary mb-3"
+                  className="btn btn-primary details-button"
                   onClick={() => navigate(`/${documentType}/${id}/items`, { state: { backUrl: location.pathname } })}
                 >
                   View Items Table

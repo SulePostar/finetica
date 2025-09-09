@@ -23,7 +23,6 @@ const DocumentItemsPage = () => {
                 </CRow>
                 <CRow className="justify-content-center">
                     <CCol lg={8}>
-                        <h2 className="mb-4">Invoice Items</h2>
                         {loading ? (
                             <div className="text-center py-5">
                                 <CSpinner color="primary" />

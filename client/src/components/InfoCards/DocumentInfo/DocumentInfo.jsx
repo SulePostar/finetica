@@ -79,7 +79,7 @@ const DocumentInfo = ({
     return (
         <DocInfoCard title={cardTitle}>
             <div
-                className="document-info-list d-flex flex-column gap-2 fs-6 rounded shadow-sm border-start border-4 px-3 py-4 mb-3"
+                className="document-info-list d-flex flex-column gap-2 fs-6 rounded shadow-sm px-3 py-4 mb-3"
                 role="list"
                 aria-label="Document details"
             >
