@@ -16,7 +16,6 @@ class ConfigManager {
 
     validateRequiredEnvVars() {
         const requiredVars = [
-            'GOOGLE_REFRESH_TOKEN',
             'SUPABASE_URL',
             'SUPABASE_SERVICE_ROLE_KEY',
             'CLIENT_ID',
@@ -41,8 +40,7 @@ class ConfigManager {
                 clientId: process.env.CLIENT_ID,
                 clientSecret: process.env.CLIENT_SECRET,
                 apiKey: process.env.API_KEY,
-                redirectUri: process.env.REDIRECT_URI,
-                refreshToken: process.env.GOOGLE_REFRESH_TOKEN
+                redirectUri: process.env.REDIRECT_URI
             },
             folders: {
                 kif: process.env.GOOGLE_DRIVE_KIF_FOLDER_ID,
@@ -56,7 +54,7 @@ class ConfigManager {
                 fileSizeLimitMB: parseInt(process.env.FILE_SIZE_LIMIT_MB) || 50,
                 tableMappings: {
                     kif: 'kif_processing_logs',
-                    kuf: 'KufLog',
+                    kuf: 'kuf_processing_logs',
                     bank_transactions: 'bank_transaction_processing_logs'
                 }
             }
