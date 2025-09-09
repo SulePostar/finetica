@@ -47,7 +47,7 @@ const DefaultLayout = ({ children }) => {
           />
         </div>
         <div className="flex-grow-1 overflow-auto">
-          <Container fluid className="p-3 py-5">{children}</Container>
+          <Container fluid className='pt-5 pe-5 ps-5'>{children}</Container>
         </div>
       </div>
     </div>
