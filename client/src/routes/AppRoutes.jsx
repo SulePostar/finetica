@@ -2,6 +2,7 @@ import { CContainer, CSpinner } from '@coreui/react';
 import React, { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from '../protectedRoutes/ProtectedRouter';
+const DocumentItemsPage = React.lazy(() => import('../pages/DocumentDetails/DocumentItemsPage'));
 const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
@@ -221,6 +222,22 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <InvalidPdfDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/kif/:id/items"
+          element={
+            <ProtectedRoute>
+              <DocumentItemsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/kuf/:id/items"
+          element={
+            <ProtectedRoute>
+              <DocumentItemsPage />
             </ProtectedRoute>
           }
         />

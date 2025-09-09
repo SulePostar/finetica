@@ -10,8 +10,8 @@ import {
   CRow,
   CSpinner,
 } from '@coreui/react';
-import { useMemo } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useMemo, useState } from 'react';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 
 import ActionButtons from '../../components/ActionButtons/ActionButtons';
 import DocumentInfo from '../../components/InfoCards/DocumentInfo/DocumentInfo';
@@ -55,6 +55,8 @@ const DocumentDetails = () => {
     handleCancel,
   } = useDocument(documentType, id, onSaveCallback);
 
+  const navigate = useNavigate();
+
   const cardTitle = isEditMode
     ? 'Edit Document'
     : isApproveMode
@@ -95,6 +97,16 @@ const DocumentDetails = () => {
                   }
                 />
               )}
+              {/* Button to navigate to items page */}
+              {!loading && (documentType === 'kif' || documentType === 'kuf') && Array.isArray(formData?.items) && (
+                <button
+                  type="button"
+                  className="btn btn-outline-primary mb-3"
+                  onClick={() => navigate(`/${documentType}/${id}/items`, { state: { backUrl: location.pathname } })}
+                >
+                  View Items Table
+                </button>
+              )}
             </CCol>
             <CCol lg={8} className="mb-4">
               <CCard className="h-70 shadow-sm detail-card mb-4">
@@ -114,10 +126,6 @@ const DocumentDetails = () => {
                   )}
                 </CCardBody>
               </CCard>
-              {/* Show items for KIF and KUF documents in line with PDF viewer */}
-              {!loading && (documentType === 'kif' || documentType === 'kuf') && Array.isArray(formData?.items) && (
-                <ItemsTable items={formData.items} />
-              )}
             </CCol>
           </CRow>
         </CContainer>
