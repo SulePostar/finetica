@@ -1,17 +1,15 @@
-.bg-dark-purple {
-  background-color: #432e62df !important;
+.app-header {
+  border-bottom: 2px solid var(--cui-sidebar-border-color);
 }
 
-.bg-light-purple {
-  background-color: #bfaee5ff !important;
+.header-back {
+  color: var(--cui-header-color) !important;
 }
 
-.hover-dark:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.hover-light:hover {
-  background-color: rgba(0, 0, 0, 0.1) !important;
+.header-back:hover {
+  background-color: var(--cui-sidebar-hover-bg) !important;
+  text-decoration: none;
+  color: var(--cui-header-color) !important;
 }
 
 .h-64 {
