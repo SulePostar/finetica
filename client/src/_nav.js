@@ -15,6 +15,12 @@ const _nav = [
   },
   {
     component: CNavItem,
+    name: 'Bank Transactions',
+    to: '/bank-transactions',
+    icon: cilBank,
+  },
+  {
+    component: CNavItem,
     name: 'Contracts',
     to: '/contracts',
     icon: cilFile,
@@ -30,12 +36,6 @@ const _nav = [
     name: 'KUF',
     to: '/kuf',
     icon: cilTag,
-  },
-  {
-    component: CNavItem,
-    name: 'Bank Transactions',
-    to: '/bank-transactions',
-    icon: cilBank,
   },
   {
     component: CNavItem,
