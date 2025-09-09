@@ -1,4 +1,7 @@
 const { ContractProcessingLog } = require('../models');
+const supabaseService = require('../utils/supabase/supabaseService');
+
+const CONTRACTS_BUCKET = 'contracts';
 
 const findAllInvalid = async (page = 1, limit = 10) => {
     const offset = (page - 1) * limit;
@@ -22,8 +25,10 @@ const findAllInvalid = async (page = 1, limit = 10) => {
 };
 
 const findById = async (id) => {
-    const contract = await ContractProcessingLog.findByPk(id);
-    return contract;
+    const contractProcessingLog = await ContractProcessingLog.findByPk(id);
+    const pdfUrl = await supabaseService.getSignedUrl(CONTRACTS_BUCKET, contractProcessingLog.filename);
+
+    return { ...contractProcessingLog.toJSON(), pdfUrl };
 };
 
 
