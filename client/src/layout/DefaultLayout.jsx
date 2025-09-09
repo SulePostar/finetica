@@ -28,7 +28,7 @@ const DefaultLayout = ({ children }) => {
   }, [checkDarkMode]);
 
   return (
-    <div className="app-layout d-flex">
+    <div className="d-flex">
       {/* Sidebar */}
       <div
         className={`sidebar-container ${!sidebarShow ? 'sidebar-hidden' : ''} ${sidebarUnfoldable ? 'sidebar-collapsed' : ''
@@ -46,7 +46,7 @@ const DefaultLayout = ({ children }) => {
             setColorMode={setColorMode}
           />
         </div>
-        <div className="content-container flex-grow-1 overflow-auto">
+        <div className="flex-grow-1 overflow-auto">
           <Container fluid className="p-3 py-5">{children}</Container>
         </div>
       </div>
