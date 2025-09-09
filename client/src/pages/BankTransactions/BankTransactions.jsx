@@ -129,14 +129,12 @@ const BankTransactions = () => {
           width: `calc(100vw - ${sidebarWidth}px)`,
         }}
       >
-        <div className="bank-transactions-table-responsive">
-          <DynamicTable
-            title="Bank Transactions"
-            columns={columns}
-            apiEndpoint={apiEndpoint}
-            uploadButton={<UploadButton bucketName={bucketName} />}
-          />
-        </div>
+        <DynamicTable
+          title="Bank Transactions"
+          columns={columns}
+          apiEndpoint={apiEndpoint}
+          uploadButton={<UploadButton bucketName={bucketName} />}
+        />
       </div>
     </DefaultLayout>
   );

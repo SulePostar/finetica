@@ -157,24 +157,22 @@ const Contract = () => {
           width: `calc(100vw - ${sidebarWidth}px)`,
         }}
       >
-        <div className="contract-table-responsive">
-          <DynamicTable
-            title="Contracts"
-            columns={columns}
-            apiEndpoint={apiEndpoint}
-            uploadButton={
-              <UploadButton
-                bucketName={bucketName}
-                onUploadSuccess={() => {
-                  if (refetchFunction) {
-                    refetchFunction(); // refresha tabelu
-                  }
-                }}
-              />
-            }
-            onRefetch={handleRefetchCallback}
-          />
-        </div>
+        <DynamicTable
+          title="Contracts"
+          columns={columns}
+          apiEndpoint={apiEndpoint}
+          uploadButton={
+            <UploadButton
+              bucketName={bucketName}
+              onUploadSuccess={() => {
+                if (refetchFunction) {
+                  refetchFunction(); // refresha tabelu
+                }
+              }}
+            />
+          }
+          onRefetch={handleRefetchCallback}
+        />
       </div>
     </DefaultLayout>
   );
