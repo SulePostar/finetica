@@ -87,7 +87,7 @@ INVOICE TYPE
 - If multiple candidates, pick the most prominently displayed one.
 - If there is "Invoice" displayed in the header do not return "Faktura" or something else. Do not invent types.
 - If you find "Račun za ...", "Faktura za ...", or similar, return only the word "Račun" or "Faktura" as the type, and not the full phrase.
-- Always use the same naming convention. If you see "FAKTURA" or "INVOICE", return "Faktura" or "Invoice" respectively.
+- Always use the same naming convention. If you see "FAKTURA" or "INVOICE", return "Faktura" or "Invoice" respectively. No all-caps or lowercase.
 
 NOTE
 - Look for labels: "Note", "Napomena", "Bemerkung", "Anmerkung", "Comment", "Warning", "Upozorenje".
@@ -100,8 +100,9 @@ NOTE
 BILL NUMBER
 - "billNumber" is a secondary reference number sometimes used for internal tracking.
 - Look for labels: "Bill No.", "Bill Number", "Broj računa", "Broj fakture", "Rechnungsnummer".
-- Bill number is NOT a "Transaction number", "Transaction ID" or "Broj transakcije".
-- Bill number is NOT "Order number" or "Order ID" or "Broj narudžbe".
+- Bill number is NOT a "Transaction number", "Transaction ID" or "Broj transakcije". If you see these labels, the Bill number is not it.
+- Bill number is NOT "Order number" or "Order ID" or "Broj narudžbe". If you see these labels, the Bill number is not it.
+- Bill number is NOT "Billing ID" or "Billing reference". If you see these labels, the Bill number is not it.
 - Bill number is often near but distinct from the main invoice number.
 - You may not find bill number; in that case, set to null.
 - It will most likely be a different format than the invoice number.
