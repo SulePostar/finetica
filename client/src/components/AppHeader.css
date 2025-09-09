@@ -1,8 +1,8 @@
 .app-header {
-  border-bottom: 1px solid var(--cui-sidebar-border-color);
+  border-bottom: 2px solid var(--cui-sidebar-border-color);
 }
 
-.header-back{
+.header-back {
   color: var(--cui-header-color) !important;
 }
 

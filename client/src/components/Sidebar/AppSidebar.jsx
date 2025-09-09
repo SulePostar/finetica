@@ -64,7 +64,8 @@ const AppSidebar = ({ isDarkMode }) => {
       visible={sidebarShow}
       style={{
         zIndex: unfoldable && isHovered ? 1060 : 1050,
-        borderRight: '1px solid var(--cui-sidebar-border-color, #efefefef)',
+        borderRight: '2px solid var(--cui-sidebar-border-color, #efefefef)',
+        boxShadow: unfoldable && isHovered ? '0 4px 8px rgba(0, 0, 0, 0.1)' : 'none',
         backgroundColor: 'var(--cui-sidebar-bg)',
         color: 'var(--cui-sidebar-color)',
       }}
