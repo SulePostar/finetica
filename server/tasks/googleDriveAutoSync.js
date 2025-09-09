@@ -3,7 +3,7 @@ const {
     performSync,
     syncFiles,
     start: helperStart
-} = require('../utils/driveDownloader/googleDriveHelper');
+} = require('../utils/googleDrive/googleDriveHelper');
 const tokenStorage = require('../services/tokenStorage');
 
 class GoogleDriveAutoSync {
