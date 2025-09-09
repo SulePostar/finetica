@@ -1,11 +1,14 @@
 const { google } = require('googleapis');
-const path = require('path');
 
-const keyFile = path.join(__dirname, '../googleDriveAccess.json');
+const dotenv = require('dotenv');
+dotenv.config();
+
+const GOOGLE_SERVICE_ACCOUNT_KEY = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
+const credentials = JSON.parse(GOOGLE_SERVICE_ACCOUNT_KEY);
 
 const auth = new google.auth.GoogleAuth({
-    keyFile,
-    scopes: ['https://www.googleapis.com/auth/drive.readonly'], // or full access
+    credentials,
+    scopes: ['https://www.googleapis.com/auth/drive.readonly'], // adjust scope if needed
 });
 
 function createDriveClient() {
