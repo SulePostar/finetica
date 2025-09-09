@@ -13,7 +13,7 @@ jest.mock('../../components/AppHeader', () => {
     return () => <div data-testid="app-header"></div>;
 });
 
-jest.mock('../../components/AppSidebar', () => {
+jest.mock('../../components/Sidebar/AppSidebar', () => {
     return () => <div data-testid="app-sidebar"></div>;
 });
 
