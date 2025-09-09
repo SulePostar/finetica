@@ -19,6 +19,8 @@ import { PdfViewer } from '../../components/PdfViewer/PdfViewer';
 import { useDocument } from '../../hooks/useDocuments';
 import DefaultLayout from '../../layout/DefaultLayout';
 
+import ItemsTable from '../../components/ItemsTable/ItemsTable';
+
 const DocumentDetails = () => {
   const { id } = useParams();
   const location = useLocation();
@@ -95,7 +97,7 @@ const DocumentDetails = () => {
               )}
             </CCol>
             <CCol lg={8} className="mb-4">
-              <CCard className="h-100 shadow-sm detail-card">
+              <CCard className="h-70 shadow-sm detail-card mb-4">
                 <CCardHeader>
                   <CCardTitle className="mb-0">
                     <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
@@ -112,6 +114,10 @@ const DocumentDetails = () => {
                   )}
                 </CCardBody>
               </CCard>
+              {/* Show items for KIF and KUF documents in line with PDF viewer */}
+              {!loading && (documentType === 'kif' || documentType === 'kuf') && Array.isArray(formData?.items) && (
+                <ItemsTable items={formData.items} />
+              )}
             </CCol>
           </CRow>
         </CContainer>
