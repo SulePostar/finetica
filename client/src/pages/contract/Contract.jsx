@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
 import DynamicTable from '../../components/Tables/DynamicTable';
@@ -7,7 +7,6 @@ import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useBucketName } from '../../lib/bucketUtils';
 import './Contract.css';
-
 const Contract = () => {
   const navigate = useNavigate();
   const sidebarWidth = useSidebarWidth();
@@ -15,6 +14,11 @@ const Contract = () => {
 
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
   const apiEndpoint = useMemo(() => `${API_BASE}/contracts`, [API_BASE]);
+  const [refetchFunction, setRefetchFunction] = useState(null);
+
+  const handleRefetchCallback = useCallback((fetchFn) => {
+    setRefetchFunction(() => fetchFn);
+  }, []);
 
   const handleView = useCallback(
     (id) => {
@@ -30,14 +34,21 @@ const Contract = () => {
     [navigate]
   );
 
-  const handleDownload = useCallback((id) => {}, []);
+  const handleDownload = useCallback((id) => { }, []);
 
   const columns = [
     {
-      name: 'Partner ID',
-      selector: (row) => row.partnerId,
+      name: 'File Name',
+      selector: (row) => row.filename,
       sortable: true,
-      width: '140px',
+      width: '200px',
+    },
+    {
+      name: 'Partner Name',
+      selector: (row) => row.businessPartner?.name,
+      sortable: true,
+      width: '200px',
+      cell: (row) => row.businessPartner?.name,
     },
     {
       name: 'Contract Number',
@@ -128,7 +139,7 @@ const Contract = () => {
           row={row}
           onView={handleView}
           onApprove={() => handleApprove(row.id)}
-          onDownload={() => handleDownload(row.id)} 
+          onDownload={() => handleDownload(row.id)}
           isApproved={Boolean(row.approvedAt || row.approvedBy || row.status === 'approved')}
           {...(row.approvedAt === null && { onApprove: () => handleApprove(row.id) })}
         />
@@ -151,7 +162,17 @@ const Contract = () => {
             title="Contracts"
             columns={columns}
             apiEndpoint={apiEndpoint}
-            uploadButton={<UploadButton bucketName={bucketName} />}
+            uploadButton={
+              <UploadButton
+                bucketName={bucketName}
+                onUploadSuccess={() => {
+                  if (refetchFunction) {
+                    refetchFunction(); // refresha tabelu
+                  }
+                }}
+              />
+            }
+            onRefetch={handleRefetchCallback}
           />
         </div>
       </div>

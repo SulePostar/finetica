@@ -1,34 +1,44 @@
 import { render } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 import { BrowserRouter } from 'react-router-dom';
 import { mockState } from './setup.js';
+
+// Create a test store
+const createTestStore = (initialState = mockState) => {
+    return configureStore({
+        reducer: {
+            auth: (state = initialState.auth) => state,
+            user: (state = initialState.user || {}) => state,
+            users: (state = initialState.users || {}) => state,
+            roles: (state = initialState.roles || {}) => state,
+            statuses: (state = initialState.statuses || {}) => state,
+            ui: (state = initialState.ui || {}) => state,
+        },
+        preloadedState: initialState,
+    });
+};
 
 // Custom render function that overrides the mocked useSelector for specific tests
 export const renderWithProviders = (
     ui,
     {
         initialState = mockState,
+        store = createTestStore(initialState),
         ...renderOptions
     } = {}
 ) => {
-    // Override the useSelector mock for this specific test
-    const { useSelector } = require('react-redux');
-    useSelector.mockImplementation((selector) => {
-        try {
-            return selector(initialState);
-        } catch (error) {
-            console.warn('Selector failed, returning fallback:', error.message);
-            return initialState.auth;
-        }
-    });
-
     const Wrapper = ({ children }) => (
-        <BrowserRouter>
-            {children}
-        </BrowserRouter>
+        <Provider store={store}>
+            <BrowserRouter>
+                {children}
+            </BrowserRouter>
+        </Provider>
     );
 
     return {
-        ...render(ui, { wrapper: Wrapper, ...renderOptions })
+        ...render(ui, { wrapper: Wrapper, ...renderOptions }),
+        store,
     };
 };
 
@@ -50,6 +60,17 @@ export const mockAuthStateFactory = (overrides = {}) => ({
 });
 
 export const waitForAsync = () => new Promise(resolve => setTimeout(resolve, 0));
+
+// Custom rerender function that works with renderWithProviders
+export const rerenderWithProviders = (
+    ui,
+    {
+        initialState = mockState,
+        ...renderOptions
+    } = {}
+) => {
+    return renderWithProviders(ui, { initialState, ...renderOptions });
+};
 
 export const commonAssertions = {
     expectElementToBeVisible: (element) => {

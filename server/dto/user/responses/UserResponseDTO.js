@@ -9,7 +9,7 @@ class UserResponseDTO {
     this.roleId = user.roleId;
     this.roleName = user.role?.get('role');
     this.statusId = user.statusId;
-    this.statusName = user.status.get('status');
+    this.statusName = user.status?.get('status');
     this.isEmailVerified = user.isEmailVerified;
     this.createdAt = user.createdAt;
     this.updatedAt = user.updatedAt;

@@ -1,0 +1,33 @@
+
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+YELLOW="\033[1;33m"
+NC="\033[0m"
+
+run_tests() {
+  FOLDER=$1
+  echo -e "${YELLOW}🧪 Running ${FOLDER} tests...${NC}"
+  cd $FOLDER || exit 1
+  npm test
+  RESULT=$?
+  cd - > /dev/null || exit 1
+  if [ $RESULT -ne 0 ]; then
+    echo -e "${RED}❌ ${FOLDER} tests failed! Push blocked.${NC}"
+    exit 1
+  else
+    echo -e "${GREEN}✅ ${FOLDER} tests passed!${NC}"
+  fi
+}
+
+# Run tests for client if there are any changes
+if [ -d "client" ]; then
+  run_tests "client"
+fi
+
+# Run tests for server if there are any changes
+if [ -d "server" ]; then
+  run_tests "server"
+fi
