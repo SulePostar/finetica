@@ -1,5 +1,6 @@
 import { CNavItem, CNavTitle, CNavGroup } from '@coreui/react';
-import { cilHome, cilFile, cilBank, cilSettings, cilUser, cilShieldAlt, cilTag, cilBriefcase } from '@coreui/icons';
+import { cilHome, cilFile, cilBank, cilSettings, cilUser, cilShieldAlt, cilTag, cilBriefcase, cilWarning } from '@coreui/icons';
+
 
 const _nav = [
   {
@@ -41,6 +42,16 @@ const _nav = [
     name: 'Partners',
     to: '/partners',
     icon: cilBriefcase,
+  },
+  {
+    component: CNavTitle,
+    name: 'Issues',
+  },
+  {
+    component: CNavItem,
+    name: 'Invalid PDFs',
+    to: '/invalid-pdfs',
+    icon: cilWarning,
   },
   {
     component: CNavTitle,

@@ -54,7 +54,7 @@ body {
   min-height: calc(3rem + 1px); // stylelint-disable-line function-disallowed-list
 }
 
-:root {
+[data-coreui-theme='light'] {
   --cui-sidebar-color: #565656; // Replace with your desired color
   --cui-sidebar-bg: #ffffff; // Replace with your desired color
   --cui-sidebar-hover-bg: #ede9fe; // Replace with your desired color
@@ -64,6 +64,7 @@ body {
   --cui-sidebar-border-color: #efefefef; // Replace with your desired color
   --cui-sidebar-title-color: #bebebe; // Replace with your desired color
   --cui-table-hover-bg: #ede9fe; // Replace with your desired color
+  --cui-header-color: #000000;
 }
 
 [data-coreui-theme='dark'] {
@@ -76,6 +77,7 @@ body {
   --cui-sidebar-border-color: #1a1a1d;
   --cui-sidebar-title-color: #5850a6; // Replace with your desired color
   --cui-table-hover-bg: #313643;
+  --cui-header-color: #5850a6; // Replace with your desired color
 }
 
 @include color-mode(dark) {

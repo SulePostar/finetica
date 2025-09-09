@@ -6,14 +6,11 @@ import {
   CSidebarToggler,
   CBadge,
 } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilCloudDownload } from '@coreui/icons'
 
 import { useFilteredNavigation } from '../../hooks/useFilteredNavigation'
 import { AppSidebarNav } from './AppSidebarNav'
 import SidebarDriveStatus from './SidebarDriveStatus'
 import './AppSidebar.css'
-import { colors } from '../../styles/colors'
 import { setDriveConnected } from '../../redux/sidebar/sidebarSlice'
 
 const AppSidebar = ({ isDarkMode }) => {
