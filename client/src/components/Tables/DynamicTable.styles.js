@@ -1,3 +1,5 @@
+import '../../scss/style.scss';
+
 const makeCustomStyles = () => ({
   rows: {
     style: {
@@ -10,7 +12,7 @@ const makeCustomStyles = () => ({
       transition: 'background-color 0.2s ease-in-out',
     },
     highlightOnHoverStyle: {
-      backgroundColor: 'var(--cui-primary-bg-subtle)',
+      backgroundColor: 'var(--cui-table-hover-bg)',
       color: 'var(--cui-primary-text-emphasis)',
       transition: 'background-color 0.2s ease-in-out, color 0.2s ease-in-out',
       cursor: 'pointer',

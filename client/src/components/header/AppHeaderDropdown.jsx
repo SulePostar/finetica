@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { logout } from '../../redux/auth/authSlice';
 import notify from '../../utilis/toastHelper';
 import ConfirmationModal from './../Modals/ConfirmationModal';
+import './AppHeaderDropdown.css';
 
 const AppHeaderDropdown = ({ isDarkMode }) => {
   const [showModal, setShowModal] = useState(false);
@@ -37,7 +38,7 @@ const AppHeaderDropdown = ({ isDarkMode }) => {
           placement="bottom-end"
           className={`pt-0 ${isDarkMode ? 'dropdown-menu-dark' : ''}`}
         >
-          <CDropdownHeader className="bg-body-secondary fw-semibold my-1">Settings</CDropdownHeader>
+          <CDropdownHeader className="fw-semibold my-1">Settings</CDropdownHeader>
           <CDropdownItem href="profile">
             <CIcon icon={cilUser} className="me-2" />
             Profile

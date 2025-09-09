@@ -84,10 +84,10 @@ const approveContractById = async (id, body, userId) => {
   return contract;
 };
 
-const createContract = async (payload) => {
-  const created = await Contract.create(payload);
+const createContract = async (contractData) => {
+  const created = await Contract.create(contractData);
   return created;
-};
+}
 
 const extractData = async (fileBuffer, mimeType) => {
   const businessPartners = await BusinessPartner.findAll({
@@ -113,9 +113,18 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
       BUCKET_NAME,
       unprocessedFileLog.filename
     );
-    const extractedData = await extractData(buffer, mimeType);
+    const { isValidContract, ...contractData } = await extractData(buffer, mimeType);
+
+    if (isValidContract === false) {
+      await unprocessedFileLog.update({ isValid: false });
+      return;
+    }
+
     await sequelize.transaction(async (t) => {
-      await Contract.create({ ...extractedData, filename: unprocessedFileLog.filename }, { transaction: t });
+      await Contract.create(
+        { ...contractData, filename: unprocessedFileLog.filename },
+        { transaction: t }
+      );
       await unprocessedFileLog.update(
         {
           isProcessed: true,
@@ -131,7 +140,10 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
 
 const processUnprocessedFiles = async () => {
   const unprocessedFileLogs = await ContractProcessingLog.findAll({
-    where: { isProcessed: false },
+    where: {
+      isProcessed: false,
+      isValid: true
+    },
   });
 
   for (const fileLog of unprocessedFileLogs) {

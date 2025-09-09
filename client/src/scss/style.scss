@@ -1,5 +1,5 @@
-@use "@coreui/coreui/scss/coreui" as * with ( 
-  $enable-deprecation-messages: false,
+@use '@coreui/coreui/scss/coreui' as * with (
+  $enable-deprecation-messages: false
 );
 
 body {
@@ -10,7 +10,7 @@ body {
   width: 100%;
   padding-inline: var(--cui-sidebar-occupy-start, 0) var(--cui-sidebar-occupy-end, 0);
   will-change: auto;
-  @include transition(padding .15s);
+  @include transition(padding 0.15s);
 }
 
 .header > .container-fluid,
@@ -52,6 +52,32 @@ body {
 
 .footer {
   min-height: calc(3rem + 1px); // stylelint-disable-line function-disallowed-list
+}
+
+[data-coreui-theme='light'] {
+  --cui-sidebar-color: #565656; // Replace with your desired color
+  --cui-sidebar-bg: #ffffff; // Replace with your desired color
+  --cui-sidebar-hover-bg: #ede9fe; // Replace with your desired color
+  --cui-sidebar-active-color: #5850a6; // Replace with your desired color
+  --cui-sidebar-active-color-text: #5850a6;
+  --cui-sidebar-icon-color: #565656; // Replace with your desired color
+  --cui-sidebar-border-color: #efefefef; // Replace with your desired color
+  --cui-sidebar-title-color: #bebebe; // Replace with your desired color
+  --cui-table-hover-bg: #ede9fe; // Replace with your desired color
+  --cui-header-color: #000000;
+}
+
+[data-coreui-theme='dark'] {
+  --cui-sidebar-color: #9f9f9f;
+  --cui-sidebar-bg: #212631;
+  --cui-sidebar-hover-bg: #313643;
+  --cui-sidebar-active-color: #5850a6;
+  --cui-sidebar-active-color-text: #9f9f9f;
+  --cui-sidebar-icon-color: #9f9f9f;
+  --cui-sidebar-border-color: #1a1a1d;
+  --cui-sidebar-title-color: #5850a6; // Replace with your desired color
+  --cui-table-hover-bg: #313643;
+  --cui-header-color: #5850a6; // Replace with your desired color
 }
 
 @include color-mode(dark) {

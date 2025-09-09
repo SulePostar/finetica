@@ -1,6 +1,9 @@
 const contractsPrompt =
     `You are an expert system for extracting data from contracts.
 Your goal is to extract all relevant fields according to the provided JSON schema.
+Use field isValidContract to indicate if the document is a valid contract or not.
+If the document is not a valid contract, set all other fields to null and isValidContract to false.
+If the document is a valid contract, set isValidContract to true and extract all other fields as accurately as possible.
 
 Rules:
 1. All fields defined in the schema MUST always appear in the response.

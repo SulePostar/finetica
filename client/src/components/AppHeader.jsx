@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './AppHeader.css';
 import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
+import '../scss/style.scss';
 
 //Returns route and label for a detail page, or null if not a detail page
 const getDetailPageConfig = (pathname) => {
@@ -67,7 +68,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   return (
     <CHeader
       position="sticky"
-      className={`px-4 d-flex align-items-center h-64 ${isDarkMode ? 'bg-dark-purple' : 'bg-light-purple'}`}
+      className={`px-4 d-flex align-items-center h-64 app-header`}
       style={{
         marginLeft: `${!isMobile && sidebarShow ? (sidebarUnfoldable ? 56 : 240) : 0}px`,
       }}
@@ -76,7 +77,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
         <CButton
           variant="outline"
           onClick={() => navigate(detailPage.route)}
-          className="ms-n3 border rounded-pill px-3 py-2 d-flex align-items-center"
+          className="ms-n3 border rounded-pill px-3 py-2 d-flex align-items-center header-back"
         >
           <CIcon icon={cilArrowLeft} className="me-2" />
           Back to {detailPage.label}

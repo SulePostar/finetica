@@ -194,28 +194,19 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
     const extractedData = await extractData(buffer, mimeType);
 
     await sequelize.transaction(async (t) => {
-      if (extractedData.isPurchaseInvoice) {
-        await createInvoice({ ...extractedData, filename: unprocessedFileLog.filename }, { transaction: t });
-      } else {
-        unprocessedFileLog.update(
-          {
-            isProcessed: true,
-            processedAt: new Date(),
-            message: 'Not a purchase invoice',
-            isValid: false
-          },
-          { transaction: t });
-        console.log(`File ${unprocessedFileLog.filename} is not a purchase invoice, skipping invoice creation.`);
-      }
-
       await unprocessedFileLog.update(
         {
           isProcessed: true,
           processedAt: new Date(),
-          message: extractedData.isPurchaseInvoice ? 'KUF processed successfully' : 'Not a purchase invoice'
+          message: extractedData.isPurchaseInvoice ? 'KUF processed successfully' : 'Not a purchase invoice',
+          isValid: extractedData.isPurchaseInvoice
         },
         { transaction: t }
       );
+
+      if (extractedData.isPurchaseInvoice) {
+        await createInvoice({ ...extractedData, filename: unprocessedFileLog.filename }, { transaction: t });
+      }
     });
   } catch (error) {
     console.error(`Failed to process log ID ${unprocessedFileLog.id}:`, error);
