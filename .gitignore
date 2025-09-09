@@ -142,5 +142,4 @@ vite.config.ts.timestamp-*
 /server/services/downloaded_uids.json
 
 googleDriveDownloads/
-stored-tokens.json
 googleDriveAccess.json
