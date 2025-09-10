@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Card, Spinner, Container, Row, Col } from 'react-bootstrap';
+import { Card, Col, Container, Row, Spinner } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
+import api from '../../services/api';
 import './DynamicTable.css';
 
 const DynamicTable = ({
@@ -24,17 +25,15 @@ const DynamicTable = ({
     const fetchData = async () => {
         setLoading(true);
         try {
-            const params = new URLSearchParams({
+            const params = {
                 page,
                 perPage,
                 ...(sortField && { sortField }),
                 sortOrder,
-            });
-            const res = await fetch(`${apiEndpoint}?${params.toString()}`);
-            if (!res.ok) throw new Error(`Error ${res.status}`);
-            const result = await res.json();
-            setData(result.data);
-            setTotalRows(result.total);
+            };
+            const res = await api.get(apiEndpoint, { params });
+            setData(res.data.data);
+            setTotalRows(res.data.total);
         } catch (err) {
             console.error('Fetch error:', err);
         } finally {
