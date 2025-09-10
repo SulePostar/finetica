@@ -12,46 +12,55 @@ const ActionsDropdown = ({
   isApproved,
   isSaved = false,
 }) => {
+  const id = row?.id;
+
   return (
-    <Dropdown className="action-dropdown">
-      <Dropdown.Toggle variant="secondary" id={`dropdown-${row.id}`}>
+    <Dropdown
+      className="action-dropdown"
+      drop="up"
+      align="end"
+      flip
+    >
+      <Dropdown.Toggle
+        id={`dropdown-${id ?? 'row'}`}
+        variant="secondary"
+        className="action-dropdown-toggle"
+        size="sm"
+      >
         <FaEllipsisV />
       </Dropdown.Toggle>
-      <Dropdown.Menu>
-        {/* View option */}
-        {onView && <Dropdown.Item onClick={() => onView(row.id)}>View</Dropdown.Item>}
 
-        {/* Edit option - only show if not saved AND edit function exists */}
-        {onEdit && !isSaved && (
-          <Dropdown.Item onClick={() => onEdit(row.id)}>
-            Edit
-          </Dropdown.Item>
-        )}
-
-        {/* Approve option */}
-        {onApprove && !isApproved && (
-          <Dropdown.Item onClick={() => onApprove(row.id)}>
-            Approve
-          </Dropdown.Item>
-        )}
-
-        {/* Download option */}
-        {onDownload && (
-          <Dropdown.Item onClick={() => onDownload(row.id)}>
-            Download
-          </Dropdown.Item>
-        )}
-
-        {/* Delete option with separator */}
+      <Dropdown.Menu
+        renderOnMount
+        className="action-dropdown-menu"
+        role="menu"
+        popperConfig={{
+          strategy: 'fixed',                 
+          modifiers: [
+            { name: 'offset', options: { offset: [0, 10] } }, 
+            {
+              name: 'preventOverflow',
+              options: {
+                boundary: 'viewport',       
+                altBoundary: true,
+                tether: false,
+              },
+            },
+            {
+              name: 'computeStyles',
+              options: { adaptive: false }, 
+            },
+          ],
+        }}
+      >
+        {onView && <Dropdown.Item onClick={() => onView(id)}>View</Dropdown.Item>}
+        {onEdit && !isSaved && <Dropdown.Item onClick={() => onEdit(id)}>Edit</Dropdown.Item>}
+        {onApprove && !isApproved && <Dropdown.Item onClick={() => onApprove(id)}>Approve</Dropdown.Item>}
+        {onDownload && <Dropdown.Item onClick={() => onDownload(id)}>Download</Dropdown.Item>}
         {onDelete && (
           <>
             <Dropdown.Divider />
-            <Dropdown.Item
-              onClick={() => onDelete(row.id)}
-              className="text-danger"
-            >
-              Delete
-            </Dropdown.Item>
+            <Dropdown.Item onClick={() => onDelete(id)} className="text-danger">Delete</Dropdown.Item>
           </>
         )}
       </Dropdown.Menu>
@@ -60,3 +69,4 @@ const ActionsDropdown = ({
 };
 
 export default ActionsDropdown;
+
