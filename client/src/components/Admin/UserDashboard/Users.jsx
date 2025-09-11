@@ -1,14 +1,67 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Card, Spinner } from 'react-bootstrap';
-import DataTable from 'react-data-table-component';
-import makeCustomStyles from '../../Tables/DynamicTable.styles';
-import CIcon from '@coreui/icons-react';
-import { cilUser, cilPencil, cilTrash } from '@coreui/icons';
-import { capitalizeFirst } from '../../../helpers/capitalizeFirstLetter';
-
-import './Users.css';
-import { colors } from '../../../styles/colors';
+import {
+  Container,
+  Title,
+  Text,
+  Card,
+  Group,
+  Badge,
+  ActionIcon,
+  TextInput,
+  Button,
+  Modal,
+  Table,
+  ScrollArea,
+  Stack,
+  Alert,
+  Loader,
+  Center,
+  ThemeIcon,
+  Divider,
+  Box,
+  Paper,
+  SimpleGrid,
+  Select,
+  Pagination,
+  Textarea,
+  Switch,
+  Grid,
+  Avatar,
+  Menu,
+  UnstyledButton,
+  Tooltip,
+  Progress,
+  RingProgress,
+  rem
+} from '@mantine/core';
+import {
+  IconSearch,
+  IconRefresh,
+  IconEdit,
+  IconTrash,
+  IconUser,
+  IconUsers,
+  IconShield,
+  IconUserCheck,
+  IconUserX,
+  IconMail,
+  IconCalendar,
+  IconSettings,
+  IconDots,
+  IconCheck,
+  IconX,
+  IconAlertCircle,
+  IconPlus,
+  IconFilter,
+  IconSortAscending,
+  IconSortDescending,
+  IconEye,
+  IconLock,
+} from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { modals } from '@mantine/modals';
 
 import {
   fetchUsers,
@@ -40,10 +93,7 @@ import {
   selectStatusesLoading,
 } from '../../../redux/statuses/statusesSlice';
 
-import { SearchFilters, EditUserModal, ConfirmationModal, QuickChangeModal } from '../../index';
-
 import { filterUsers, getRoleName, getStatusBadge, isNewUser } from '../../../utilis/formatters';
-import notify from '../../../utilis/toastHelper';
 
 const Users = () => {
   const dispatch = useDispatch();
@@ -67,12 +117,17 @@ const Users = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showQuickChangeModal, setShowQuickChangeModal] = useState(false);
-  const [quickChangeData, setQuickChangeData] = useState({
-    type: null,
-    newValue: null,
+  const [editModalOpened, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+  const [sortField, setSortField] = useState('fullName');
+  const [sortDirection, setSortDirection] = useState('asc');
+
+  // Form states for editing
+  const [editFormData, setEditFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: ''
   });
 
   useEffect(() => {
@@ -81,28 +136,54 @@ const Users = () => {
     dispatch(fetchStatuses());
   }, [dispatch]);
 
+  // Handle notifications
   useEffect(() => {
-    if (error || success) {
-      if (error) {
-        notify.onError(error);
-      }
-      if (success) {
-        notify.onSuccess(success);
-      }
-
-      const timer = setTimeout(() => {
-        if (error) dispatch(clearError());
-        if (success) dispatch(clearSuccess());
-      }, 5000);
-      return () => clearTimeout(timer);
+    if (error) {
+      notifications.show({
+        title: 'Error',
+        message: error,
+        color: 'red',
+        icon: <IconX size="1rem" />,
+      });
+      dispatch(clearError());
     }
-  }, [error, success, dispatch]);
+  }, [error, dispatch]);
+
+  useEffect(() => {
+    if (success) {
+      notifications.show({
+        title: 'Success',
+        message: success,
+        color: 'green',
+        icon: <IconCheck size="1rem" />,
+      });
+      dispatch(clearSuccess());
+    }
+  }, [success, dispatch]);
 
   const filteredUsers = useMemo(() => {
     return filterUsers(users, searchTerm, filterRole);
   }, [users, searchTerm, filterRole]);
 
-  const customStyles = useMemo(() => makeCustomStyles(), []);
+  const sortedUsers = useMemo(() => {
+    return [...filteredUsers].sort((a, b) => {
+      const aValue = a[sortField] || '';
+      const bValue = b[sortField] || '';
+
+      if (sortDirection === 'asc') {
+        return aValue.localeCompare(bValue);
+      } else {
+        return bValue.localeCompare(aValue);
+      }
+    });
+  }, [filteredUsers, sortField, sortDirection]);
+
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return sortedUsers.slice(startIndex, startIndex + itemsPerPage);
+  }, [sortedUsers, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(sortedUsers.length / itemsPerPage);
 
   const handleRefresh = useCallback(() => {
     dispatch(fetchUsers());
@@ -110,287 +191,433 @@ const Users = () => {
 
   const handleEditUser = useCallback((user) => {
     setSelectedUser(user);
-    setShowEditModal(true);
-  }, []);
+    setEditFormData({
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      email: user.email || ''
+    });
+    openEditModal();
+  }, [openEditModal]);
+
+  const handleUpdateUser = useCallback(() => {
+    if (selectedUser) {
+      dispatch(updateUser({ userId: selectedUser.id, userData: editFormData }));
+      closeEditModal();
+    }
+  }, [dispatch, selectedUser, editFormData, closeEditModal]);
 
   const handleDeleteUser = useCallback((user) => {
-    setSelectedUser(user);
-    setShowDeleteModal(true);
-  }, []);
+    modals.openConfirmModal({
+      title: 'Delete User',
+      children: (
+        <Text size="sm">
+          Are you sure you want to delete user <strong>{user.fullName}</strong>? This action cannot be undone.
+        </Text>
+      ),
+      labels: { confirm: 'Delete', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onConfirm: () => {
+        dispatch(deleteUser(user.id));
+        notifications.show({
+          title: 'User Deleted',
+          message: `User ${user.fullName} has been deleted`,
+          color: 'red',
+        });
+      },
+    });
+  }, [dispatch]);
 
   const handleQuickStatusChange = useCallback(
     (userId, newStatusId) => {
-      setSelectedUser(users.find((u) => u.id === userId));
-      setQuickChangeData({ type: 'status', newValue: newStatusId });
-      setShowQuickChangeModal(true);
+      const user = users.find((u) => u.id === userId);
+      if (user) {
+        dispatch(quickChangeUserStatus({ userId, statusId: newStatusId }));
+        notifications.show({
+          title: 'Status Updated',
+          message: `User status has been updated`,
+          color: 'blue',
+        });
+      }
     },
-    [users]
+    [dispatch, users]
   );
 
   const handleQuickRoleChange = useCallback(
     (userId, newRoleId) => {
-      setSelectedUser(users.find((u) => u.id === userId));
-      setQuickChangeData({ type: 'role', newValue: newRoleId });
-      setShowQuickChangeModal(true);
-    },
-    [users]
-  );
-
-  const handleUpdateUser = useCallback(
-    (formData) => {
-      dispatch(updateUser({ userId: selectedUser.id, userData: formData }));
-      setShowEditModal(false);
-    },
-    [dispatch, selectedUser]
-  );
-
-  const handleConfirmDelete = useCallback(() => {
-    dispatch(deleteUser(selectedUser.id));
-    setShowDeleteModal(false);
-    notify.onWarning(`Deleting user: ${selectedUser.firstName || selectedUser.email}`);
-  }, [dispatch, selectedUser]);
-
-  const handleConfirmQuickChange = useCallback(() => {
-    const { type, newValue } = quickChangeData;
-    if (type === 'status') {
-      dispatch(quickChangeUserStatus({ userId: selectedUser.id, statusId: newValue }));
-    } else if (type === 'role') {
-      dispatch(quickChangeUserRole({ userId: selectedUser.id, roleId: newValue }));
-    }
-    setShowQuickChangeModal(false);
-  }, [dispatch, selectedUser, quickChangeData]);
-
-  const columns = useMemo(
-    () => [
-      {
-        name: 'Name',
-        selector: (row) => row.fullName,
-        sortable: true,
-        width: '15%',
-        cell: (row) => (
-          <div>
-            {row.fullName}
-            {isNewUser(row) && <span className="badge bg-success ms-2">New User</span>}
-          </div>
-        ),
-      },
-      {
-        name: 'Email',
-        selector: (row) => row.email,
-        sortable: true,
-        width: '25%',
-        cell: (row) => (
-          <div className="user-dashboard-email-cell" title={row.email}>
-            {row.email}
-          </div>
-        ),
-      },
-      {
-        name: 'Role',
-        selector: (row) => getRoleName(row, roles),
-        sortable: true,
-        width: '12.5%',
-      },
-      {
-        name: 'Status',
-        selector: (row) => row.statusId,
-        sortable: true,
-        width: '12.5%',
-        cell: (row) => getStatusBadge(row.statusId, statuses),
-      },
-      {
-        name: 'Actions',
-        selector: (row) => row.id,
-        sortable: false,
-        width: '35%',
-        cell: (row) => {
-          const isSelf = row.id === currentUser?.id;
-          return (
-            <div className="user-dashboard-actions-container">
-              <div className="user-dashboard-status-dropdown-wrapper">
-                <select
-                  className="form-select form-select-sm user-dashboard-status-dropdown"
-                  value={row.statusId}
-                  onChange={(e) => handleQuickStatusChange(row.id, parseInt(e.target.value))}
-                  title="Change Status"
-                  disabled={changingStatus || statusesLoading}
-                >
-                  {statusesLoading ? (
-                    <option>Loading...</option>
-                  ) : (
-                    statuses.map((status) => (
-                      <option key={status.id} value={status.id}>
-                        {capitalizeFirst(status.status)}
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
-              <div className="user-dashboard-role-dropdown-wrapper">
-                <select
-                  className="form-select form-select-sm user-dashboard-role-dropdown"
-                  value={row.roleId || row.role_id || ''}
-                  onChange={(e) => handleQuickRoleChange(row.id, parseInt(e.target.value))}
-                  title="Change Role"
-                  disabled={changingRole || rolesLoading}
-                >
-                  <option value="">No Role</option>
-                  {rolesLoading ? (
-                    <option>Loading...</option>
-                  ) : (
-                    roles.map((role) => (
-                      <option key={role.id} value={role.id}>
-                        {capitalizeFirst(role.role)}
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
-              <button
-                className="btn btn-sm user-dashboard-edit-btn"
-                onClick={() => handleEditUser(row)}
-                disabled={updatingUser || deletingUser}
-                title="Edit User"
-                style={{ backgroundColor: colors.primary }}
-              >
-                <CIcon icon={cilPencil} />
-              </button>
-              <button
-                className="btn bg-danger btn-sm user-dashboard-delete-btn"
-                onClick={() => handleDeleteUser(row)}
-                disabled={isSelf || updatingUser || deletingUser}
-                title="Delete User"
-              >
-                <CIcon icon={cilTrash} />
-              </button>
-            </div>
-          );
-        },
+      const user = users.find((u) => u.id === userId);
+      if (user) {
+        dispatch(quickChangeUserRole({ userId, roleId: newRoleId }));
+        notifications.show({
+          title: 'Role Updated',
+          message: `User role has been updated`,
+          color: 'blue',
+        });
       }
-    ],
-    [
-      currentUser,
-      updatingUser,
-      deletingUser,
-      changingStatus,
-      changingRole,
-      roles,
-      statuses,
-      rolesLoading,
-      statusesLoading,
-      handleEditUser,
-      handleQuickStatusChange,
-      handleQuickRoleChange,
-      handleDeleteUser,
-    ]
+    },
+    [dispatch, users]
   );
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const getStatusColor = (statusId) => {
+    const status = statuses.find(s => s.id === statusId);
+    if (!status) return 'gray';
+
+    const statusName = status.status.toLowerCase();
+    if (statusName.includes('active')) return 'green';
+    if (statusName.includes('inactive')) return 'red';
+    if (statusName.includes('pending')) return 'yellow';
+    return 'blue';
+  };
+
+  const getRoleColor = (roleId) => {
+    const role = roles.find(r => r.id === roleId);
+    if (!role) return 'gray';
+
+    const roleName = role.role.toLowerCase();
+    if (roleName.includes('admin')) return 'red';
+    if (roleName.includes('user')) return 'blue';
+    if (roleName.includes('manager')) return 'orange';
+    return 'gray';
+  };
+
+  const stats = useMemo(() => {
+    const totalUsers = users.length;
+    const activeUsers = users.filter(user => {
+      const status = statuses.find(s => s.id === user.statusId);
+      return status && status.status.toLowerCase().includes('active');
+    }).length;
+    const adminUsers = users.filter(user => {
+      const role = roles.find(r => r.id === user.roleId);
+      return role && role.role.toLowerCase().includes('admin');
+    }).length;
+    const newUsers = users.filter(user => isNewUser(user)).length;
+
+    return { totalUsers, activeUsers, adminUsers, newUsers };
+  }, [users, statuses, roles]);
 
   if (loading) {
     return (
-      <div className="user-dashboard-loading" data-testid="loading-spinner">
-        <Spinner animation="border" variant="primary" />
-      </div>
+      <Container fluid>
+        <Center h={400}>
+          <Stack align="center" gap="md">
+            <Loader size="xl" />
+            <Text c="dimmed" size="lg">Loading users...</Text>
+          </Stack>
+        </Center>
+      </Container>
     );
   }
 
   return (
-    <div>
-      <div className="user-dashboard-container">
-        <Card className="my-4 shadow-sm border-0 bg-light dark:bg-dark">
-          <Card.Body>
-            <Card.Title className="user-dashboard-title">
-              User Management Dashboard
-            </Card.Title>
-
-            {/* Search and Filters */}
-            <div className="user-dashboard-search-filters">
-              <SearchFilters
-                searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
-                filters={[
-                  {
-                    name: "role",
-                    label: "All Roles",
-                    options: [
-                      { value: "", label: "All Roles" },
-                      ...(rolesLoading
-                        ? [{ value: "loading", label: "Loading..." }]
-                        : roles.map((role) => ({
-                          value: role.id.toString(),
-                          label: capitalizeFirst(role.role),
-                        }))
-                      ),
-                    ],
-                  },
-                ]}
-                filterValues={{ role: filterRole }}
-                onFilterChange={(name, value) => {
-                  if (name === "role") setFilterRole(value);
-                }}
-                onRefresh={handleRefresh}
-              />
+    <Container fluid>
+      <Stack gap="xl">
+        {/* Header */}
+        <Paper p="xl" radius="md" withBorder>
+          <Group>
+            <ThemeIcon size="xl" color="blue" variant="light">
+              <IconUsers size="2rem" />
+            </ThemeIcon>
+            <div>
+              <Title order={2}>User Management Dashboard</Title>
+              <Text c="dimmed" size="lg">
+                Manage users, roles, and permissions
+              </Text>
             </div>
+          </Group>
+        </Paper>
 
-            {/* Users Table */}
-            <DataTable
-              columns={columns}
-              data={filteredUsers}
-              progressPending={loading}
-              progressComponent={<Spinner animation="border" variant="primary" />}
-              pagination
-              paginationTotalRows={filteredUsers.length}
-              highlightOnHover
-              responsive
-              customStyles={customStyles}
-              dense
+        {/* Stats Cards */}
+        <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="md">
+          <Card withBorder p="md" radius="md">
+            <Group justify="space-between">
+              <div>
+                <Text c="dimmed" size="sm" fw={500}>Total Users</Text>
+                <Text fw={700} size="xl">{stats.totalUsers}</Text>
+              </div>
+              <ThemeIcon color="blue" variant="light" size="lg" radius="md">
+                <IconUsers size="1.5rem" />
+              </ThemeIcon>
+            </Group>
+          </Card>
+
+          <Card withBorder p="md" radius="md">
+            <Group justify="space-between">
+              <div>
+                <Text c="dimmed" size="sm" fw={500}>Active Users</Text>
+                <Text fw={700} size="xl" c="green">{stats.activeUsers}</Text>
+              </div>
+              <ThemeIcon color="green" variant="light" size="lg" radius="md">
+                <IconUserCheck size="1.5rem" />
+              </ThemeIcon>
+            </Group>
+          </Card>
+
+          <Card withBorder p="md" radius="md">
+            <Group justify="space-between">
+              <div>
+                <Text c="dimmed" size="sm" fw={500}>Admin Users</Text>
+                <Text fw={700} size="xl" c="red">{stats.adminUsers}</Text>
+              </div>
+              <ThemeIcon color="red" variant="light" size="lg" radius="md">
+                <IconShield size="1.5rem" />
+              </ThemeIcon>
+            </Group>
+          </Card>
+
+          <Card withBorder p="md" radius="md">
+            <Group justify="space-between">
+              <div>
+                <Text c="dimmed" size="sm" fw={500}>New Users</Text>
+                <Text fw={700} size="xl" c="orange">{stats.newUsers}</Text>
+              </div>
+              <ThemeIcon color="orange" variant="light" size="lg" radius="md">
+                <IconUser size="1.5rem" />
+              </ThemeIcon>
+            </Group>
+          </Card>
+        </SimpleGrid>
+
+        {/* Search and Filters */}
+        <Card withBorder p="md" radius="md">
+          <Group justify="space-between" mb="md">
+            <Title order={3}>Users</Title>
+            <Button
+              leftSection={<IconRefresh size="1rem" />}
+              onClick={handleRefresh}
+              variant="light"
+            >
+              Refresh
+            </Button>
+          </Group>
+
+          <Group mb="md">
+            <TextInput
+              placeholder="Search users..."
+              leftSection={<IconSearch size="1rem" />}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ flex: 1 }}
             />
-          </Card.Body>
+            <Select
+              placeholder="Filter by role"
+              data={[
+                { value: '', label: 'All Roles' },
+                ...roles.map(role => ({
+                  value: role.id.toString(),
+                  label: role.role.charAt(0).toUpperCase() + role.role.slice(1)
+                }))
+              ]}
+              value={filterRole}
+              onChange={(value) => setFilterRole(value || '')}
+              style={{ width: 200 }}
+            />
+          </Group>
+
+          {/* Users Table */}
+          <ScrollArea>
+            <Table highlightOnHover>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>
+                    <UnstyledButton onClick={() => handleSort('fullName')}>
+                      <Group gap="xs">
+                        <Text fw={600}>Name</Text>
+                        {sortField === 'fullName' && (
+                          sortDirection === 'asc' ? <IconSortAscending size="0.875rem" /> : <IconSortDescending size="0.875rem" />
+                        )}
+                      </Group>
+                    </UnstyledButton>
+                  </Table.Th>
+                  <Table.Th>
+                    <UnstyledButton onClick={() => handleSort('email')}>
+                      <Group gap="xs">
+                        <Text fw={600}>Email</Text>
+                        {sortField === 'email' && (
+                          sortDirection === 'asc' ? <IconSortAscending size="0.875rem" /> : <IconSortDescending size="0.875rem" />
+                        )}
+                      </Group>
+                    </UnstyledButton>
+                  </Table.Th>
+                  <Table.Th>Role</Table.Th>
+                  <Table.Th>Status</Table.Th>
+                  <Table.Th>Actions</Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                {paginatedUsers.map((user) => {
+                  const isSelf = user.id === currentUser?.id;
+                  const role = roles.find(r => r.id === user.roleId);
+                  const status = statuses.find(s => s.id === user.statusId);
+
+                  return (
+                    <Table.Tr key={user.id}>
+                      <Table.Td>
+                        <Group gap="sm">
+                          <Avatar size="sm" color="blue">
+                            {user.firstName?.charAt(0) || user.email.charAt(0)}
+                          </Avatar>
+                          <div>
+                            <Text fw={500}>{user.fullName}</Text>
+                            {isNewUser(user) && (
+                              <Badge size="xs" color="green" variant="light">
+                                New
+                              </Badge>
+                            )}
+                          </div>
+                        </Group>
+                      </Table.Td>
+                      <Table.Td>
+                        <Group gap="xs">
+                          <IconMail size="0.875rem" color="gray" />
+                          <Text size="sm" c="dimmed">{user.email}</Text>
+                        </Group>
+                      </Table.Td>
+                      <Table.Td>
+                        <Badge
+                          color={getRoleColor(user.roleId)}
+                          variant="light"
+                          size="sm"
+                        >
+                          {role ? role.role.charAt(0).toUpperCase() + role.role.slice(1) : 'No Role'}
+                        </Badge>
+                      </Table.Td>
+                      <Table.Td>
+                        <Badge
+                          color={getStatusColor(user.statusId)}
+                          variant="light"
+                          size="sm"
+                        >
+                          {status ? status.status.charAt(0).toUpperCase() + status.status.slice(1) : 'Unknown'}
+                        </Badge>
+                      </Table.Td>
+                      <Table.Td>
+                        <Group gap="xs">
+                          <Select
+                            placeholder="Status"
+                            size="xs"
+                            data={statuses.map(s => ({
+                              value: s.id.toString(),
+                              label: s.status.charAt(0).toUpperCase() + s.status.slice(1)
+                            }))}
+                            value={user.statusId?.toString() || ''}
+                            onChange={(value) => value && handleQuickStatusChange(user.id, parseInt(value))}
+                            disabled={changingStatus || statusesLoading}
+                            style={{ width: 100 }}
+                          />
+                          <Select
+                            placeholder="Role"
+                            size="xs"
+                            data={[
+                              { value: '', label: 'No Role' },
+                              ...roles.map(r => ({
+                                value: r.id.toString(),
+                                label: r.role.charAt(0).toUpperCase() + r.role.slice(1)
+                              }))
+                            ]}
+                            value={user.roleId?.toString() || ''}
+                            onChange={(value) => value && handleQuickRoleChange(user.id, parseInt(value))}
+                            disabled={changingRole || rolesLoading}
+                            style={{ width: 100 }}
+                          />
+                          <Tooltip label="Edit User">
+                            <ActionIcon
+                              color="blue"
+                              variant="light"
+                              onClick={() => handleEditUser(user)}
+                              disabled={updatingUser || deletingUser}
+                            >
+                              <IconEdit size="0.875rem" />
+                            </ActionIcon>
+                          </Tooltip>
+                          <Tooltip label="Delete User">
+                            <ActionIcon
+                              color="red"
+                              variant="light"
+                              onClick={() => handleDeleteUser(user)}
+                              disabled={isSelf || updatingUser || deletingUser}
+                            >
+                              <IconTrash size="0.875rem" />
+                            </ActionIcon>
+                          </Tooltip>
+                        </Group>
+                      </Table.Td>
+                    </Table.Tr>
+                  );
+                })}
+              </Table.Tbody>
+            </Table>
+          </ScrollArea>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <Group justify="center" mt="md">
+              <Pagination
+                value={currentPage}
+                onChange={setCurrentPage}
+                total={totalPages}
+                size="sm"
+              />
+            </Group>
+          )}
         </Card>
-      </div>
 
-      {/* Edit User Modal */}
-      {selectedUser && (
-        <EditUserModal
-          visible={showEditModal}
-          onCancel={() => setShowEditModal(false)}
-          onConfirm={handleUpdateUser}
-          user={selectedUser}
-          loading={updatingUser === selectedUser?.id}
-          error={error}
-        />
-      )}
-
-      {/* Delete User Modal */}
-      {selectedUser && (
-        <ConfirmationModal
-          visible={showDeleteModal}
-          onCancel={() => setShowDeleteModal(false)}
-          onConfirm={handleConfirmDelete}
-          title="Delete User"
-          body={`Are you sure you want to delete user "${selectedUser.fullName}"? This action cannot be undone.`}
-          cancelText="Cancel"
-          confirmText="Delete User"
-          confirmColor="danger"
-          user={selectedUser}
-          loading={deletingUser === selectedUser?.id}
-          error={error}
-        />
-      )}
-
-      {/* Quick Change Modal */}
-      {selectedUser && (
-        <QuickChangeModal
-          visible={showQuickChangeModal}
-          onCancel={() => setShowQuickChangeModal(false)}
-          onConfirm={handleConfirmQuickChange}
-          type={quickChangeData.type}
-          newValue={quickChangeData.newValue}
-          user={selectedUser}
-          loading={changingStatus === selectedUser?.id || changingRole === selectedUser?.id}
-          error={error}
-        />
-      )}
-    </div>
+        {/* Edit User Modal */}
+        <Modal
+          opened={editModalOpened}
+          onClose={closeEditModal}
+          title={
+            <Group>
+              <ThemeIcon color="blue" size="sm">
+                <IconEdit size="1rem" />
+              </ThemeIcon>
+              Edit User: {selectedUser?.fullName}
+            </Group>
+          }
+          centered
+        >
+          <Stack gap="md">
+            <TextInput
+              label="First Name"
+              placeholder="Enter first name"
+              value={editFormData.firstName}
+              onChange={(e) => setEditFormData(prev => ({ ...prev, firstName: e.target.value }))}
+            />
+            <TextInput
+              label="Last Name"
+              placeholder="Enter last name"
+              value={editFormData.lastName}
+              onChange={(e) => setEditFormData(prev => ({ ...prev, lastName: e.target.value }))}
+            />
+            <TextInput
+              label="Email"
+              placeholder="Enter email address"
+              value={editFormData.email}
+              onChange={(e) => setEditFormData(prev => ({ ...prev, email: e.target.value }))}
+            />
+            <Group justify="flex-end" gap="sm">
+              <Button variant="light" onClick={closeEditModal}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUpdateUser}
+                loading={updatingUser === selectedUser?.id}
+                disabled={!editFormData.firstName.trim() || !editFormData.lastName.trim() || !editFormData.email.trim()}
+              >
+                Update User
+              </Button>
+            </Group>
+          </Stack>
+        </Modal>
+      </Stack>
+    </Container>
   );
 };
 
