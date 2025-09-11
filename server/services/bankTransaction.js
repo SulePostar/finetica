@@ -67,21 +67,20 @@ const getBankTransactionById = async (id) => {
 const createBankTransactionFromAI = async (extractedData) => {
     const t = await sequelize.transaction();
     try {
-        const { items, ...bankTransactionData } = extractedData.data || extractedData;
+        const { items, filename, ...bankTransactionData } = extractedData.data || extractedData;
 
         const dataToSave = {
             date: bankTransactionData.date,
             amount: parseFloat(bankTransactionData.amount),
             direction: bankTransactionData.direction,
-            account_number: bankTransactionData.accountNumber,
+            accountNumber: bankTransactionData.accountNumber,
             description: bankTransactionData.description,
-            invoice_id: bankTransactionData.invoiceId ? String(bankTransactionData.invoiceId) : null,
-            partner_id: bankTransactionData.partnerId,
-            category_id: bankTransactionData.categoryId,
-            approved_at: bankTransactionData.approvedAt,
-            approved_by: bankTransactionData.approvedBy,
-            created_at: new Date(),
-            updated_at: new Date()
+            invoiceId: bankTransactionData.invoiceId ? String(bankTransactionData.invoiceId) : null,
+            partnerId: bankTransactionData.partnerId,
+            categoryId: bankTransactionData.categoryId,
+            approvedAt: bankTransactionData.approvedAt,
+            approvedBy: bankTransactionData.approvedBy,
+            fileName: filename
         };
         const document = await BankTransaction.create(dataToSave, { transaction: t });
 

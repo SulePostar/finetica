@@ -42,8 +42,14 @@ const PIPELINES = {
   transactions: {
     logModel: BankTransactionProcessingLog,
     extract: (buf, mime) => bankTransactionService.extractData(buf, mime),
-    persist: (data, t) => bankTransactionService.createBankTransactionFromAI(data, { transaction: t }),
-    isValid: (data) => true,
+    persist: (data, t) => bankTransactionService.createBankTransactionFromAI(data),
+    isValid: (data) => {
+      // Check if the AI explicitly marked it as valid
+      if (data.is_valid === false) {
+        return false;
+      }
+      return true;
+    },
     successMessage: 'Transaction processed successfully',
     invalidMessage: 'File is not a valid bank transaction',
   },
@@ -238,8 +244,9 @@ class UploadedFilesService {
       extractedData = await pipeline.extract(file.buffer, file.mimetype);
     } catch (error) {
       await logRow.update({
-        isProcessed: false,
+        isProcessed: true,
         processedAt: new Date(),
+        isValid: false,
         message: `Extraction error: ${error.message}`.slice(0, 1000),
       });
       throw new AppError(`Data extraction failed: ${error.message}`, 500);
