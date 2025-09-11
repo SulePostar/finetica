@@ -1,4 +1,3 @@
-
 const path = require('path');
 const dotenv = require('dotenv');
 const Logger = require('../utils/logger');
@@ -31,14 +30,19 @@ const categoryModelMap = {
         // Supabase client
         const supabase = createClient(config.supabase.url, config.supabase.serviceKey);
 
-        // Google Drive client
-        const oAuth2Client = new google.auth.OAuth2(
-            config.google.clientId,
-            config.google.clientSecret,
-            config.google.redirectUri
-        );
-        oAuth2Client.setCredentials({ refresh_token: config.google.refreshToken });
-        const drive = google.drive({ version: 'v3', auth: oAuth2Client });
+        // Parse service account key
+        const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
+
+        // Google Drive client using service account
+        const auth = new google.auth.GoogleAuth({
+            credentials: {
+                client_email: serviceAccount.client_email,
+                private_key: serviceAccount.private_key,
+            },
+            scopes: ['https://www.googleapis.com/auth/drive.readonly'],
+        });
+
+        const drive = google.drive({ version: 'v3', auth });
 
         // Map folderId to category
         const folderIdToCategory = Object.entries(config.folders).reduce((acc, [category, folderId]) => {
@@ -59,12 +63,14 @@ const categoryModelMap = {
                 Logger.info(`No files found in folder for category '${category}'.`);
                 continue;
             }
+
             // Parallelize file processing with concurrency limit
             const CONCURRENCY = 5;
             const fileChunks = [];
             for (let i = 0; i < files.length; i += CONCURRENCY) {
                 fileChunks.push(files.slice(i, i + CONCURRENCY));
             }
+
             for (const chunk of fileChunks) {
                 await Promise.all(chunk.map(async (file) => {
                     try {
