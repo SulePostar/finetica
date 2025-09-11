@@ -14,6 +14,10 @@ const {
     kifInvoiceCreateSchema,
     kifInvoiceUpdateSchema,
 } = require('../schemas/kifJoiSchema');
+const { getInvalidKifs, getKifLog } = require('../controllers/kifProcessingLog');
+
+router.get('/logs/invalid', isAuthenticated, getInvalidKifs);
+router.get('/logs/:id',   isAuthenticated, getKifLog);
 
 router.get('/', getKifData);
 router.get('/:id', getKif);
