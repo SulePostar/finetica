@@ -2,7 +2,7 @@ import React from 'react';
 import SidebarNavItem from './SidebarNavItem';
 import SidebarNavLinkContent from './SidebarNavLinkContent';
 
-const SidebarNavGroup = ({ item }) => {
+const SidebarNavGroup = ({ item, onItemClick }) => {
     const { component: Component, name, icon, items, ...rest } = item;
 
     return (
@@ -13,9 +13,20 @@ const SidebarNavGroup = ({ item }) => {
             {...rest}
         >
             {items?.map((subItem, subIndex) =>
-                subItem.items
-                    ? <SidebarNavGroup key={subIndex} item={subItem} />
-                    : <SidebarNavItem key={subIndex} item={subItem} indent={true} />
+                subItem.items ? (
+                    <SidebarNavGroup
+                        key={subIndex}
+                        item={subItem}
+                        onItemClick={onItemClick}
+                    />
+                ) : (
+                    <SidebarNavItem
+                        key={subIndex}
+                        item={subItem}
+                        indent={true}
+                        onItemClick={onItemClick}
+                    />
+                )
             )}
         </Component>
     );
