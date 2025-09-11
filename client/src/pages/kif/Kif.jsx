@@ -141,14 +141,12 @@ const Kif = () => {
           width: `calc(100vw - ${sidebarWidth}px)`,
         }}
       >
-        <div className="kif-table-responsive">
-          <DynamicTable
-            title="KIF - Sales Invoices"
-            columns={columns}
-            apiEndpoint={apiEndpoint}
-            uploadButton={<UploadButton bucketName={bucketName} />}
-          />
-        </div>
+        <DynamicTable
+          title="KIF - Sales Invoices"
+          columns={columns}
+          apiEndpoint={apiEndpoint}
+          uploadButton={<UploadButton bucketName={bucketName} />}
+        />
       </div>
     </DefaultLayout>
   );

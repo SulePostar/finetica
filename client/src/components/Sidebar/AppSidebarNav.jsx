@@ -6,12 +6,14 @@ import { CSidebarNav } from '@coreui/react';
 import SidebarNavItem from './SidebarNavItem';
 import SidebarNavGroup from './SidebarNavGroup';
 
-export const AppSidebarNav = ({ items }) => (
+export const AppSidebarNav = ({ items, onItemClick }) => (
   <CSidebarNav as={SimpleBar}>
     {items?.map((item, index) =>
-      item.items
-        ? <SidebarNavGroup key={index} item={item} />
-        : <SidebarNavItem key={index} item={item} />
+      item.items ? (
+        <SidebarNavGroup key={index} item={item} onItemClick={onItemClick} />
+      ) : (
+        <SidebarNavItem key={index} item={item} onItemClick={onItemClick} />
+      )
     )}
   </CSidebarNav>
 );
