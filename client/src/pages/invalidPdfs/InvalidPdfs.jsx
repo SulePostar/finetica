@@ -34,7 +34,7 @@ const InvalidPdfs = () => {
     const endpoints = {
         bank: `${API_BASE}/bank-transactions`,
         kif: `${API_BASE}/kif`,
-        kuf: `${API_BASE}/kuf`,
+        kuf: `${API_BASE}/kuf/logs/invalid`,
         contracts: `${API_BASE}/contracts`,
     }
 

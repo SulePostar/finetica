@@ -26,7 +26,7 @@ const PIPELINES = {
     logModel: KufProcessingLog,
     extract: (buf, mime) => kufService.extractData(buf, mime),
     persist: (data, t) => kufService.createInvoiceFromAI(data, { transaction: t }),
-    isValid: (data) => true,
+    isValid: (data) => data.isPurchaseInvoice !== false,
     successMessage: 'KUF processed successfully',
   },
   contracts: {
