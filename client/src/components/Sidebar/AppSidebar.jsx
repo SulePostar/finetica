@@ -4,7 +4,6 @@ import {
   CSidebar,
   CSidebarFooter,
   CSidebarToggler,
-  CBadge,
 } from '@coreui/react'
 
 import { useFilteredNavigation } from '../../hooks/useFilteredNavigation'
@@ -21,6 +20,12 @@ const AppSidebar = ({ isDarkMode }) => {
   const driveConnected = useSelector((state) => state.sidebar.driveConnected)
 
   const [isHovered, setIsHovered] = useState(false)
+
+  const handleCloseSidebar = () => {
+    if (window.innerWidth < 768) {
+      dispatch({ type: 'set', sidebarShow: false })
+    }
+  }
 
   // Check Google Drive connection
   useEffect(() => {
@@ -58,7 +63,6 @@ const AppSidebar = ({ isDarkMode }) => {
     <CSidebar
       className={`sidebar ${sidebarShow ? 'show' : ''} ${unfoldable ? 'sidebar-unfoldable' : ''
         }`}
-      // colorScheme is handled by CoreUI theme, no need for manual prop
       position="fixed"
       unfoldable={unfoldable}
       visible={sidebarShow}
@@ -78,7 +82,7 @@ const AppSidebar = ({ isDarkMode }) => {
       </div>
 
       {/* Navigation */}
-      <AppSidebarNav items={filteredNav} />
+      <AppSidebarNav items={filteredNav} onItemClick={handleCloseSidebar} />
 
       {/* Google Drive status */}
       <SidebarDriveStatus unfoldable={unfoldable} isHovered={isHovered} driveConnected={driveConnected} />
