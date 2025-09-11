@@ -170,7 +170,11 @@ const InvalidPdfs = () => {
                                             <DynamicTable columns={logColumns} apiEndpoint={endpoints.kif} />
                                         </CTabPane>
                                         <CTabPane visible={activeKey === 3} className="fade">
-                                            <DynamicTable columns={logColumns} apiEndpoint={endpoints.kuf} />
+                                            <DynamicTable
+                                                columns={logColumns}
+                                                apiEndpoint={endpoints.kuf}
+                                                onRowClick={handleRowClick}
+                                            />
                                         </CTabPane>
                                         <CTabPane visible={activeKey === 4} className="fade">
                                             <DynamicTable

@@ -21,8 +21,8 @@ const InvalidPdfDetails = ({ id, type }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
 
-  const reqSeqRef = useRef(0);    
-  const mountedRef = useRef(true); 
+  const reqSeqRef = useRef(0);
+  const mountedRef = useRef(true);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -39,7 +39,7 @@ const InvalidPdfDetails = ({ id, type }) => {
         const base = TYPE_TO_PATH[type];
         if (!base) throw new Error(`Unknown document type: ${type}`);
 
-        const { data } = await api.get(`/${base}/logs/${encodeURIComponent(id)}`);
+        const { data } = await api.get(`/${base}/logs/invalid/${encodeURIComponent(id)}`);
 
         if (mountedRef.current && mySeq === reqSeqRef.current) {
           setDoc(data);
@@ -62,7 +62,7 @@ const InvalidPdfDetails = ({ id, type }) => {
 
   const handleEdit = () => setIsEditing(true);
   const handleCancel = () => { setFormData(doc); setIsEditing(false); };
-  const handleSave = () => { setDoc(formData); setIsEditing(false); }; 
+  const handleSave = () => { setDoc(formData); setIsEditing(false); };
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete this document?")) {
       console.log("Deleting document:", doc?.filename);
