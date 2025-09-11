@@ -19,15 +19,17 @@ const PIPELINES = {
     logModel: KifProcessingLog,
     extract: (buf, mime) => kifService.extractKifData(buf, mime),
     persist: (data, t) => kifService.createKifFromAI(data, { transaction: t }),
-    isValid: (data) => true,
+    isValid: (data) => data?.isInvoice === true,
     successMessage: 'KIF processed successfully',
+    invalidMessage: 'File is not a valid sales invoice (KIF)',
   },
   kuf: {
     logModel: KufProcessingLog,
     extract: (buf, mime) => kufService.extractData(buf, mime),
     persist: (data, t) => kufService.createInvoiceFromAI(data, { transaction: t }),
-    isValid: (data) => true,
+    isValid: (data) => data.isPurchaseInvoice !== false,
     successMessage: 'KUF processed successfully',
+    invalidMessage: 'File is not a valid purchase invoice (KUF)',
   },
   contracts: {
     logModel: ContractProcessingLog,
@@ -35,6 +37,7 @@ const PIPELINES = {
     persist: (data, t) => contractService.createContract(data, { transaction: t }),
     isValid: (data) => data.isValidContract !== false,
     successMessage: 'Contract processed successfully',
+    invalidMessage: 'File is not a valid contract',
   },
   transactions: {
     logModel: BankTransactionProcessingLog,
@@ -42,6 +45,7 @@ const PIPELINES = {
     persist: (data, t) => bankTransactionService.createBankTransactionFromAI(data, { transaction: t }),
     isValid: (data) => true,
     successMessage: 'Transaction processed successfully',
+    invalidMessage: 'File is not a valid bank transaction',
   },
 };
 class UploadedFilesService {
@@ -271,7 +275,7 @@ class UploadedFilesService {
         await logRow.update(
           {
             isValid: false,
-            message: 'File is not a valid contract',
+            message: pipeline.invalidMessage,
           },
           { transaction: t }
         );

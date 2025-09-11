@@ -1,5 +1,5 @@
 import { useColorModes } from '@coreui/react';
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { Container } from 'react-bootstrap';
 import { AppHeader, AppSidebar } from '../components/index';
@@ -16,41 +16,29 @@ const DefaultLayout = ({ children }) => {
     const dark = colorMode === 'dark' || (colorMode === 'auto' && media.matches);
     setIsDarkMode(dark);
 
-    // Update data attribute for CSS selectors
     document.documentElement.setAttribute('data-coreui-theme', dark ? 'dark' : 'light');
-    if (dark) {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
-    }
+    document.body.classList.toggle('dark-mode', dark);
   }, [colorMode]);
 
   useEffect(() => {
     checkDarkMode();
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     media.addEventListener('change', checkDarkMode);
-
     return () => media.removeEventListener('change', checkDarkMode);
   }, [checkDarkMode]);
 
-  const sidebarWidth = useMemo(() => {
-    if (!sidebarShow) return 0;
-    return sidebarUnfoldable ? 56 : 240;
-  }, [sidebarShow, sidebarUnfoldable]);
-
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <div className="d-flex">
+      {/* Sidebar */}
       <div
-        className={`sidebar-container ${!sidebarShow ? 'd-none' : ''} ${sidebarUnfoldable ? 'collapsed' : ''}`}
-        style={{ width: sidebarShow ? `${sidebarWidth}px` : 0 }}
+        className={`sidebar-container ${!sidebarShow ? 'sidebar-hidden' : ''} ${sidebarUnfoldable ? 'sidebar-collapsed' : ''
+          }`}
       >
         <AppSidebar isDarkMode={isDarkMode} />
       </div>
 
-      <div
-        className="main-content-wrapper"
-        style={{ '--sidebar-width': `${sidebarWidth}px` }}
-      >
+      {/* Main content */}
+      <div className="main-content d-flex flex-column flex-grow-1">
         <div className="header-container">
           <AppHeader
             isDarkMode={isDarkMode}
@@ -58,13 +46,8 @@ const DefaultLayout = ({ children }) => {
             setColorMode={setColorMode}
           />
         </div>
-
-        <div className="flex-grow-1 d-flex flex-column">
-          <div className="flex-grow-1 overflow-auto">
-            <Container fluid className="px-0 p-3">
-              {children}
-            </Container>
-          </div>
+        <div className="flex-grow-1 overflow-auto">
+          <Container fluid className='pt-5 pe-5 ps-5'>{children}</Container>
         </div>
       </div>
     </div>

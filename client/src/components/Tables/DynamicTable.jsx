@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Card, Spinner, Container, Row, Col } from 'react-bootstrap';
+import { Card, Col, Container, Row, Spinner } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
+import api from '../../services/api';
 import './DynamicTable.css';
+import makeCustomStyles from './DynamicTable.styles';
 
 const DynamicTable = ({
     title,
@@ -24,17 +26,15 @@ const DynamicTable = ({
     const fetchData = async () => {
         setLoading(true);
         try {
-            const params = new URLSearchParams({
+            const params = {
                 page,
                 perPage,
                 ...(sortField && { sortField }),
                 sortOrder,
-            });
-            const res = await fetch(`${apiEndpoint}?${params.toString()}`);
-            if (!res.ok) throw new Error(`Error ${res.status}`);
-            const result = await res.json();
-            setData(result.data);
-            setTotalRows(result.total);
+            };
+            const res = await api.get(apiEndpoint, { params });
+            setData(res.data.data);
+            setTotalRows(res.data.total);
         } catch (err) {
             console.error('Fetch error:', err);
         } finally {
@@ -72,7 +72,7 @@ const DynamicTable = ({
     };
 
     return (
-        <Container fluid="xxl" className="my-4 dynamic-table-container">
+        <Container fluid="xxl" className="dynamic-table-container">
             <Card className="shadow-sm border-0">
                 <Card.Body>
                     <Row className="align-items-center mb-3">
@@ -102,6 +102,7 @@ const DynamicTable = ({
                             columns={columns}
                             data={data}
                             progressPending={loading}
+                            customStyles={makeCustomStyles()}
                             progressComponent={<Spinner animation="border" />}
                             pagination
                             paginationServer

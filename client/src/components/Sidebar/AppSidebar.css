@@ -15,6 +15,7 @@
   transform: translateX(-100%) !important;
   transition: ease-in-out 0.2s ease !important;
 }
+
 .sidebar.show {
   transform: translateX(0) !important;
 }
@@ -27,6 +28,7 @@
   height: 80px;
   padding: 10px 0;
 }
+
 .sidebar-logo img {
   max-width: 100%;
   max-height: 90px;
@@ -38,8 +40,10 @@
 .sidebar .nav-link-text {
   color: var(--cui-sidebar-color) !important;
 }
+
 .sidebar .nav-title {
-  color: var(--cui-sidebar-title-color) !important; /* Custom purple for section titles */
+  color: var(--cui-sidebar-title-color) !important;
+  /* Custom purple for section titles */
   font-weight: 600;
   letter-spacing: 0.8px;
 }
@@ -55,15 +59,18 @@
   font-weight: 400;
   font-size: 14px;
 }
+
 .sidebar .nav-link:hover,
 .sidebar .nav-link.active {
   background-color: var(--cui-sidebar-hover-bg) !important;
   color: var(--cui-sidebar-active-color-text) !important;
 }
+
 .sidebar .nav-link .nav-icon {
   transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--cui-sidebar-icon-color) !important;
 }
+
 .sidebar .nav-link:hover .nav-icon,
 .sidebar .nav-link.active .nav-icon {
   color: var(--cui-sidebar-active-color-text) !important;
@@ -86,17 +93,20 @@
 .sidebar-unfoldable {
   transition: width 0.3s ease-in-out !important;
 }
+
 .sidebar-unfoldable:hover {
   width: 250px !important;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
   z-index: 1060 !important;
 }
+
 .sidebar-unfoldable .nav-link-text,
 .sidebar-unfoldable .nav-title {
   opacity: 0;
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
 }
+
 .sidebar-unfoldable:hover .nav-link-text,
 .sidebar-unfoldable:hover .nav-title {
   opacity: 1;
@@ -105,23 +115,27 @@
 .sidebar-unfoldable .nav-link .nav-icon {
   transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .sidebar-unfoldable .nav-link,
 .sidebar-unfoldable .nav-link .nav-icon {
   transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Mobile overlay */
-@media (max-width: 768px) {
+@media (max-width: 766px) {
   .sidebar {
-    width: 240px !important;
+    width: 100% !important;
+    max-width: 100% !important;
     z-index: 1050 !important;
   }
+
   .sidebar-backdrop {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.3);
     z-index: 1049;
   }
+
   body.sidebar-open {
     overflow: hidden;
   }
