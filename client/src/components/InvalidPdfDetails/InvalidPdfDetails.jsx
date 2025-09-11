@@ -39,7 +39,7 @@ const InvalidPdfDetails = ({ id, type }) => {
         const base = TYPE_TO_PATH[type];
         if (!base) throw new Error(`Unknown document type: ${type}`);
 
-        const { data } = await api.get(`/${base}/logs/invalid/${encodeURIComponent(id)}`);
+        const { data } = await api.get(`/${base}/logs/${encodeURIComponent(id)}`);
 
         if (mountedRef.current && mySeq === reqSeqRef.current) {
           setDoc(data);
