@@ -275,7 +275,7 @@ class UploadedFilesService {
         await logRow.update(
           {
             isValid: false,
-            isProcessed: true,              
+            isProcessed: true,
             processedAt: new Date(),
             message: pipeline.invalidMessage,
           },
