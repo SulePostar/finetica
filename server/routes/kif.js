@@ -3,6 +3,7 @@ const router = express.Router();
 const {
     getKifData,
     getKif,
+    getKifItems,
     createKifInvoice,
     processKifInvoice,
     approveKifInvoice,
@@ -17,6 +18,7 @@ const {
 
 router.get('/', getKifData);
 router.get('/:id', getKif);
+router.get('/:id/items', getKifItems);
 router.post('/',
     isAuthenticated,
     validate(kifInvoiceCreateSchema),

@@ -311,11 +311,25 @@ const processKif = async (fileBuffer, mimeType, model = "gemini-2.5-flash-lite")
         throw new AppError('Failed to process KIF document', 500);
     }
 };
+
+const getKifItemsById = async (id) => {
+    try {
+        const items = await SalesInvoiceItem.findAll({
+            where: { invoiceId: id },
+            order: [['orderNumber', 'ASC']]
+        });
+        return items.map(item => item.toJSON());
+    } catch (error) {
+        throw new AppError('Failed to fetch KIF items by ID', 500);
+    }
+};
+
 module.exports = {
     getKifs,
     getKifById,
     createKif,
     processKif,
+    getKifItemsById,
     createKifFromAI,
     approveKif,
     extractKifData,

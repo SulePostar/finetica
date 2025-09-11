@@ -5,6 +5,7 @@ const {
   createInvoice,
   updateInvoice,
   processUnprocessedFiles,
+  getKufItemsById
 } = require('../services/kuf');
 
 // Rename to match contract naming
@@ -22,6 +23,19 @@ const getInvoiceData = async (req, res, next) => {
     next(err);
   }
 };
+
+// GET /kuf/:id/items
+const getKufItems = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const items = await getKufItemsById(id);
+    const result = { data: items, total: items.length };
+    res.json(result);
+  } catch (error) {
+    res.status(error.statusCode || 500).json({ error: error.message });
+  }
+};
+
 
 const getInvoice = async (req, res, next) => {
   try {
@@ -75,5 +89,6 @@ module.exports = {
   approveInvoice,
   create,
   processDocuments,
-  update
+  update,
+  getKufItems
 };

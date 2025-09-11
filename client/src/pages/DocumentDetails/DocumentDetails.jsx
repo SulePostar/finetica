@@ -20,7 +20,6 @@ import { useDocument } from '../../hooks/useDocuments';
 import DefaultLayout from '../../layout/DefaultLayout';
 import '../../styles/shared/CommonStyles.css';
 
-import ItemsTable from '../../components/ItemsTable/ItemsTable';
 
 const DocumentDetails = () => {
   const { id } = useParams();

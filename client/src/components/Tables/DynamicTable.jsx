@@ -72,60 +72,61 @@ const DynamicTable = ({
     };
 
     return (
-        <Container fluid="xxl" className="my-4 dynamic-table-container">
-            <Card className="shadow-sm border-0">
-                <Card.Body>
-                    <Row className="align-items-center mb-3">
-                        <Col className="d-flex justify-content-between flex-wrap">
-                            <Card.Title className="dynamic-table-title">{title}</Card.Title>
-                            {uploadButton && <div className="ms-3">{uploadButton}</div>}
-                        </Col>
-                    </Row>
 
-                    {isMobile ? (
-                        <div className="stacked-table">
-                            {data.map((row, rowIndex) => (
-                                <Card className="mb-3 stacked-row" key={rowIndex}>
-                                    <Card.Body>
-                                        {columns.map((col, colIndex) => (
-                                            <div key={colIndex} className="stacked-cell">
-                                                <div className="fw-bold stacked-label">{col.name}</div>
-                                                <div className="stacked-value">{getCellValue(col, row)}</div>
-                                            </div>
-                                        ))}
-                                    </Card.Body>
-                                </Card>
-                            ))}
-                        </div>
-                    ) : (
-                        <DataTable
-                            columns={columns}
-                            data={data}
-                            progressPending={loading}
-                            progressComponent={<Spinner animation="border" />}
-                            pagination
-                            paginationServer
-                            paginationTotalRows={totalRows}
-                            onChangeRowsPerPage={(newPerPage) => {
-                                setPerPage(newPerPage);
-                                setPage(1);
-                            }}
-                            onChangePage={(p) => setPage(p)}
-                            onSort={(col, dir) => {
-                                setSortField(col.sortField || col.selector?.name || col.selector);
-                                setSortOrder(dir);
-                            }}
-                            onRowClicked={onRowClick}
-                            sortServer
-                            highlightOnHover
-                            pointerOnHover
-                            responsive
-                        />
-                    )}
+        <Card className="shadow-sm border-0 table-card">
+            <Card.Body>
+                <Row className="align-items-center mb-3">
+                    <Col className="d-flex justify-content-between flex-wrap">
+                        <Card.Title className="dynamic-table-title">{title}</Card.Title>
+                        {uploadButton && <div className="ms-3">{uploadButton}</div>}
+                    </Col>
+                </Row>
 
-                </Card.Body>
-            </Card>
-        </Container>
+                {isMobile ? (
+                    <div className="stacked-table">
+                        {data.map((row, rowIndex) => (
+                            <Card className="mb-3 stacked-row" key={rowIndex}>
+                                <Card.Body>
+                                    {columns.map((col, colIndex) => (
+                                        <div key={colIndex} className="stacked-cell">
+                                            <div className="fw-bold stacked-label">{col.name}</div>
+                                            <div className="stacked-value">{getCellValue(col, row)}</div>
+                                        </div>
+                                    ))}
+                                </Card.Body>
+                            </Card>
+                        ))}
+                    </div>
+                ) : (
+                    <DataTable
+                        columns={columns}
+                        data={data}
+                        progressPending={loading}
+                        progressComponent={<Spinner animation="border" />}
+                        pagination
+                        paginationServer
+                        paginationTotalRows={totalRows}
+                        onChangeRowsPerPage={(newPerPage) => {
+                            setPerPage(newPerPage);
+                            setPage(1);
+                        }}
+                        onChangePage={(p) => setPage(p)}
+                        onSort={(col, dir) => {
+                            // Use selector if it's a string, otherwise use sortField
+                            setSortField(typeof col.selector === 'string' ? col.selector : col.sortField);
+                            setSortOrder(dir);
+                        }}
+                        onRowClicked={onRowClick}
+                        sortServer
+                        highlightOnHover
+                        pointerOnHover
+                        responsive
+                        className='dynamic-table'
+                    />
+                )}
+
+            </Card.Body>
+        </Card>
     );
 };
 

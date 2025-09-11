@@ -1,40 +1,98 @@
-import { useParams, useLocation, Link } from 'react-router-dom';
+import { cilFile } from '@coreui/icons';
+import CIcon from '@coreui/icons-react';
+import {
+    CCard,
+    CCardBody,
+    CCardHeader,
+    CCardTitle,
+    CCol,
+    CContainer,
+    CRow,
+    CSpinner,
+} from '@coreui/react';
+import { useMemo } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+
 import DefaultLayout from '../../layout/DefaultLayout';
-import ItemsTable from '../../components/ItemsTable/ItemsTable';
-import { useDocument } from '../../hooks/useDocuments';
-import { CContainer, CRow, CCol, CSpinner, CButton } from '@coreui/react';
+import DynamicTable from '../../components/Tables/DynamicTable';
+import '../../styles/shared/CommonStyles.css';
 
 const DocumentItemsPage = () => {
     const { id } = useParams();
     const location = useLocation();
-    // Optionally get documentType from location.state or parse from path
-    const documentType = location.pathname.includes('/kif/') ? 'kif' : location.pathname.includes('/kuf/') ? 'kuf' : null;
-    const { formData, loading, error } = useDocument(documentType, id);
+    const documentType = useMemo(() => {
+        const path = location.pathname;
+        if (path.includes('/kif/')) return 'kif';
+        if (path.includes('/kuf/')) return 'kuf';
+        return null;
+    }, [location.pathname]);
+    const API_BASE = import.meta.env.VITE_API_BASE_URL;
+    const apiEndpoint = `${API_BASE}/${documentType}/${id}/items`;
+
+    // Columns for KIF (SalesInvoiceItem)
+    const kifColumns = [
+        { name: 'ID', selector: row => row.id },
+        { name: 'Order Number', selector: row => row.orderNumber },
+        { name: 'Description', selector: row => row.description },
+        { name: 'Unit', selector: row => row.unit },
+        { name: 'Quantity', selector: row => row.quantity },
+        { name: 'Unit Price', selector: row => row.unitPrice },
+        { name: 'Net Subtotal', selector: row => row.netSubtotal },
+        { name: 'VAT Amount', selector: row => row.vatAmount },
+        { name: 'Gross Subtotal', selector: row => row.grossSubtotal },
+    ];
+
+    // Columns for KUF (PurchaseInvoiceItem)
+    const kufColumns = [
+        { name: 'ID', selector: row => row.id },
+        { name: 'Order Number', selector: row => row.orderNumber },
+        { name: 'Description', selector: row => row.description },
+        { name: 'Net Subtotal', selector: row => row.netSubtotal },
+        { name: 'Lump Sum', selector: row => row.lumpSum },
+        { name: 'VAT Amount', selector: row => row.vatAmount },
+        { name: 'Gross Subtotal', selector: row => row.grossSubtotal },
+    ];
+
+    const columns = documentType === 'kif' ? kifColumns : kufColumns;
+
+    // Get backUrl from location.state, fallback to details page for this document
+    const backUrl = location.state?.backUrl || `/${documentType}/${id}`;
 
     return (
         <DefaultLayout>
-            <CContainer className="py-4">
-                <CRow className="mb-3">
-                    <CCol>
-                        <Link to={location.state?.backUrl || `/`}> {/* fallback to home if no backUrl */}
-                            <CButton color="secondary" variant="outline">Back to Details</CButton>
-                        </Link>
-                    </CCol>
-                </CRow>
-                <CRow className="justify-content-center">
-                    <CCol lg={8}>
-                        {loading ? (
-                            <div className="text-center py-5">
-                                <CSpinner color="primary" />
-                            </div>
-                        ) : error ? (
-                            <div className="text-danger">{error}</div>
-                        ) : (
-                            <ItemsTable items={formData?.items || []} />
-                        )}
-                    </CCol>
-                </CRow>
-            </CContainer>
+            <div className="body flex-grow-1 px-3 details-page">
+                <CContainer fluid className="details-container">
+                    <CRow className="justify-content-center">
+                        <CCol lg={10} className="mb-4">
+                            <CCard className="h-70 shadow-sm detail-card mb-4">
+                                <CCardHeader>
+                                    <CCardTitle className="mb-0">
+                                        <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
+                                        {documentType ? `${documentType.toUpperCase()} Items` : 'Document Items'}
+                                    </CCardTitle>
+                                </CCardHeader>
+                                <CCardBody>
+                                    <div className="mb-3">
+                                        <button
+                                            type="button"
+                                            className="btn btn-secondary"
+                                            onClick={() => window.history.back() || window.location.assign(backUrl)}
+                                        >
+                                            Back to Details
+                                        </button>
+                                    </div>
+                                    <DynamicTable
+                                        title="Invoice Items"
+                                        columns={columns}
+                                        apiEndpoint={apiEndpoint}
+                                        pagination={false}
+                                    />
+                                </CCardBody>
+                            </CCard>
+                        </CCol>
+                    </CRow>
+                </CContainer>
+            </div>
         </DefaultLayout>
     );
 };
