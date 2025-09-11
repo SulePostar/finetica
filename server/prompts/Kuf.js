@@ -9,28 +9,7 @@ TASK OVERVIEW
   "isPurchaseInvoice": false,
   "confidence_notes": "<short reason>"
 }
-3) If it IS a purchase invoice, return EXACTLY the JSON below (no extra keys, no omissions, no markdown):
-
-{
-  "isPurchaseInvoice": true,
-  "vatPeriod": "string | null",
-  "invoiceType": "string | null",
-  "invoiceNumber": "string | null",
-  "billNumber": "string | null",
-  "note": "string | null",
-  "supplierId": "integer | null",
-  "invoiceDate": "YYYY-MM-DD | null",
-  "dueDate": "YYYY-MM-DD | null",
-  "receivedDate": "YYYY-MM-DD | null",
-  "netTotal": "number | null",
-  "lumpSum": "number | null",
-  "vatAmount": "number | null",
-  "deductibleVat": "number | null",
-  "nonDeductibleVat": "number | null",
-  "vatExemptRegion": "string | null",
-  "isApproved": false,
-  "confidence_notes": "string"
-}
+3) If it IS a purchase invoice, return EXACTLY the JSON as provided schema (no extra keys, no omissions, no markdown):
 
 GLOBAL OUTPUT RULES
 - Output MUST be one valid JSON object. No markdown, code fences, comments, or extra text.
@@ -100,13 +79,12 @@ NOTE
 BILL NUMBER
 - "billNumber" is a secondary reference number sometimes used for internal tracking.
 - Look for labels: "Bill No.", "Bill Number", "Broj računa", "Broj fakture", "Rechnungsnummer".
-- Bill number is NOT a "Transaction number", "Transaction ID" or "Broj transakcije". If you see these labels, the Bill number is not it.
+- Bill number is NOT "Transaction number", "Transaction ID" or "Broj transakcije". If you see these labels, the Bill number is not it.
 - Bill number is NOT "Order number" or "Order ID" or "Broj narudžbe". If you see these labels, the Bill number is not it.
 - Bill number is NOT "Billing ID" or "Billing reference". If you see these labels, the Bill number is not it.
 - Bill number is often near but distinct from the main invoice number.
 - You may not find bill number; in that case, set to null.
 - It will most likely be a different format than the invoice number.
-- If multiple candidates, pick the one closest to the invoice number.
 
 NET TOTAL
 - Look for labels: "Net Total", "Nettobetrag", "Neto iznos", "Nettosumme", "Netto".
