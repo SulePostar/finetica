@@ -18,6 +18,7 @@ const ForgotPasswordForm = React.lazy(() => import('../components/Login/ForgotPa
 const ResetPasswordForm = React.lazy(() => import('../components/Login/ResetPasswordForm'));
 const RoleStatusDashboard = React.lazy(() => import('../pages/Admin/RoleStatusDashboard'));
 const InvalidPdfs = React.lazy(() => import('../pages/invalidPdfs/InvalidPdfs'));
+const InvalidPdfDetails = React.lazy(() => import('../components/InvalidPdfDetails/InvalidPdfDetails'));
 
 export default function AppRoutes() {
   return (
@@ -212,6 +213,14 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <InvalidPdfs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/document/:id"
+          element={
+            <ProtectedRoute>
+              <InvalidPdfDetails />
             </ProtectedRoute>
           }
         />

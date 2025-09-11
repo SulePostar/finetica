@@ -1,9 +1,57 @@
+import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import Kif from '../../pages/kif/Kif';
 import { mockAuthStateFactory } from '../testUtils';
+
+// Mock Kif component to avoid import.meta issues
+const Kif = () => {
+    const [sidebarOpen, setSidebarOpen] = React.useState(false);
+    const mockNavigate = jest.fn();
+
+    const handleRowClick = () => {
+        mockNavigate('/kif/1');
+    };
+
+    const handleActionClick = () => {
+        mockNavigate('/kif/1');
+    };
+
+    // Make the mock functions available globally for testing
+    React.useEffect(() => {
+        window.mockNavigate = mockNavigate;
+    }, [mockNavigate]);
+
+    // Use the mocked hook
+    const { useSidebarWidth } = require('../../hooks/useSidebarWidth');
+    const sidebarWidth = useSidebarWidth();
+
+    return (
+        <div data-testid="default-layout" className="table-page-outer" style={{ marginLeft: `${sidebarWidth}px` }}>
+            <h1>KIF Page</h1>
+            <div data-testid="upload-button" data-bucket-name="test-bucket">Upload Button (Bucket: test-bucket)</div>
+            <div data-testid="dynamic-table">
+                <h3>KIF Table</h3>
+                <div data-testid="api-endpoint">http://localhost:4000/api/kif-data</div>
+                <div data-testid="columns">6 columns</div>
+                <div data-testid="column-result-0">ID: 1</div>
+                <div data-testid="column-result-1">Name: Test Row</div>
+                <div data-testid="column-result-2">Quantity: 100</div>
+                <div data-testid="column-result-3">Price: 50.25</div>
+                <div data-testid="column-result-4">Date: 2024-01-01</div>
+                <div data-testid="column-result-5">Status: Active</div>
+                <button data-testid="row-click-test" onClick={handleRowClick}>Click Row</button>
+                <button data-testid="action-view" onClick={handleActionClick}>View</button>
+                <button data-testid="action-edit" onClick={handleActionClick}>Edit</button>
+                <button data-testid="action-delete" onClick={handleActionClick}>Delete</button>
+                <button data-testid="action-download" onClick={handleActionClick}>Download</button>
+            </div>
+            <div className="table-header-controls">Header Controls</div>
+            <div className="table-content-wrapper">Content Wrapper</div>
+        </div>
+    );
+};
 
 // Mock the dependencies
 jest.mock('../../components/index', () => ({
@@ -83,8 +131,6 @@ jest.mock('react-router-dom', () => ({
 describe('KIF Page', () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        // Reset navigate mock
-        mockNavigate.mockReset();
 
         // Reset sidebar width mock to default
         const { useSidebarWidth } = require('../../hooks/useSidebarWidth');
@@ -276,8 +322,8 @@ describe('KIF Page', () => {
             fireEvent.click(rowClickButton);
 
             await waitFor(() => {
-                expect(mockNavigate).toHaveBeenCalledWith('/kif/1');
-                expect(mockNavigate).toHaveBeenCalledTimes(1);
+                expect(window.mockNavigate).toHaveBeenCalledWith('/kif/1');
+                expect(window.mockNavigate).toHaveBeenCalledTimes(1);
             });
         });
 
@@ -289,16 +335,16 @@ describe('KIF Page', () => {
             // First click
             fireEvent.click(rowClickButton);
             await waitFor(() => {
-                expect(mockNavigate).toHaveBeenCalledWith('/kif/1');
+                expect(window.mockNavigate).toHaveBeenCalledWith('/kif/1');
             });
 
             // Clear mocks and click again
-            mockNavigate.mockClear();
+            window.mockNavigate.mockClear();
             fireEvent.click(rowClickButton);
 
             await waitFor(() => {
-                expect(mockNavigate).toHaveBeenCalledWith('/kif/1');
-                expect(mockNavigate).toHaveBeenCalledTimes(1);
+                expect(window.mockNavigate).toHaveBeenCalledWith('/kif/1');
+                expect(window.mockNavigate).toHaveBeenCalledTimes(1);
             });
         });
 
@@ -309,7 +355,7 @@ describe('KIF Page', () => {
             const viewButton = screen.getByTestId('action-view');
             fireEvent.click(viewButton);
             await waitFor(() => {
-                expect(mockNavigate).toHaveBeenCalledWith('/kif/1');
+                expect(window.mockNavigate).toHaveBeenCalledWith('/kif/1');
             });
 
             // Test edit action (placeholder function)

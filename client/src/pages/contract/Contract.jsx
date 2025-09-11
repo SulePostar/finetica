@@ -38,6 +38,12 @@ const Contract = () => {
 
   const columns = [
     {
+      name: 'File Name',
+      selector: (row) => row.filename,
+      sortable: true,
+      width: '200px',
+    },
+    {
       name: 'Partner Name',
       selector: (row) => row.businessPartner?.name,
       sortable: true,
@@ -145,30 +151,28 @@ const Contract = () => {
   return (
     <DefaultLayout>
       <div
-        className="table-page-outer contract-table-outer"
+        className="table-page-outer"
         style={{
           marginLeft: sidebarWidth,
           width: `calc(100vw - ${sidebarWidth}px)`,
         }}
       >
-        <div className="contract-table-responsive">
-          <DynamicTable
-            title="Contracts"
-            columns={columns}
-            apiEndpoint={apiEndpoint}
-            uploadButton={
-              <UploadButton
-                bucketName={bucketName}
-                onUploadSuccess={() => {
-                  if (refetchFunction) {
-                    refetchFunction(); // refresha tabelu
-                  }
-                }}
-              />
-            }
-            onRefetch={handleRefetchCallback}
-          />
-        </div>
+        <DynamicTable
+          title="Contracts"
+          columns={columns}
+          apiEndpoint={apiEndpoint}
+          uploadButton={
+            <UploadButton
+              bucketName={bucketName}
+              onUploadSuccess={() => {
+                if (refetchFunction) {
+                  refetchFunction(); // refresha tabelu
+                }
+              }}
+            />
+          }
+          onRefetch={handleRefetchCallback}
+        />
       </div>
     </DefaultLayout>
   );

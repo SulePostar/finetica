@@ -64,6 +64,10 @@ const createContractSchema = Joi.object({
         'date.max': 'Signed date cannot be in the future',
         'any.required': 'Signed date is required',
     }),
+
+    filename: Joi.string().trim().optional().messages({
+        'string.base': 'Filename must be a string',
+    }),
 });
 
 module.exports = {

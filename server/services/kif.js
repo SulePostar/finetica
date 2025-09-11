@@ -21,21 +21,36 @@ const extractKifData = async (fileBuffer, mimeType) => {
     );
     return data;
 };
+
 const processSingleUnprocessedKifFile = async (fileLog) => {
     try {
         const { buffer, mimeType } = await supabaseService.getFile(
             KIF_BUCKET_NAME,
             fileLog.filename
         );
+
         const extractedData = await extractKifData(buffer, mimeType);
-        await sequelize.transaction(async (t) => {
-            const result = await createKifFromAI(extractedData, { transaction: t });
-            const message = result.isInvoice ? 'Processed successfully' : 'Document is not an invoice - skipped';
+        const { isInvoice, ...invoiceData } = extractedData || {};
+
+        if (isInvoice === false) {
             await fileLog.update({
-                isProcessed: true,
-                processedAt: new Date(),
-                message: message
-            }, { transaction: t });
+                isValid: false,
+                message: 'File is not a valid sales invoice (KIF)',
+            });
+            return;
+        }
+
+        await sequelize.transaction(async (t) => {
+            await createKifFromAI({ ...invoiceData, isInvoice: true, filename: fileLog.filename }, { transaction: t });
+
+            await fileLog.update(
+                {
+                    isProcessed: true,
+                    processedAt: new Date(),
+                    message: 'Processed successfully',
+                },
+                { transaction: t }
+            );
         });
     } catch (error) {
         console.error(`Failed to process KIF file log ID ${fileLog.id}:`, error);
@@ -43,25 +58,33 @@ const processSingleUnprocessedKifFile = async (fileLog) => {
             await fileLog.update({
                 isProcessed: false,
                 processedAt: new Date(),
-                message: `Error: ${error.message}`.slice(0, 1000)
+                message: `Error: ${error.message}`.slice(0, 1000),
             });
         } catch (innerErr) {
-            console.error('Also failed to update KifProcessedFile after error:', innerErr);
+            console.error('Also failed to update KifProcessingLog after error:', innerErr);
         }
     }
 };
+
 const processUnprocessedKifFiles = async () => {
-    const unprocessed = await KifProcessingLog.findAll({ where: { isProcessed: false } });
+    const unprocessed = await KifProcessingLog.findAll({
+        where: { isProcessed: false, isValid: true },
+    });
+
     for (const log of unprocessed) {
         await processSingleUnprocessedKifFile(log);
     }
     return { processed: unprocessed.length };
 };
+
 const createKifFromAI = async (extractedData, options = {}) => {
     const externalTx = options.transaction;
+    const { filename } = options;
     const tx = externalTx || await sequelize.transaction();
     try {
-        const { items, isInvoice, ...invoiceData } = extractedData;
+        const { items, isInvoice, filename: dataFilename, ...invoiceData } = extractedData;
+        // Use filename from options first, then from extractedData
+        const file_name = filename || dataFilename;
 
         // If it's not an invoice, don't create a database record
         if (!isInvoice) {
@@ -71,6 +94,7 @@ const createKifFromAI = async (extractedData, options = {}) => {
 
         const document = await SalesInvoice.create({
             ...invoiceData,
+            fileName: file_name,
             approvedAt: null,
             approvedBy: null,
             createdAt: new Date(),
@@ -278,9 +302,11 @@ const getKifById = async (id) => {
             throw new AppError('Sales invoice not found', 404);
         }
         const invoiceData = salesInvoice.toJSON();
+        const pdfUrl = invoiceData.fileName ? await supabaseService.getSignedUrl(KIF_BUCKET_NAME, invoiceData.fileName) : null;
         return {
             ...invoiceData,
-            customerName: invoiceData.BusinessPartner?.name || null
+            customerName: invoiceData.BusinessPartner?.name || null,
+            pdfUrl
         };
     } catch (error) {
         throw new AppError('Failed to fetch KIF by ID', 500);

@@ -1,17 +1,18 @@
-import { useEffect, useState, useMemo } from 'react';
-import { Card, Spinner } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { Card, Col, Container, Row, Spinner } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
-import makeCustomStyles from './DynamicTable.styles';
+import api from '../../services/api';
 import './DynamicTable.css';
+import makeCustomStyles from './DynamicTable.styles';
 
-const DynamicTable = ({ 
-    title, 
-    columns, 
-    apiEndpoint, 
-    onRowClick, 
-    uploadButton, 
+const DynamicTable = ({
+    title,
+    columns,
+    apiEndpoint,
+    onRowClick,
+    uploadButton,
     reloadTable,
-    onRefetch 
+    onRefetch,
 }) => {
     const [data, setData] = useState([]);
     const [totalRows, setTotalRows] = useState(0);
@@ -20,42 +21,20 @@ const DynamicTable = ({
     const [perPage, setPerPage] = useState(10);
     const [sortField, setSortField] = useState(null);
     const [sortOrder, setSortOrder] = useState('asc');
-
-    const customStyles = useMemo(() => makeCustomStyles(), []);
-
-    const containerStyle = {
-        maxWidth: '1400px',
-        margin: '0 auto',
-        width: '100%',
-    };
-
-    const titleStyle = useMemo(
-        () => ({
-            marginBottom: '0px',
-            fontSize: '28px',
-            fontWeight: 700,
-            color: 'var(--cui-primary)',
-            fontFamily: "'Segoe UI', sans-serif",
-        }),
-        []
-    );
+    const [isMobile, setIsMobile] = useState(false);
 
     const fetchData = async () => {
         setLoading(true);
         try {
-            const params = new URLSearchParams({
+            const params = {
                 page,
                 perPage,
                 ...(sortField && { sortField }),
                 sortOrder,
-            });
-
-            const res = await fetch(`${apiEndpoint}?${params.toString()}`);
-            if (!res.ok) throw new Error(`Error ${res.status}`);
-
-            const result = await res.json();
-            setData(result.data);
-            setTotalRows(result.total);
+            };
+            const res = await api.get(apiEndpoint, { params });
+            setData(res.data.data);
+            setTotalRows(res.data.total);
         } catch (err) {
             console.error('Fetch error:', err);
         } finally {
@@ -64,54 +43,90 @@ const DynamicTable = ({
     };
 
     useEffect(() => {
-        if (onRefetch) {
-            onRefetch(fetchData);
-        }
+        if (onRefetch) onRefetch(fetchData);
     }, [onRefetch]);
 
     useEffect(() => {
         fetchData();
     }, [page, perPage, sortField, sortOrder, reloadTable]);
 
+    // Detect mobile
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const getCellValue = (col, row) => {
+        if (typeof col.cell === 'function') {
+            return col.cell(row);
+        }
+        if (typeof col.selector === 'function') {
+            return col.selector(row);
+        }
+        if (typeof col.selector === 'string') {
+            return row[col.selector];
+        }
+        return '';
+    };
+
     return (
-        <div style={containerStyle}>
-            <Card className="my-4 shadow-sm border-0 bg-light dark:bg-dark">
-                <Card.Body className="p-4">
-                    <div className="d-flex justify-content-between align-items-center mb-3">
-                        <Card.Title style={titleStyle}>{title}</Card.Title>
-                        {uploadButton && (
-                            <div className="table-upload-button">
-                                {uploadButton}
-                            </div>
-                        )}
-                    </div>
-                    <DataTable
-                        columns={columns}
-                        data={data}
-                        progressPending={loading}
-                        progressComponent={<Spinner animation="border" />}
-                        pagination
-                        paginationServer
-                        paginationTotalRows={totalRows}
-                        onChangeRowsPerPage={(newPerPage) => {
-                            setPerPage(newPerPage);
-                            setPage(1);
-                        }}
-                        onChangePage={(p) => setPage(p)}
-                        onSort={(col, dir) => {
-                            setSortField(col.sortField || col.selector?.name || col.selector);
-                            setSortOrder(dir);
-                        }}
-                        onRowClicked={onRowClick}
-                        sortServer
-                        highlightOnHover
-                        responsive
-                        customStyles={customStyles}
-                        pointerOnHover
-                    />
+        <Container fluid="xxl" className="dynamic-table-container">
+            <Card className="shadow-sm border-0">
+                <Card.Body>
+                    <Row className="align-items-center mb-3">
+                        <Col className="d-flex justify-content-between flex-wrap">
+                            <Card.Title className="dynamic-table-title">{title}</Card.Title>
+                            {uploadButton && <div className="ms-3">{uploadButton}</div>}
+                        </Col>
+                    </Row>
+
+                    {isMobile ? (
+                        <div className="stacked-table">
+                            {data.map((row, rowIndex) => (
+                                <Card className="mb-3 stacked-row" key={rowIndex}>
+                                    <Card.Body>
+                                        {columns.map((col, colIndex) => (
+                                            <div key={colIndex} className="stacked-cell">
+                                                <div className="fw-bold stacked-label">{col.name}</div>
+                                                <div className="stacked-value">{getCellValue(col, row)}</div>
+                                            </div>
+                                        ))}
+                                    </Card.Body>
+                                </Card>
+                            ))}
+                        </div>
+                    ) : (
+                        <DataTable
+                            columns={columns}
+                            data={data}
+                            progressPending={loading}
+                            customStyles={makeCustomStyles()}
+                            progressComponent={<Spinner animation="border" />}
+                            pagination
+                            paginationServer
+                            paginationTotalRows={totalRows}
+                            onChangeRowsPerPage={(newPerPage) => {
+                                setPerPage(newPerPage);
+                                setPage(1);
+                            }}
+                            onChangePage={(p) => setPage(p)}
+                            onSort={(col, dir) => {
+                                setSortField(col.sortField || col.selector?.name || col.selector);
+                                setSortOrder(dir);
+                            }}
+                            onRowClicked={onRowClick}
+                            sortServer
+                            highlightOnHover
+                            pointerOnHover
+                            responsive
+                        />
+                    )}
+
                 </Card.Body>
             </Card>
-        </div>
+        </Container>
     );
 };
 

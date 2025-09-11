@@ -2,7 +2,6 @@ import { cilArrowLeft, cilContrast, cilMenu, cilMoon, cilSun } from '@coreui/ico
 import CIcon from '@coreui/icons-react';
 import {
   CButton,
-  CContainer,
   CDropdown,
   CDropdownItem,
   CDropdownMenu,
@@ -16,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './AppHeader.css';
 import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
+import '../scss/style.scss';
 
 //Returns route and label for a detail page, or null if not a detail page
 const getDetailPageConfig = (pathname) => {
@@ -66,9 +66,9 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
   const isMobile = window.innerWidth < 768;
 
   return (
-    <CContainer
-      fluid
-      className={`px-4 d-flex align-items-center h-64 ${isDarkMode ? 'bg-dark-purple' : 'bg-light-purple'}`}
+    <CHeader
+      position="sticky"
+      className={`px-4 d-flex align-items-center h-64 app-header`}
       style={{
         marginLeft: `${!isMobile && sidebarShow ? (sidebarUnfoldable ? 56 : 240) : 0}px`,
       }}
@@ -77,7 +77,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
         <CButton
           variant="outline"
           onClick={() => navigate(detailPage.route)}
-          className="ms-n3 border rounded-pill px-3 py-2 d-flex align-items-center"
+          className="ms-n3 border rounded-pill px-3 py-2 d-flex align-items-center header-back"
         >
           <CIcon icon={cilArrowLeft} className="me-2" />
           Back to {detailPage.label}
@@ -93,55 +93,52 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
 
       <div className="flex-grow-1"></div>
 
-      <div className="position-fixed z-index-1060 top-0 end-0 h-64 d-flex align-items-center px-4">
-        <CHeaderNav className="d-flex gap-3">
-          <CDropdown variant="nav-item" placement="bottom-end">
-            <CDropdownToggle caret={false} className="bg-transparent border-0">
-              {colorMode === 'dark' && <CIcon icon={cilMoon} size="lg" className="text-white" />}
-              {colorMode === 'light' && <CIcon icon={cilSun} size="lg" className="text-dark" />}
-              {colorMode === 'auto' && (
-                <CIcon
-                  icon={cilContrast}
-                  size="lg"
-                  className={isDarkMode ? 'text-white' : 'text-dark'}
-                />
-              )}
-            </CDropdownToggle>
-            <CDropdownMenu className={isDarkMode ? 'dropdown-menu-dark' : ''}>
-              <CDropdownItem
-                active={colorMode === 'light'}
-                as="button"
-                type="button"
-                onClick={() => setColorMode('light')}
-                className="d-flex align-items-center"
-              >
-                <CIcon className="me-2" icon={cilSun} size="lg" /> Light
-              </CDropdownItem>
-              <CDropdownItem
-                active={colorMode === 'dark'}
-                as="button"
-                type="button"
-                onClick={() => setColorMode('dark')}
-                className="d-flex align-items-center"
-              >
-                <CIcon className="me-2" icon={cilMoon} size="lg" /> Dark
-              </CDropdownItem>
-              <CDropdownItem
-                active={colorMode === 'auto'}
-                as="button"
-                type="button"
-                onClick={() => setColorMode('auto')}
-                className="d-flex align-items-center"
-              >
-                <CIcon className="me-2" icon={cilContrast} size="lg" /> Auto
-              </CDropdownItem>
-            </CDropdownMenu>
-          </CDropdown>
-          <AppHeaderDropdown isDarkMode={isDarkMode} />
-        </CHeaderNav>
-      </div>
-    </CContainer>
-
+      <CHeaderNav className="ms-auto d-flex gap-3 align-items-center">
+        <CDropdown variant="nav-item" placement="bottom-end">
+          <CDropdownToggle caret={false} className="bg-transparent border-0">
+            {colorMode === 'dark' && <CIcon icon={cilMoon} size="lg" className="text-white" />}
+            {colorMode === 'light' && <CIcon icon={cilSun} size="lg" className="text-dark" />}
+            {colorMode === 'auto' && (
+              <CIcon
+                icon={cilContrast}
+                size="lg"
+                className={isDarkMode ? 'text-white' : 'text-dark'}
+              />
+            )}
+          </CDropdownToggle>
+          <CDropdownMenu className={isDarkMode ? 'dropdown-menu-dark' : ''}>
+            <CDropdownItem
+              active={colorMode === 'light'}
+              as="button"
+              type="button"
+              onClick={() => setColorMode('light')}
+              className="d-flex align-items-center"
+            >
+              <CIcon className="me-2" icon={cilSun} size="lg" /> Light
+            </CDropdownItem>
+            <CDropdownItem
+              active={colorMode === 'dark'}
+              as="button"
+              type="button"
+              onClick={() => setColorMode('dark')}
+              className="d-flex align-items-center"
+            >
+              <CIcon className="me-2" icon={cilMoon} size="lg" /> Dark
+            </CDropdownItem>
+            <CDropdownItem
+              active={colorMode === 'auto'}
+              as="button"
+              type="button"
+              onClick={() => setColorMode('auto')}
+              className="d-flex align-items-center"
+            >
+              <CIcon className="me-2" icon={cilContrast} size="lg" /> Auto
+            </CDropdownItem>
+          </CDropdownMenu>
+        </CDropdown>
+        <AppHeaderDropdown isDarkMode={isDarkMode} />
+      </CHeaderNav>
+    </CHeader>
   );
 };
 

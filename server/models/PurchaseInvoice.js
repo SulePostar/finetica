@@ -16,7 +16,7 @@ module.exports = (sequelize) => {
         autoIncrement: true,
         primaryKey: true,
       },
-      fileName: {
+      filename: {
         type: DataTypes.STRING,
         field: 'file_name',
         allowNull: false,

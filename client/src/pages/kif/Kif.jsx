@@ -76,13 +76,13 @@ const Kif = () => {
       style: { textAlign: 'right' },
     },
     {
-      name: 'bank-transactions Period',
+      name: 'Vat Period',
       selector: row => row.vatPeriod,
       sortable: true,
       width: '150px',
     },
     {
-      name: 'bank-transactions Category',
+      name: 'Vat Category',
       selector: row => row.vatCategory,
       sortable: true,
       width: '170px',
@@ -141,14 +141,12 @@ const Kif = () => {
           width: `calc(100vw - ${sidebarWidth}px)`,
         }}
       >
-        <div className="kif-table-responsive">
-          <DynamicTable
-            title="KIF - Sales Invoices"
-            columns={columns}
-            apiEndpoint={apiEndpoint}
-            uploadButton={<UploadButton bucketName={bucketName} />}
-          />
-        </div>
+        <DynamicTable
+          title="KIF - Sales Invoices"
+          columns={columns}
+          apiEndpoint={apiEndpoint}
+          uploadButton={<UploadButton bucketName={bucketName} />}
+        />
       </div>
     </DefaultLayout>
   );

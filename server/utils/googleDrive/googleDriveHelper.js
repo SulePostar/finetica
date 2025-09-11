@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
 const cron = require('node-cron');
-const tokenStorage = require('../../services/tokenStorage');
-const { createDriveClient, oauth2Client } = require('../../config/driveConfig');
+const Logger = require('../logger');
+const { createDriveClient } = require('../../config/driveConfig');
 
 async function findFineticaFolderId(drive) {
     try {
@@ -239,39 +239,20 @@ async function getStatus() {
         isRunning: this.isRunning,
         lastSync: this.lastSyncTime,
         syncInterval: 'Every minute',
-        hasRefreshToken: tokenStorage.hasValidRefreshToken(),
+        hasRefreshToken: false,
         downloadPath: this.downloadPath
     };
 }
 async function performSync() {
     try {
-
-        // Load tokens from environment variables
-        const tokens = tokenStorage.loadTokens();
-        if (!tokens || !tokens.refresh_token) {
-            console.log('⚠️ No refresh token available. Skipping sync.');
-            return;
-        }
-
-        // Set up OAuth client with tokens from environment
-        oauth2Client.setCredentials(tokens);
-
-        // Try to refresh access token if needed
-        try {
-            const { credentials } = await oauth2Client.refreshAccessToken();
-
-            // Use refreshed credentials for this session only (no file storage)
-            oauth2Client.setCredentials(credentials);
-        } catch (refreshError) {
-            console.error('❌ Failed to refresh access token:', refreshError.message);
-            return;
-        }
-
-        // Create Drive client and sync files
+        // Create Drive client using Service Account
         const drive = createDriveClient();
+
+        // Sync files
         await this.syncFiles(drive);
 
         this.lastSyncTime = new Date().toISOString();
+        Logger.info('✅ Google Drive sync completed at ' + this.lastSyncTime);
 
     } catch (error) {
         console.error('❌ Google Drive sync failed:', error.message);
