@@ -33,7 +33,7 @@ const InvalidPdfs = () => {
 
     const endpoints = {
         bank: `${API_BASE}/bank-transactions`,
-        kif: `${API_BASE}/kif`,
+        kif: `${API_BASE}/kif/logs/invalid`,
         kuf: `${API_BASE}/kuf/logs/invalid`,
         contracts: `/contracts/logs/invalid`,
     }
@@ -167,7 +167,7 @@ const InvalidPdfs = () => {
                                             <DynamicTable columns={logColumns} apiEndpoint={endpoints.bank} />
                                         </CTabPane>
                                         <CTabPane visible={activeKey === 2} className="fade">
-                                            <DynamicTable columns={logColumns} apiEndpoint={endpoints.kif} />
+                                            <DynamicTable columns={logColumns} apiEndpoint={endpoints.kif} onRowClick={handleRowClick}/>
                                         </CTabPane>
                                         <CTabPane visible={activeKey === 3} className="fade">
                                             <DynamicTable
