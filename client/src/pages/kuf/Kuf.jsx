@@ -141,14 +141,12 @@ const Kuf = () => {
                     width: `calc(100vw - ${sidebarWidth}px)`,
                 }}
             >
-                <div className="kuf-table-responsive">
-                    <DynamicTable
-                        title="KUF - Purchase Invoices"
-                        columns={columns}
-                        apiEndpoint={apiEndpoint}
-                        uploadButton={<UploadButton bucketName={bucketName} />}
-                    />
-                </div>
+                <DynamicTable
+                    title="KUF - Purchase Invoices"
+                    columns={columns}
+                    apiEndpoint={apiEndpoint}
+                    uploadButton={<UploadButton bucketName={bucketName} />}
+                />
             </div>
         </DefaultLayout>
     );

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card, Spinner, Container, Row, Col } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import './DynamicTable.css';
+import makeCustomStyles from './DynamicTable.styles';
 
 const DynamicTable = ({
     title,
@@ -72,7 +73,7 @@ const DynamicTable = ({
     };
 
     return (
-        <Container fluid="xxl" className="my-4 dynamic-table-container">
+        <Container fluid="xxl" className="dynamic-table-container">
             <Card className="shadow-sm border-0">
                 <Card.Body>
                     <Row className="align-items-center mb-3">
@@ -102,6 +103,7 @@ const DynamicTable = ({
                             columns={columns}
                             data={data}
                             progressPending={loading}
+                            customStyles={makeCustomStyles()}
                             progressComponent={<Spinner animation="border" />}
                             pagination
                             paginationServer
