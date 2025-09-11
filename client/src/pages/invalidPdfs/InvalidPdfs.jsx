@@ -1,29 +1,29 @@
-import { useState } from 'react';
+import { cilCalculator, cilDescription, cilFolderOpen, cilWallet } from '@coreui/icons';
+import CIcon from '@coreui/icons-react';
 import {
+    CBadge,
     CCard,
     CCardBody,
     CCardHeader,
+    CCardTitle,
+    CCol,
+    CModal,
+    CModalBody,
+    CModalHeader,
+    CModalTitle,
     CNav,
     CNavItem,
     CNavLink,
+    CRow,
     CTabContent,
     CTabPane,
-    CRow,
-    CCol,
-    CCardTitle,
-    CBadge,
-    CModal,
-    CModalHeader,
-    CModalBody,
-    CModalTitle,
 } from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilCalculator, cilWallet, cilFolderOpen, cilDescription } from '@coreui/icons';
+import { useState } from 'react';
+import { InvalidPdfDetails } from '../../components/InvalidPdfDetails/InvalidPdfDetails';
+import DynamicTable from '../../components/Tables/DynamicTable';
+import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import DefaultLayout from '../../layout/DefaultLayout';
 import './InvalidPdfs.css';
-import { useSidebarWidth } from '../../hooks/useSidebarWidth';
-import DynamicTable from '../../components/Tables/DynamicTable';
-import { InvalidPdfDetails } from '../../components/InvalidPdfDetails/InvalidPdfDetails'
 
 const InvalidPdfs = () => {
     const [activeKey, setActiveKey] = useState(1);
@@ -35,7 +35,7 @@ const InvalidPdfs = () => {
         bank: `${API_BASE}/bank-transactions`,
         kif: `${API_BASE}/kif`,
         kuf: `${API_BASE}/kuf`,
-        contracts: `${API_BASE}/contracts`,
+        contracts: `/contracts/logs/invalid`,
     }
 
     const [modalOpen, setModalOpen] = useState(false);
