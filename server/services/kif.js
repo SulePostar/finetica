@@ -35,6 +35,8 @@ const processSingleUnprocessedKifFile = async (fileLog) => {
         if (isInvoice === false) {
             await fileLog.update({
                 isValid: false,
+                isProcessed: true,                    
+                processedAt: new Date(),
                 message: 'File is not a valid sales invoice (KIF)',
             });
             return;
