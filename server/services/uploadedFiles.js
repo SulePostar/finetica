@@ -42,9 +42,8 @@ const PIPELINES = {
   transactions: {
     logModel: BankTransactionProcessingLog,
     extract: (buf, mime) => bankTransactionService.extractData(buf, mime),
-    persist: (data, t) => bankTransactionService.createBankTransactionFromAI(data),
+    persist: (data, t) => bankTransactionService.createBankTransactionFromAI(data, { transaction: t }),
     isValid: (data) => {
-      // Check if the AI explicitly marked it as valid
       if (data.is_valid === false) {
         return false;
       }

@@ -64,8 +64,10 @@ const getBankTransactionById = async (id) => {
     }
 };
 
-const createBankTransactionFromAI = async (extractedData) => {
-    const t = await sequelize.transaction();
+const createBankTransactionFromAI = async (extractedData, options = {}) => {
+    const t = options.transaction || await sequelize.transaction();
+    const shouldCommit = !options.transaction; // Only commit if we created the transaction
+
     try {
         const { items, filename, ...bankTransactionData } = extractedData.data || extractedData;
 
@@ -95,14 +97,18 @@ const createBankTransactionFromAI = async (extractedData) => {
             await BankTransaction.bulkCreate(itemsToCreate, { transaction: t });
         }
 
-        await t.commit();
+        if (shouldCommit) {
+            await t.commit();
+        }
 
         return {
             ...document.toJSON(),
             items: items || []
         };
     } catch (error) {
-        await t.rollback();
+        if (shouldCommit) {
+            await t.rollback();
+        }
         console.error("Database Error:", error);
         throw new AppError('Failed to save bank transaction to database', 500);
     }
