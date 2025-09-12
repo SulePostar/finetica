@@ -243,9 +243,8 @@ class UploadedFilesService {
       extractedData = await pipeline.extract(file.buffer, file.mimetype);
     } catch (error) {
       await logRow.update({
-        isProcessed: true,
+        isProcessed: false,
         processedAt: new Date(),
-        isValid: false,
         message: `Extraction error: ${error.message}`.slice(0, 1000),
       });
       throw new AppError(`Data extraction failed: ${error.message}`, 500);
