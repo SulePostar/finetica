@@ -250,6 +250,9 @@ class UploadedFilesService {
       throw new AppError(`Data extraction failed: ${error.message}`, 500);
     }
 
+    let isValidFile = false;
+    let responseMessage = '';
+
     await sequelize.transaction(async (t) => {
       await UploadedFile.create(
         {
@@ -266,6 +269,8 @@ class UploadedFilesService {
       );
 
       if (pipeline.isValid(extractedData)) {
+        isValidFile = true;
+        responseMessage = pipeline.successMessage;
         await pipeline.persist({ ...extractedData, filename: objectName }, t);
         await logRow.update(
           {
@@ -277,6 +282,8 @@ class UploadedFilesService {
           { transaction: t }
         );
       } else {
+        isValidFile = false;
+        responseMessage = pipeline.invalidMessage;
         await logRow.update(
           {
             isValid: false,
@@ -292,6 +299,8 @@ class UploadedFilesService {
 
     return {
       success: true,
+      isValid: isValidFile,
+      message: responseMessage,
       data: {
         fileName: objectName,
         bucketName,
