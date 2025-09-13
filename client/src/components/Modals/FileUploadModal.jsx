@@ -99,9 +99,16 @@ const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess }) => {
       setUploadProgress(100);
 
       if (result.success) {
-        notify.onSuccess(
-          `File "${finalFileName}" uploaded successfully to ${bucketName.toUpperCase()} bucket!`
-        );
+        if (result.isValid) {
+          notify.onSuccess(
+            `File "${finalFileName}" uploaded and processed successfully to ${bucketName.toUpperCase()} bucket!`
+          );
+        } else {
+          notify.onWarning(
+            `File "${finalFileName}" uploaded and processed successfully to ${bucketName.toUpperCase()} bucket but contains invalid data. Check the Invalid PDFs section for details.`
+          );
+        }
+
         if (onUploadSuccess) {
           onUploadSuccess(result);
         }
@@ -160,9 +167,8 @@ const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess }) => {
 
             {/* File Drop Area */}
             <div
-              className={`file-input-area ${dragOver ? 'drag-over' : ''} ${
-                selectedFile ? 'has-file' : ''
-              }`}
+              className={`file-input-area ${dragOver ? 'drag-over' : ''} ${selectedFile ? 'has-file' : ''
+                }`}
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
