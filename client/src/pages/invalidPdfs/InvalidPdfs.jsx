@@ -1,29 +1,29 @@
-import { useState } from 'react';
+import { cilCalculator, cilDescription, cilFolderOpen, cilWallet } from '@coreui/icons';
+import CIcon from '@coreui/icons-react';
 import {
+    CBadge,
     CCard,
     CCardBody,
     CCardHeader,
+    CCardTitle,
+    CCol,
+    CModal,
+    CModalBody,
+    CModalHeader,
+    CModalTitle,
     CNav,
     CNavItem,
     CNavLink,
+    CRow,
     CTabContent,
     CTabPane,
-    CRow,
-    CCol,
-    CCardTitle,
-    CBadge,
-    CModal,
-    CModalHeader,
-    CModalBody,
-    CModalTitle,
 } from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilCalculator, cilWallet, cilFolderOpen, cilDescription } from '@coreui/icons';
+import { useState } from 'react';
+import { InvalidPdfDetails } from '../../components/InvalidPdfDetails/InvalidPdfDetails';
+import DynamicTable from '../../components/Tables/DynamicTable';
+import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import DefaultLayout from '../../layout/DefaultLayout';
 import './InvalidPdfs.css';
-import { useSidebarWidth } from '../../hooks/useSidebarWidth';
-import DynamicTable from '../../components/Tables/DynamicTable';
-import { InvalidPdfDetails } from '../../components/InvalidPdfDetails/InvalidPdfDetails'
 
 const InvalidPdfs = () => {
     const [activeKey, setActiveKey] = useState(1);
@@ -33,9 +33,9 @@ const InvalidPdfs = () => {
 
     const endpoints = {
         bank: `${API_BASE}/bank-transactions`,
-        kif: `${API_BASE}/kif`,
-        kuf: `${API_BASE}/kuf`,
-        contracts: `${API_BASE}/contracts`,
+        kif: `${API_BASE}/kif/logs/invalid`,
+        kuf: `${API_BASE}/kuf/logs/invalid`,
+        contracts: `/contracts/logs/invalid`,
     }
 
     const [modalOpen, setModalOpen] = useState(false);
@@ -85,14 +85,13 @@ const InvalidPdfs = () => {
             name: 'Processed At',
             selector: (row) => row.processedAt,
             sortable: true,
-            width: '200px',
+            width: '150px',
             cell: (row) => (row.processedAt ? new Date(row.processedAt).toLocaleString() : '-'),
         },
         {
             name: 'Created At',
             selector: (row) => row.createdAt,
             sortable: true,
-            width: '200px',
             cell: (row) => new Date(row.createdAt).toLocaleString(),
         },
     ];
@@ -104,7 +103,6 @@ const InvalidPdfs = () => {
                 style={{
                     marginLeft: sidebarWidth,
                     width: `calc(100vw - ${sidebarWidth}px)`,
-                    padding: '50px 60px',
                 }}
             >
                 <CRow className="justify-content-center w-100 mx-0">
@@ -169,10 +167,14 @@ const InvalidPdfs = () => {
                                             <DynamicTable columns={logColumns} apiEndpoint={endpoints.bank} />
                                         </CTabPane>
                                         <CTabPane visible={activeKey === 2} className="fade">
-                                            <DynamicTable columns={logColumns} apiEndpoint={endpoints.kif} />
+                                            <DynamicTable columns={logColumns} apiEndpoint={endpoints.kif} onRowClick={handleRowClick}/>
                                         </CTabPane>
                                         <CTabPane visible={activeKey === 3} className="fade">
-                                            <DynamicTable columns={logColumns} apiEndpoint={endpoints.kuf} />
+                                            <DynamicTable
+                                                columns={logColumns}
+                                                apiEndpoint={endpoints.kuf}
+                                                onRowClick={handleRowClick}
+                                            />
                                         </CTabPane>
                                         <CTabPane visible={activeKey === 4} className="fade">
                                             <DynamicTable

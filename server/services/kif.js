@@ -21,21 +21,38 @@ const extractKifData = async (fileBuffer, mimeType) => {
     );
     return data;
 };
+
 const processSingleUnprocessedKifFile = async (fileLog) => {
     try {
         const { buffer, mimeType } = await supabaseService.getFile(
             KIF_BUCKET_NAME,
             fileLog.filename
         );
+
         const extractedData = await extractKifData(buffer, mimeType);
-        await sequelize.transaction(async (t) => {
-            const result = await createKifFromAI(extractedData, { transaction: t, filename: fileLog.filename });
-            const message = result.isInvoice ? 'Processed successfully' : 'Document is not an invoice - skipped';
+        const { isInvoice, ...invoiceData } = extractedData || {};
+
+        if (isInvoice === false) {
             await fileLog.update({
-                isProcessed: true,
+                isValid: false,
+                isProcessed: true,                    
                 processedAt: new Date(),
-                message: message
-            }, { transaction: t });
+                message: 'File is not a valid sales invoice (KIF)',
+            });
+            return;
+        }
+
+        await sequelize.transaction(async (t) => {
+            await createKifFromAI({ ...invoiceData, isInvoice: true, filename: fileLog.filename }, { transaction: t });
+
+            await fileLog.update(
+                {
+                    isProcessed: true,
+                    processedAt: new Date(),
+                    message: 'Processed successfully',
+                },
+                { transaction: t }
+            );
         });
     } catch (error) {
         console.error(`Failed to process KIF file log ID ${fileLog.id}:`, error);
@@ -43,20 +60,25 @@ const processSingleUnprocessedKifFile = async (fileLog) => {
             await fileLog.update({
                 isProcessed: false,
                 processedAt: new Date(),
-                message: `Error: ${error.message}`.slice(0, 1000)
+                message: `Error: ${error.message}`.slice(0, 1000),
             });
         } catch (innerErr) {
-            console.error('Also failed to update KifProcessedFile after error:', innerErr);
+            console.error('Also failed to update KifProcessingLog after error:', innerErr);
         }
     }
 };
+
 const processUnprocessedKifFiles = async () => {
-    const unprocessed = await KifProcessingLog.findAll({ where: { isProcessed: false } });
+    const unprocessed = await KifProcessingLog.findAll({
+        where: { isProcessed: false, isValid: true },
+    });
+
     for (const log of unprocessed) {
         await processSingleUnprocessedKifFile(log);
     }
     return { processed: unprocessed.length };
 };
+
 const createKifFromAI = async (extractedData, options = {}) => {
     const externalTx = options.transaction;
     const { filename } = options;

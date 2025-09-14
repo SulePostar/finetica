@@ -246,7 +246,7 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
 const processUnprocessedFiles = async () => {
   try {
     const unprocessedFileLogs = await KufProcessingLog.findAll({
-      where: { isProcessed: false },
+      where: { isProcessed: false, isValid: true },
     });
 
     let processed = 0;
