@@ -1,27 +1,47 @@
-/* Table header styling */
-.table-upload-button {
+.dynamic-table-container {
+  max-width: 1600px;
+}
+
+.dynamic-table-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--cui-primary);
+}
+
+.stacked-row {
+  border: 1px solid var(--cui-border-color);
+  border-radius: 8px;
+}
+
+.stacked-cell {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--cui-border-color);
 }
 
-/* Responsive behavior for the table header */
-@media (max-width: 768px) {
-  .d-flex.justify-content-between.align-items-center {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .table-upload-button {
-    align-self: flex-end;
-    width: 100%;
-    justify-content: flex-end;
-  }
+.stacked-cell:last-child {
+  border-bottom: none;
 }
 
-@media (max-width: 576px) {
-  .table-upload-button {
-    align-self: stretch;
-    justify-content: center;
-  }
+.stacked-label {
+  margin-bottom: 4px;
+}
+
+.stacked-value {
+  white-space: normal;
+  word-break: break-word;
+}
+
+[data-coreui-theme="dark"] .card,
+.dark-mode .card {
+  background-color: var(--cui-body-bg-dark, #212529);
+  color: var(--cui-body-color, #f8f9fa);
+  border-color: var(--cui-border-color-dark, #495057);
+}
+
+[data-coreui-theme="dark"] .card-body,
+.dark-mode .card-body {
+  background-color: inherit;
+  color: inherit;
 }

@@ -2,7 +2,6 @@ import { CContainer, CSpinner } from '@coreui/react';
 import React, { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from '../protectedRoutes/ProtectedRouter';
-import { Nav } from 'react-bootstrap';
 const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const Register = React.lazy(() => import('../pages/Register/Register'));
 const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
@@ -11,12 +10,14 @@ const DocumentDetails = React.lazy(() => import('../pages/DocumentDetails/Docume
 const BankTransactions = React.lazy(() => import('../pages/BankTransactions/BankTransactions'));
 const Kuf = React.lazy(() => import('../pages/kuf/Kuf'));
 const Contracts = React.lazy(() => import('../pages/contract/Contract'));
-const Partner = React.lazy(() => import('../pages/partner/Partner')); // 1. Uvezi Partner komponentu
+const Partner = React.lazy(() => import('../pages/partner/Partner'));
 const ProfilePage = React.lazy(() => import('../pages/Profile/ProfilePage'));
 const GuestWrapper = React.lazy(() => import('../protectedRoutes/GuestWrapper'));
 const ForgotPasswordForm = React.lazy(() => import('../components/Login/ForgotPasswordForm'));
 const ResetPasswordForm = React.lazy(() => import('../components/Login/ResetPasswordForm'));
 const RoleStatusDashboard = React.lazy(() => import('../pages/Admin/RoleStatusDashboard'));
+const InvalidPdfs = React.lazy(() => import('../pages/invalidPdfs/InvalidPdfs'));
+const InvalidPdfDetails = React.lazy(() => import('../components/InvalidPdfDetails/InvalidPdfDetails'));
 const UsersDashboard = React.lazy(() => import('../pages/Admin/UsersDashboard'));
 const ActivityLogs = React.lazy(() => import('../pages/AdminDashboard/ActivityLogs'));
 
@@ -213,6 +214,22 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <DocumentDetails />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/invalid-pdfs"
+          element={
+            <ProtectedRoute>
+              <InvalidPdfs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/document/:id"
+          element={
+            <ProtectedRoute>
+              <InvalidPdfDetails />
             </ProtectedRoute>
           }
         />

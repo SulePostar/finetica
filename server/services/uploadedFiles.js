@@ -20,25 +20,33 @@ const PIPELINES = {
     logModel: KifProcessingLog,
     extract: (buf, mime) => kifService.extractKifData(buf, mime),
     persist: (data, t) => kifService.createKifFromAI(data, { transaction: t }),
+    isValid: (data) => data?.isInvoice === true,
     successMessage: 'KIF processed successfully',
+    invalidMessage: 'File is not a valid sales invoice (KIF)',
   },
   kuf: {
     logModel: KufProcessingLog,
     extract: (buf, mime) => kufService.extractData(buf, mime),
     persist: (data, t) => kufService.createInvoiceFromAI(data, { transaction: t }),
+    isValid: (data) => data.isPurchaseInvoice !== false,
     successMessage: 'KUF processed successfully',
+    invalidMessage: 'File is not a valid purchase invoice (KUF)',
   },
   contracts: {
     logModel: ContractProcessingLog,
     extract: (buf, mime) => contractService.extractData(buf, mime),
     persist: (data, t) => contractService.createContract(data, { transaction: t }),
+    isValid: (data) => data.isValidContract !== false,
     successMessage: 'Contract processed successfully',
+    invalidMessage: 'File is not a valid contract',
   },
   transactions: {
     logModel: BankTransactionProcessingLog,
     extract: (buf, mime) => bankTransactionService.extractData(buf, mime),
     persist: (data, t) => bankTransactionService.createBankTransactionFromAI(data, { transaction: t }),
+    isValid: (data) => true,
     successMessage: 'Transaction processed successfully',
+    invalidMessage: 'File is not a valid bank transaction',
   },
 };
 class UploadedFilesService {
@@ -219,89 +227,72 @@ class UploadedFilesService {
       throw new AppError(`Upload failed: ${uploadResult.error}`, 400);
     }
     const objectName = uploadResult.fileName;
-    let logRow;
+
+    const logRow = await pipeline.logModel.create({
+      filename: objectName,
+      isProcessed: false,
+      processedAt: null,
+    });
+
+    let extractedData
     try {
-      const [row, created] = await pipeline.logModel.findOrCreate({
-        where: { filename: objectName },
-        defaults: {
-          filename: objectName,
-          isProcessed: false,
-          processedAt: null,
-          message: 'Processing started',
-        },
+      extractedData = await pipeline.extract(file.buffer, file.mimetype);
+    } catch (error) {
+      await logRow.update({
+        isProcessed: false,
+        processedAt: new Date(),
+        message: `Extraction error: ${error.message}`.slice(0, 1000),
       });
-      if (!created) {
-        await row.update({
-          isProcessed: false,
-          processedAt: null,
-          message: 'Processing restarted',
-        });
-      }
-      logRow = row;
-    } catch (e) {
-      await supabaseService.deleteFile(objectName, bucketName);
-      throw new AppError(`Failed to create processing log: ${e.message}`, 500);
+      throw new AppError(`Data extraction failed: ${error.message}`, 500);
     }
-    let extracted;
-    try {
-      extracted = await pipeline.extract(file.buffer, file.mimetype);
-    } catch (e) {
-      try {
-        await logRow.update({
-          isProcessed: false,
-          processedAt: new Date(),
-          message: `Extraction error: ${e.message}`.slice(0, 1000),
-        });
-      } finally {
-        await supabaseService.deleteFile(objectName, bucketName);
-      }
-      throw e;
-    }
-    try {
-      const result = await sequelize.transaction(async (t) => {
-        const domainEntity = await pipeline.persist({ ...extracted, filename: objectName }, t);
-        const createdFile = await UploadedFile.create(
-          {
-            fileName: objectName,
-            fileUrl: uploadResult.publicUrl,
-            fileSize: file.size,
-            mimeType: file.mimetype,
-            uploadedBy: userId,
-            bucketName,
-            description,
-            isActive: true,
-          },
-          { transaction: t }
-        );
+
+    await sequelize.transaction(async (t) => {
+      await UploadedFile.create(
+        {
+          fileName: objectName,
+          fileUrl: uploadResult.publicUrl,
+          fileSize: file.size,
+          mimeType: file.mimetype,
+          uploadedBy: userId,
+          bucketName,
+          description,
+          isActive: true,
+        },
+        { transaction: t }
+      );
+
+      if (pipeline.isValid(extractedData)) {
+        await pipeline.persist({ ...extractedData, filename: objectName }, t);
         await logRow.update(
           {
             isProcessed: true,
             processedAt: new Date(),
             message: pipeline.successMessage,
+            isValid: true,
           },
           { transaction: t }
         );
-        return { createdFile, domainEntity };
-      });
-      return {
-        success: true,
-        data: {
-          file: result.createdFile,
-          processed: result.domainEntity,
-        },
-      };
-    } catch (e) {
-      try {
-        await logRow.update({
-          isProcessed: false,
-          processedAt: new Date(),
-          message: `Persistence error: ${e.message}`.slice(0, 1000),
-        });
-      } finally {
-        await supabaseService.deleteFile(objectName, bucketName);
+      } else {
+        await logRow.update(
+          {
+            isValid: false,
+            isProcessed: true,              
+            processedAt: new Date(),
+            message: pipeline.invalidMessage,
+          },
+          { transaction: t }
+        );
+
       }
-      throw new AppError(`Failed to save processed data: ${e.message}`, 500);
-    }
+    });
+
+    return {
+      success: true,
+      data: {
+        fileName: objectName,
+        bucketName,
+      },
+    };
   }
 }
 module.exports = new UploadedFilesService();

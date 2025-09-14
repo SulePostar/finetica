@@ -38,7 +38,7 @@ const Partner = () => {
   const handleDelete = useCallback((row) => {
     setPartnerToDelete(row);
     setDeleteModalVisible(true);
-    setError(''); 
+    setError('');
   }, []);
 
   const handleCloseModal = useCallback(() => {
@@ -56,23 +56,23 @@ const Partner = () => {
 
     try {
       const response = await fetch(`${apiEndpoint}/${partnerToDelete.id}`, {
-        method: 'PATCH',  
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`,
         },
-        body: JSON.stringify({ isActive: false }), 
+        body: JSON.stringify({ isActive: false }),
       });
 
       if (!response.ok) {
         const text = await response.text();
         throw new Error(`Failed to deactivate partner: ${text}`);
       }
-      
+
       if (refetchFunction) {
         await refetchFunction();
       }
-      
+
       handleCloseModal();
     } catch (error) {
       console.error("Error deactivating partner:", error);
@@ -154,14 +154,12 @@ const Partner = () => {
           width: `calc(100vw - ${sidebarWidth}px)`,
         }}
       >
-        <div className="partner-table-responsive">
-          <DynamicTable 
-            title="Partners" 
-            columns={columns} 
-            apiEndpoint={apiEndpoint}
-            onRefetch={handleRefetchCallback} 
-          />
-        </div>
+        <DynamicTable
+          title="Partners"
+          columns={columns}
+          apiEndpoint={apiEndpoint}
+          onRefetch={handleRefetchCallback}
+        />
       </div>
 
       <ConfirmationModal

@@ -1,12 +1,13 @@
 import { CNavItem, CNavTitle, CNavGroup } from '@coreui/react';
-import { cilHome, cilListNumbered, cilList, cilCalculator, cilSpeedometer, cilChart, cilDescription, cilSettings, cilPeople, cilShieldAlt, cilBriefcase } from '@coreui/icons';
+import { cilHome, cilFile, cilBank, cilSettings, cilUser, cilShieldAlt, cilTag, cilBriefcase, cilWarning } from '@coreui/icons';
+
 
 const _nav = [
   {
     component: CNavItem,
-    name: 'FINETICA',
+    name: 'Finetica',
     to: '/',
-    icon: cilSpeedometer,
+    icon: cilHome,
   },
   {
     component: CNavTitle,
@@ -14,33 +15,43 @@ const _nav = [
   },
   {
     component: CNavItem,
+    name: 'Bank Transactions',
+    to: '/bank-transactions',
+    icon: cilBank,
+  },
+  {
+    component: CNavItem,
     name: 'Contracts',
     to: '/contracts',
-    icon: cilDescription,
+    icon: cilFile,
   },
   {
     component: CNavItem,
     name: 'KIF',
     to: '/kif',
-    icon: cilListNumbered,
+    icon: cilTag,
   },
   {
     component: CNavItem,
     name: 'KUF',
     to: '/kuf',
-    icon: cilList,
-  },
-  {
-    component: CNavItem,
-    name: 'Bank Transactions',
-    to: '/bank-transactions',
-    icon: cilCalculator,
+    icon: cilTag,
   },
   {
     component: CNavItem,
     name: 'Partners',
     to: '/partners',
     icon: cilBriefcase,
+  },
+  {
+    component: CNavTitle,
+    name: 'Issues',
+  },
+  {
+    component: CNavItem,
+    name: 'Invalid PDFs',
+    to: '/invalid-pdfs',
+    icon: cilWarning,
   },
   {
     component: CNavTitle,
@@ -57,7 +68,7 @@ const _nav = [
         component: CNavItem,
         name: 'Users',
         to: '/admin/users',
-        icon: cilPeople,
+        icon: cilUser,
       },
       {
         component: CNavItem,

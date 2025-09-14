@@ -1,6 +1,6 @@
 export const colors = {
   // Primary Purple Theme
-  primary: '#5b3cc4', // Main buttons, links, focus states
+  primary: '#6C69FF', // Main buttons, links, focus states
   primaryHover: '#553c9a', // Button hover state
   primaryLight: '#8367deff', // Login page left section background
 

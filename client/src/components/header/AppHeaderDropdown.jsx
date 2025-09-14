@@ -14,8 +14,10 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../redux/auth/authSlice';
 import authService from '../../services/authService';
+import { NavLink } from 'react-router-dom';
 import notify from '../../utilis/toastHelper';
 import ConfirmationModal from './../Modals/ConfirmationModal';
+import './AppHeaderDropdown.css';
 
 
 const AppHeaderDropdown = ({ isDarkMode }) => {
@@ -49,7 +51,7 @@ const AppHeaderDropdown = ({ isDarkMode }) => {
           placement="bottom-end"
           className={`pt-0 ${isDarkMode ? 'dropdown-menu-dark' : ''}`}
         >
-          <CDropdownHeader className="bg-body-secondary fw-semibold my-1">Settings</CDropdownHeader>
+          <CDropdownHeader className="fw-semibold my-1">Settings</CDropdownHeader>
           <CDropdownItem as={NavLink} to="/profile">
             <CIcon icon={cilUser} className="me-2" />
             Profile

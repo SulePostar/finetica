@@ -72,11 +72,12 @@ const findById = async (id) => {
     });
 
     if (!invoice) throw new AppError('Purchase invoice not found', 404);
-    return invoice.get({ plain: true });
+    const pdfUrl = await supabaseService.getSignedUrl(BUCKET_NAME, invoice.filename);
+    return { ...invoice.toJSON(), pdfUrl };
   } catch (error) {
     if (error instanceof AppError) throw error;
     console.error('Error in findById:', error);
-    throw new AppError('Failed to fetch invoice', 500);
+    throw new AppError('Failed to fetch invoice' + error, 500);
   }
 };
 
@@ -96,7 +97,7 @@ const approveInvoiceById = async (id, body, userId) => {
   } catch (error) {
     if (error instanceof AppError) throw error;
     console.error('Error in approveInvoiceById:', error);
-    throw new AppError('Failed to approve invoice', 500);
+    throw new AppError('Failed to approve invoice' + error, 500);
   }
 };
 
@@ -122,7 +123,7 @@ const extractData = async (fileBuffer, mimeType) => {
     return data;
   } catch (error) {
     console.error('Error in extractData:', error);
-    throw new AppError('Failed to extract data from document', 500);
+    throw new AppError('Failed to extract data from document' + error, 500);
   }
 };
 
@@ -146,7 +147,7 @@ const createInvoice = async (payload) => {
   } catch (error) {
     await transaction.rollback();
     console.error('Error in createInvoice:', error);
-    throw new AppError('Failed to create invoice', 500);
+    throw new AppError('Failed to create invoice' + error, 500);
   }
 };
 
@@ -180,7 +181,7 @@ const createInvoiceFromAI = async (extractedData, options = {}) => {
     };
   } catch (error) {
     if (!externalTx) await tx.rollback();
-    throw new AppError('Failed to save KUF purchase invoice to database', 500);
+    throw new AppError('Failed to save KUF purchase invoice to database ' + error, 500);
   }
 };
 
@@ -193,42 +194,57 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
     const extractedData = await extractData(buffer, mimeType);
 
     await sequelize.transaction(async (t) => {
-      if (extractedData.isPurchaseInvoice) {
-        await createInvoice(extractedData, { transaction: t });
-      } else {
-        console.log(`File ${unprocessedFileLog.filename} is not a purchase invoice, skipping invoice creation.`);
-      }
-
       await unprocessedFileLog.update(
         {
           isProcessed: true,
           processedAt: new Date(),
-          message: extractedData.isPurchaseInvoice ? 'KUF processed successfully' : 'Not a purchase invoice'
+          message: extractedData.isPurchaseInvoice ? 'KUF processed successfully' : 'Not a purchase invoice',
+          isValid: extractedData.isPurchaseInvoice
         },
         { transaction: t }
       );
+
+      if (extractedData.isPurchaseInvoice) {
+        await createInvoice({ ...extractedData, filename: unprocessedFileLog.filename }, { transaction: t });
+      }
     });
   } catch (error) {
     console.error(`Failed to process log ID ${unprocessedFileLog.id}:`, error);
-    await unprocessedFileLog.update({
-      isProcessed: false,
-      message: error.message
-    });
+    try {
+      await unprocessedFileLog.update({
+        isProcessed: false,
+        message: error.message
+      });
+    }
+    catch (updateError) {
+      console.error(`Also failed to update log ID ${unprocessedFileLog.id}:`, updateError);
+    }
   }
 };
 
 const processUnprocessedFiles = async () => {
   try {
     const unprocessedFileLogs = await KufProcessingLog.findAll({
-      where: { isProcessed: false },
+      where: { isProcessed: false, isValid: true },
     });
 
+    let processed = 0;
+    let failed = 0;
+
     for (const fileLog of unprocessedFileLogs) {
-      await processSingleUnprocessedFile(fileLog);
+      try {
+        await processSingleUnprocessedFile(fileLog);
+        processed++;
+      } catch (err) {
+        failed++;
+        console.error(`❌ Failed processing fileLog ID ${fileLog.id}:`, err);
+      }
     }
+
+    return { processed, failed };
   } catch (error) {
     console.error('Error in processUnprocessedFiles:', error);
-    throw new AppError('Failed to process unprocessed files', 500);
+    throw new AppError('Failed to process unprocessed files' + error, 500);
   }
 };
 
@@ -261,7 +277,7 @@ const updateInvoice = async (id, updatedData) => {
     await transaction.rollback();
     if (error instanceof AppError) throw error;
     console.error('Error in updateInvoice:', error);
-    throw new AppError('Failed to update invoice', 500);
+    throw new AppError('Failed to update invoice' + error, 500);
   }
 };
 

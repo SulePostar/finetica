@@ -7,6 +7,11 @@ const createContractSchema = Joi.object({
         'any.required': 'Partner ID is required',
     }),
 
+    partnerName: Joi.string().trim().optional().messages({
+        'string.base': 'Partner name must be a string',
+        'string.empty': 'Partner name cannot be empty',
+    }),
+
     contractNumber: Joi.string().trim().max(50).required().messages({
         'string.base': 'Contract number must be a string',
         'string.empty': 'Contract number is required',
@@ -58,6 +63,10 @@ const createContractSchema = Joi.object({
         'date.format': 'Signed date must be in ISO format',
         'date.max': 'Signed date cannot be in the future',
         'any.required': 'Signed date is required',
+    }),
+
+    filename: Joi.string().trim().optional().messages({
+        'string.base': 'Filename must be a string',
     }),
 });
 
