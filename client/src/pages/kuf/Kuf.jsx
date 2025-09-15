@@ -8,6 +8,8 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import { useBucketName } from '../../lib/bucketUtils';
 import { activityLogService } from '../../services/activityLogService';
 import './Kuf.styles.css';
+import { useSelector } from 'react-redux';
+import KufService from '../../services/kuf';
 
 const Kuf = () => {
     const navigate = useNavigate();
@@ -15,11 +17,12 @@ const Kuf = () => {
     const sidebarWidth = useSidebarWidth();
     const API_BASE = import.meta.env.VITE_API_BASE_URL;
     const apiEndpoint = useMemo(() => `${API_BASE}/kuf`, [API_BASE]);
+    const user = useSelector(state => state.user.profile);
 
     const handleView = useCallback((id) => {
         navigate(`/kuf/${id}`);
         logActivity({
-            userId: 1,
+            userId: user.id,
             action: 'view',
             entity: 'kuf',
             entityId: id,
@@ -29,17 +32,39 @@ const Kuf = () => {
     const handleApprove = useCallback((id) => {
         navigate(`/kuf/${id}/approve`);
         logActivity({
-            userId: 1,
+            userId: user.id,
             action: 'approve',
             entity: 'kuf',
             entityId: id,
         });
     }, [navigate]);
 
-    const handleDownload = useCallback((id) => {
-        // TODO: Implement download functionality
-        console.log('Download KUF:', id);
-    }, []);
+    const handleDownload = useCallback(async (id) => {
+        try {
+            await logActivity({
+                userId: user.id,
+                action: 'download',
+                entity: 'kuf',
+                entityId: id,
+            });
+
+            const response = await KufService.getKufById(id);
+            const documentData = response.data;
+
+            if (!documentData?.pdfUrl) {
+                console.error("No pdfUrl found for this document");
+                return;
+            }
+            const link = document.createElement("a");
+            link.href = documentData.pdfUrl;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+        } catch (err) {
+            console.error("Download failed:", err);
+        }
+    }, [user?.id]);
 
     const logActivity = async (logData) => {
         try {
