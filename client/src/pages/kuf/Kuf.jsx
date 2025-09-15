@@ -57,10 +57,6 @@ const Kuf = () => {
             }
             const link = document.createElement("a");
             link.href = documentData.pdfUrl;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
         } catch (err) {
             console.error("Download failed:", err);
         }
