@@ -1,6 +1,7 @@
 import { cilFile } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import {
+    CButton,
     CCard,
     CCardBody,
     CCardHeader,
@@ -8,18 +9,16 @@ import {
     CCol,
     CContainer,
     CRow,
-    CSpinner,
 } from '@coreui/react';
 import { useMemo } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
-
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import DefaultLayout from '../../layout/DefaultLayout';
 import DynamicTable from '../../components/Tables/DynamicTable';
-import '../../styles/shared/CommonStyles.css';
 
 const DocumentItemsPage = () => {
     const { id } = useParams();
     const location = useLocation();
+    const navigate = useNavigate();
     const documentType = useMemo(() => {
         const path = location.pathname;
         if (path.includes('/kif/')) return 'kif';
@@ -54,33 +53,29 @@ const DocumentItemsPage = () => {
     ];
 
     const columns = documentType === 'kif' ? kifColumns : kufColumns;
-
-    // Get backUrl from location.state, fallback to details page for this document
     const backUrl = location.state?.backUrl || `/${documentType}/${id}`;
 
     return (
         <DefaultLayout>
-            <div className="body flex-grow-1 px-3 details-page">
-                <CContainer fluid className="details-container">
+            <main>
+                <CContainer>
                     <CRow className="justify-content-center">
-                        <CCol lg={10} className="mb-4">
-                            <CCard className="h-70 shadow-sm detail-card mb-4">
+                        <CCol lg={10}>
+                            <CCard>
                                 <CCardHeader>
-                                    <CCardTitle className="mb-0">
-                                        <CIcon icon={cilFile} className="me-2" aria-hidden="true" />
+                                    <CCardTitle>
+                                        <CIcon icon={cilFile} />
                                         {documentType ? `${documentType.toUpperCase()} Items` : 'Document Items'}
                                     </CCardTitle>
                                 </CCardHeader>
                                 <CCardBody>
-                                    <div className="mb-3">
-                                        <button
-                                            type="button"
-                                            className="btn btn-secondary"
-                                            onClick={() => window.history.back() || window.location.assign(backUrl)}
-                                        >
-                                            Back to Details
-                                        </button>
-                                    </div>
+                                    <CButton
+                                        color="secondary"
+                                        variant="outline"
+                                        onClick={() => navigate(backUrl)}
+                                    >
+                                        Back to Details
+                                    </CButton>
                                     <DynamicTable
                                         title="Invoice Items"
                                         columns={columns}
@@ -92,7 +87,7 @@ const DocumentItemsPage = () => {
                         </CCol>
                     </CRow>
                 </CContainer>
-            </div>
+            </main>
         </DefaultLayout>
     );
 };
