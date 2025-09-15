@@ -427,7 +427,6 @@ const ActivityLogs = () => {
                                                                         {log.entity && (
                                                                             <CBadge color="info">
                                                                                 {log.entity}
-                                                                                {log.entityId && ` #${log.entityId}`}
                                                                             </CBadge>
                                                                         )}
                                                                     </CTableDataCell>

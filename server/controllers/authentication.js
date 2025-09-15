@@ -42,21 +42,6 @@ const logout = async (req, res) => {
       try {
         const token = authHeader.split(' ')[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-        // Log the logout activity
-        await activityLogService.logActivity({
-          userId: decoded.userId,
-          action: 'logout',
-          entity: 'User',
-          entityId: decoded.userId,
-          details: {
-            method: 'token_invalidation',
-            role: decoded.roleName || 'unknown',
-          },
-          ipAddress: req.clientInfo?.ipAddress,
-          userAgent: req.clientInfo?.userAgent,
-          status: 'success',
-        });
       } catch (error) {
         console.log('Token verification failed during logout:', error.message);
       }

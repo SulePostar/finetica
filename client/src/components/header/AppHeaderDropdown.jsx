@@ -17,6 +17,7 @@ import { NavLink } from 'react-router-dom';
 import notify from '../../utilis/toastHelper';
 import ConfirmationModal from './../Modals/ConfirmationModal';
 import './AppHeaderDropdown.css';
+import { activityLogService } from '../../services/activityLogService';
 
 
 const AppHeaderDropdown = ({ isDarkMode }) => {
@@ -26,6 +27,12 @@ const AppHeaderDropdown = ({ isDarkMode }) => {
 
   const handleLogout = async () => {
     try {
+      activityLogService.logActivity({
+        userId: 1,
+        action: 'logout',
+        entity: 'User',
+        entityId: 1,
+      });
       await authService.logout();
       dispatch(logout());
       notify.onSuccess('Logout successful');
