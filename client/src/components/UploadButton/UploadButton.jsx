@@ -4,6 +4,7 @@ import CIcon from '@coreui/icons-react';
 import { cilCloudUpload } from '@coreui/icons';
 import { FileUploadModal } from '../Modals';
 import './UploadButton.css';
+import { activityLogService } from '../../services/activityLogService';
 
 const UploadButton = ({
     bucketName,
@@ -27,6 +28,12 @@ const UploadButton = ({
         if (onUploadSuccess) {
             onUploadSuccess(result);
         }
+        activityLogService.logActivity({
+            userId: 1,
+            action: 'upload',
+            entity: bucketName, //We should get was it from kuf kif or transactions...
+            entityId: 1,
+        });
         setShowUploadModal(false);
     };
 
