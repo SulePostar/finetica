@@ -14,7 +14,6 @@ const contractService = require('../services/contract');
 const bankTransactionService = require('../services/bankTransaction');
 const supabaseService = require('../utils/supabase/supabaseService');
 const AppError = require('../utils/errorHandler');
-const activityLogService = require('./activityLogService');
 const PIPELINES = {
   kif: {
     logModel: KifProcessingLog,
@@ -276,7 +275,7 @@ class UploadedFilesService {
         await logRow.update(
           {
             isValid: false,
-            isProcessed: true,              
+            isProcessed: true,
             processedAt: new Date(),
             message: pipeline.invalidMessage,
           },

@@ -2,7 +2,6 @@
 const { User, Role, UserStatus } = require('../models');
 const AppError = require('../utils/errorHandler');
 const { UserResponseDTO } = require('../dto/user/responses/UserResponseDTO.js');
-const activityLogService = require('./activityLogService');
 
 class UserService {
   async getAllUsers() {
