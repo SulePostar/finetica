@@ -5,6 +5,7 @@ const {
     getActivityLogs,
     exportActivityLogs,
     getActivityStats,
+    logActivity,
 } = require('../controllers/activityLog');
 
 // Get activity logs with filtering and pagination
@@ -15,5 +16,8 @@ router.get('/export', isAuthenticated, exportActivityLogs);
 
 // Get activity statistics for dashboard
 router.get('/stats', isAuthenticated, getActivityStats);
+
+// Log activity
+router.post('/log', isAuthenticated, logActivity);
 
 module.exports = router;

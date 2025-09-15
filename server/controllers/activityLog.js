@@ -91,8 +91,17 @@ const getActivityStats = async (req, res, next) => {
     }
 };
 
+const logActivity = async (req, res, next) => {
+    try {
+        const activity = await activityLogService.logActivity(req.body);
+        res.json(activity);
+    } catch (error) {
+        next(error);
+    }
+};
 module.exports = {
     getActivityLogs,
     exportActivityLogs,
     getActivityStats,
+    logActivity,
 };

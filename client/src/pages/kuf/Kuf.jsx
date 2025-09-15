@@ -6,6 +6,7 @@ import UploadButton from '../../components/UploadButton/UploadButton';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useBucketName } from '../../lib/bucketUtils';
+import { activityLogService } from '../../services/activityLogService';
 import './Kuf.styles.css';
 
 const Kuf = () => {
@@ -17,16 +18,36 @@ const Kuf = () => {
 
     const handleView = useCallback((id) => {
         navigate(`/kuf/${id}`);
+        logActivity({
+            userId: 1,
+            action: 'view',
+            entity: 'kuf',
+            entityId: id,
+        });
     }, [navigate]);
 
     const handleApprove = useCallback((id) => {
         navigate(`/kuf/${id}/approve`);
+        logActivity({
+            userId: 1,
+            action: 'approve',
+            entity: 'kuf',
+            entityId: id,
+        });
     }, [navigate]);
 
     const handleDownload = useCallback((id) => {
         // TODO: Implement download functionality
         console.log('Download KUF:', id);
     }, []);
+
+    const logActivity = async (logData) => {
+        try {
+            await activityLogService.logActivity(logData);
+        } catch (error) {
+            console.error('Failed to log activity:', error);
+        }
+    };
 
     const columns = [
         {
