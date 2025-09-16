@@ -26,7 +26,7 @@ module.exports = (sequelize) => {
                 allowNull: true,
                 field: 'processed_at',
             },
-            errorMessage: {
+            message: {
                 type: DataTypes.TEXT,
                 allowNull: true,
                 field: 'error_message',

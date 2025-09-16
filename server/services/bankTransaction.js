@@ -64,24 +64,25 @@ const getBankTransactionById = async (id) => {
     }
 };
 
-const createBankTransactionFromAI = async (extractedData) => {
-    const t = await sequelize.transaction();
+const createBankTransactionFromAI = async (extractedData, options = {}) => {
+    const t = options.transaction || await sequelize.transaction();
+    const shouldCommit = !options.transaction; // Only commit if we created the transaction
+
     try {
-        const { items, ...bankTransactionData } = extractedData.data || extractedData;
+        const { items, filename, ...bankTransactionData } = extractedData.data || extractedData;
 
         const dataToSave = {
             date: bankTransactionData.date,
             amount: parseFloat(bankTransactionData.amount),
             direction: bankTransactionData.direction,
-            account_number: bankTransactionData.accountNumber,
+            accountNumber: bankTransactionData.accountNumber,
             description: bankTransactionData.description,
-            invoice_id: bankTransactionData.invoiceId ? String(bankTransactionData.invoiceId) : null,
-            partner_id: bankTransactionData.partnerId,
-            category_id: bankTransactionData.categoryId,
-            approved_at: bankTransactionData.approvedAt,
-            approved_by: bankTransactionData.approvedBy,
-            created_at: new Date(),
-            updated_at: new Date()
+            invoiceId: bankTransactionData.invoiceId ? String(bankTransactionData.invoiceId) : null,
+            partnerId: bankTransactionData.partnerId,
+            categoryId: bankTransactionData.categoryId,
+            approvedAt: bankTransactionData.approvedAt,
+            approvedBy: bankTransactionData.approvedBy,
+            fileName: filename
         };
         const document = await BankTransaction.create(dataToSave, { transaction: t });
 
@@ -96,14 +97,18 @@ const createBankTransactionFromAI = async (extractedData) => {
             await BankTransaction.bulkCreate(itemsToCreate, { transaction: t });
         }
 
-        await t.commit();
+        if (shouldCommit) {
+            await t.commit();
+        }
 
         return {
             ...document.toJSON(),
             items: items || []
         };
     } catch (error) {
-        await t.rollback();
+        if (shouldCommit) {
+            await t.rollback();
+        }
         console.error("Database Error:", error);
         throw new AppError('Failed to save bank transaction to database', 500);
     }
