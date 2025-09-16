@@ -1,81 +1,85 @@
-import React, { useState } from 'react';
-import { Table, Button, Modal, Form, Card } from 'react-bootstrap';
-import { capitalizeFirst } from '../../helpers/capitalizeFirstLetter';
+import React, { useState } from "react";
+import {
+    CCard,
+    CCardHeader,
+    CCardBody,
+    CTable,
+    CTableHead,
+    CTableRow,
+    CTableHeaderCell,
+    CTableBody,
+    CTableDataCell,
+    CButton,
+    CForm,
+    CFormInput,
+} from "@coreui/react";
 
 const RolesStatusesTable = ({ title, data, nameKey, onAdd, onDelete }) => {
-    const [showModal, setShowModal] = useState(false);
-    const [newValue, setNewValue] = useState('');
+    const [newValue, setNewValue] = useState("");
 
-    const handleAdd = () => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
         if (newValue.trim()) {
             onAdd({ [nameKey]: newValue });
-            setNewValue('');
-            setShowModal(false);
+            setNewValue("");
         }
     };
 
     return (
-        <Card className="shadow-sm border-0">
-            <Card.Body>
-                <Card.Title>{title}</Card.Title>
-                <Button variant="primary" size="sm" onClick={() => setShowModal(true)}>
-                    Add {title === 'Roles' ? title.slice(0, -1) : title.slice(0, -2)}
-                </Button>
-
-                <div className="table-wrapper" style={{ marginTop: '1rem' }}>
-                    <Table striped bordered hover size="sm" responsive>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>{capitalizeFirst(nameKey)}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {Array.isArray(data) &&
-                                data
-                                    .filter(item => item && item.id)
-                                    .map(item => (
-                                        <tr key={item.id}>
-                                            <td>{item.id}</td>
-                                            <td>{item[nameKey]}</td>
-                                            <td>
-                                                <Button
-                                                    variant="danger"
-                                                    size="sm"
-                                                    onClick={() => onDelete(item.id)}
-                                                >
-                                                    Delete
-                                                </Button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                        </tbody>
-                    </Table>
-                </div>
-
-                <Modal show={showModal} onHide={() => setShowModal(false)}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Add {title.slice(0, -1)}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Form.Control
-                            type="text"
-                            placeholder={`Enter ${nameKey}`}
-                            value={newValue}
-                            onChange={(e) => setNewValue(e.target.value)}
-                        />
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={() => setShowModal(false)}>
-                            Cancel
-                        </Button>
-                        <Button variant="primary" onClick={handleAdd}>
-                            Add
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            </Card.Body>
-        </Card>
+        <CCard className="shadow-sm">
+            <CCardHeader className="d-flex justify-content-between align-items-center">
+                <h5 className="mb-0">{title}</h5>
+                <CForm onSubmit={handleSubmit} className="d-flex gap-2">
+                    <CFormInput
+                        size="sm"
+                        placeholder={`Add ${title}`}
+                        value={newValue}
+                        onChange={(e) => setNewValue(e.target.value)}
+                    />
+                    <CButton type="submit" color="primary" size="sm">
+                        Add
+                    </CButton>
+                </CForm>
+            </CCardHeader>
+            <CCardBody>
+                <CTable striped hover responsive>
+                    <CTableHead>
+                        <CTableRow>
+                            <CTableHeaderCell scope="col">ID</CTableHeaderCell>
+                            <CTableHeaderCell scope="col">{title.slice(0, -1)}</CTableHeaderCell>
+                            <CTableHeaderCell scope="col" className="text-end">
+                                Actions
+                            </CTableHeaderCell>
+                        </CTableRow>
+                    </CTableHead>
+                    <CTableBody>
+                        {data?.length > 0 ? (
+                            data.map((item) => (
+                                <CTableRow key={item.id}>
+                                    <CTableDataCell>{item.id}</CTableDataCell>
+                                    <CTableDataCell>{item[nameKey]}</CTableDataCell>
+                                    <CTableDataCell className="text-end">
+                                        <CButton
+                                            color="danger"
+                                            size="sm"
+                                            onClick={() => onDelete(item.id)}
+                                        >
+                                            Delete
+                                        </CButton>
+                                    </CTableDataCell>
+                                </CTableRow>
+                            ))
+                        ) : (
+                            <CTableRow>
+                                <CTableDataCell colSpan={3} className="text-center text-muted">
+                                    No {title.toLowerCase()} found
+                                </CTableDataCell>
+                            </CTableRow>
+                        )}
+                    </CTableBody>
+                </CTable>
+            </CCardBody>
+        </CCard>
     );
 };
 
