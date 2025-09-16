@@ -1,25 +1,25 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import RolesStatusesTable from "../../Tables/RolesStatusesTable";
-import "../../../styles/shared/CommonStyles.css";
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import RolesStatusesTable from '../../Tables/RolesStatusesTable';
+import '../../../styles/shared/CommonStyles.css';
 import {
     fetchRoles,
     addRole,
     selectRoles,
     deleteRole,
-} from "../../../redux/roles/rolesSlice";
+} from '../../../redux/roles/rolesSlice';
 import {
     fetchStatuses,
     addStatus,
     selectStatuses,
     deleteStatus,
-} from "../../../redux/statuses/statusesSlice";
+} from '../../../redux/statuses/statusesSlice';
 import {
     CRow, CCol,
     CCard,
     CCardHeader,
     CCardBody,
-} from "@coreui/react";
+} from '@coreui/react';
 
 const RoleAndStatusDashboard = () => {
     const dispatch = useDispatch();
@@ -46,7 +46,7 @@ const RoleAndStatusDashboard = () => {
     return (
         <CRow className="user-dashboard-container">
             <CCol>
-                <CCard my-4 shadow-sm border-0 bg-light dark:bg-dark>
+                <CCard>
                     <CCardHeader>
                         <h4 className="user-dashboard-title">Role & Status Management</h4>
                     </CCardHeader>

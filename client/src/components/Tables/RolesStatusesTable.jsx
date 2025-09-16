@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { capitalizeFirst } from '../../helpers/capitalizeFirstLetter';
 import {
     CCard,
     CCardHeader,
@@ -12,7 +13,7 @@ import {
     CButton,
     CForm,
     CFormInput,
-} from "@coreui/react";
+} from '@coreui/react';
 
 const RolesStatusesTable = ({ title, data, nameKey, onAdd, onDelete }) => {
     const [newValue, setNewValue] = useState("");
@@ -32,7 +33,7 @@ const RolesStatusesTable = ({ title, data, nameKey, onAdd, onDelete }) => {
                 <CForm onSubmit={handleSubmit} className="d-flex gap-2">
                     <CFormInput
                         size="sm"
-                        placeholder={`Add ${title}`}
+                        placeholder={`Add ${capitalizeFirst(title)}`}
                         value={newValue}
                         onChange={(e) => setNewValue(e.target.value)}
                     />
@@ -46,7 +47,7 @@ const RolesStatusesTable = ({ title, data, nameKey, onAdd, onDelete }) => {
                     <CTableHead>
                         <CTableRow>
                             <CTableHeaderCell scope="col">ID</CTableHeaderCell>
-                            <CTableHeaderCell scope="col">{title.slice(0, -1)}</CTableHeaderCell>
+                            <CTableHeaderCell scope="col">{title}</CTableHeaderCell>
                             <CTableHeaderCell scope="col" className="text-end">
                                 Actions
                             </CTableHeaderCell>
@@ -57,7 +58,7 @@ const RolesStatusesTable = ({ title, data, nameKey, onAdd, onDelete }) => {
                             data.map((item) => (
                                 <CTableRow key={item.id}>
                                     <CTableDataCell>{item.id}</CTableDataCell>
-                                    <CTableDataCell>{item[nameKey]}</CTableDataCell>
+                                    <CTableDataCell>{capitalizeFirst(item[nameKey])}</CTableDataCell>
                                     <CTableDataCell className="text-end">
                                         <CButton
                                             color="danger"
