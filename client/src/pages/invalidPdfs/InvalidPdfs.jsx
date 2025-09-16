@@ -32,7 +32,7 @@ const InvalidPdfs = () => {
     const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
     const endpoints = {
-        bank: `${API_BASE}/bank-transactions`,
+        bank: `${API_BASE}/transactions/logs/invalid`,
         kif: `${API_BASE}/kif/logs/invalid`,
         kuf: `${API_BASE}/kuf/logs/invalid`,
         contracts: `/contracts/logs/invalid`,
@@ -164,10 +164,10 @@ const InvalidPdfs = () => {
                                 <CCardBody className="p-3 p-md-4">
                                     <CTabContent>
                                         <CTabPane visible={activeKey === 1} className="fade">
-                                            <DynamicTable columns={logColumns} apiEndpoint={endpoints.bank} />
+                                            <DynamicTable columns={logColumns} apiEndpoint={endpoints.bank} onRowClick={handleRowClick} />
                                         </CTabPane>
                                         <CTabPane visible={activeKey === 2} className="fade">
-                                            <DynamicTable columns={logColumns} apiEndpoint={endpoints.kif} onRowClick={handleRowClick}/>
+                                            <DynamicTable columns={logColumns} apiEndpoint={endpoints.kif} onRowClick={handleRowClick} />
                                         </CTabPane>
                                         <CTabPane visible={activeKey === 3} className="fade">
                                             <DynamicTable

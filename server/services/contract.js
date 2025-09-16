@@ -116,7 +116,12 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
     const { isValidContract, ...contractData } = await extractData(buffer, mimeType);
 
     if (isValidContract === false) {
-      await unprocessedFileLog.update({ isValid: false });
+      await unprocessedFileLog.update({ 
+        isValid: false,
+        isProcessed: true,                    
+        processedAt: new Date(),
+        message: 'File is not a valid Contract',
+      });
       return;
     }
 
