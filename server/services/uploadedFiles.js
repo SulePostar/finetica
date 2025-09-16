@@ -43,7 +43,12 @@ const PIPELINES = {
     logModel: BankTransactionProcessingLog,
     extract: (buf, mime) => bankTransactionService.extractData(buf, mime),
     persist: (data, t) => bankTransactionService.createBankTransactionFromAI(data, { transaction: t }),
-    isValid: (data) => true,
+    isValid: (data) => {
+      if (data.is_valid === false) {
+        return false;
+      }
+      return true;
+    },
     successMessage: 'Transaction processed successfully',
     invalidMessage: 'File is not a valid bank transaction',
   },
@@ -218,32 +223,26 @@ class UploadedFilesService {
     if (!pipeline) {
       throw new AppError(`No processing pipeline registered for bucket "${bucketName}"`, 400);
     }
+
+    let extractedData;
+    try {
+      extractedData = await pipeline.extract(file.buffer, file.mimetype);
+    } catch (error) {
+      throw new AppError(`Data extraction failed: ${error.message}`, 500);
+    }
+
+    if (!pipeline.isValid(extractedData)) {
+      throw new AppError(pipeline.invalidMessage, 422);
+    }
+
     const uploadResult = await supabaseService.uploadFile(file, null, bucketName, undefined, false);
     if (!uploadResult.success) {
       if (uploadResult.code === 'DUPLICATE') {
-        return { success: false, message: uploadResult.error };
+        throw new AppError(uploadResult.error, 409);
       }
       throw new AppError(`Upload failed: ${uploadResult.error}`, 400);
     }
     const objectName = uploadResult.fileName;
-
-    const logRow = await pipeline.logModel.create({
-      filename: objectName,
-      isProcessed: false,
-      processedAt: null,
-    });
-
-    let extractedData
-    try {
-      extractedData = await pipeline.extract(file.buffer, file.mimetype);
-    } catch (error) {
-      await logRow.update({
-        isProcessed: false,
-        processedAt: new Date(),
-        message: `Extraction error: ${error.message}`.slice(0, 1000),
-      });
-      throw new AppError(`Data extraction failed: ${error.message}`, 500);
-    }
 
     await sequelize.transaction(async (t) => {
       await UploadedFile.create(
@@ -260,29 +259,18 @@ class UploadedFilesService {
         { transaction: t }
       );
 
-      if (pipeline.isValid(extractedData)) {
-        await pipeline.persist({ ...extractedData, filename: objectName }, t);
-        await logRow.update(
-          {
-            isProcessed: true,
-            processedAt: new Date(),
-            message: pipeline.successMessage,
-            isValid: true,
-          },
-          { transaction: t }
-        );
-      } else {
-        await logRow.update(
-          {
-            isValid: false,
-            isProcessed: true,              
-            processedAt: new Date(),
-            message: pipeline.invalidMessage,
-          },
-          { transaction: t }
-        );
+      await pipeline.persist({ ...extractedData, filename: objectName }, t);
 
-      }
+      await pipeline.logModel.create(
+        {
+          filename: objectName,
+          isProcessed: true,
+          processedAt: new Date(),
+          isValid: true,
+          message: pipeline.successMessage,
+        },
+        { transaction: t }
+      );
     });
 
     return {
