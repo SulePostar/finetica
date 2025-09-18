@@ -4,7 +4,10 @@ const AppError = require('../utils/errorHandler');
 const BANK_TRANSACTIONS_PROMPT = require('../prompts/BankTransactions');
 const bankTransactionSchema = require('../schemas/bankTransactionSchema');
 const { sequelize } = require('../models');
+const supabaseService = require('../utils/supabase/supabaseService');
 const MODEL_NAME = 'gemini-2.5-flash-lite';
+
+const BUCKET_NAME = 'transactions';
 
 
 const getTransactions = async (query = {}) => {
@@ -57,7 +60,14 @@ const getBankTransactionById = async (id) => {
             console.warn(`No BankTransaction found with id: ${id}`);
             return null;
         }
-        return document.toJSON();
+
+        const transactionData = document.toJSON();
+        const pdfUrl = transactionData.fileName ? await supabaseService.getSignedUrl(BUCKET_NAME, transactionData.fileName) : null;
+
+        return {
+            ...transactionData,
+            pdfUrl
+        };
     } catch (error) {
         console.error("Fetch Document Error:", error);
         throw new AppError('Failed to fetch bank transaction document', 500);

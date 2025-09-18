@@ -1,20 +1,27 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import RolesStatusesTable from '../../Tables/RolesStatusesTable.jsx';
+import RolesStatusesTable from '../../Tables/RolesStatusesTable';
+import '../../../styles/shared/CommonStyles.css';
 import {
     fetchRoles,
     addRole,
     selectRoles,
-    deleteRole
-} from '../../../redux/roles/rolesSlice.js';
+    deleteRole,
+} from '../../../redux/roles/rolesSlice';
 import {
     fetchStatuses,
     addStatus,
     selectStatuses,
-    deleteStatus
-} from '../../../redux/statuses/statusesSlice.js';
+    deleteStatus,
+} from '../../../redux/statuses/statusesSlice';
+import {
+    CRow, CCol,
+    CCard,
+    CCardHeader,
+    CCardBody,
+} from '@coreui/react';
 
-const RoleStatusDashboard = () => {
+const RoleAndStatusDashboard = () => {
     const dispatch = useDispatch();
     const roles = useSelector(selectRoles);
     const statuses = useSelector(selectStatuses);
@@ -36,37 +43,40 @@ const RoleStatusDashboard = () => {
         });
     };
 
-
-    const handleDeleteRole = (roleId) => {
-        dispatch(deleteRole(roleId));
-    };
-
-    const handleDeleteStatus = (statusId) => {
-        dispatch(deleteStatus(statusId));
-    };
-
     return (
-        <div className="row mt-4">
-            <div className="col-md-6 mb-4">
-                <RolesStatusesTable
-                    title="Roles"
-                    data={roles}
-                    nameKey="role"
-                    onAdd={handleAddRole}
-                    onDelete={handleDeleteRole}
-                />
-            </div>
-            <div className="col-md-6 mb-4">
-                <RolesStatusesTable
-                    title="Statuses"
-                    data={statuses}
-                    nameKey="status"
-                    onAdd={handleAddStatus}
-                    onDelete={handleDeleteStatus}
-                />
-            </div>
-        </div>
+        <CRow className="user-dashboard-container">
+            <CCol>
+                <CCard>
+                    <CCardHeader>
+                        <h4 className="user-dashboard-title">Role & Status Management</h4>
+                    </CCardHeader>
+                    <CCardBody>
+                        <CRow>
+                            <CCol md={6} className="pr-3">
+                                <RolesStatusesTable
+                                    title="Role"
+                                    data={roles}
+                                    nameKey="role"
+                                    onAdd={handleAddRole}
+                                    onDelete={(id) => dispatch(deleteRole(id))}
+                                />
+                            </CCol>
+                            <CCol md={6} className="pl-3">
+                                <RolesStatusesTable
+                                    title="Status"
+                                    data={statuses}
+                                    nameKey="status"
+                                    onAdd={handleAddStatus}
+                                    onDelete={(id) => dispatch(deleteStatus(id))}
+                                />
+                            </CCol>
+                        </CRow>
+                    </CCardBody>
+                </CCard>
+            </CCol>
+        </CRow>
+
     );
 };
 
-export default RoleStatusDashboard;
+export default RoleAndStatusDashboard;
