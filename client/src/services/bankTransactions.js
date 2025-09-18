@@ -4,6 +4,7 @@ class BankTransactionsService {
     getById(id) {
         return api.get(`/transactions/bank-transaction-data/${id}`);
     }
+
     approve(id, payload) {
         return api.patch(`/transactions/${id}/approve`, payload);
     }

@@ -6,6 +6,7 @@ import UploadButton from '../../components/UploadButton/UploadButton';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useBucketName } from '../../lib/bucketUtils';
+import BankTransactionsService from '../../services/bankTransactions';
 import '../../styles/shared/CommonStyles.css';
 import '../../styles/TablePages.css';
 import './BankTransactions.css';
@@ -26,9 +27,26 @@ const BankTransactions = () => {
     navigate(`/bank-transactions/${id}/approve`);
   }, [navigate]);
 
-  const handleDownload = useCallback((id) => {
-    // TODO: Implement download functionality
-    console.log('Download bank-transactions transaction:', id);
+  const handleDownload = useCallback(async (id) => {
+    try {
+      const response = await BankTransactionsService.getById(id);
+      const documentData = response.data;
+
+      if (!documentData?.pdfUrl) {
+        console.error("No pdfUrl found for this document");
+        return;
+      }
+
+      const link = document.createElement("a");
+      link.href = documentData.pdfUrl;
+      link.download = `bank-transaction-${id}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+    } catch (err) {
+      console.error("Download failed:", err);
+    }
   }, []);
 
   const columns = [
