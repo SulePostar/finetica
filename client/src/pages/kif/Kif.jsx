@@ -7,6 +7,7 @@ import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useBucketName } from '../../lib/bucketUtils';
 import './Kif.css';
+import KifService from '../../services/kif';
 
 const Kif = () => {
   const navigate = useNavigate();
@@ -23,10 +24,27 @@ const Kif = () => {
     navigate(`/kif/${id}/approve`);
   }, [navigate]);
 
-  const handleDownload = useCallback((id) => {
-    // TODO: Implement download functionality
-    console.log('Download KIF:', id);
-  }, []);
+  const handleDownload = useCallback(async (id) => {
+    try {
+            const response = await KifService.getById(id);
+            const documentData = response.data;
+
+            if (!documentData?.pdfUrl) {
+                console.error("No pdfUrl found for this document");
+                return;
+            }
+
+            const link = document.createElement("a");
+            link.href = documentData.pdfUrl;
+            link.download = `kif-${id}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+        } catch (err) {
+            console.error("Download failed:", err);
+        }
+    }, []);
 
   const columns = [
     {
