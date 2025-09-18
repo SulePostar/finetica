@@ -99,15 +99,9 @@ const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess }) => {
       setUploadProgress(100);
 
       if (result.success) {
-        if (result.isValid) {
-          notify.onSuccess(
-            `File "${finalFileName}" uploaded and processed successfully to ${bucketName.toUpperCase()} bucket!`
-          );
-        } else {
-          notify.onWarning(
-            `File "${finalFileName}" uploaded and processed successfully to ${bucketName.toUpperCase()} bucket but contains invalid data. Check the Invalid PDFs section for details.`
-          );
-        }
+        notify.onSuccess(
+          `File "${finalFileName}" uploaded and processed successfully to ${bucketName.toUpperCase()} bucket!`
+        );
 
         if (onUploadSuccess) {
           onUploadSuccess(result);
