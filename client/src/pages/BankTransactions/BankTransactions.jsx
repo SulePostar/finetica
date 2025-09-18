@@ -29,7 +29,7 @@ const BankTransactions = () => {
 
   const handleDownload = useCallback(async (id) => {
     try {
-      const response = await BankTransactionsService.getBankTransactionById(id);
+      const response = await BankTransactionsService.getById(id);
       const documentData = response.data;
 
       if (!documentData?.pdfUrl) {
