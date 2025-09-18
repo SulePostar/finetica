@@ -1,7 +1,7 @@
 import React from 'react';
-import DefaultLayout from '../../layout/DefaultLayout.jsx';
-import RoleAndStatusDashboard from '../../components/Admin/RoleAndStatusDashboard/RoleAndStatusDashboard.jsx';
-import { useSidebarWidth } from '../../hooks/useSidebarWidth.js';
+import DefaultLayout from '../../layout/DefaultLayout';
+import RoleAndStatusDashboard from '../../components/Admin/RoleAndStatusDashboard/RoleAndStatusDashboard';
+import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import '../../styles/shared/CommonStyles.css';
 import '../../styles/TablePages.css';
 
@@ -17,7 +17,11 @@ const RoleStatusDashboard = () => {
                     width: `calc(100vw - ${sidebarWidth}px)`,
                 }}
             >
-                <div className="table-content-wrapper">
+                <div className="role-status-dashboard-page"
+                    style={{
+                        width: `calc(100vw - ${sidebarWidth}px)`,
+                        transition: 'margin-left 0.3s ease, width 0.3s ease',
+                    }}>
                     <RoleAndStatusDashboard />
                 </div>
             </div>
