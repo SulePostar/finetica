@@ -3,8 +3,6 @@ const BANK_TRANSACTIONS_PROMPT =
 
 FIRST: Analyze the document to determine if it is a bank transaction statement or bank account statement. Set isBankTransaction to true if it's a bank transaction document, false otherwise.
 
-If isBankTransaction is false (not a bank transaction), set ALL other fields to null.
-If isBankTransaction is true (is a bank transaction), extract all the fields defined in the provided schema.
 
 BANK TRANSACTION IDENTIFICATION:
 A bank transaction document typically contains:
@@ -23,7 +21,6 @@ This is clearly NOT a bank transaction if it contains:
 - VAT registration numbers and tax calculations (clearly an invoice)
 - Purchase/Sales invoice headers or terminology (clearly KIF/KUF)
 
-CRITICAL: If you see invoice-like structure (seller info, buyer info, line items, VAT amounts, invoice numbers), set isBankTransaction to false regardless of any other content.
 
 Rules:
 1. ALL fields defined in the schema MUST always appear in the response.
