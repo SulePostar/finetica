@@ -79,7 +79,7 @@ const createBankTransactionFromAI = async (extractedData, options = {}) => {
     const shouldCommit = !options.transaction; // Only commit if we created the transaction
 
     try {
-        const { items, filename, ...bankTransactionData } = extractedData.data || extractedData;
+        const { items, filename, isBankTransaction, ...bankTransactionData } = extractedData.data || extractedData;
 
         const dataToSave = {
             date: bankTransactionData.date,
@@ -233,6 +233,16 @@ const processBankTransaction = async (fileBuffer, mimeType, fileName, model = "g
     try {
         const extractedData = await extractData(fileBuffer, mimeType);
 
+        // Validate that the document is actually a bank transaction
+        const { isBankTransaction, ...bankTransactionData } = extractedData?.data || extractedData;
+
+        console.log(`File: ${fileName}, isBankTransaction: ${isBankTransaction}`);
+
+        if (isBankTransaction === false) {
+            throw new AppError('Uploaded file is not a valid bank transaction document. Please upload a bank statement or transaction record.', 400);
+        }
+
+
         const bankTransaction = await createBankTransactionFromAI(extractedData);
         await processUnprocessedFiles(fileName);
         return {
@@ -241,6 +251,9 @@ const processBankTransaction = async (fileBuffer, mimeType, fileName, model = "g
         };
     } catch (error) {
         console.error('Error: ', error);
+        if (error instanceof AppError) {
+            throw error; // Re-throw AppError with original message and status
+        }
         throw new AppError('Failed to process Bank Transaction document', 500);
 
     }

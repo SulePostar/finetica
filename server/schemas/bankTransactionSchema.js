@@ -3,6 +3,7 @@ const { Type } = require("@google/genai");
 const bankTransactionSchema = {
     type: Type.OBJECT,
     properties: {
+        isBankTransaction: { type: Type.BOOLEAN },
         date: { anyOf: [{ type: Type.DATE }, { type: Type.STRING }, { type: Type.NULL }] },
         amount: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
         direction: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
@@ -16,6 +17,7 @@ const bankTransactionSchema = {
         approvedBy: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] }
     },
     required: [
+        'isBankTransaction',
         'date',
         'amount',
         'direction',
