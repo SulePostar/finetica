@@ -1,11 +1,16 @@
 const { Sequelize } = require('sequelize');
-const config = require('./config.js')['development'];
+const environment = process.env.NODE_ENV || 'development';
+const config = require('./config.js')[environment];
 
-const sequelize = new Sequelize(config.database, config.username, config.password, {
-  host: config.host,
-  dialect: config.dialect,
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  dialect: 'postgres',
   logging: config.logging,
-  port: process.env.DB_PORT || 5432, // Default to 5432 if not specified in .env
+  dialectOptions: {
+    ssl: process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging' ? {
+      require: true,
+      rejectUnauthorized: false
+    } : false
+  }
 });
 
 const connectToDatabase = async () => {

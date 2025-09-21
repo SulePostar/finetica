@@ -4,7 +4,10 @@ const AppError = require('../utils/errorHandler');
 const BANK_TRANSACTIONS_PROMPT = require('../prompts/BankTransactions');
 const bankTransactionSchema = require('../schemas/bankTransactionSchema');
 const { sequelize } = require('../models');
+const supabaseService = require('../utils/supabase/supabaseService');
 const MODEL_NAME = 'gemini-2.5-flash-lite';
+
+const BUCKET_NAME = 'transactions';
 
 
 const getTransactions = async (query = {}) => {
@@ -57,31 +60,39 @@ const getBankTransactionById = async (id) => {
             console.warn(`No BankTransaction found with id: ${id}`);
             return null;
         }
-        return document.toJSON();
+
+        const transactionData = document.toJSON();
+        const pdfUrl = transactionData.fileName ? await supabaseService.getSignedUrl(BUCKET_NAME, transactionData.fileName) : null;
+
+        return {
+            ...transactionData,
+            pdfUrl
+        };
     } catch (error) {
         console.error("Fetch Document Error:", error);
         throw new AppError('Failed to fetch bank transaction document', 500);
     }
 };
 
-const createBankTransactionFromAI = async (extractedData) => {
-    const t = await sequelize.transaction();
+const createBankTransactionFromAI = async (extractedData, options = {}) => {
+    const t = options.transaction || await sequelize.transaction();
+    const shouldCommit = !options.transaction; // Only commit if we created the transaction
+
     try {
-        const { items, ...bankTransactionData } = extractedData.data || extractedData;
+        const { items, filename, ...bankTransactionData } = extractedData.data || extractedData;
 
         const dataToSave = {
             date: bankTransactionData.date,
             amount: parseFloat(bankTransactionData.amount),
             direction: bankTransactionData.direction,
-            account_number: bankTransactionData.accountNumber,
+            accountNumber: bankTransactionData.accountNumber,
             description: bankTransactionData.description,
-            invoice_id: bankTransactionData.invoiceId ? String(bankTransactionData.invoiceId) : null,
-            partner_id: bankTransactionData.partnerId,
-            category_id: bankTransactionData.categoryId,
-            approved_at: bankTransactionData.approvedAt,
-            approved_by: bankTransactionData.approvedBy,
-            created_at: new Date(),
-            updated_at: new Date()
+            invoiceId: bankTransactionData.invoiceId ? String(bankTransactionData.invoiceId) : null,
+            partnerId: bankTransactionData.partnerId,
+            categoryId: bankTransactionData.categoryId,
+            approvedAt: bankTransactionData.approvedAt,
+            approvedBy: bankTransactionData.approvedBy,
+            fileName: filename
         };
         const document = await BankTransaction.create(dataToSave, { transaction: t });
 
@@ -96,14 +107,18 @@ const createBankTransactionFromAI = async (extractedData) => {
             await BankTransaction.bulkCreate(itemsToCreate, { transaction: t });
         }
 
-        await t.commit();
+        if (shouldCommit) {
+            await t.commit();
+        }
 
         return {
             ...document.toJSON(),
             items: items || []
         };
     } catch (error) {
-        await t.rollback();
+        if (shouldCommit) {
+            await t.rollback();
+        }
         console.error("Database Error:", error);
         throw new AppError('Failed to save bank transaction to database', 500);
     }
