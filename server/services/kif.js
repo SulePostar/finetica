@@ -35,7 +35,7 @@ const processSingleUnprocessedKifFile = async (fileLog) => {
         if (isInvoice === false) {
             await fileLog.update({
                 isValid: false,
-                isProcessed: true,                    
+                isProcessed: true,
                 processedAt: new Date(),
                 message: 'File is not a valid sales invoice (KIF)',
             });
@@ -346,6 +346,16 @@ const getKifItemsById = async (id) => {
     }
 };
 
+/**
+ * Update a single KIF item by ID
+ */
+async function updateKifItem(itemId, updateData) {
+    const item = await SalesInvoiceItem.findByPk(itemId);
+    if (!item) throw new AppError('KIF item not found', 404);
+    await item.update(updateData);
+    return item;
+}
+
 module.exports = {
     getKifs,
     getKifById,
@@ -357,4 +367,5 @@ module.exports = {
     extractKifData,
     processSingleUnprocessedKifFile,
     processUnprocessedKifFiles,
+    updateKifItem,
 };

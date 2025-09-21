@@ -302,6 +302,16 @@ const updateInvoice = async (id, updatedData) => {
   }
 };
 
+/**
+ * Update a single KUF item by ID
+ */
+async function updateKufItem(itemId, updateData) {
+  const item = await PurchaseInvoiceItem.findByPk(itemId);
+  if (!item) throw new AppError('KUF item not found', 404);
+  await item.update(updateData);
+  return item;
+}
+
 module.exports = {
   listInvoices,
   findById,
@@ -311,5 +321,6 @@ module.exports = {
   extractData,
   processUnprocessedFiles,
   updateInvoice,
-  getKufItemsById
+  getKufItemsById,
+  updateKufItem,
 };
