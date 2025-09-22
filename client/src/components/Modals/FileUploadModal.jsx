@@ -100,8 +100,9 @@ const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess }) => {
 
       if (result.success) {
         notify.onSuccess(
-          `File "${finalFileName}" uploaded successfully to ${bucketName.toUpperCase()} bucket!`
+          `File "${finalFileName}" uploaded and processed successfully to ${bucketName.toUpperCase()} bucket!`
         );
+
         if (onUploadSuccess) {
           onUploadSuccess(result);
         }
@@ -160,9 +161,8 @@ const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess }) => {
 
             {/* File Drop Area */}
             <div
-              className={`file-input-area ${dragOver ? 'drag-over' : ''} ${
-                selectedFile ? 'has-file' : ''
-              }`}
+              className={`file-input-area ${dragOver ? 'drag-over' : ''} ${selectedFile ? 'has-file' : ''
+                }`}
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
