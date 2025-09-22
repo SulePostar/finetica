@@ -67,7 +67,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
 
   return (
     <CHeader
-      position="sticky"
+      position="fixed"
       className={`px-4 d-flex align-items-center h-64 app-header`}
       style={{
         marginLeft: `${!isMobile && sidebarShow ? (sidebarUnfoldable ? 56 : 240) : 0}px`,
