@@ -56,8 +56,10 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    const authEndpoints = ['/auth/login', '/auth/register', '/auth/forgot-password', '/auth/reset-password'];
+    const isAuthEndpoint = authEndpoints.some(endpoint => originalRequest.url.includes(endpoint));
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });

@@ -1,9 +1,12 @@
+const { get } = require('../routes/kif');
 const {
     getKifs,
     getKifById,
     createKif,
     processKif,
     approveKif,
+    getKifItemsById,
+    updateKifItem: updateKifItemService,
 } = require('../services/kif');
 
 const getKifData = async (req, res, next) => {
@@ -31,6 +34,18 @@ const getKif = async (req, res, next) => {
         res.json(result);
     } catch (error) {
         next(error);
+    }
+};
+
+const getKifItems = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const items = await getKifItemsById(parseInt(id));
+        const result = { data: items, total: items.length };
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch KIF items' });
     }
 };
 
@@ -72,10 +87,24 @@ const approveKifInvoice = async (req, res, next) => {
     }
 };
 
+// Update a single KIF item
+const updateKifItem = async (req, res, next) => {
+    try {
+        const { itemId } = req.params;
+        const updateData = req.body;
+        const item = await updateKifItemService(itemId, updateData);
+        res.json(item);
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     getKifData,
     getKif,
     createKifInvoice,
     processKifInvoice,
     approveKifInvoice,
+    getKifItems,
+    updateKifItem,
 };

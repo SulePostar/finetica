@@ -3,6 +3,7 @@ const router = express.Router();
 const {
     getKifData,
     getKif,
+    getKifItems,
     createKifInvoice,
     processKifInvoice,
     approveKifInvoice,
@@ -15,12 +16,16 @@ const {
     kifInvoiceUpdateSchema,
 } = require('../schemas/kifJoiSchema');
 const { getInvalidKifs, getKifLog } = require('../controllers/kifProcessingLog');
+const { updateKifItem } = require('../controllers/kif');
 
 router.get('/logs/invalid', isAuthenticated, getInvalidKifs);
-router.get('/logs/:id',   isAuthenticated, getKifLog);
+router.get('/logs/:id', isAuthenticated, getKifLog);
 
 router.get('/', getKifData);
 router.get('/:id', getKif);
+router.get('/:id/items', getKifItems);
+// Update a single KIF item
+router.put('/items/:itemId', updateKifItem);
 router.post('/',
     isAuthenticated,
     validate(kifInvoiceCreateSchema),
