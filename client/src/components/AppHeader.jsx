@@ -17,16 +17,26 @@ import './AppHeader.css';
 import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
 import '../scss/style.scss';
 
-//Returns route and label for a detail page, or null if not a detail page
+// Returns route and label for a detail or item details page
 const getDetailPageConfig = (pathname) => {
-  if (pathname.startsWith('/partners/') && pathname !== '/partners') {
-    return { route: '/partners', label: 'PARTNERS' };
+  // Item details page: /kif/:id/items or /kuf/:id/items
+  const kifItemMatch = pathname.match(/^\/kif\/(\d+)\/items/);
+  if (kifItemMatch) {
+    return { route: `/kif/${kifItemMatch[1]}`, label: 'KIF Invoice' };
   }
+  const kufItemMatch = pathname.match(/^\/kuf\/(\d+)\/items/);
+  if (kufItemMatch) {
+    return { route: `/kuf/${kufItemMatch[1]}`, label: 'KUF Invoice' };
+  }
+  // Invoice details page
   if (pathname.startsWith('/kuf/') && pathname !== '/kuf') {
     return { route: '/kuf', label: 'KUF' };
   }
   if (pathname.startsWith('/kif/') && pathname !== '/kif') {
     return { route: '/kif', label: 'KIF' };
+  }
+  if (pathname.startsWith('/partners/') && pathname !== '/partners') {
+    return { route: '/partners', label: 'PARTNERS' };
   }
   if (pathname.startsWith('/bank-transactions/') && pathname !== '/bank-transactions') {
     return { route: '/bank-transactions', label: 'Bank Transactions' };
@@ -67,7 +77,7 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
 
   return (
     <CHeader
-      position="sticky"
+      position="fixed"
       className={`px-4 d-flex align-items-center h-64 app-header`}
       style={{
         marginLeft: `${!isMobile && sidebarShow ? (sidebarUnfoldable ? 56 : 240) : 0}px`,

@@ -44,12 +44,7 @@ const PIPELINES = {
     extract: (buf, mime) => bankTransactionService.extractData(buf, mime),
     persist: (data, t) =>
       bankTransactionService.createBankTransactionFromAI(data, { transaction: t }),
-    isValid: (data) => {
-      if (data.is_valid === false) {
-        return false;
-      }
-      return true;
-    },
+    isValid: (data) => data.isBankTransaction !== false,
     successMessage: 'Transaction processed successfully',
     invalidMessage: 'File is not a valid bank transaction',
   },

@@ -90,7 +90,7 @@ const Partner = () => {
     { name: 'Type', selector: row => row.type, sortable: true, width: '150px' },
     { name: 'Name', selector: row => row.name, sortable: true, wrap: true, width: '200px' },
     { name: 'Short Name', selector: row => row.shortName, sortable: true, width: '180px' },
-    { name: 'Country Code', selector: row => row.countryCode, sortable: true, width: '150px' },
+    { name: 'Country Code', selector: row => row.countryCode, sortable: true, width: '200px' },
     { name: 'VAT Number', selector: row => row.vatNumber, sortable: true, width: '180px' },
     { name: 'Tax ID', selector: row => row.taxId, sortable: true, width: '180px' },
     { name: 'Registration No.', selector: row => row.registrationNumber, sortable: true, width: '200px' },
@@ -98,7 +98,7 @@ const Partner = () => {
       name: 'VAT Registered',
       selector: row => row.is_vat_registered,
       sortable: true,
-      width: '160px',
+      width: '200px',
       cell: row => (
         <span className={`status-badge ${row.is_vat_registered ? 'active' : 'inactive'}`}>
           {row.is_vat_registered ? 'Yes' : 'No'}
@@ -107,14 +107,14 @@ const Partner = () => {
     },
     { name: 'Address', selector: row => row.address, sortable: true, wrap: true, width: '250px' },
     { name: 'City', selector: row => row.city, sortable: true, width: '180px' },
-    { name: 'Postal Code', selector: row => row.postalCode, sortable: true, width: '150px' },
+    { name: 'Postal Code', selector: row => row.postalCode, sortable: true, width: '200px' },
     { name: 'Email', selector: row => row.email, sortable: true, width: '220px' },
     { name: 'Phone', selector: row => row.phone, sortable: true, width: '180px' },
     { name: 'IBAN', selector: row => row.iban, sortable: true, width: '250px' },
     { name: 'Bank Name', selector: row => row.bankName, sortable: true, width: '200px' },
     { name: 'SWIFT Code', selector: row => row.swiftCode, sortable: true, width: '160px' },
-    { name: 'Default Currency', selector: row => row.defaultCurrency, sortable: true, width: '160px' },
-    { name: 'Language Code', selector: row => row.languageCode, sortable: true, width: '160px' },
+    { name: 'Default Currency', selector: row => row.defaultCurrency, sortable: true, width: '200px' },
+    { name: 'Language Code', selector: row => row.languageCode, sortable: true, width: '200px' },
     { name: 'Payment Terms', selector: row => row.paymentTerms, sortable: true, wrap: true, width: '200px' },
     {
       name: 'Status',
