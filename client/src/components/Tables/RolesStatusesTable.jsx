@@ -48,19 +48,7 @@ const RolesStatusesTable = ({ title, data, nameKey, onAdd, onDelete }) => {
     return (
         <CCard className="management-card shadow-sm">
             <div className="management-header d-flex justify-content-between align-items-center">
-                <h5 className="mb-0">{title}</h5>
-                <CForm onSubmit={handleSubmit} className="d-flex gap-2">
-                    <CFormInput
-                        size="sm"
-                        className="add-input"
-                        placeholder={`Add ${capitalizeFirst(title)}`}
-                        value={newValue}
-                        onChange={(e) => setNewValue(e.target.value)}
-                    />
-                    <CButton type="submit" size="sm" className="add-btn">
-                        Add
-                    </CButton>
-                </CForm>
+                <h5 className="mb-0 management-title">{title}</h5>
             </div>
             <CCardBody>
                 <CTable hover responsive className="modern-table">
@@ -120,6 +108,18 @@ const RolesStatusesTable = ({ title, data, nameKey, onAdd, onDelete }) => {
                         )}
                     </CTableBody>
                 </CTable>
+                <CForm onSubmit={handleSubmit} className="d-flex gap-2">
+                    <CFormInput
+                        size="sm"
+                        className="add-input"
+                        placeholder={`Add ${capitalizeFirst(title)}`}
+                        value={newValue}
+                        onChange={(e) => setNewValue(e.target.value)}
+                    />
+                    <CButton type="submit" size="sm" className="add-btn">
+                        Add
+                    </CButton>
+                </CForm>
             </CCardBody>
             {/* Confirmation Modal for Delete */}
             <ConfirmationModal
