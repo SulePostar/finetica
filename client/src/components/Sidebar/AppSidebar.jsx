@@ -56,6 +56,7 @@ const AppSidebar = ({ isDarkMode }) => {
     }
   }, [sidebarShow]);
 
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 1024 && sidebarShow) {
@@ -69,7 +70,7 @@ const AppSidebar = ({ isDarkMode }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, [sidebarShow, dispatch]);
 
-  // Use custom hook for filtered navigation
+
   const filteredNav = useFilteredNavigation(isHovered);
 
   return (
