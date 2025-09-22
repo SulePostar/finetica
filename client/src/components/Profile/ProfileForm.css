@@ -15,6 +15,7 @@
 }
 
 .form-container-card {
+  margin-top: 64px;
   transition: transform 0.3s ease-in-out;
   position: relative;
   width: 100%;
