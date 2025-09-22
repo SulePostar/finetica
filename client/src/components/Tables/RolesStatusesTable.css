@@ -37,12 +37,12 @@
 }
 
 [data-coreui-theme='dark'] {
-  --card-bg: #1f2937;
+  --card-bg: #292f3d;
   --card-border: #374151;
   --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
   --card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
 
-  --header-bg: #111827;
+  --header-bg: #212631;
   --header-border: #374151;
 
   --text-primary: #f3f4f6;
@@ -63,11 +63,11 @@
   --btn-delete-hover-border: #f87171;
   --btn-delete-hover-color: #fee2e2;
 
-  --table-head-bg: #111827;
+  --table-head-bg: #212631;
   --table-head-color: #f3f4f6;
-  --table-row-bg: #1f2937; /* Dark mode row */
-  --table-row-striped: #252f3f; /* Dark mode stripe */
-  --table-row-hover: #2a3446; /* Dark mode hover */
+  --table-row-bg: #212631; /* Dark mode row */
+  --table-row-striped: #212631; /* Dark mode stripe */
+  --table-row-hover: #212631; /* Dark mode hover */
 
   --status-bg: #4f46e5;
   --status-color: #e0e7ff;
@@ -165,11 +165,11 @@
 }
 
 .modern-table tbody tr {
-  background: var(--table-row-bg, transparent); /* fallback */
+  background: transparent; /* fallback */
 }
 
 .modern-table tbody tr:nth-child(even) {
-  background: var(--table-row-striped);
+  background: transparent;
 }
 
 .modern-table tbody tr:hover {
