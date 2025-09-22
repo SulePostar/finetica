@@ -7,6 +7,7 @@ import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useBucketName } from '../../lib/bucketUtils';
 import './Contract.css';
+
 const Contract = () => {
   const navigate = useNavigate();
   const sidebarWidth = useSidebarWidth();
@@ -34,7 +35,8 @@ const Contract = () => {
     [navigate]
   );
 
-  const handleDownload = useCallback((id) => { }, []);
+  const handleDownload = useCallback((id) => {
+  }, []);
 
   const columns = [
     {
@@ -130,7 +132,6 @@ const Contract = () => {
         </span>
       ),
     },
-
     {
       name: 'Actions',
       width: '140px',
@@ -141,7 +142,6 @@ const Contract = () => {
           onApprove={() => handleApprove(row.id)}
           onDownload={() => handleDownload(row.id)}
           isApproved={Boolean(row.approvedAt || row.approvedBy || row.status === 'approved')}
-          {...(row.approvedAt === null && { onApprove: () => handleApprove(row.id) })}
         />
       ),
       ignoreRowClick: true,
@@ -153,26 +153,28 @@ const Contract = () => {
       <div
         className="table-page-outer"
         style={{
-          marginLeft: sidebarWidth,
+          left: sidebarWidth,
           width: `calc(100vw - ${sidebarWidth}px)`,
         }}
       >
-        <DynamicTable
-          title="Contracts"
-          columns={columns}
-          apiEndpoint={apiEndpoint}
-          uploadButton={
-            <UploadButton
-              bucketName={bucketName}
-              onUploadSuccess={() => {
-                if (refetchFunction) {
-                  refetchFunction(); // refresha tabelu
-                }
-              }}
-            />
-          }
-          onRefetch={handleRefetchCallback}
-        />
+        <div className="contract-table-scroll contract-table-responsive">
+          <DynamicTable
+            title="Contracts"
+            columns={columns}
+            apiEndpoint={apiEndpoint}
+            uploadButton={
+              <UploadButton
+                bucketName={bucketName}
+                onUploadSuccess={() => {
+                  if (refetchFunction) {
+                    refetchFunction(); // refresh the table
+                  }
+                }}
+              />
+            }
+            onRefetch={handleRefetchCallback}
+          />
+        </div>
       </div>
     </DefaultLayout>
   );
