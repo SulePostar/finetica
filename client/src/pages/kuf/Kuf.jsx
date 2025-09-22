@@ -156,8 +156,9 @@ const Kuf = () => {
             <div
                 className="table-page-outer kuf-table-outer"
                 style={{
+                    marginTop: '30px',
                     marginLeft: sidebarWidth,
-                    width: `calc(100vw - ${sidebarWidth}px)`,
+                    width: `calc(95vw - ${sidebarWidth}px)`
                 }}
             >
                 <DynamicTable

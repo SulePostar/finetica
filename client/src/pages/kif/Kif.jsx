@@ -26,25 +26,25 @@ const Kif = () => {
 
   const handleDownload = useCallback(async (id) => {
     try {
-            const response = await KifService.getById(id);
-            const documentData = response.data;
+      const response = await KifService.getById(id);
+      const documentData = response.data;
 
-            if (!documentData?.pdfUrl) {
-                console.error("No pdfUrl found for this document");
-                return;
-            }
+      if (!documentData?.pdfUrl) {
+        console.error("No pdfUrl found for this document");
+        return;
+      }
 
-            const link = document.createElement("a");
-            link.href = documentData.pdfUrl;
-            link.download = `kif-${id}.pdf`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+      const link = document.createElement("a");
+      link.href = documentData.pdfUrl;
+      link.download = `kif-${id}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-        } catch (err) {
-            console.error("Download failed:", err);
-        }
-    }, []);
+    } catch (err) {
+      console.error("Download failed:", err);
+    }
+  }, []);
 
   const columns = [
     {
@@ -155,8 +155,9 @@ const Kif = () => {
       <div
         className="table-page-outer kif-table-outer"
         style={{
+          marginTop: '30px',
           marginLeft: sidebarWidth,
-          width: `calc(100vw - ${sidebarWidth}px)`,
+          width: `calc(95vw - ${sidebarWidth}px)`
         }}
       >
         <DynamicTable

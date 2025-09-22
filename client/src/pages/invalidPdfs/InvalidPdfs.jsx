@@ -110,8 +110,9 @@ const InvalidPdfs = () => {
             <div
                 className="table-page-outer"
                 style={{
+                    marginTop: '50px',
                     marginLeft: sidebarWidth,
-                    width: `calc(100vw - ${sidebarWidth}px)`,
+                    width: `calc(95vw - ${sidebarWidth}px)`
                 }}
             >
                 <CRow className="justify-content-center w-100 mx-0">

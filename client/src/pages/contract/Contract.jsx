@@ -153,8 +153,9 @@ const Contract = () => {
       <div
         className="table-page-outer"
         style={{
+          marginTop: '30px',
           marginLeft: sidebarWidth,
-          width: `calc(100vw - ${sidebarWidth}px)`,
+          width: `calc(95vw - ${sidebarWidth}px)`
         }}
       >
         <DynamicTable

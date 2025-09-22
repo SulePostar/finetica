@@ -143,8 +143,9 @@ const BankTransactions = () => {
       <div
         className="table-page-outer bank-transactions-table-outer"
         style={{
+          marginTop: '30px',
           marginLeft: sidebarWidth,
-          width: `calc(100vw - ${sidebarWidth}px)`,
+          width: `calc(95vw - ${sidebarWidth}px)`
         }}
       >
         <DynamicTable
