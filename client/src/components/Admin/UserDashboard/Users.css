@@ -1,72 +1,20 @@
-.user-dashboard-container {
-  max-width: 1000px;
-  margin: 100px auto;
-  width: 100%;
+.avatar-circle {
+  width: 32px;
+  height: 32px;
+  background: #6c5ce7;
+  font-size: 14px;
 }
 
-/* Loading state */
-.user-dashboard-loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 400px;
-}
-
-/* Dashboard title */
 .user-dashboard-title {
-  margin-bottom: 20px;
   font-size: 28px;
-  font-weight: 700;
   color: var(--cui-primary);
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* Email cell styles */
-.user-dashboard-email-cell {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 250px;
+.user-fullname {
+  font-size: 14px;
 }
 
-/* Actions container */
-.user-dashboard-actions-container {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-  justify-content: flex-start;
-  width: 100%;
-}
-
-/* Action buttons */
-.user-dashboard-edit-btn {
-  padding: 6px 10px;
-}
-
-.user-dashboard-delete-btn {
-  padding: 6px 10px;
-}
-
-/* Status dropdown wrapper */
-.user-dashboard-status-dropdown-wrapper {
-  width: 50%;
-}
-
-/* Role dropdown wrapper */
-.user-dashboard-role-dropdown-wrapper {
-  width: 50%;
-}
-
-/* Dropdown styles */
-.user-dashboard-status-dropdown,
-.user-dashboard-role-dropdown {
-  width: 100%;
-  padding: 4px 6px;
-  font-size: 13px;
-}
-
-/* Search filters container */
-.user-dashboard-search-filters {
-  margin-bottom: 1rem;
-  width: 100%;
+.user-email {
+  font-size: 14px;
 }

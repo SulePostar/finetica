@@ -3,13 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Card, Spinner } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import makeCustomStyles from '../../Tables/DynamicTable.styles';
-import CIcon from '@coreui/icons-react';
-import { cilUser, cilPencil, cilTrash } from '@coreui/icons';
 import { capitalizeFirst } from '../../../helpers/capitalizeFirstLetter';
+import ActionsDropdown from '../../Tables/Dropdown/ActionsDropdown';
+import { formatDateTime } from '../../../helpers/formatDate';
+import ViewUserModal from '../../Modals/ViewUserModal/ViewUserModal';
 
 import './Users.css';
-import { colors } from '../../../styles/colors';
-
 import {
   fetchUsers,
   updateUser,
@@ -48,6 +47,7 @@ import notify from '../../../utilis/toastHelper';
 const Users = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.profile);
+  const [showViewModal, setShowViewModal] = useState(false);
 
   const users = useSelector(selectUsers);
   const loading = useSelector(selectUsersLoading);
@@ -160,17 +160,33 @@ const Users = () => {
     setShowQuickChangeModal(false);
   }, [dispatch, selectedUser, quickChangeData]);
 
+  const roleOptions = useMemo(() => {
+    if (rolesLoading) return [{ value: "loading", label: "Loading..." }];
+
+    return roles
+      .filter(r => r.id && r.role)
+      .map(r => ({
+        value: r.id.toString(),
+        label: capitalizeFirst(r.role),
+      }));
+  }, [roles, rolesLoading]);
+
   const columns = useMemo(
     () => [
       {
         name: 'Name',
         selector: (row) => row.fullName,
         sortable: true,
-        width: '15%',
+        width: '25%',
         cell: (row) => (
-          <div>
-            {row.fullName}
-            {isNewUser(row) && <span className="badge bg-success ms-2">New User</span>}
+          <div className="d-flex align-items-center gap-2">
+            <div className="avatar-circle d-flex align-items-center me-2 
+            justify-content-center rounded-circle fw-semibold text-white">
+              {row.fullName?.charAt(0) || "U"}
+            </div>
+            <div className="d-flex flex-column">
+              <div className="user-fullname fw-semibold">{row.fullName}</div>
+            </div>
           </div>
         ),
       },
@@ -179,115 +195,58 @@ const Users = () => {
         selector: (row) => row.email,
         sortable: true,
         width: '25%',
-        cell: (row) => (
-          <div className="user-dashboard-email-cell" title={row.email}>
-            {row.email}
-          </div>
-        ),
+        cell: (row) => <div className="user-email">{row.email}</div>,
       },
       {
         name: 'Role',
         selector: (row) => getRoleName(row, roles),
         sortable: true,
-        width: '12.5%',
+        width: '10%',
+        cell: (row) => (
+          <span className="badge bg-light text-dark">{getRoleName(row, roles)}</span>
+        ),
       },
       {
         name: 'Status',
         selector: (row) => row.statusId,
         sortable: true,
-        width: '12.5%',
+        width: '15%',
         cell: (row) => getStatusBadge(row.statusId, statuses),
       },
       {
+        name: 'Last Active',
+        selector: (row) => row.lastLoginAt ? formatDateTime(row.lastLoginAt) : "—",
+        sortable: true,
+        width: '15%',
+      },
+      {
         name: 'Actions',
-        selector: (row) => row.id,
-        sortable: false,
-        width: '35%',
-        cell: (row) => {
-          const isSelf = row.id === currentUser?.id;
-          return (
-            <div className="user-dashboard-actions-container">
-              <div className="user-dashboard-status-dropdown-wrapper">
-                <select
-                  className="form-select form-select-sm user-dashboard-status-dropdown"
-                  value={row.statusId}
-                  onChange={(e) => handleQuickStatusChange(row.id, parseInt(e.target.value))}
-                  title="Change Status"
-                  disabled={changingStatus || statusesLoading}
-                >
-                  {statusesLoading ? (
-                    <option>Loading...</option>
-                  ) : (
-                    statuses.map((status) => (
-                      <option key={status.id} value={status.id}>
-                        {capitalizeFirst(status.status)}
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
-              <div className="user-dashboard-role-dropdown-wrapper">
-                <select
-                  className="form-select form-select-sm user-dashboard-role-dropdown"
-                  value={row.roleId || row.role_id || ''}
-                  onChange={(e) => handleQuickRoleChange(row.id, parseInt(e.target.value))}
-                  title="Change Role"
-                  disabled={changingRole || rolesLoading}
-                >
-                  <option value="">No Role</option>
-                  {rolesLoading ? (
-                    <option>Loading...</option>
-                  ) : (
-                    roles.map((role) => (
-                      <option key={role.id} value={role.id}>
-                        {capitalizeFirst(role.role)}
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
-              <button
-                className="btn btn-sm user-dashboard-edit-btn"
-                onClick={() => handleEditUser(row)}
-                disabled={updatingUser || deletingUser}
-                title="Edit User"
-                style={{ backgroundColor: colors.primary }}
-              >
-                <CIcon icon={cilPencil} />
-              </button>
-              <button
-                className="btn bg-danger btn-sm user-dashboard-delete-btn"
-                onClick={() => handleDeleteUser(row)}
-                disabled={isSelf || updatingUser || deletingUser}
-                title="Delete User"
-              >
-                <CIcon icon={cilTrash} />
-              </button>
-            </div>
-          );
-        },
-      }
+        width: '10%',
+        cell: (row) => (
+          <ActionsDropdown
+            row={row}
+            // onView={handleView}
+            onEdit={() => handleEditUser(row)}
+            onDelete={() => handleDeleteUser(row)}
+          />
+        ),
+        ignoreRowClick: true,
+      },
     ],
     [
       currentUser,
       updatingUser,
       deletingUser,
-      changingStatus,
-      changingRole,
       roles,
       statuses,
-      rolesLoading,
-      statusesLoading,
       handleEditUser,
-      handleQuickStatusChange,
-      handleQuickRoleChange,
       handleDeleteUser,
     ]
   );
 
   if (loading) {
     return (
-      <div className="user-dashboard-loading" data-testid="loading-spinner">
+      <div className="d-flex justify-content-center align-items-center" data-testid="loading-spinner">
         <Spinner animation="border" variant="primary" />
       </div>
     );
@@ -295,34 +254,19 @@ const Users = () => {
 
   return (
     <div>
-      <div className="user-dashboard-container">
+      <div className="p-3">
         <Card className="my-4 shadow-sm border-0 bg-light dark:bg-dark">
           <Card.Body>
-            <Card.Title className="user-dashboard-title">
+            <Card.Title className="user-dashboard-title mb-3 fw-bold">
               User Management Dashboard
             </Card.Title>
 
             {/* Search and Filters */}
-            <div className="user-dashboard-search-filters">
+            <div className='mb-3'>
               <SearchFilters
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
-                filters={[
-                  {
-                    name: "role",
-                    label: "All Roles",
-                    options: [
-                      { value: "", label: "All Roles" },
-                      ...(rolesLoading
-                        ? [{ value: "loading", label: "Loading..." }]
-                        : roles.map((role) => ({
-                          value: role.id.toString(),
-                          label: capitalizeFirst(role.role),
-                        }))
-                      ),
-                    ],
-                  },
-                ]}
+                filters={[{ name: "role", label: "All Roles", options: roleOptions }]}
                 filterValues={{ role: filterRole }}
                 onFilterChange={(name, value) => {
                   if (name === "role") setFilterRole(value);
@@ -343,6 +287,10 @@ const Users = () => {
               responsive
               customStyles={customStyles}
               dense
+              onRowClicked={(row) => {
+                setSelectedUser(row);
+                setShowViewModal(true);
+              }}
             />
           </Card.Body>
         </Card>
@@ -377,8 +325,21 @@ const Users = () => {
         />
       )}
 
-      {/* Quick Change Modal */}
       {selectedUser && (
+        // In Users component
+        <ViewUserModal
+          visible={showViewModal}
+          onClose={() => setShowViewModal(false)}
+          user={selectedUser}
+          onEdit={handleEditUser}
+          onDelete={handleDeleteUser}
+          roles={roles}
+          statuses={statuses}
+        />
+      )}
+
+      {/* Quick Change Modal */}
+      {/* {selectedUser && (
         <QuickChangeModal
           visible={showQuickChangeModal}
           onCancel={() => setShowQuickChangeModal(false)}
@@ -389,7 +350,7 @@ const Users = () => {
           loading={changingStatus === selectedUser?.id || changingRole === selectedUser?.id}
           error={error}
         />
-      )}
+      )} */}
     </div>
   );
 };

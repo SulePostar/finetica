@@ -1,0 +1,31 @@
+.avatar-circle-view-model {
+    width: 50px;
+    height: 50px;
+    background: #6c5ce7 !important;
+    font-size: 14px;
+}
+
+.btn-bordered {
+    background-color: white;
+    border: 1px solid #ccc;
+}
+
+.btn-bordered:hover {
+    background-color: #f5f5f5;
+    border-color: #f5f5f5;
+    color: #8367deff;
+}
+
+/* In your ViewUserModal.css */
+.text-email {
+    color: #8367deff !important;
+    text-decoration: none !important;
+}
+
+.text-email:hover {
+    text-decoration: underline !important;
+}
+
+.text-header {
+    padding: 0 !important;
+}
