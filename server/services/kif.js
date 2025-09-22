@@ -35,7 +35,7 @@ const processSingleUnprocessedKifFile = async (fileLog) => {
         if (isInvoice === false) {
             await fileLog.update({
                 isValid: false,
-                isProcessed: true,                    
+                isProcessed: true,
                 processedAt: new Date(),
                 message: 'File is not a valid sales invoice (KIF)',
             });
@@ -308,7 +308,10 @@ const getKifById = async (id) => {
         return {
             ...invoiceData,
             customerName: invoiceData.BusinessPartner?.name || null,
-            pdfUrl
+            pdfUrl,
+            items: Array.isArray(invoiceData.SalesInvoiceItems)
+                ? invoiceData.SalesInvoiceItems
+                : []
         };
     } catch (error) {
         throw new AppError('Failed to fetch KIF by ID', 500);
@@ -333,14 +336,39 @@ const processKif = async (fileBuffer, mimeType, model = "gemini-2.5-flash-lite")
         throw new AppError('Failed to process KIF document', 500);
     }
 };
+
+const getKifItemsById = async (id) => {
+    try {
+        const items = await SalesInvoiceItem.findAll({
+            where: { invoiceId: id },
+            order: [['orderNumber', 'ASC']]
+        });
+        return items.map(item => item.toJSON());
+    } catch (error) {
+        throw new AppError('Failed to fetch KIF items by ID', 500);
+    }
+};
+
+/**
+ * Update a single KIF item by ID
+ */
+async function updateKifItem(itemId, updateData) {
+    const item = await SalesInvoiceItem.findByPk(itemId);
+    if (!item) throw new AppError('KIF item not found', 404);
+    await item.update(updateData);
+    return item;
+}
+
 module.exports = {
     getKifs,
     getKifById,
     createKif,
     processKif,
+    getKifItemsById,
     createKifFromAI,
     approveKif,
     extractKifData,
     processSingleUnprocessedKifFile,
     processUnprocessedKifFiles,
+    updateKifItem,
 };

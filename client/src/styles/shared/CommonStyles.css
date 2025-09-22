@@ -1,3 +1,7 @@
+:root {
+  --btn-hover: #5850a6;
+}
+
 /* Common Page Layout Styles */
 .page-header {
   margin-bottom: 2rem;
@@ -155,6 +159,20 @@
   color: white;
   font-weight: bold;
   margin: 0 auto 1rem;
+}
+
+.details-button {
+  background-color: var(--cui-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.details-button:hover {
+  background-color: var(--btn-hover);
 }
 
 /* Animation for successful upload */

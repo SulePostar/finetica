@@ -10,6 +10,7 @@ const KUF_PROMPT = require('../prompts/Kuf');
 const purchaseInvoiceSchema = require('../schemas/kufSchema');
 const AppError = require('../utils/errorHandler');
 const supabaseService = require('../utils/supabase/supabaseService');
+const { get } = require('../routes/kif');
 
 const MODEL_NAME = 'gemini-2.5-flash';
 const BUCKET_NAME = 'kuf';
@@ -72,12 +73,32 @@ const findById = async (id) => {
     });
 
     if (!invoice) throw new AppError('Purchase invoice not found', 404);
+    const invoiceData = invoice.toJSON();
     const pdfUrl = await supabaseService.getSignedUrl(BUCKET_NAME, invoice.filename);
-    return { ...invoice.toJSON(), pdfUrl };
+    // Normalize items array
+    return {
+      ...invoiceData,
+      items: invoiceData.PurchaseInvoiceItems || [],
+      pdfUrl
+    };
   } catch (error) {
     if (error instanceof AppError) throw error;
     console.error('Error in findById:', error);
     throw new AppError('Failed to fetch invoice' + error, 500);
+  }
+};
+
+
+const getKufItemsById = async (id) => {
+  try {
+    const items = await PurchaseInvoiceItem.findAll({
+      where: { invoiceId: id },
+      order: [['orderNumber', 'ASC']]
+    });
+    return items.map(item => item.toJSON());
+  } catch (error) {
+    console.error('Error in getKufItemsById:', error);
+    throw new AppError('Failed to fetch KUF items by ID', 500);
   }
 };
 
@@ -281,6 +302,16 @@ const updateInvoice = async (id, updatedData) => {
   }
 };
 
+/**
+ * Update a single KUF item by ID
+ */
+async function updateKufItem(itemId, updateData) {
+  const item = await PurchaseInvoiceItem.findByPk(itemId);
+  if (!item) throw new AppError('KUF item not found', 404);
+  await item.update(updateData);
+  return item;
+}
+
 module.exports = {
   listInvoices,
   findById,
@@ -290,4 +321,6 @@ module.exports = {
   extractData,
   processUnprocessedFiles,
   updateInvoice,
+  getKufItemsById,
+  updateKufItem,
 };
