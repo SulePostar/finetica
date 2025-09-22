@@ -10,7 +10,6 @@ import KufService from '../../services/kuf';
 import { activityLogService } from '../../services/activityLogService';
 import './Kuf.styles.css';
 import { useSelector } from 'react-redux';
-import KufService from '../../services/kuf';
 
 const Kuf = () => {
   const navigate = useNavigate();
@@ -23,7 +22,7 @@ const Kuf = () => {
   const handleView = useCallback(
     (id) => {
       navigate(`/kuf/${id}`);
-      logActivity({
+      activityLogService.logActivity({
         userId: user.id,
         action: 'view',
         entity: 'kuf',
@@ -36,7 +35,7 @@ const Kuf = () => {
   const handleApprove = useCallback(
     (id) => {
       navigate(`/kuf/${id}/approve`);
-      logActivity({
+      activityLogService.logActivity({
         userId: user.id,
         action: 'approve',
         entity: 'kuf',
@@ -48,6 +47,12 @@ const Kuf = () => {
 
   const handleDownload = useCallback(async (id) => {
     try {
+      await activityLogService.logActivity({
+        userId: user.id,
+        action: 'download',
+        entity: 'kuf',
+        entityId: id,
+      });
       const response = await KufService.getKufById(id);
       const documentData = response.data;
 
