@@ -63,6 +63,8 @@ const DocumentDetails = () => {
       ? 'Approve Document'
       : `View ${documentType?.toUpperCase() || 'Document'} Details`;
 
+  console.log('KIF items:', documentType, Array.isArray(formData?.items), formData?.items);
+
   return (
     <DefaultLayout>
       <CContainer fluid className="details-container">

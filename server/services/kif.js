@@ -308,7 +308,10 @@ const getKifById = async (id) => {
         return {
             ...invoiceData,
             customerName: invoiceData.BusinessPartner?.name || null,
-            pdfUrl
+            pdfUrl,
+            items: Array.isArray(invoiceData.SalesInvoiceItems)
+                ? invoiceData.SalesInvoiceItems
+                : []
         };
     } catch (error) {
         throw new AppError('Failed to fetch KIF by ID', 500);
