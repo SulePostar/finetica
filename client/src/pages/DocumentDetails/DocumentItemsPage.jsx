@@ -1,5 +1,5 @@
 import { CButton } from '@coreui/react';
-import { cilArrowLeft } from '@coreui/icons';
+import { cilArrowLeft, cilPencil } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import { useMemo, useState } from 'react';
 import EditItemModal from '../../components/Modals/EditItemModal';
@@ -61,8 +61,8 @@ const DocumentItemsPage = () => {
         {
             name: 'Actions',
             cell: row => (
-                <CButton size="sm" color="primary" onClick={() => openEditModal(row, type)}>
-                    Edit
+                <CButton size="sm" color="secondary" onClick={() => openEditModal(row, type)}>
+                    <CIcon icon={cilPencil} size="sm" />
                 </CButton>
             ),
             ignoreRowClick: true,
@@ -127,25 +127,6 @@ const DocumentItemsPage = () => {
     return (
         <DefaultLayout>
             <main>
-                <CButton
-                    color="primary"
-                    style={{
-                        backgroundColor: '#5850a6',
-                        border: 'none',
-                        borderRadius: '50%',
-                        width: '40px',
-                        height: '40px',
-                        padding: 0,
-                        marginBottom: '20px',
-                        marginLeft: '50px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
-                    onClick={() => navigate(backUrl)}
-                >
-                    <CIcon icon={cilArrowLeft} size="lg" style={{ color: 'white' }} />
-                </CButton>
                 <DynamicTable
                     title="Invoice Items"
                     columns={columns}

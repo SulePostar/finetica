@@ -84,11 +84,6 @@
 
 /* Detail card styles */
 
-.details-page {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
 .details-container {
   margin-top: 0 !important;
   padding-top: 0 !important;
@@ -136,9 +131,14 @@
 }
 
 /* Page layout styles */
-.details-page {
-  background-color: var(--cui-body-bg);
-  min-height: 100vh;
+.details-button {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.details-button:hover {
+  background-color: var(--cui-primary-hover);
+  border-color: var(--cui-primary-hover);
 }
 
 .details-container {

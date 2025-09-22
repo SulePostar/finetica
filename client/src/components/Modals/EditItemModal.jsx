@@ -2,8 +2,6 @@ import React from 'react';
 import ConfirmationModal from './ConfirmationModal';
 
 const EditItemModal = ({ visible, onCancel, onConfirm, formData, onFormChange, formFields, loading = false, error = '' }) => {
-    // Patch: pass readOnly prop to ConfirmationModal fields
-    // ConfirmationModal will need to respect the readOnly property on each field
     return (
         <ConfirmationModal
             visible={visible}
