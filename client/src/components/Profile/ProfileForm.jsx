@@ -1,24 +1,24 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import axios from 'axios';
 import {
+  CButton,
   CForm,
+  CFormInput,
+  CFormLabel,
   CInputGroup,
   CInputGroupText,
-  CFormInput,
-  CButton,
-  CFormLabel,
 } from '@coreui/react';
+import axios from 'axios';
+import { useCallback, useEffect, useState } from 'react';
 import { Card } from 'react-bootstrap';
-import { formatDateTime } from '../../helpers/formatDate.js';
+import { useDispatch, useSelector } from 'react-redux';
 import { capitalizeFirst } from '../../helpers/capitalizeFirstLetter.js';
-import { setUserProfile } from '../../redux/user/userSlice';
-import ProfilePhotoUpload from '../Register/ProfilePhotoUpload/ProfilePhotoUpload';
-import FileUploadService from '../../services/fileUploadService';
-import notify from '../../utilis/toastHelper';
-import { colors } from '../../styles/colors';
-import './ProfileForm.css'
+import { formatDateTime } from '../../helpers/formatDate.js';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth'; // <-- NEW
+import { setUserProfile } from '../../redux/user/userSlice';
+import FileUploadService from '../../services/fileUploadService';
+import { colors } from '../../styles/colors';
+import notify from '../../utilis/toastHelper';
+import ProfilePhotoUpload from '../Register/ProfilePhotoUpload/ProfilePhotoUpload';
+import './ProfileForm.css';
 const url = import.meta.env.VITE_API_BASE_URL
 
 const ProfileForm = () => {
@@ -70,7 +70,6 @@ const ProfileForm = () => {
 
         if (uploadResult.success && uploadResult.url) {
           profileImageUrl = uploadResult.url;
-          notify.onSuccess('Profile image selected successfully!');
         } else {
           notify.onWarning('Profile image upload failed, profile saved without new image.');
         }
