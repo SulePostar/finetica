@@ -56,11 +56,12 @@ const AppSidebar = ({ isDarkMode }) => {
     }
   }, [sidebarShow]);
 
-  //logic for automatic sidebar closure on screens <= 1024px
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 1024 && sidebarShow) {
         dispatch({ type: 'set', sidebarShow: false });
+      } else if (window.innerWidth > 1024 && !sidebarShow) {
+        dispatch({ type: 'set', sidebarShow: true });
       }
     };
 
@@ -68,7 +69,7 @@ const AppSidebar = ({ isDarkMode }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, [sidebarShow, dispatch]);
 
-
+  // Use custom hook for filtered navigation
   const filteredNav = useFilteredNavigation(isHovered);
 
   return (
