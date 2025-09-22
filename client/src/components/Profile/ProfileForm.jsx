@@ -177,13 +177,10 @@ const ProfileForm = () => {
                 <CFormLabel className="label-in-input-group-text">Email</CFormLabel>
               </CInputGroupText>
               <CFormInput
-                type='email'
-                name='email'
                 placeholder='Email'
-                className={isEditable ? "form-input" : "form-input-disabled"}
+                className="form-input-disabled"
                 value={formData.email || ''}
-                onChange={handleChange}
-                disabled={!isEditable}
+                disabled
               />
             </CInputGroup>
 
