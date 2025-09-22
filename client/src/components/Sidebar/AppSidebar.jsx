@@ -56,11 +56,13 @@ const AppSidebar = ({ isDarkMode }) => {
     }
   }, [sidebarShow]);
 
-  //logic for automatic sidebar closure on screens <= 1024px
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 1024 && sidebarShow) {
         dispatch({ type: 'set', sidebarShow: false });
+      } else if (window.innerWidth > 1024 && !sidebarShow) {
+        dispatch({ type: 'set', sidebarShow: true });
       }
     };
 
