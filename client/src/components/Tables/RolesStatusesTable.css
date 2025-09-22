@@ -1,0 +1,203 @@
+/* ===== CSS VARIABLES ===== */
+:root {
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  --card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  --header-bg: #f9fafb;
+  --header-border: #f1f3f5;
+
+  --text-primary: #111827;
+  --text-muted: #6b7280;
+
+  --input-bg: #ffffff; /* Light mode input */
+  --text-primary: #111827; /* Light mode text */
+  --input-border: #d1d5db;
+  --input-focus-border: #6366f1;
+  --input-focus-shadow: rgba(99, 102, 241, 0.15);
+  --input-placeholder: #9ca3af; /* Light mode placeholder */
+
+  --btn-add-bg: #10b981;
+  --btn-add-hover: #059669;
+  --btn-delete-color: #dc2626;
+  --btn-delete-border: #fca5a5;
+  --btn-delete-hover-bg: #fee2e2;
+  --btn-delete-hover-border: #ef4444;
+  --btn-delete-hover-color: #b91c1c;
+
+  --table-head-bg: #f3f4f6;
+  --table-head-color: #374151;
+  --table-row-bg: #ffffff; /* Light mode default */
+  --table-row-striped: #f8fafc; /* Light mode stripe */
+  --table-row-hover: #f9fafb; /* Light mode hover */
+
+  --status-bg: #e0e7ff;
+  --status-color: #ffffff;
+}
+
+[data-coreui-theme='dark'] {
+  --card-bg: #1f2937;
+  --card-border: #374151;
+  --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  --card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+
+  --header-bg: #111827;
+  --header-border: #374151;
+
+  --text-primary: #f3f4f6;
+  --text-muted: #9ca3af;
+
+  --input-bg: #1f2937; /* Dark mode input */
+  --input-border: #4b5563;
+  --input-focus-border: #818cf8;
+  --input-focus-shadow: rgba(129, 140, 248, 0.3);
+  --input-placeholder: #9ca3af; /* Dark mode placeholder (lighter than dark bg) */
+
+  --btn-add-bg: #059669;
+  --btn-add-hover: #047857;
+
+  --btn-delete-color: #f87171;
+  --btn-delete-border: #b91c1c;
+  --btn-delete-hover-bg: #7f1d1d;
+  --btn-delete-hover-border: #f87171;
+  --btn-delete-hover-color: #fee2e2;
+
+  --table-head-bg: #111827;
+  --table-head-color: #f3f4f6;
+  --table-row-bg: #1f2937; /* Dark mode row */
+  --table-row-striped: #252f3f; /* Dark mode stripe */
+  --table-row-hover: #2a3446; /* Dark mode hover */
+
+  --status-bg: #4f46e5;
+  --status-color: #e0e7ff;
+}
+
+/* ===== Card Container ===== */
+.management-card {
+  border-radius: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+
+.management-card:hover {
+  box-shadow: var(--card-hover-shadow);
+}
+
+/* ===== Section Header ===== */
+.management-header {
+  font-weight: 600;
+  color: var(--text-primary);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--header-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--header-bg);
+}
+
+/* ===== Add Input + Button ===== */
+.add-input {
+  border-radius: 8px;
+  border: 1px solid var(--input-border);
+  padding: 0.35rem 0.75rem;
+  font-size: 0.9rem;
+  background: var(--input-bg); /* <-- Use variable */
+  color: var(--text-primary); /* <-- Text color variable */
+}
+
+.add-input::placeholder {
+  color: var(--input-placeholder); /* Use a variable */
+  opacity: 1; /* Make sure it’s visible */
+}
+
+.add-input:focus {
+  border-color: var(--input-focus-border);
+  box-shadow: 0 0 0 2px var(--input-focus-shadow);
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  /* Ensure text remains visible */
+  outline: none;
+}
+
+.add-btn {
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.85rem;
+  background-color: var(--btn-add-bg);
+  border: none;
+  color: #fff;
+}
+
+.add-btn:hover {
+  background-color: var(--btn-add-hover);
+}
+
+/* ===== Modern Table ===== */
+/* ===== Modern Table ===== */
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.modern-table thead th {
+  font-weight: 600;
+  color: var(--table-head-color);
+  background: var(--table-head-bg);
+  border-bottom: 2px solid var(--card-border);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 0.75rem;
+}
+
+.modern-table tbody td {
+  vertical-align: middle;
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--header-border);
+  background: inherit; /* Important for dark mode inheritance */
+}
+
+.modern-table tbody tr {
+  background: var(--table-row-bg, transparent); /* fallback */
+}
+
+.modern-table tbody tr:nth-child(even) {
+  background: var(--table-row-striped);
+}
+
+.modern-table tbody tr:hover {
+  background: var(--table-row-hover);
+}
+/* ===== Status Badges ===== */
+.status-badge {
+  font-size: 0.75rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  background-color: var(--status-bg);
+  color: var(--status-color);
+}
+
+/* ===== Delete Button ===== */
+.delete-btn {
+  border-radius: 6px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--btn-delete-color);
+  border: 1px solid var(--btn-delete-border);
+  background: transparent;
+}
+
+.delete-btn:hover {
+  background-color: var(--btn-delete-hover-bg);
+  border-color: var(--btn-delete-hover-border);
+  color: var(--btn-delete-hover-color);
+}
