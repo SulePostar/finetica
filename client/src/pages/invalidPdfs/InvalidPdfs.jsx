@@ -18,7 +18,8 @@ import {
     CTabContent,
     CTabPane,
 } from '@coreui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { InvalidPdfDetails } from '../../components/InvalidPdfDetails/InvalidPdfDetails';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
@@ -26,7 +27,7 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import './InvalidPdfs.css';
 
 const InvalidPdfs = () => {
-    const [activeKey, setActiveKey] = useState(1);
+    const [searchParams, setSearchParams] = useSearchParams();
     const sidebarWidth = useSidebarWidth();
 
     const API_BASE = import.meta.env.VITE_API_BASE_URL;
@@ -35,8 +36,11 @@ const InvalidPdfs = () => {
         bank: `${API_BASE}/transactions/logs/invalid`,
         kif: `${API_BASE}/kif/logs/invalid`,
         kuf: `${API_BASE}/kuf/logs/invalid`,
-        contracts: `/contracts/logs/invalid`,
+        contracts: `${API_BASE}/contracts/logs/invalid`,
     }
+
+    const initialTab = Number(searchParams.get("tab")) || 1;
+    const [activeKey, setActiveKey] = useState(initialTab);
 
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
@@ -45,6 +49,11 @@ const InvalidPdfs = () => {
         setSelectedRow({ ...row, type: activeKey });
         setModalOpen(true);
     };
+
+    // ✅ Update URL when tab changes
+    useEffect(() => {
+        setSearchParams({ tab: activeKey });
+    }, [activeKey, setSearchParams]);
 
     const logColumns = [
         {
