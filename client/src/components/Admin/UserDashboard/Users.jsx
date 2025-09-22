@@ -7,6 +7,8 @@ import { capitalizeFirst } from '../../../helpers/capitalizeFirstLetter';
 import ActionsDropdown from '../../Tables/Dropdown/ActionsDropdown';
 import { formatDateTime } from '../../../helpers/formatDate';
 import ViewUserModal from '../../Modals/ViewUserModal/ViewUserModal';
+import { useColorModes } from '@coreui/react';
+
 
 import './Users.css';
 import {
@@ -48,6 +50,9 @@ const Users = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.profile);
   const [showViewModal, setShowViewModal] = useState(false);
+
+  const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme');
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const users = useSelector(selectUsers);
   const loading = useSelector(selectUsersLoading);
@@ -103,6 +108,22 @@ const Users = () => {
   }, [users, searchTerm, filterRole]);
 
   const customStyles = useMemo(() => makeCustomStyles(), []);
+
+  const checkDarkMode = useCallback(() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const dark = colorMode === 'dark' || (colorMode === 'auto' && media.matches);
+    setIsDarkMode(dark);
+
+    document.documentElement.setAttribute('data-coreui-theme', dark ? 'dark' : 'light');
+    document.body.classList.toggle('dark-mode', dark);
+  }, [colorMode]);
+
+  useEffect(() => {
+    checkDarkMode();
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    media.addEventListener('change', checkDarkMode);
+    return () => media.removeEventListener('change', checkDarkMode);
+  }, [checkDarkMode]);
 
   const handleRefresh = useCallback(() => {
     dispatch(fetchUsers());
@@ -225,7 +246,6 @@ const Users = () => {
         cell: (row) => (
           <ActionsDropdown
             row={row}
-            // onView={handleView}
             onEdit={() => handleEditUser(row)}
             onDelete={() => handleDeleteUser(row)}
           />
@@ -335,6 +355,7 @@ const Users = () => {
           onDelete={handleDeleteUser}
           roles={roles}
           statuses={statuses}
+          isDarkMode={isDarkMode}
         />
       )}
 

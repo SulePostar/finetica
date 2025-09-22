@@ -12,11 +12,16 @@ import { getRoleName, getStatusBadge } from '../../../utilis/formatters';
 import { formatDateTime } from '../../../helpers/formatDate';
 import './ViewUserModal.css';
 
-const ViewUserModal = ({ visible, onClose, user, onEdit, onDelete, roles, statuses }) => {
+const ViewUserModal = ({ visible, onClose, user, onEdit, onDelete, roles, statuses, isDarkMode }) => {
     if (!user) return null;
 
     return (
-        <CModal visible={visible} onClose={onClose} size="lg" alignment="center" className="view-user-modal">
+        <CModal
+            visible={visible}
+            onClose={onClose}
+            size="lg"
+            alignment="center"
+        >
             <CModalHeader className="position-relative">
                 <div className="row w-100 align-items-center">
                     {/* Left Column: Avatar + Name */}
@@ -26,8 +31,13 @@ const ViewUserModal = ({ visible, onClose, user, onEdit, onDelete, roles, status
                         </div>
                         <div>
                             <div className="d-flex align-items-center gap-2">
-                                <CModalTitle className="mb-0 fw-semibold">{user.fullName}</CModalTitle>
-                                {getStatusBadge(user.statusId, statuses)}
+                                <CModalTitle className='mb-0 fw-semibold'>
+                                    {user.fullName}
+                                </CModalTitle>
+                                <div className="status-badge">
+                                    {getStatusBadge(user.statusId, statuses)}
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -44,44 +54,45 @@ const ViewUserModal = ({ visible, onClose, user, onEdit, onDelete, roles, status
                 </div>
             </CModalHeader>
 
-
             <CModalBody>
                 <div className="row">
                     {/* Left Column - Contact Information */}
                     <div className="col-md-6">
-                        <CBadge className="fs-6 text-header mb-3 text-dark">
+                        <CBadge className='fs-6 text-header'>
                             Contact Information
                         </CBadge>
-                        <div className="small text-muted mb-1">Email</div>
+                        <div className='small mb-1'>Email</div>
 
                         <CButton
-                            className="p-0 text-primary text-email"
+                            className='p-0 text-email'
                             onClick={() => window.location = `mailto:${user.email}`}
                         >
                             {user.email}
                         </CButton>
                     </div>
 
-
                     {/* Right Column - Account Details */}
                     <div className="col-md-6">
-                        <CBadge className="fs-6 text-header mb-3 text-dark">
+                        <CBadge className='fs-6 text-header'>
                             Account Details
                         </CBadge>
-                        <div className="small text-muted mb-1">Last Active</div>
-                        <div>{user.lastLoginAt ? formatDateTime(user.lastLoginAt) : "—"}</div>
+                        <div className={`small mb-1 ${isDarkMode ? 'text-light' : 'text-muted'}`}>Last Active</div>
+                        <div className={isDarkMode ? 'text-light' : ''}>
+                            {user.lastLoginAt ? formatDateTime(user.lastLoginAt) : "—"}
+                        </div>
                     </div>
                 </div>
 
                 {/* Role Information */}
                 <div className="row mt-4">
                     <div className="col-12">
-                        {/* <h6 className="fw-semibold mb-3">Role Information</h6> */}
-                        <CBadge className="fs-6 text-header mb-3 text-dark">
+                        <CBadge className='fs-6 text-header'>
                             Role Information
                         </CBadge>
-                        <div className="d-flex align-items-center gap-2">
-                            <CBadge className="badge bg-light-gray text-dark">{getRoleName(user, roles)}</CBadge>
+                        <div className="d-flex align-items-center mt-1">
+                            <CBadge className="role-badge">
+                                {getRoleName(user, roles)}
+                            </CBadge>
                         </div>
                     </div>
                 </div>
