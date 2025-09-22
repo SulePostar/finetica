@@ -18,6 +18,9 @@ const DocumentInfo = ({
 }) => {
     const fields = useMemo(() => DOCUMENT_FIELD_CONFIGS[type] || DOCUMENT_FIELD_CONFIGS.kuf, [type]);
 
+    // Debug log
+    console.log('DocumentInfo type:', type, 'fields:', fields);
+
     // Helper function to get nested property values
     const getNestedValue = (obj, path) => {
         return path.split('.').reduce((current, key) => current?.[key], obj);
@@ -79,7 +82,7 @@ const DocumentInfo = ({
     return (
         <DocInfoCard title={cardTitle}>
             <div
-                className="document-info-list d-flex flex-column gap-2 fs-6 rounded shadow-sm border-start border-4 px-3 py-4 mb-3"
+                className="document-info-list d-flex flex-column gap-2 fs-6 rounded shadow-sm px-3 py-4 mb-3"
                 role="list"
                 aria-label="Document details"
             >
