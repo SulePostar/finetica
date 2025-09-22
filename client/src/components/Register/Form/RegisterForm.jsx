@@ -1,14 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { CForm, CInputGroup, CInputGroupText, CFormInput, CButton, CAlert } from '@coreui/react';
+import { cilContact, cilEnvelopeClosed, cilLockLocked, cilUser } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
-import { cilUser, cilEnvelopeClosed, cilLockLocked, cilContact } from '@coreui/icons';
-import { injectRegisterFormStyles, registerFormStyles } from './RegisterForm.styles';
-import { authService } from '../../../services';
+import { CAlert, CButton, CForm, CFormInput, CInputGroup, CInputGroupText } from '@coreui/react';
+import { useCallback, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useRegistrationForm } from '../../../hooks/useRegistrationForm';
+import { authService } from '../../../services';
 import FileUploadService from '../../../services/fileUploadService';
-import ProfilePhotoUpload from '../ProfilePhotoUpload';
 import notify from '../../../utilis/toastHelper';
+import ProfilePhotoUpload from '../ProfilePhotoUpload';
+import { injectRegisterFormStyles, registerFormStyles } from './RegisterForm.styles';
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -57,7 +57,6 @@ const RegisterForm = () => {
 
         if (uploadResult.success && uploadResult.url) {
           registrationData.profileImage = uploadResult.url;
-          notify.onSuccess('Profile image uploaded successfully!');
         } else {
           notify.onWarning('Profile image upload failed, but registration will continue');
           // Continue with registration even if image upload fails
