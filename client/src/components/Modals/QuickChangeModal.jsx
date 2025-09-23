@@ -11,6 +11,8 @@ const QuickChangeModal = ({
   user,
   loading = false,
   error = '',
+  roles = [],
+  statuses = [],
 }) => {
   const getTitle = () => {
     return type === 'status' ? 'Change User Status' : 'Change User Role';
@@ -19,9 +21,9 @@ const QuickChangeModal = ({
   const getBody = () => {
     const userName = user?.firstName || user?.email || 'User';
     if (type === 'status') {
-      return `Are you sure you want to change the status to "${getStatusName(newValue)}"?`;
+      return `Are you sure you want to change the status to "${getStatusName(newValue, statuses)}"?`;
     } else {
-      return `Are you sure you want to change the role to "${getRoleNameById(newValue)}"?`;
+      return `Are you sure you want to change the role to "${getRoleNameById(newValue, roles)}"?`;
     }
   };
 

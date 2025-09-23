@@ -388,6 +388,8 @@ const Users = () => {
           user={selectedUser}
           loading={changingStatus === selectedUser?.id || changingRole === selectedUser?.id}
           error={error}
+          roles={roles}
+          statuses={statuses}
         />
       )}
     </div>
