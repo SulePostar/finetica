@@ -142,3 +142,12 @@ vite.config.ts.timestamp-*
 /server/services/downloaded_uids.json
 
 googleDriveDownloads/
+
+# macOS system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

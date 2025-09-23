@@ -8,6 +8,8 @@ import ActionsDropdown from '../../Tables/Dropdown/ActionsDropdown';
 import { formatDateTime } from '../../../helpers/formatDate';
 import ViewUserModal from '../../Modals/ViewUserModal/ViewUserModal';
 import { useColorModes } from '@coreui/react';
+import { useState, useEffect } from "react";
+import { Row, Col, Card } from "react-bootstrap";
 
 
 import './Users.css';
@@ -237,6 +239,21 @@ const Users = () => {
       </div>
     );
   }
+
+  const useIsMobile = (breakpoint = 768) => {
+    const [isMobile, setIsMobile] = useState(window.innerWidth < breakpoint);
+
+    useEffect(() => {
+      const handleResize = () => setIsMobile(window.innerWidth < breakpoint);
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, [breakpoint]);
+
+    return isMobile;
+  };
+
+  const isMobile = useIsMobile();
+
 
   return (
     <div>

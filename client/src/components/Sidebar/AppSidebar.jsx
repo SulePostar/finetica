@@ -1,68 +1,81 @@
-import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   CSidebar,
   CSidebarFooter,
   CSidebarToggler,
-} from '@coreui/react'
+} from '@coreui/react';
 
-import { useFilteredNavigation } from '../../hooks/useFilteredNavigation'
-import { AppSidebarNav } from './AppSidebarNav'
-import SidebarDriveStatus from './SidebarDriveStatus'
-import './AppSidebar.css'
-import { setDriveConnected } from '../../redux/sidebar/sidebarSlice'
+import { useFilteredNavigation } from '../../hooks/useFilteredNavigation';
+import { AppSidebarNav } from './AppSidebarNav';
+import SidebarDriveStatus from './SidebarDriveStatus';
+import './AppSidebar.css';
+import { setDriveConnected } from '../../redux/sidebar/sidebarSlice';
 
 const AppSidebar = ({ isDarkMode }) => {
-  const dispatch = useDispatch()
-  const unfoldable = useSelector((state) => state.ui.sidebarUnfoldable)
-  const sidebarShow = useSelector((state) => state.ui.sidebarShow)
-  const userRole = useSelector((state) => state.user.profile.roleName)
-  const driveConnected = useSelector((state) => state.sidebar.driveConnected)
+  const dispatch = useDispatch();
+  const unfoldable = useSelector((state) => state.ui.sidebarUnfoldable);
+  const sidebarShow = useSelector((state) => state.ui.sidebarShow);
+  const userRole = useSelector((state) => state.user.profile.roleName);
+  const driveConnected = useSelector((state) => state.sidebar.driveConnected);
 
-  const [isHovered, setIsHovered] = useState(false)
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleCloseSidebar = () => {
     if (window.innerWidth < 768) {
-      dispatch({ type: 'set', sidebarShow: false })
+      dispatch({ type: 'set', sidebarShow: false });
     }
-  }
+  };
 
   // Check Google Drive connection
   useEffect(() => {
     const checkDriveConnection = async () => {
       try {
-        const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '')
+        const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
         const res = await fetch(`${baseUrl}/drive/drive-connection`, {
           credentials: 'include',
-        })
-        const data = await res.json()
-        dispatch(setDriveConnected(data.connected))
+        });
+        const data = await res.json();
+        dispatch(setDriveConnected(data.connected));
       } catch {
-        dispatch(setDriveConnected(false))
+        dispatch(setDriveConnected(false));
       }
-    }
+    };
 
-    checkDriveConnection()
-    const interval = setInterval(checkDriveConnection, 30000)
-    return () => clearInterval(interval)
-  }, [dispatch])
+    checkDriveConnection();
+    const interval = setInterval(checkDriveConnection, 30000);
+    return () => clearInterval(interval);
+  }, [dispatch]);
 
   // Lock body scroll when sidebar is open on mobile
   useEffect(() => {
     if (sidebarShow && window.innerWidth <= 768) {
-      document.body.classList.add('sidebar-open')
+      document.body.classList.add('sidebar-open');
     } else {
-      document.body.classList.remove('sidebar-open')
+      document.body.classList.remove('sidebar-open');
     }
-  }, [sidebarShow])
+  }, [sidebarShow]);
 
-  // Use custom hook for filtered navigation
-  const filteredNav = useFilteredNavigation(isHovered)
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 1024 && sidebarShow) {
+        dispatch({ type: 'set', sidebarShow: false });
+      } else if (window.innerWidth > 1024 && !sidebarShow) {
+        dispatch({ type: 'set', sidebarShow: true });
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [sidebarShow, dispatch]);
+
+
+  const filteredNav = useFilteredNavigation(isHovered);
 
   return (
     <CSidebar
-      className={`sidebar ${sidebarShow ? 'show' : ''} ${unfoldable ? 'sidebar-unfoldable' : ''
-        }`}
+      className={`sidebar ${sidebarShow ? 'show' : ''} ${unfoldable ? 'sidebar-unfoldable' : ''}`}
       position="fixed"
       unfoldable={unfoldable}
       visible={sidebarShow}
@@ -96,7 +109,7 @@ const AppSidebar = ({ isDarkMode }) => {
         />
       </CSidebarFooter>
     </CSidebar>
-  )
-}
+  );
+};
 
-export default React.memo(AppSidebar)
+export default React.memo(AppSidebar);
