@@ -15,8 +15,6 @@ import {
   fetchUsers,
   updateUser,
   deleteUser,
-  quickChangeUserStatus,
-  quickChangeUserRole,
   clearError,
   clearSuccess,
   selectUsers,
@@ -25,8 +23,6 @@ import {
   selectUsersSuccess,
   selectUpdatingUser,
   selectDeletingUser,
-  selectChangingStatus,
-  selectChangingRole,
 } from '../../../redux/users/usersSlice';
 
 import {
@@ -38,12 +34,11 @@ import {
 import {
   fetchStatuses,
   selectStatuses,
-  selectStatusesLoading,
 } from '../../../redux/statuses/statusesSlice';
 
-import { SearchFilters, EditUserModal, ConfirmationModal, QuickChangeModal } from '../../index';
+import { SearchFilters, EditUserModal, ConfirmationModal } from '../../index';
 
-import { filterUsers, getRoleName, getStatusBadge, isNewUser } from '../../../utilis/formatters';
+import { filterUsers, getRoleName, getStatusBadge } from '../../../utilis/formatters';
 import notify from '../../../utilis/toastHelper';
 
 const Users = () => {
@@ -60,25 +55,17 @@ const Users = () => {
   const success = useSelector(selectUsersSuccess);
   const updatingUser = useSelector(selectUpdatingUser);
   const deletingUser = useSelector(selectDeletingUser);
-  const changingStatus = useSelector(selectChangingStatus);
-  const changingRole = useSelector(selectChangingRole);
 
   // New selectors for roles and statuses
   const roles = useSelector(selectRoles);
   const rolesLoading = useSelector(selectRolesLoading);
   const statuses = useSelector(selectStatuses);
-  const statusesLoading = useSelector(selectStatusesLoading);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showQuickChangeModal, setShowQuickChangeModal] = useState(false);
-  const [quickChangeData, setQuickChangeData] = useState({
-    type: null,
-    newValue: null,
-  });
 
   useEffect(() => {
     dispatch(fetchUsers());
@@ -139,24 +126,6 @@ const Users = () => {
     setShowDeleteModal(true);
   }, []);
 
-  const handleQuickStatusChange = useCallback(
-    (userId, newStatusId) => {
-      setSelectedUser(users.find((u) => u.id === userId));
-      setQuickChangeData({ type: 'status', newValue: newStatusId });
-      setShowQuickChangeModal(true);
-    },
-    [users]
-  );
-
-  const handleQuickRoleChange = useCallback(
-    (userId, newRoleId) => {
-      setSelectedUser(users.find((u) => u.id === userId));
-      setQuickChangeData({ type: 'role', newValue: newRoleId });
-      setShowQuickChangeModal(true);
-    },
-    [users]
-  );
-
   const handleUpdateUser = useCallback(
     (formData) => {
       dispatch(updateUser({ userId: selectedUser.id, userData: formData }));
@@ -170,16 +139,6 @@ const Users = () => {
     setShowDeleteModal(false);
     notify.onWarning(`Deleting user: ${selectedUser.firstName || selectedUser.email}`);
   }, [dispatch, selectedUser]);
-
-  const handleConfirmQuickChange = useCallback(() => {
-    const { type, newValue } = quickChangeData;
-    if (type === 'status') {
-      dispatch(quickChangeUserStatus({ userId: selectedUser.id, statusId: newValue }));
-    } else if (type === 'role') {
-      dispatch(quickChangeUserRole({ userId: selectedUser.id, roleId: newValue }));
-    }
-    setShowQuickChangeModal(false);
-  }, [dispatch, selectedUser, quickChangeData]);
 
   const roleOptions = useMemo(() => {
     if (rolesLoading) return [{ value: "loading", label: "Loading..." }];
@@ -346,7 +305,6 @@ const Users = () => {
       )}
 
       {selectedUser && (
-        // In Users component
         <ViewUserModal
           visible={showViewModal}
           onClose={() => setShowViewModal(false)}
@@ -358,20 +316,6 @@ const Users = () => {
           isDarkMode={isDarkMode}
         />
       )}
-
-      {/* Quick Change Modal */}
-      {/* {selectedUser && (
-        <QuickChangeModal
-          visible={showQuickChangeModal}
-          onCancel={() => setShowQuickChangeModal(false)}
-          onConfirm={handleConfirmQuickChange}
-          type={quickChangeData.type}
-          newValue={quickChangeData.newValue}
-          user={selectedUser}
-          loading={changingStatus === selectedUser?.id || changingRole === selectedUser?.id}
-          error={error}
-        />
-      )} */}
     </div>
   );
 };
