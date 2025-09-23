@@ -43,11 +43,11 @@ const ViewUserModal = ({ visible, onClose, user, onEdit, onDelete, roles, status
                     </div>
 
                     {/* Right Column: Buttons side by side */}
-                    <div className="col-auto d-flex gap-1 m-3">
-                        <CButton className='btn-bordered' size="m" onClick={() => onEdit(user)}>
+                    <div className="button-group col d-flex gap-2 mt-2 mb-2 me-2">
+                        <CButton className='btn-bordered' size="s" onClick={() => onEdit(user)}>
                             Edit
                         </CButton>
-                        <CButton color="danger" size="m" onClick={() => onDelete(user)}>
+                        <CButton color="danger" size="s" onClick={() => onDelete(user)}>
                             Delete
                         </CButton>
                     </div>

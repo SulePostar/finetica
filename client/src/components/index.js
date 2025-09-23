@@ -7,7 +7,7 @@ import FileUploadModal from './Modals/FileUploadModal.jsx';
 import EditUserModal from './Modals/EditUserModal/EditUserModal.jsx';
 import UserTable from './Users/UserTable.jsx';
 import UserRow from './Users/UserRow.jsx';
-import SearchFilters from '../utilis/SearchFilters.jsx';
+import SearchFilters from '../utilis/SearchFilters/SearchFilters.jsx';
 import UploadButton from './UploadButton/UploadButton.jsx';
 
 export {

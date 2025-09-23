@@ -1,130 +1,116 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-// Fetch all users
-export const fetchUsers = createAsyncThunk(
-  'users/fetchUsers',
+export const fetchUserProfile = createAsyncThunk(
+  'user/fetchUserProfile',
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get('http://localhost:4000/api/users', {
+      const res = await axios.get('http://localhost:4000/api/users/me', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('jwt_token')}`,
         },
       });
       return res.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data || err.message);
-    }
-  }
-);
-
-// Update a user
-export const updateUser = createAsyncThunk(
-  'users/updateUser',
-  async ({ userId, userData }, { rejectWithValue }) => {
-    try {
-      const res = await axios.put(
-        `http://localhost:4000/api/users/${userId}`,
-        userData,
-        { headers: { Authorization: `Bearer ${localStorage.getItem('jwt_token')}` } }
-      );
-      return res.data;
-    } catch (err) {
-      return rejectWithValue(err.response?.data || err.message);
-    }
-  }
-);
-
-// Delete a user
-export const deleteUser = createAsyncThunk(
-  'users/deleteUser',
-  async (userId, { rejectWithValue }) => {
-    try {
-      await axios.delete(`http://localhost:4000/api/users/${userId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('jwt_token')}` },
-      });
-      return userId;
-    } catch (err) {
+      console.error('Failed to fetch user profile:', err.response?.data || err.message);
       return rejectWithValue(err.response?.data || err.message);
     }
   }
 );
 
 const initialState = {
-  users: [],
+  profile: {
+    id: null,
+    email: '',
+    fullName: '',
+    firstName: '',
+    lastName: '',
+    profileImage: '',
+    roleId: null,
+    roleName: '',
+    statusId: null,
+    statusName: '',
+    lastLoginAt: null,
+    createdAt: null,
+    updatedAt: null,
+  },
   loading: false,
-  updatingUser: null,
-  deletingUser: null,
   error: null,
-  success: null,
 };
 
-const usersSlice = createSlice({
-  name: 'users',
+const userSlice = createSlice({
+  name: 'user',
   initialState,
   reducers: {
-    clearError(state) {
+    setUserProfile(state, action) {
+      const {
+        id,
+        email,
+        fullName,
+        firstName,
+        lastName,
+        profileImage,
+        roleId,
+        roleName,
+        statusId,
+        statusName,
+        lastLoginAt,
+        createdAt,
+        updatedAt,
+      } = action.payload;
+
+      state.profile = {
+        id,
+        email,
+        fullName,
+        firstName,
+        lastName,
+        profileImage,
+        roleId,
+        roleName,
+        statusId,
+        statusName,
+        lastLoginAt,
+        createdAt,
+        updatedAt,
+      };
+      state.loading = false;
       state.error = null;
     },
-    clearSuccess(state) {
-      state.success = null;
+    clearUserProfile(state) {
+      state.profile = initialState.profile;
+    },
+    setUserLoading(state, action) {
+      state.loading = action.payload;
+    },
+    setUserError(state, action) {
+      state.error = action.payload;
+      state.loading = false;
     },
   },
   extraReducers: (builder) => {
     builder
-      // Fetch users
-      .addCase(fetchUsers.pending, (state) => {
+      .addCase(fetchUserProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchUsers.fulfilled, (state, action) => {
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.profile = action.payload;
         state.loading = false;
-        state.users = action.payload;
+        state.error = null;
       })
-      .addCase(fetchUsers.rejected, (state, action) => {
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.error = action.payload;
         state.loading = false;
-        state.error = action.payload;
-      })
-
-      // Update user
-      .addCase(updateUser.pending, (state, action) => {
-        state.updatingUser = action.meta.arg.userId;
-      })
-      .addCase(updateUser.fulfilled, (state, action) => {
-        const updatedUser = action.payload;
-        const index = state.users.findIndex(u => u.id === updatedUser.id);
-        if (index !== -1) state.users[index] = updatedUser;
-        state.updatingUser = null;
-        state.success = 'User updated successfully';
-      })
-      .addCase(updateUser.rejected, (state, action) => {
-        state.updatingUser = null;
-        state.error = action.payload;
-      })
-
-      // Delete user
-      .addCase(deleteUser.pending, (state, action) => {
-        state.deletingUser = action.meta.arg;
-      })
-      .addCase(deleteUser.fulfilled, (state, action) => {
-        state.users = state.users.filter(u => u.id !== action.payload);
-        state.deletingUser = null;
-        state.success = 'User deleted successfully';
-      })
-      .addCase(deleteUser.rejected, (state, action) => {
-        state.deletingUser = null;
-        state.error = action.payload;
       });
   },
 });
 
-export const { clearError, clearSuccess } = usersSlice.actions;
+export const {
+  setUserProfile,
+  clearUserProfile,
+  setUserLoading,
+  setUserError,
+} = userSlice.actions;
 
-export const selectUsers = (state) => state.users.users;
-export const selectUsersLoading = (state) => state.users.loading;
-export const selectUpdatingUser = (state) => state.users.updatingUser;
-export const selectDeletingUser = (state) => state.users.deletingUser;
-export const selectUsersError = (state) => state.users.error;
-export const selectUsersSuccess = (state) => state.users.success;
-
-export default usersSlice.reducer;
+export default userSlice.reducer;

@@ -5,6 +5,15 @@
   font-size: 14px;
 }
 
+/* Tablet (≥768px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .avatar-circle {
+    width: 23px;
+    height: 23px;
+    font-size: 0.6rem;
+  }
+}
+
 .user-dashboard-title {
   font-size: 28px;
   color: var(--cui-primary);
@@ -17,4 +26,9 @@
 
 .user-email {
   font-size: 14px;
+}
+
+body.dark-mode .card {
+  background-color: #212529 !important;
+  color: #ffffff !important;
 }

@@ -1,0 +1,25 @@
+[data-coreui-theme="light"] .btn-refreshed {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+[data-coreui-theme="dark"] .btn-refreshed {
+    background-color: #2d343f !important;
+    color: #e2e8f0 !important;
+}
+
+[data-coreui-theme="dark"] .form-control,
+[data-coreui-theme="dark"] .form-select {
+    background-color: #2d343f !important;
+    color: #e2e8f0 !important;
+}
+
+[data-coreui-theme="dark"] .form-control::placeholder,
+[data-coreui-theme="dark"] .form-select::placeholder {
+    color: #cbd5e1 !important;
+}
+
+[data-coreui-theme="dark"] .cvFfSA {
+    background-color: #2d343f !important;
+    color: #e2e8f0 !important;
+}

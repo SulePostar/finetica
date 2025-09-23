@@ -3,7 +3,7 @@ import React from 'react';
 import { CFormInput, CFormSelect, CButton } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilReload } from '@coreui/icons';
-import { colors } from '../styles/colors';
+import './SearchFilters.css';
 
 const SearchFilters = ({
   searchTerm,
@@ -47,11 +47,11 @@ const SearchFilters = ({
 
       {/* Refresh Button */}
       {onRefresh && (
-        <div style={{ width: '120px' }}>
+        <div>
           <CButton
-            style={{ backgroundColor: colors.primary }}
             onClick={onRefresh}
-            size="sm"
+            size="m"
+            className='btn-refreshed'
           >
             <CIcon icon={cilReload} className="me-1" />
             {refreshLabel}
