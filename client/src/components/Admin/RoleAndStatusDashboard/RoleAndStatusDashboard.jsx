@@ -44,35 +44,31 @@ const RoleAndStatusDashboard = () => {
     };
 
     return (
-        <CRow className="user-dashboard-container">
+        <CRow className="mb-4">
             <CCol>
-                <CCard>
-                    <CCardHeader>
-                        <h4 className="user-dashboard-title">Role & Status Management</h4>
-                    </CCardHeader>
-                    <CCardBody>
-                        <CRow>
-                            <CCol md={6} className="pr-3">
-                                <RolesStatusesTable
-                                    title="Role"
-                                    data={roles}
-                                    nameKey="role"
-                                    onAdd={handleAddRole}
-                                    onDelete={(id) => dispatch(deleteRole(id))}
-                                />
-                            </CCol>
-                            <CCol md={6} className="pl-3">
-                                <RolesStatusesTable
-                                    title="Status"
-                                    data={statuses}
-                                    nameKey="status"
-                                    onAdd={handleAddStatus}
-                                    onDelete={(id) => dispatch(deleteStatus(id))}
-                                />
-                            </CCol>
-                        </CRow>
-                    </CCardBody>
-                </CCard>
+
+                <CCardBody>
+                    <CRow>
+                        <CCol md={5} className="pr-3">
+                            <RolesStatusesTable
+                                title="Role"
+                                data={roles}
+                                nameKey="role"
+                                onAdd={handleAddRole}
+                                onDelete={(id) => dispatch(deleteRole(id))}
+                            />
+                        </CCol>
+                        <CCol md={7} className="pl-3">
+                            <RolesStatusesTable
+                                title="Status"
+                                data={statuses}
+                                nameKey="status"
+                                onAdd={handleAddStatus}
+                                onDelete={(id) => dispatch(deleteStatus(id))}
+                            />
+                        </CCol>
+                    </CRow>
+                </CCardBody>
             </CCol>
         </CRow>
 
