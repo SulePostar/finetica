@@ -112,6 +112,13 @@ const Users = () => {
     return () => media.removeEventListener('change', checkDarkMode);
   }, [checkDarkMode]);
 
+  useEffect(() => {
+    if (selectedUser) {
+      const updated = users.find(u => u.id === selectedUser.id);
+      if (updated) setSelectedUser(updated);
+    }
+  }, [users, selectedUser]);
+
   const handleRefresh = useCallback(() => {
     dispatch(fetchUsers());
   }, [dispatch]);

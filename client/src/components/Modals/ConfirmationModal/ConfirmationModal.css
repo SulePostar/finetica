@@ -10,8 +10,9 @@
 }
 
 [data-coreui-theme='dark'] .input {
-    background-color: #2d3748 !important;
+    background-color: #2d343f !important;
     color: #e2e8f0 !important;
+    border-color: #4a5568 !important;
 }
 
 .readonly-field {

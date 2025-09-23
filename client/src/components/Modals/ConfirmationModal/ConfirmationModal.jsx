@@ -123,10 +123,8 @@ const ConfirmationModal = ({
             id={field.name}
             value={localFormData[field.name] || ''}
             onChange={(e) => handleInputChange(field.name, e.target.value)}
-            // className={`form-select ${field.className || ''}`}
             className={field.className || ''}
           >
-            <option value="">Select {field.label.replace('*', '').trim()}</option>
             {(field.options || []).map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
