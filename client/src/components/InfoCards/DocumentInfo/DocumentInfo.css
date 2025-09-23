@@ -66,8 +66,12 @@
   color: var(--text-primary);
   letter-spacing: 0.02em;
   flex-shrink: 0;
-  min-width: fit-content;
+  min-width: 0;
   line-height: 1.4;
+  overflow-x: auto;
+  white-space: normal;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .info-value {
@@ -85,7 +89,7 @@
 /* Detail card styles */
 
 .details-container {
-  margin-top: 0 !important;
+  margin-top: 30px !important;
   padding-top: 0 !important;
 }
 
