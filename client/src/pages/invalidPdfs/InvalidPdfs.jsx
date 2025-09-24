@@ -61,20 +61,20 @@ const InvalidPdfs = () => {
       selector: (row) => row.filename || '—',
       sortable: true,
       wrap: true,
-      width: '220px',
+      width: '25%',
     },
     {
       name: 'Message',
       selector: (row) => row.message || '—',
       sortable: false,
       wrap: true,
-      width: '420px',
+      width: '25%',
     },
     {
       name: 'Status',
       selector: (row) => row.isValid,
       sortable: true,
-      width: '150px',
+      width: '10%',
       cell: (row) =>
         row.isValid ? (
           <CBadge color="success">valid</CBadge>
@@ -86,7 +86,7 @@ const InvalidPdfs = () => {
       name: 'Processed',
       selector: (row) => row.isProcessed,
       sortable: true,
-      width: '150px',
+      width: '10%',
       cell: (row) =>
         row.isProcessed ? <CBadge color="success">Yes</CBadge> : <CBadge color="danger">No</CBadge>,
     },
@@ -94,14 +94,14 @@ const InvalidPdfs = () => {
       name: 'Processed At',
       selector: (row) => row.processedAt || '—',
       sortable: true,
-      width: '170px',
+      width: '15%',
       cell: (row) => (row.processedAt ? new Date(row.processedAt).toLocaleString() : '—'),
     },
     {
       name: 'Created At',
       selector: (row) => row.createdAt,
       sortable: true,
-      width: '170px',
+      width: '15%',
       cell: (row) => (row.createdAt ? new Date(row.createdAt).toLocaleString() : '—'),
     },
   ];
