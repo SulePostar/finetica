@@ -86,7 +86,6 @@ const Contract = () => {
     grow: 0,
     cell: (row) => (row.startDate ? new Date(row.startDate).toLocaleDateString() : '—'),
     hideAtOrBelow: 'lg',
-    hideBelow: 1024,
     hideBelow: 1440,
   },
   {
