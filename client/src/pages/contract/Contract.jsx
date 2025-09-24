@@ -8,18 +8,22 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import { useBucketName } from '../../lib/bucketUtils';
 import './Contract.css';
 
+
 const Contract = () => {
   const navigate = useNavigate();
   const sidebarWidth = useSidebarWidth();
   const bucketName = useBucketName();
 
+
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
   const apiEndpoint = useMemo(() => `${API_BASE}/contracts`, [API_BASE]);
   const [refetchFunction, setRefetchFunction] = useState(null);
 
+
   const handleRefetchCallback = useCallback((fetchFn) => {
     setRefetchFunction(() => fetchFn);
   }, []);
+
 
   const handleView = useCallback(
     (id) => {
@@ -28,6 +32,7 @@ const Contract = () => {
     [navigate]
   );
 
+
   const handleApprove = useCallback(
     (id) => {
       navigate(`/contracts/${id}/approve`);
@@ -35,9 +40,11 @@ const Contract = () => {
     [navigate]
   );
 
+
   const handleDownload = useCallback((id) => {
     // Implement file download later if needed
   }, []);
+
 
     const columns = [
   {
@@ -68,6 +75,7 @@ const Contract = () => {
     grow: 0,
     hideAtOrBelow: 'md',
     hideBelow: 1024,
+    hideBelow: 1440,
   },
   {
     name: 'Start',
@@ -79,6 +87,7 @@ const Contract = () => {
     cell: (row) => (row.startDate ? new Date(row.startDate).toLocaleDateString() : '—'),
     hideAtOrBelow: 'lg',
     hideBelow: 1024,
+    hideBelow: 1440,
   },
   {
     name: 'End',
@@ -141,6 +150,7 @@ const Contract = () => {
   },
 ];
 
+
   return (
     <DefaultLayout>
       <div
@@ -172,5 +182,6 @@ const Contract = () => {
     </DefaultLayout>
   );
 };
+
 
 export default Contract;
