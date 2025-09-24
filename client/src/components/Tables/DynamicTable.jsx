@@ -73,7 +73,7 @@ const DynamicTable = ({
 
     return (
         <Container fluid="xxl" className="dynamic-table-container">
-            <Card className="shadow-sm border-0">
+            <Card className='border-0'>
                 <Card.Body>
                     <Row className="align-items-center mb-3">
                         <Col className="d-flex justify-content-between flex-wrap">
