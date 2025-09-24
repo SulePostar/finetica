@@ -14,6 +14,7 @@
   --cui-hover-background: #374151;
   --cui-font-color: #f3f4f6;
 }
+
 .table-card {
   background: var(--cui-background);
   color: var(--cui-font-color);
@@ -26,6 +27,7 @@
   background-color: var(--cui-background);
   color: var(--cui-font-color);
 }
+
 .dynamic-table-container {
   max-width: 3500px;
 }
@@ -36,6 +38,7 @@
   color: var(--cui-primary);
 }
 
+/* Stacked mobile cards */
 .stacked-row {
   border: 1px solid var(--cui-border-color);
   border-radius: 8px;
