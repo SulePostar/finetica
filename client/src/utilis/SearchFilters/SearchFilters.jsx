@@ -13,7 +13,7 @@ const SearchFilters = ({
   onFilterChange,
   onRefresh,
   searchPlaceholder = "Search...",
-  refreshLabel = "Refresh",
+  refreshLabel = "Clear Filters",
 }) => {
   return (
     <div className="d-flex gap-3 align-items-center w-100 flex-wrap">
@@ -29,7 +29,7 @@ const SearchFilters = ({
 
       {/* Dynamic Filters */}
       {filters.map((filter) => (
-        <div key={filter.name} style={{ width: filter.width || '200px' }}>
+        <div key={filter.name} style={{ width: filter.width || '190px' }}>
           <CFormSelect
             value={filterValues[filter.name] || ""}
             onChange={(e) => onFilterChange(filter.name, e.target.value)}

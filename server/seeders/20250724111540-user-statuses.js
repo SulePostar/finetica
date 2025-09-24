@@ -37,13 +37,7 @@ module.exports = {
           status: 'rejected',
           created_at: new Date(),
           updated_at: new Date(),
-        },
-        {
-          id: 4,
-          status: 'deleted',
-          created_at: new Date(),
-          updated_at: new Date(),
-        },
+        }
       ],
       {}
     );
