@@ -1,7 +1,7 @@
 import { CContainer, CSpinner } from '@coreui/react';
 import React, { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import ProtectedRoute from '../protectedRoutes/ProtectedRouter';
+import ProtectedRoute from '../protectedRoutes/ProtectedRoute';
 const DocumentItemsPage = React.lazy(() => import('../pages/DocumentDetails/DocumentItemsPage'));
 const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const Register = React.lazy(() => import('../pages/Register/Register'));
@@ -75,7 +75,7 @@ export default function AppRoutes() {
         <Route
           path="/admin/users"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="admin">
               <UsersDashboard />
             </ProtectedRoute>
           }
@@ -244,7 +244,7 @@ export default function AppRoutes() {
         <Route
           path="/admin/role-status"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="admin">
               <RoleStatusDashboard />
             </ProtectedRoute>
           }
