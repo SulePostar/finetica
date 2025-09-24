@@ -1,51 +1,88 @@
 :root {
-    --color-primary: #8367deff;
-    --color-primary-hover: #5b3cc4;
-    --color-white: #ffffff;
+  --color-primary: #8367deff;
+  --color-primary-hover: #5b3cc4;
+  --color-white: #ffffff;
+  --app-header-height: 64px;
+}
+
+.table-page-outer {
+  position: fixed;
+  top: var(--app-header-height, 64px);
+  bottom: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.invalid-pdfs-scroll {
+  margin: 2rem;
+  max-height: calc(100% - 4rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.invalid-pdfs-container {
+  max-width: 2000px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .nav-link {
-    color: var(--cui-body-color) !important;
+  color: var(--cui-body-color) !important;
 }
 
 .custom-card-header .nav-link.active,
 .custom-card-header .nav-link.active:hover,
 .custom-card-header .nav-link.active:focus {
-    background-color: var(--color-primary) !important;
-    color: var(--color-white) !important;
+  background-color: var(--color-primary) !important;
+  color: var(--color-white) !important;
 }
 
-/* Hover for inactive tabs */
 .custom-card-header .nav-link:not(.active):hover,
 .custom-card-header .nav-link:not(.active):focus {
-    background-color: var(--color-primary-hover) !important;
-    color: var(--color-white) !important;
+  background-color: var(--color-primary-hover) !important;
+  color: var(--color-white) !important;
 }
 
 .custom-card-header {
-    background-color: var(--cui-card-cap-bg) !important;
-    color: var(--cui-card-cap-color) !important;
+  background-color: var(--cui-card-cap-bg) !important;
+  color: var(--cui-card-cap-color) !important;
 }
 
 .custom-card {
-    background-color: var(--cui-card-bg) !important;
-    color: var(--cui-body-color) !important;
+  background-color: var(--cui-card-bg) !important;
+  color: var(--cui-body-color) !important;
 }
 
 .nav-fill.flex-nowrap.overflow-auto {
-    -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;
 }
 
 .custom-card-title {
-    margin-bottom: 0px;
-    font-size: 28px !important;
-    font-weight: 700 !important;
-    color: var(--cui-primary);
-    font-family: 'Segoe UI', sans-serif !important;
+  margin-bottom: 0;
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  color: var(--cui-primary);
+  font-family: 'Segoe UI', sans-serif !important;
 }
 
-.invalid-pdfs-container {
-    max-width: 2000px;
-    margin: 0 auto;
-    width: 100%;
+.sticky-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+@media (max-width: 900px) {
+  .invalid-pdfs-scroll {
+    margin: 1rem;
+    max-height: calc(100% - 2rem);
+  }
+}
+
+@media (max-width: 600px) {
+  .invalid-pdfs-scroll {
+    margin: 0.5rem;
+    max-height: calc(100% - 1rem);
+  }
 }
