@@ -39,49 +39,58 @@ const Kuf = () => {
   }, []);
 
   const columns = [
-    { name: 'Invoice ID', selector: (row) => row.id ?? '—', sortable: true, width: '140px' },
-    { name: 'Invoice Number', selector: (row) => row.invoiceNumber || '—', sortable: true, width: '190px' },
-    { name: 'Invoice Type', selector: (row) => row.invoiceType || '—', sortable: true, width: '160px' },
-    { name: 'Customer Name', selector: (row) => row.customerName || '—', sortable: true, width: '220px' },
+    {
+      name: 'Invoice Number',
+      selector: (row) => row.invoiceNumber || '—',
+      sortable: true,
+    },
+    {
+      name: 'Invoice Type',
+      selector: (row) => row.invoiceType || '—',
+      sortable: true,
+    },
+    {
+      name: 'Customer',
+      selector: (row) => row.customerName || '—',
+      sortable: true,
+    },
     {
       name: 'Invoice Date',
       selector: (row) => row.invoiceDate || '—',
       sortable: true,
-      width: '160px',
       cell: (row) => (row.invoiceDate ? new Date(row.invoiceDate).toLocaleDateString() : '—'),
     },
     {
       name: 'Due Date',
       selector: (row) => row.dueDate || '—',
       sortable: true,
-      width: '160px',
       cell: (row) => (row.dueDate ? new Date(row.dueDate).toLocaleDateString() : '—'),
     },
     {
       name: 'Total Amount',
-      selector: (row) => (row.totalAmount != null ? row.totalAmount : '—'),
+      selector: (row) => (row.lumpSum != null ? row.lumpSum : row.netTotal ?? '—'),
       sortable: true,
-      width: '170px',
-      cell: (row) => (row.totalAmount != null ? `${parseFloat(row.totalAmount).toFixed(2)} KM` : '—'),
+      cell: (row) =>
+        row.lumpSum != null
+          ? `${parseFloat(row.lumpSum).toFixed(2)} KM`
+          : `${parseFloat(row.netTotal).toFixed(2)} KM` ?? '—',
       style: { textAlign: 'right' },
     },
-    { name: 'VAT Period', selector: (row) => row.vatPeriod || '—', sortable: true, width: '150px' },
-    { name: 'VAT Category', selector: (row) => row.vatCategory || '—', sortable: true, width: '170px' },
-    { name: 'Delivery Period', selector: (row) => row.deliveryPeriod || '—', sortable: true, width: '200px' },
-    { name: 'Bill Number', selector: (row) => row.billNumber || '—', sortable: true, width: '160px' },
     {
       name: 'Approval Status',
       selector: (row) => (row.approvedAt || row.approvedBy ? 'Approved' : 'Pending'),
       sortable: true,
-      width: '190px',
       cell: (row) => {
         const status = row.approvedAt || row.approvedBy ? 'approved' : 'pending';
-        return <span className={`status-badge ${status}`}>{status === 'approved' ? 'Approved' : 'Pending'}</span>;
+        return (
+          <span className={`status-badge ${status}`}>
+            {status === 'approved' ? 'Approved' : 'Pending'}
+          </span>
+        );
       },
     },
     {
       name: 'Actions',
-      width: '140px',
       cell: (row) => (
         <ActionsDropdown
           row={row}
