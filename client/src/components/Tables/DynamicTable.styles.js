@@ -1,6 +1,16 @@
 import '../../scss/style.scss';
 
 const makeCustomStyles = () => ({
+  tableWrapper: {
+    style: {
+      overflowX: 'hidden', 
+    },
+  },
+  table: {
+    style: {
+      width: '100%',
+    },
+  },
   rows: {
     style: {
       minHeight: '60px',
@@ -29,7 +39,8 @@ const makeCustomStyles = () => ({
       padding: '18px 20px',
       fontWeight: 700,
       fontSize: '1rem',
-      whiteSpace: 'nowrap',
+      whiteSpace: 'normal',
+      wordBreak: 'break-word',
       fontFamily: "'Segoe UI', system-ui, sans-serif",
       backgroundColor: 'var(--cui-body-bg)',
       color: 'var(--cui-secondary-color, var(--cui-body-color))',
@@ -46,6 +57,9 @@ const makeCustomStyles = () => ({
       color: 'var(--cui-body-color)',
       borderBottom: '1px solid var(--cui-border-color)',
       transition: 'color 0.2s ease',
+      whiteSpace: 'normal',
+      wordBreak: 'break-word',
+      minWidth: 0, 
     },
   },
 

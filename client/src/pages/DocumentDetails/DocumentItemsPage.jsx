@@ -8,6 +8,7 @@ import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import DefaultLayout from '../../layout/DefaultLayout';
 import DynamicTable from '../../components/Tables/DynamicTable';
 
+
 const DocumentItemsPage = () => {
     const { id } = useParams();
     const location = useLocation();
@@ -126,7 +127,11 @@ const DocumentItemsPage = () => {
 
     return (
         <DefaultLayout>
-            <main>
+            <div
+                style={{
+                    marginTop: '30px'
+                }}
+            >
                 <DynamicTable
                     title="Invoice Items"
                     columns={columns}
@@ -134,6 +139,7 @@ const DocumentItemsPage = () => {
                     pagination={false}
                     reloadTable={editModal.visible === false && !modalLoading ? Math.random() : undefined}
                 />
+
                 <EditItemModal
                     visible={editModal.visible}
                     onCancel={closeEditModal}
@@ -144,7 +150,7 @@ const DocumentItemsPage = () => {
                     loading={modalLoading}
                     error={modalError}
                 />
-            </main>
+            </div>
         </DefaultLayout>
     );
 };
