@@ -77,7 +77,7 @@ const Kuf = () => {
       style: { textAlign: 'right' },
     },
     {
-      name: 'Approval Status',
+      name: 'Review',
       selector: (row) => (row.approvedAt || row.approvedBy ? 'Approved' : 'Pending'),
       sortable: true,
       cell: (row) => {
