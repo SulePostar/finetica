@@ -3,7 +3,6 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import RoleAndStatusDashboard from '../../components/Admin/RoleAndStatusDashboard/RoleAndStatusDashboard';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import '../../styles/shared/CommonStyles.css';
-import '../../styles/TablePages.css';
 import '../Admin/RoleStatusDashboard.css';
 
 const RoleStatusDashboard = () => {
