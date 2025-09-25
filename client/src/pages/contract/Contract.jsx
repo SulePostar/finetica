@@ -125,7 +125,7 @@ const Contract = () => {
     selector: (row) => row.status || '—',
     sortable: true,
     sortField: 'status',
-    minWidth: '120px',
+    minWidth: '130px',
     wrap: true,
     cell: (row) => (
       <span className={`status-badge ${row.approvedAt ? 'approved' : 'pending'}`}>

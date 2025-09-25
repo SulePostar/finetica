@@ -2,7 +2,6 @@
   --app-header-height: 64px;
 }
 
-/* Page area under fixed header */
 .table-page-outer {
   position: fixed;
   top: var(--app-header-height, 64px);
@@ -12,12 +11,11 @@
   flex-direction: column;
 }
 
-/* Scroll the page area, not the inner table; avoid horizontal scroll here */
 .contract-table-scroll {
   margin: 2rem;
   max-height: calc(100% - 4rem);
   overflow-y: auto;
-  overflow-x: hidden; /* was auto */
+  overflow-x: hidden; 
   -webkit-overflow-scrolling: touch;
   background: var(--cui-body-bg, transparent);
   border-radius: 10px;
@@ -25,7 +23,6 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.25);
 }
 
-/* Status badges */
 .status-badge {
   padding: 0.3rem 0.75rem;
   border-radius: 20px;
@@ -36,20 +33,28 @@
 .status-badge.inactive { background-color: #fee2e2; color: #991b1b; }
 .status-badge.pending { background-color: #FEF3C7; color: #92400E; }
 
+.status-badge.approved {
+  background-color: #d1fae5; 
+  color: #065f46;            
+  white-space: nowrap;       
+}
+
+[data-coreui-theme='dark'] .status-badge.approved {
+  background-color: #065f46;
+  color: #d1fae5;
+}
+
+
 [data-coreui-theme='dark'] .status-badge.active { background-color: #065f46; color: #d1fae5; }
 [data-coreui-theme='dark'] .status-badge.inactive { background-color: #991b1b; color: #fee2e2; }
 [data-coreui-theme='dark'] .status-badge.pending { background-color: #92400E; color: #FEF3C7; }
 
-/* Let the table take full width and shrink without forcing min-width */
 .contract-table-responsive .rdt_Table,
 .contract-table-responsive table {
   width: 100%;
   max-width: 100%;
   font-size: 1rem;
 }
-
-/* Remove fixed minimums that forced horizontal scroll on laptops */
-/* Previously: min-width: 1200px and lower min-widths in media queries */
 
 @media (min-width: 2000px) {
   .contract-table-scroll {
@@ -96,7 +101,6 @@
   }
 }
 
-/* Tighter layout on small screens for the page container (not the table) */
 @media (max-width: 900px) {
   .contract-table-scroll {
     margin: 1rem;
@@ -113,7 +117,6 @@
   }
 }
 
-/* Allow the RDT wrapper to fill, prevent its own horizontal scroll */
 .contract-table-scroll .rdt_TableWrapper {
   max-height: 100%;
   overflow-x: hidden;
