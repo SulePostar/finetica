@@ -186,7 +186,7 @@
   padding: 0.4rem 0.75rem;
   border-radius: 9999px;
   font-weight: 500;
-  background-color: var(--status-bg);
+  /* background-color: var(--status-bg); */
   color: var(--status-color);
 }
 

@@ -55,12 +55,14 @@ import {
 } from '../../../utilis/formatters';
 import notify from '../../../utilis/toastHelper';
 
+import { useSidebarWidth } from '../../../hooks/useSidebarWidth';
+import DefaultLayout from '../../../layout/DefaultLayout';
+
 const useIsMobile = (breakpoint = 768) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < breakpoint);
 
   useEffect(() => {
-    const handleResize = () =>
-      setIsMobile(window.innerWidth < breakpoint);
+    const handleResize = () => setIsMobile(window.innerWidth < breakpoint);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [breakpoint]);
@@ -73,9 +75,7 @@ const Users = () => {
   const currentUser = useSelector((state) => state.user.profile);
   const [showViewModal, setShowViewModal] = useState(false);
 
-  const { colorMode } = useColorModes(
-    'coreui-free-react-admin-template-theme'
-  );
+  const { colorMode } = useColorModes('coreui-free-react-admin-template-theme');
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   const users = useSelector(selectUsers);
@@ -96,15 +96,14 @@ const Users = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const isMobile = useIsMobile();
+  const sidebarWidth = useSidebarWidth();
 
-  // fetch data
   useEffect(() => {
     dispatch(fetchUsers());
     dispatch(fetchRoles());
     dispatch(fetchStatuses());
   }, [dispatch]);
 
-  // notifications
   useEffect(() => {
     if (error || success) {
       if (error) notify.onError(error);
@@ -125,18 +124,12 @@ const Users = () => {
 
   const customStyles = useMemo(() => makeCustomStyles(), []);
 
-  // dark mode
   const checkDarkMode = useCallback(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)');
-    const dark =
-      colorMode === 'dark' ||
-      (colorMode === 'auto' && media.matches);
+    const dark = colorMode === 'dark' || (colorMode === 'auto' && media.matches);
     setIsDarkMode(dark);
 
-    document.documentElement.setAttribute(
-      'data-coreui-theme',
-      dark ? 'dark' : 'light'
-    );
+    document.documentElement.setAttribute('data-coreui-theme', dark ? 'dark' : 'light');
     document.body.classList.toggle('dark-mode', dark);
   }, [colorMode]);
 
@@ -170,9 +163,7 @@ const Users = () => {
 
   const handleUpdateUser = useCallback(
     (formData) => {
-      dispatch(
-        updateUser({ userId: selectedUser.id, userData: formData })
-      );
+      dispatch(updateUser({ userId: selectedUser.id, userData: formData }));
       setShowEditModal(false);
     },
     [dispatch, selectedUser]
@@ -181,22 +172,14 @@ const Users = () => {
   const handleConfirmDelete = useCallback(() => {
     dispatch(deleteUser(selectedUser.id));
     setShowDeleteModal(false);
-    notify.onWarning(
-      `Deleting user: ${selectedUser.firstName || selectedUser.email
-      }`
-    );
+    notify.onWarning(`Deleting user: ${selectedUser.firstName || selectedUser.email}`);
   }, [dispatch, selectedUser]);
 
   const roleOptions = useMemo(() => {
-    if (rolesLoading)
-      return [{ value: 'loading', label: 'Loading...' }];
-
+    if (rolesLoading) return [{ value: 'loading', label: 'Loading...' }];
     return roles
       .filter((r) => r.id && r.role)
-      .map((r) => ({
-        value: r.id.toString(),
-        label: capitalizeFirst(r.role),
-      }));
+      .map((r) => ({ value: r.id.toString(), label: capitalizeFirst(r.role) }));
   }, [roles, rolesLoading]);
 
   const columns = useMemo(
@@ -205,6 +188,8 @@ const Users = () => {
         name: 'Name',
         selector: (row) => row.fullName,
         sortable: true,
+        minWidth: '220px',
+        grow: 2,
         cell: (row) => (
           <div className="d-flex align-items-center gap-2">
             <div
@@ -214,9 +199,7 @@ const Users = () => {
               {row.fullName?.charAt(0) || 'U'}
             </div>
             <div className="d-flex flex-column">
-              <div className="user-fullname fw-semibold">
-                {row.fullName}
-              </div>
+              <div className="user-fullname fw-semibold">{row.fullName}</div>
             </div>
           </div>
         ),
@@ -225,40 +208,39 @@ const Users = () => {
         name: 'Email',
         selector: (row) => row.email,
         sortable: true,
-        cell: (row) => (
-          <div className="user-email">{row.email}</div>
-        ),
+        minWidth: '240px',
+        grow: 2,
+        cell: (row) => <div className="user-email">{row.email}</div>,
       },
       {
         name: 'Role',
         selector: (row) => getRoleName(row, roles),
         sortable: true,
-        cell: (row) => (
-          <span className="badge bg-light text-dark">
-            {getRoleName(row, roles)}
-          </span>
-        ),
+        minWidth: '140px',
+        grow: 1,
+        cell: (row) => <span className="badge bg-light text-dark">{getRoleName(row, roles)}</span>,
       },
       {
         name: 'Status',
         selector: (row) => row.statusId,
         sortable: true,
+        minWidth: '140px',
+        grow: 0.8,
         cell: (row) => getStatusBadge(row.statusId, statuses),
       },
       {
         name: 'Last Active',
-        selector: (row) =>
-          row.lastLoginAt ? formatDateTime(row.lastLoginAt) : '—',
+        selector: (row) => (row.lastLoginAt ? formatDateTime(row.lastLoginAt) : '—'),
         sortable: true,
+        minWidth: '170px',
+        grow: 1,
       },
       {
         name: 'Actions',
+        minWidth: '140px',
+        grow: 0.6,
         cell: (row) => (
-          <ActionsDropdown
-            row={row}
-            onEdit={() => handleEditUser(row)}
-            onDelete={() => handleDeleteUser(row)}
-          />
+          <ActionsDropdown row={row} onEdit={() => handleEditUser(row)} onDelete={() => handleDeleteUser(row)} />
         ),
         ignoreRowClick: true,
       },
@@ -268,130 +250,121 @@ const Users = () => {
 
   if (loading) {
     return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        data-testid="loading-spinner"
-      >
-        <Spinner animation="border" variant="primary" />
-      </div>
+      <DefaultLayout>
+        <div
+          className="table-page-outer"
+          style={{ left: sidebarWidth + 24, right: 24 }}
+        >
+          <div className="users-table-scroll d-flex justify-content-center align-items-center">
+            <Spinner animation="border" variant="primary" />
+          </div>
+        </div>
+      </DefaultLayout>
     );
   }
 
   return (
-    <div className="p-3">
-      <Card className="my-4 shadow-sm border-0 bg-light dark:bg-dark">
-        <Card.Body>
-          <Card.Title className="user-dashboard-title mb-3 fw-bold">
-            User Management Dashboard
-          </Card.Title>
+    <DefaultLayout>
+      <div
+        className="table-page-outer"
+        style={{ left: sidebarWidth + 24, right: 24 }}
+      >
+        <div className="users-table-scroll users-table-responsive">
+          <Card className="my-0 shadow-none border-0 bg-transparent">
+            <Card.Body className="p-0">
+              <Card.Title className="user-dashboard-title mb-3 fw-bold">
+                User Management Dashboard
+              </Card.Title>
 
-          {/* Search and Filters */}
-          <div className="mb-3">
-            <SearchFilters
-              searchTerm={searchTerm}
-              onSearchChange={setSearchTerm}
-              filters={[
-                {
-                  name: 'role',
-                  label: 'All Roles',
-                  options: roleOptions,
-                },
-              ]}
-              filterValues={{ role: filterRole }}
-              onFilterChange={(name, value) => {
-                if (name === 'role') setFilterRole(value);
-              }}
-              onRefresh={handleRefresh}
-            />
-          </div>
-
-          {/* Desktop Table */}
-          {!isMobile ? (
-            <DataTable
-              columns={columns}
-              data={filteredUsers}
-              progressPending={loading}
-              progressComponent={
-                <Spinner animation="border" variant="primary" />
-              }
-              pagination
-              paginationTotalRows={filteredUsers.length}
-              highlightOnHover
-              responsive
-              customStyles={customStyles}
-              dense
-              onRowClicked={(row) => {
-                setSelectedUser(row);
-                setShowViewModal(true);
-              }}
-            />
-          ) : (
-            // Mobile Cards
-            <div>
-              {filteredUsers.map((user) => (
-                <Card
-                  key={user.id}
-                  className="mb-3 shadow-sm border-0"
-                  onClick={() => {
-                    setSelectedUser(user);
-                    setShowViewModal(true);
+              <div className="mb-3">
+                <SearchFilters
+                  searchTerm={searchTerm}
+                  onSearchChange={setSearchTerm}
+                  filters={[
+                    {
+                      name: 'role',
+                      label: 'All Roles',
+                      options: roleOptions,
+                    },
+                  ]}
+                  filterValues={{ role: filterRole }}
+                  onFilterChange={(name, value) => {
+                    if (name === 'role') setFilterRole(value);
                   }}
-                >
-                  <Card.Body>
-                    <Row className="mb-2">
-                      <Col xs={4} className="fw-bold">
-                        Name:
-                      </Col>
-                      <Col xs={8}>{user.fullName}</Col>
-                    </Row>
-                    <Row className="mb-2">
-                      <Col xs={4} className="fw-bold">
-                        Email:
-                      </Col>
-                      <Col xs={8}>{user.email}</Col>
-                    </Row>
-                    <Row className="mb-2">
-                      <Col xs={4} className="fw-bold">
-                        Role:
-                      </Col>
-                      <Col xs={8}>{getRoleName(user, roles)}</Col>
-                    </Row>
-                    <Row className="mb-2">
-                      <Col xs={4} className="fw-bold">
-                        Status:
-                      </Col>
-                      <Col xs={8}>
-                        {getStatusBadge(user.statusId, statuses)}
-                      </Col>
-                    </Row>
-                    <Row className="mb-2">
-                      <Col xs={4} className="fw-bold">
-                        Last Active:
-                      </Col>
-                      <Col xs={8}>
-                        {user.lastLoginAt
-                          ? formatDateTime(user.lastLoginAt)
-                          : '—'}
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col>
-                        <ActionsDropdown
-                          row={user}
-                          onEdit={() => handleEditUser(user)}
-                          onDelete={() => handleDeleteUser(user)}
-                        />
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Card>
-              ))}
-            </div>
-          )}
-        </Card.Body>
-      </Card>
+                  onRefresh={handleRefresh}
+                />
+              </div>
 
-      {/* Edit User Modal */}
+              {!isMobile ? (
+                <div className="users-table-card">
+                  <DataTable
+                    columns={columns}
+                    data={filteredUsers}
+                    progressPending={loading}
+                    progressComponent={<Spinner animation="border" variant="primary" />}
+                    pagination
+                    paginationTotalRows={filteredUsers.length}
+                    highlightOnHover
+                    responsive
+                    customStyles={customStyles}
+                    dense
+                    onRowClicked={(row) => {
+                      setSelectedUser(row);
+                      setShowViewModal(true);
+                    }}
+                  />
+                </div>
+              ) : (
+                <div>
+                  {filteredUsers.map((user) => (
+                    <Card
+                      key={user.id}
+                      className="mb-3 shadow-sm border-0"
+                      onClick={() => {
+                        setSelectedUser(user);
+                        setShowViewModal(true);
+                      }}
+                    >
+                      <Card.Body>
+                        <Row className="mb-2">
+                          <Col xs={4} className="fw-bold">Name:</Col>
+                          <Col xs={8}>{user.fullName}</Col>
+                        </Row>
+                        <Row className="mb-2">
+                          <Col xs={4} className="fw-bold">Email:</Col>
+                          <Col xs={8}>{user.email}</Col>
+                        </Row>
+                        <Row className="mb-2">
+                          <Col xs={4} className="fw-bold">Role:</Col>
+                          <Col xs={8}>{getRoleName(user, roles)}</Col>
+                        </Row>
+                        <Row className="mb-2">
+                          <Col xs={4} className="fw-bold">Status:</Col>
+                          <Col xs={8}>{getStatusBadge(user.statusId, statuses)}</Col>
+                        </Row>
+                        <Row className="mb-2">
+                          <Col xs={4} className="fw-bold">Last Active:</Col>
+                          <Col xs={8}>{user.lastLoginAt ? formatDateTime(user.lastLoginAt) : '—'}</Col>
+                        </Row>
+                        <Row>
+                          <Col>
+                            <ActionsDropdown
+                              row={user}
+                              onEdit={() => handleEditUser(user)}
+                              onDelete={() => handleDeleteUser(user)}
+                            />
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </Card.Body>
+          </Card>
+        </div>
+      </div>
+
       {selectedUser && (
         <EditUserModal
           visible={showEditModal}
@@ -403,7 +376,6 @@ const Users = () => {
         />
       )}
 
-      {/* Delete User Modal */}
       {selectedUser && (
         <ConfirmationModal
           visible={showDeleteModal}
@@ -420,7 +392,6 @@ const Users = () => {
         />
       )}
 
-      {/* View User Modal */}
       {selectedUser && (
         <ViewUserModal
           visible={showViewModal}
@@ -433,7 +404,7 @@ const Users = () => {
           isDarkMode={isDarkMode}
         />
       )}
-    </div>
+    </DefaultLayout>
   );
 };
 
