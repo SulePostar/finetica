@@ -183,7 +183,7 @@ const ConfirmationModal = ({
           {cancelText}
         </AppButton>
         <AppButton
-          variant="danger"
+          variant={confirmColor}
           onClick={handleConfirm}
           disabled={loading}
         >
