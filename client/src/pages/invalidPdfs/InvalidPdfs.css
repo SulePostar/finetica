@@ -1,51 +1,81 @@
 :root {
-    --color-primary: #8367deff;
-    --color-primary-hover: #5b3cc4;
-    --color-white: #ffffff;
+  --color-primary: #8367deff;
+  --color-primary-hover: #5b3cc4;
+  --color-white: #ffffff;
 }
 
 .nav-link {
-    color: var(--cui-body-color) !important;
+  color: var(--cui-body-color) !important;
 }
 
 .custom-card-header .nav-link.active,
 .custom-card-header .nav-link.active:hover,
 .custom-card-header .nav-link.active:focus {
-    background-color: var(--color-primary) !important;
-    color: var(--color-white) !important;
+  background-color: var(--color-primary) !important;
+  color: var(--color-white) !important;
 }
 
 /* Hover for inactive tabs */
 .custom-card-header .nav-link:not(.active):hover,
 .custom-card-header .nav-link:not(.active):focus {
-    background-color: var(--color-primary-hover) !important;
-    color: var(--color-white) !important;
+  background-color: var(--color-primary-hover) !important;
+  color: var(--color-white) !important;
 }
 
 .custom-card-header {
-    background-color: var(--cui-card-cap-bg) !important;
-    color: var(--cui-card-cap-color) !important;
+  background-color: var(--cui-card-cap-bg) !important;
+  color: var(--cui-card-cap-color) !important;
 }
 
 .custom-card {
-    background-color: var(--cui-card-bg) !important;
-    color: var(--cui-body-color) !important;
+  background-color: var(--cui-card-bg) !important;
+  color: var(--cui-body-color) !important;
 }
 
 .nav-fill.flex-nowrap.overflow-auto {
-    -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;
 }
 
 .custom-card-title {
-    margin-bottom: 0px;
-    font-size: 28px !important;
-    font-weight: 700 !important;
-    color: var(--cui-primary);
-    font-family: 'Segoe UI', sans-serif !important;
+  margin-bottom: 0px;
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  color: var(--cui-primary);
+  font-family: 'Segoe UI', sans-serif !important;
 }
 
 .invalid-pdfs-container {
-    max-width: 2000px;
-    margin: 0 auto;
-    width: 100%;
+  max-width: 2000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ==================== DARK THEME ==================== */
+[data-coreui-theme='dark'] .invalid-pdfs-container,
+[data-coreui-theme='dark'] .invalid-pdfs-container .card,
+[data-coreui-theme='dark'] .invalid-pdfs-container .list-group-item {
+  background-color: #1e212a !important;
+  color: #f3f4f6 !important;
+  border-color: #2c2f38 !important;
+}
+
+[data-coreui-theme='dark'] .invalid-pdfs-container .card-header,
+[data-coreui-theme='dark'] .invalid-pdfs-container .card-body,
+[data-coreui-theme='dark'] .invalid-pdfs-container .card-footer {
+  background-color: #23262f !important;
+  border-color: #2c2f38 !important;
+  color: #f3f4f6 !important;
+}
+
+[data-coreui-theme='dark'] .invalid-pdfs-container .badge.bg-success {
+  background-color: #2e7d32 !important;
+}
+[data-coreui-theme='dark'] .invalid-pdfs-container .badge.bg-danger {
+  background-color: #c62828 !important;
+}
+
+/* PDF viewer dio ostaje svijetao */
+.pdf-viewer-container {
+  background-color: #f8f9fa !important;
+  color: inherit !important;
 }

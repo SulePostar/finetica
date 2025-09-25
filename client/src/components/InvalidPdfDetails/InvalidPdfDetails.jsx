@@ -9,7 +9,7 @@ import { PdfViewer } from "../PdfViewer/PdfViewer";
 import api from "../../services/api";
 
 const TYPE_TO_PATH = {
-  1: "bank-transactions",
+  1: "transactions",
   2: "kif",
   3: "kuf",
   4: "contracts",
@@ -80,16 +80,16 @@ const InvalidPdfDetails = ({ id, type }) => {
   if (!doc) return <div className="text-danger text-center">Document not found</div>;
 
   return (
-    <CRow className="g-0">
+    <CRow className="g-0 invalid-pdfs-container">
       {/* PDF Viewer */}
-      <CCol md={8} className="border-end bg-light d-flex align-items-center justify-content-center">
+      <CCol md={8} className="border-end d-flex align-items-center justify-content-center pdf-viewer-container">
         {doc.pdfUrl ? <PdfViewer pdfUrl={doc.pdfUrl} /> : <div>No PDF available</div>}
       </CCol>
 
       {/* Details panel */}
-      <CCol md={4} className="bg-white">
-        <CCard className="border-0 shadow-sm rounded-3">
-          <CCardHeader className="d-flex justify-content-center align-items-center bg-white border-bottom">
+      <CCol md={4} className="invalid-pdf-details-panel">
+        <CCard className="border-0 shadow-sm rounded-3 h-100">
+          <CCardHeader className="d-flex justify-content-center align-items-center border-bottom">
             <div className="d-flex gap-2">
               {isEditing ? (
                 <>
