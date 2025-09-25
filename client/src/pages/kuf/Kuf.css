@@ -11,11 +11,11 @@
   flex-direction: column;
 }
 
-.contract-table-scroll {
+.kuf-table-scroll {
   margin: 2rem;
   max-height: calc(100% - 4rem);
   overflow-y: auto;
-  overflow-x: hidden; 
+  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   background: var(--cui-body-bg, transparent);
   border-radius: 10px;
@@ -29,14 +29,15 @@
   font-size: 0.9rem;
   font-weight: 500;
 }
-.status-badge.active { background-color: #d1fae5; color: #065f46; }
-.status-badge.inactive { background-color: #fee2e2; color: #991b1b; }
-.status-badge.pending { background-color: #FEF3C7; color: #92400E; }
 
 .status-badge.approved {
-  background-color: #d1fae5; 
-  color: #065f46;            
-  white-space: nowrap;       
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.status-badge.pending {
+  background-color: #fef3c7;
+  color: #92400e;
 }
 
 [data-coreui-theme='dark'] .status-badge.approved {
@@ -44,25 +45,26 @@
   color: #d1fae5;
 }
 
+[data-coreui-theme='dark'] .status-badge.pending {
+  background-color: #92400e;
+  color: #fef3c7;
+}
 
-[data-coreui-theme='dark'] .status-badge.active { background-color: #065f46; color: #d1fae5; }
-[data-coreui-theme='dark'] .status-badge.inactive { background-color: #991b1b; color: #fee2e2; }
-[data-coreui-theme='dark'] .status-badge.pending { background-color: #92400E; color: #FEF3C7; }
-
-.contract-table-responsive .rdt_Table,
-.contract-table-responsive table {
+.kuf-table-responsive .rdt_Table,
+.kuf-table-responsive table {
   width: 100%;
+  min-width: 1200px;
   max-width: 100%;
   font-size: 1rem;
 }
 
 @media (min-width: 2000px) {
-  .contract-table-scroll {
+  .kuf-table-scroll {
     margin: 3rem;
     max-height: calc(100% - 6rem);
   }
-  .contract-table-responsive .rdt_Table,
-  .contract-table-responsive table {
+  .kuf-table-responsive .rdt_Table,
+  .kuf-table-responsive table {
     font-size: 1.05rem;
   }
   .status-badge {
@@ -72,12 +74,12 @@
 }
 
 @media (min-width: 2560px) {
-  .contract-table-scroll {
+  .kuf-table-scroll {
     margin: 4rem;
     max-height: calc(100% - 8rem);
   }
-  .contract-table-responsive .rdt_Table,
-  .contract-table-responsive table {
+  .kuf-table-responsive .rdt_Table,
+  .kuf-table-responsive table {
     font-size: 1.15rem;
   }
   .status-badge {
@@ -87,12 +89,12 @@
 }
 
 @media (min-width: 3440px) {
-  .contract-table-scroll {
+  .kuf-table-scroll {
     margin: 5rem;
     max-height: calc(100% - 10rem);
   }
-  .contract-table-responsive .rdt_Table,
-  .contract-table-responsive table {
+  .kuf-table-responsive .rdt_Table,
+  .kuf-table-responsive table {
     font-size: 1.25rem;
   }
   .status-badge {
@@ -102,22 +104,31 @@
 }
 
 @media (max-width: 900px) {
-  .contract-table-scroll {
+  .kuf-table-scroll {
     margin: 1rem;
     max-height: calc(100% - 2rem);
     padding: 1rem;
   }
+  .kuf-table-responsive .rdt_Table,
+  .kuf-table-responsive table {
+    min-width: 900px;
+    font-size: 0.85rem;
+  }
 }
 
 @media (max-width: 600px) {
-  .contract-table-scroll {
+  .kuf-table-scroll {
     margin: 0.5rem;
     max-height: calc(100% - 1rem);
     padding: 0.75rem;
   }
+  .kuf-table-responsive .rdt_Table,
+  .kuf-table-responsive table {
+    min-width: 600px;
+    font-size: 0.78rem;
+  }
 }
 
-.contract-table-scroll .rdt_TableWrapper {
+.kuf-table-scroll .rdt_TableWrapper {
   max-height: 100%;
-  overflow-x: hidden;
 }

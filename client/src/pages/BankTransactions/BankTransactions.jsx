@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ActionsDropdown from '../../components/Tables/Dropdown/ActionsDropdown';
 import DynamicTable from '../../components/Tables/DynamicTable';
@@ -7,152 +7,132 @@ import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useBucketName } from '../../lib/bucketUtils';
 import BankTransactionsService from '../../services/bankTransactions';
-import '../../styles/shared/CommonStyles.css';
-import '../../styles/TablePages.css';
 import './BankTransactions.css';
-
 
 const BankTransactions = () => {
   const navigate = useNavigate();
   const bucketName = useBucketName();
   const sidebarWidth = useSidebarWidth();
+
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
-  const apiEndpoint = useMemo(() => `${API_BASE}/transactions/bank-transaction-data`, [API_BASE]);
+  const apiEndpoint = useMemo(
+    () => `${API_BASE}/transactions/bank-transaction-data`,
+    [API_BASE]
+  );
 
-  const handleView = useCallback((id) => {
-    navigate(`/bank-transactions/${id}`);
-  }, [navigate]);
+  const [refetchFunction, setRefetchFunction] = useState(null);
+  const handleRefetchCallback = useCallback((fn) => setRefetchFunction(() => fn), []);
 
-  const handleApprove = useCallback((id) => {
-    navigate(`/bank-transactions/${id}/approve`);
-  }, [navigate]);
+  const handleView = useCallback((id) => navigate(`/bank-transactions/${id}`), [navigate]);
+  const handleApprove = useCallback((id) => navigate(`/bank-transactions/${id}/approve`), [navigate]);
 
   const handleDownload = useCallback(async (id) => {
     try {
-      const response = await BankTransactionsService.getById(id);
-      const documentData = response.data;
-
-      if (!documentData?.pdfUrl) {
-        console.error("No pdfUrl found for this document");
-        return;
-      }
-
-      const link = document.createElement("a");
-      link.href = documentData.pdfUrl;
+      const { data } = await BankTransactionsService.getById(id);
+      if (!data?.pdfUrl) return;
+      const link = document.createElement('a');
+      link.href = data.pdfUrl;
       link.download = `bank-transaction-${id}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
-    } catch (err) {
-      console.error("Download failed:", err);
+    } catch (e) {
+      console.error('Download failed:', e);
     }
   }, []);
 
   const columns = [
-    {
-      name: 'Transaction ID',
-      selector: row => row.id,
-      sortable: true,
-    },
+    { name: 'Transaction ID', selector: (row) => row.id ?? '—', sortable: true },
     {
       name: 'Date',
-      selector: row => row.date,
+      selector: (row) => row.date || '—',
       sortable: true,
-      cell: row => row.date ? new Date(row.date).toLocaleDateString() : '—',
+      cell: (row) => (row.date ? new Date(row.date).toLocaleDateString() : '—'),
+      width: '150px',
     },
     {
       name: 'Direction',
-      selector: row => row.direction,
+      selector: (row) => row.direction || '—',
       sortable: true,
-      cell: row => (
-        <span>
-          {row.direction === 'in' ? 'Expense' : 'Income'}
-        </span>
-      ),
+      cell: (row) => (row.direction === 'in' ? 'Expense' : row.direction === 'out' ? 'Income' : '—'),
+      width: '130px',
     },
     {
       name: 'Category',
-      selector: row => row.TransactionCategory?.name,
+      selector: (row) => row.TransactionCategory?.name || '—',
       sortable: true,
-      cell: row => row.TransactionCategory?.name || '—',
+      cell: (row) => row.TransactionCategory?.name || '—',
+      width: '200px',
     },
-    {
-      name: 'Account Number',
-      selector: row => row.accountNumber,
-      sortable: true,
-    },
-    {
-      name: 'Description',
-      selector: row => row.description,
-      sortable: true,
-      wrap: true,
-    },
-    {
-      name: 'Invoice ID',
-      selector: row => row.invoiceId,
-      sortable: true,
-    },
+    { name: 'Account Number', selector: (row) => row.accountNumber || '—', sortable: true, width: '200px' },
+    { name: 'Description', selector: (row) => row.description || '—', sortable: true, wrap: true, width: '300px' },
+    { name: 'Invoice ID', selector: (row) => row.invoiceId || '—', sortable: true, width: '150px' },
     {
       name: 'Partner',
-      selector: row => row.BusinessPartner?.name,
+      selector: (row) => row.BusinessPartner?.name || '—',
       sortable: true,
-      cell: row => row.BusinessPartner?.name || '—',
+      cell: (row) => row.BusinessPartner?.name || '—',
+      width: '220px',
     },
     {
       name: 'Amount',
-      selector: row => row.amount,
+      selector: (row) => (row.amount != null ? row.amount : '—'),
       sortable: true,
-      cell: row => row.amount ? `${parseFloat(row.amount).toFixed(2)} KM` : '—',
+      cell: (row) => (row.amount != null ? `${parseFloat(row.amount).toFixed(2)} KM` : '—'),
       style: { textAlign: 'right' },
+      width: '160px',
     },
     {
       name: 'Status',
-      selector: row => {
-        if (row.approvedAt || row.approvedBy) return 'Approved';
-        return 'Pending';
-      },
+      selector: (row) => (row.approvedAt || row.approvedBy ? 'Approved' : 'Pending'),
       sortable: true,
       width: '130px',
-      cell: row => {
-        const status = row.approvedAt || row.approvedBy ? 'Approved' : 'Pending';
-        return (
-          <span className={`status-badge ${status === 'Approved' ? 'approved' : 'pending'}`}>
-            {status}
-          </span>
-        );
+      cell: (row) => {
+        const status = row.approvedAt || row.approvedBy ? 'approved' : 'pending';
+        return <span className={`status-badge ${status}`}>{status === 'approved' ? 'Approved' : 'Pending'}</span>;
       },
     },
     {
       name: 'Actions',
-      cell: row => (
+      cell: (row) => (
         <ActionsDropdown
           row={row}
           onView={handleView}
           onApprove={() => handleApprove(row.id)}
-          onDownload={handleDownload}
+          onDownload={() => handleDownload(row.id)}
           isApproved={Boolean(row.approvedAt || row.approvedBy)}
         />
       ),
       ignoreRowClick: true,
+      width: '140px',
     },
   ];
 
   return (
     <DefaultLayout>
       <div
-        className="table-page-outer bank-transactions-table-outer"
+        className="table-page-outer"
         style={{
-          marginLeft: sidebarWidth,
-          width: `calc(100vw - ${sidebarWidth}px)`,
+          left: sidebarWidth + 24,
+          right: 24,
         }}
       >
-        <DynamicTable
-          title="Bank Transactions"
-          columns={columns}
-          apiEndpoint={apiEndpoint}
-          uploadButton={<UploadButton bucketName={bucketName} />}
-        />
+        <div className="bank-transactions-table-scroll bank-transactions-table-responsive">
+          <DynamicTable
+            title="Bank Transactions"
+            columns={columns}
+            apiEndpoint={apiEndpoint}
+            uploadButton={
+              <UploadButton
+                bucketName={bucketName}
+                onUploadSuccess={() => {
+                  if (refetchFunction) refetchFunction();
+                }}
+              />
+            }
+            onRefetch={handleRefetchCallback}
+          />
+        </div>
       </div>
     </DefaultLayout>
   );

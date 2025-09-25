@@ -1,21 +1,26 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Card, Spinner } from 'react-bootstrap';
+import { Card, Spinner, Row, Col } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
+import { useColorModes } from '@coreui/react';
+
 import makeCustomStyles from '../../Tables/DynamicTable.styles';
-import CIcon from '@coreui/icons-react';
-import { cilUser, cilPencil, cilTrash } from '@coreui/icons';
 import { capitalizeFirst } from '../../../helpers/capitalizeFirstLetter';
+import ActionsDropdown from '../../Tables/Dropdown/ActionsDropdown';
+import { formatDateTime } from '../../../helpers/formatDate';
+import ViewUserModal from '../../Modals/ViewUserModal/ViewUserModal';
 
 import './Users.css';
-import { colors } from '../../../styles/colors';
 
 import {
   fetchUsers,
   updateUser,
   deleteUser,
-  quickChangeUserStatus,
-  quickChangeUserRole,
   clearError,
   clearSuccess,
   selectUsers,
@@ -24,8 +29,6 @@ import {
   selectUsersSuccess,
   selectUpdatingUser,
   selectDeletingUser,
-  selectChangingStatus,
-  selectChangingRole,
 } from '../../../redux/users/usersSlice';
 
 import {
@@ -37,17 +40,43 @@ import {
 import {
   fetchStatuses,
   selectStatuses,
-  selectStatusesLoading,
 } from '../../../redux/statuses/statusesSlice';
 
-import { SearchFilters, EditUserModal, ConfirmationModal, QuickChangeModal } from '../../index';
+import {
+  SearchFilters,
+  EditUserModal,
+  ConfirmationModal,
+} from '../../index';
 
-import { filterUsers, getRoleName, getStatusBadge, isNewUser } from '../../../utilis/formatters';
+import {
+  filterUsers,
+  getRoleName,
+  getStatusBadge,
+} from '../../../utilis/formatters';
 import notify from '../../../utilis/toastHelper';
+
+import { useSidebarWidth } from '../../../hooks/useSidebarWidth';
+import DefaultLayout from '../../../layout/DefaultLayout';
+
+const useIsMobile = (breakpoint = 768) => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < breakpoint);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < breakpoint);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [breakpoint]);
+
+  return isMobile;
+};
 
 const Users = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.profile);
+  const [showViewModal, setShowViewModal] = useState(false);
+
+  const { colorMode } = useColorModes('coreui-free-react-admin-template-theme');
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const users = useSelector(selectUsers);
   const loading = useSelector(selectUsersLoading);
@@ -55,25 +84,19 @@ const Users = () => {
   const success = useSelector(selectUsersSuccess);
   const updatingUser = useSelector(selectUpdatingUser);
   const deletingUser = useSelector(selectDeletingUser);
-  const changingStatus = useSelector(selectChangingStatus);
-  const changingRole = useSelector(selectChangingRole);
 
-  // New selectors for roles and statuses
   const roles = useSelector(selectRoles);
   const rolesLoading = useSelector(selectRolesLoading);
   const statuses = useSelector(selectStatuses);
-  const statusesLoading = useSelector(selectStatusesLoading);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showQuickChangeModal, setShowQuickChangeModal] = useState(false);
-  const [quickChangeData, setQuickChangeData] = useState({
-    type: null,
-    newValue: null,
-  });
+
+  const isMobile = useIsMobile();
+  const sidebarWidth = useSidebarWidth();
 
   useEffect(() => {
     dispatch(fetchUsers());
@@ -83,12 +106,8 @@ const Users = () => {
 
   useEffect(() => {
     if (error || success) {
-      if (error) {
-        notify.onError(error);
-      }
-      if (success) {
-        notify.onSuccess(success);
-      }
+      if (error) notify.onError(error);
+      if (success) notify.onSuccess(success);
 
       const timer = setTimeout(() => {
         if (error) dispatch(clearError());
@@ -98,11 +117,35 @@ const Users = () => {
     }
   }, [error, success, dispatch]);
 
-  const filteredUsers = useMemo(() => {
-    return filterUsers(users, searchTerm, filterRole);
-  }, [users, searchTerm, filterRole]);
+  const filteredUsers = useMemo(
+    () => filterUsers(users, searchTerm, filterRole),
+    [users, searchTerm, filterRole]
+  );
 
   const customStyles = useMemo(() => makeCustomStyles(), []);
+
+  const checkDarkMode = useCallback(() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const dark = colorMode === 'dark' || (colorMode === 'auto' && media.matches);
+    setIsDarkMode(dark);
+
+    document.documentElement.setAttribute('data-coreui-theme', dark ? 'dark' : 'light');
+    document.body.classList.toggle('dark-mode', dark);
+  }, [colorMode]);
+
+  useEffect(() => {
+    checkDarkMode();
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    media.addEventListener('change', checkDarkMode);
+    return () => media.removeEventListener('change', checkDarkMode);
+  }, [checkDarkMode]);
+
+  useEffect(() => {
+    if (selectedUser) {
+      const updated = users.find((u) => u.id === selectedUser.id);
+      if (updated) setSelectedUser(updated);
+    }
+  }, [users, selectedUser]);
 
   const handleRefresh = useCallback(() => {
     dispatch(fetchUsers());
@@ -118,24 +161,6 @@ const Users = () => {
     setShowDeleteModal(true);
   }, []);
 
-  const handleQuickStatusChange = useCallback(
-    (userId, newStatusId) => {
-      setSelectedUser(users.find((u) => u.id === userId));
-      setQuickChangeData({ type: 'status', newValue: newStatusId });
-      setShowQuickChangeModal(true);
-    },
-    [users]
-  );
-
-  const handleQuickRoleChange = useCallback(
-    (userId, newRoleId) => {
-      setSelectedUser(users.find((u) => u.id === userId));
-      setQuickChangeData({ type: 'role', newValue: newRoleId });
-      setShowQuickChangeModal(true);
-    },
-    [users]
-  );
-
   const handleUpdateUser = useCallback(
     (formData) => {
       dispatch(updateUser({ userId: selectedUser.id, userData: formData }));
@@ -150,15 +175,12 @@ const Users = () => {
     notify.onWarning(`Deleting user: ${selectedUser.firstName || selectedUser.email}`);
   }, [dispatch, selectedUser]);
 
-  const handleConfirmQuickChange = useCallback(() => {
-    const { type, newValue } = quickChangeData;
-    if (type === 'status') {
-      dispatch(quickChangeUserStatus({ userId: selectedUser.id, statusId: newValue }));
-    } else if (type === 'role') {
-      dispatch(quickChangeUserRole({ userId: selectedUser.id, roleId: newValue }));
-    }
-    setShowQuickChangeModal(false);
-  }, [dispatch, selectedUser, quickChangeData]);
+  const roleOptions = useMemo(() => {
+    if (rolesLoading) return [{ value: 'loading', label: 'Loading...' }];
+    return roles
+      .filter((r) => r.id && r.role)
+      .map((r) => ({ value: r.id.toString(), label: capitalizeFirst(r.role) }));
+  }, [roles, rolesLoading]);
 
   const columns = useMemo(
     () => [
@@ -166,11 +188,19 @@ const Users = () => {
         name: 'Name',
         selector: (row) => row.fullName,
         sortable: true,
-        width: '15%',
+        minWidth: '220px',
+        grow: 2,
         cell: (row) => (
-          <div>
-            {row.fullName}
-            {isNewUser(row) && <span className="badge bg-success ms-2">New User</span>}
+          <div className="d-flex align-items-center gap-2">
+            <div
+              className="avatar-circle d-flex align-items-center me-2 
+            justify-content-center rounded-circle fw-semibold text-white"
+            >
+              {row.fullName?.charAt(0) || 'U'}
+            </div>
+            <div className="d-flex flex-column">
+              <div className="user-fullname fw-semibold">{row.fullName}</div>
+            </div>
           </div>
         ),
       },
@@ -178,177 +208,163 @@ const Users = () => {
         name: 'Email',
         selector: (row) => row.email,
         sortable: true,
-        width: '25%',
-        cell: (row) => (
-          <div className="user-dashboard-email-cell" title={row.email}>
-            {row.email}
-          </div>
-        ),
+        minWidth: '240px',
+        grow: 2,
+        cell: (row) => <div className="user-email">{row.email}</div>,
       },
       {
         name: 'Role',
         selector: (row) => getRoleName(row, roles),
         sortable: true,
-        width: '12.5%',
+        minWidth: '140px',
+        grow: 1,
+        cell: (row) => <span className="badge bg-light text-dark">{getRoleName(row, roles)}</span>,
       },
       {
         name: 'Status',
         selector: (row) => row.statusId,
         sortable: true,
-        width: '12.5%',
+        minWidth: '140px',
+        grow: 0.8,
         cell: (row) => getStatusBadge(row.statusId, statuses),
       },
       {
+        name: 'Last Active',
+        selector: (row) => (row.lastLoginAt ? formatDateTime(row.lastLoginAt) : '—'),
+        sortable: true,
+        minWidth: '170px',
+        grow: 1,
+      },
+      {
         name: 'Actions',
-        selector: (row) => row.id,
-        sortable: false,
-        width: '35%',
-        cell: (row) => {
-          const isSelf = row.id === currentUser?.id;
-          return (
-            <div className="user-dashboard-actions-container">
-              <div className="user-dashboard-status-dropdown-wrapper">
-                <select
-                  className="form-select form-select-sm user-dashboard-status-dropdown"
-                  value={row.statusId}
-                  onChange={(e) => handleQuickStatusChange(row.id, parseInt(e.target.value))}
-                  title="Change Status"
-                  disabled={changingStatus || statusesLoading}
-                >
-                  {statusesLoading ? (
-                    <option>Loading...</option>
-                  ) : (
-                    statuses.map((status) => (
-                      <option key={status.id} value={status.id}>
-                        {capitalizeFirst(status.status)}
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
-              <div className="user-dashboard-role-dropdown-wrapper">
-                <select
-                  className="form-select form-select-sm user-dashboard-role-dropdown"
-                  value={row.roleId || row.role_id || ''}
-                  onChange={(e) => handleQuickRoleChange(row.id, parseInt(e.target.value))}
-                  title="Change Role"
-                  disabled={changingRole || rolesLoading}
-                >
-                  <option value="">No Role</option>
-                  {rolesLoading ? (
-                    <option>Loading...</option>
-                  ) : (
-                    roles.map((role) => (
-                      <option key={role.id} value={role.id}>
-                        {capitalizeFirst(role.role)}
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
-              <button
-                className="btn btn-sm user-dashboard-edit-btn"
-                onClick={() => handleEditUser(row)}
-                disabled={updatingUser || deletingUser}
-                title="Edit User"
-                style={{ backgroundColor: colors.primary }}
-              >
-                <CIcon icon={cilPencil} />
-              </button>
-              <button
-                className="btn bg-danger btn-sm user-dashboard-delete-btn"
-                onClick={() => handleDeleteUser(row)}
-                disabled={isSelf || updatingUser || deletingUser}
-                title="Delete User"
-              >
-                <CIcon icon={cilTrash} />
-              </button>
-            </div>
-          );
-        },
-      }
+        minWidth: '140px',
+        grow: 0.6,
+        cell: (row) => (
+          <ActionsDropdown row={row} onEdit={() => handleEditUser(row)} onDelete={() => handleDeleteUser(row)} />
+        ),
+        ignoreRowClick: true,
+      },
     ],
-    [
-      currentUser,
-      updatingUser,
-      deletingUser,
-      changingStatus,
-      changingRole,
-      roles,
-      statuses,
-      rolesLoading,
-      statusesLoading,
-      handleEditUser,
-      handleQuickStatusChange,
-      handleQuickRoleChange,
-      handleDeleteUser,
-    ]
+    [roles, statuses, handleEditUser, handleDeleteUser]
   );
 
   if (loading) {
     return (
-      <div className="user-dashboard-loading" data-testid="loading-spinner">
-        <Spinner animation="border" variant="primary" />
-      </div>
+      <DefaultLayout>
+        <div
+          className="table-page-outer"
+          style={{ left: sidebarWidth + 24, right: 24 }}
+        >
+          <div className="users-table-scroll d-flex justify-content-center align-items-center">
+            <Spinner animation="border" variant="primary" />
+          </div>
+        </div>
+      </DefaultLayout>
     );
   }
 
   return (
-    <div>
-      <div className="user-dashboard-container">
-        <Card className="my-4 shadow-sm border-0 bg-light dark:bg-dark">
-          <Card.Body>
-            <Card.Title className="user-dashboard-title">
-              User Management Dashboard
-            </Card.Title>
+    <DefaultLayout>
+      <div
+        className="table-page-outer"
+        style={{ left: sidebarWidth + 24, right: 24 }}
+      >
+        <div className="users-table-scroll users-table-responsive">
+          <Card className="my-0 shadow-none border-0 bg-transparent">
+            <Card.Body className="p-0">
+              <Card.Title className="user-dashboard-title mb-3 fw-bold">
+                User Management Dashboard
+              </Card.Title>
 
-            {/* Search and Filters */}
-            <div className="user-dashboard-search-filters">
-              <SearchFilters
-                searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
-                filters={[
-                  {
-                    name: "role",
-                    label: "All Roles",
-                    options: [
-                      { value: "", label: "All Roles" },
-                      ...(rolesLoading
-                        ? [{ value: "loading", label: "Loading..." }]
-                        : roles.map((role) => ({
-                          value: role.id.toString(),
-                          label: capitalizeFirst(role.role),
-                        }))
-                      ),
-                    ],
-                  },
-                ]}
-                filterValues={{ role: filterRole }}
-                onFilterChange={(name, value) => {
-                  if (name === "role") setFilterRole(value);
-                }}
-                onRefresh={handleRefresh}
-              />
-            </div>
+              <div className="mb-3">
+                <SearchFilters
+                  searchTerm={searchTerm}
+                  onSearchChange={setSearchTerm}
+                  filters={[
+                    {
+                      name: 'role',
+                      label: 'All Roles',
+                      options: roleOptions,
+                    },
+                  ]}
+                  filterValues={{ role: filterRole }}
+                  onFilterChange={(name, value) => {
+                    if (name === 'role') setFilterRole(value);
+                  }}
+                  onRefresh={handleRefresh}
+                />
+              </div>
 
-            {/* Users Table */}
-            <DataTable
-              columns={columns}
-              data={filteredUsers}
-              progressPending={loading}
-              progressComponent={<Spinner animation="border" variant="primary" />}
-              pagination
-              paginationTotalRows={filteredUsers.length}
-              highlightOnHover
-              responsive
-              customStyles={customStyles}
-              dense
-            />
-          </Card.Body>
-        </Card>
+              {!isMobile ? (
+                <div className="users-table-card">
+                  <DataTable
+                    columns={columns}
+                    data={filteredUsers}
+                    progressPending={loading}
+                    progressComponent={<Spinner animation="border" variant="primary" />}
+                    pagination
+                    paginationTotalRows={filteredUsers.length}
+                    highlightOnHover
+                    responsive
+                    customStyles={customStyles}
+                    dense
+                    onRowClicked={(row) => {
+                      setSelectedUser(row);
+                      setShowViewModal(true);
+                    }}
+                  />
+                </div>
+              ) : (
+                <div>
+                  {filteredUsers.map((user) => (
+                    <Card
+                      key={user.id}
+                      className="mb-3 shadow-sm border-0"
+                      onClick={() => {
+                        setSelectedUser(user);
+                        setShowViewModal(true);
+                      }}
+                    >
+                      <Card.Body>
+                        <Row className="mb-2">
+                          <Col xs={4} className="fw-bold">Name:</Col>
+                          <Col xs={8}>{user.fullName}</Col>
+                        </Row>
+                        <Row className="mb-2">
+                          <Col xs={4} className="fw-bold">Email:</Col>
+                          <Col xs={8}>{user.email}</Col>
+                        </Row>
+                        <Row className="mb-2">
+                          <Col xs={4} className="fw-bold">Role:</Col>
+                          <Col xs={8}>{getRoleName(user, roles)}</Col>
+                        </Row>
+                        <Row className="mb-2">
+                          <Col xs={4} className="fw-bold">Status:</Col>
+                          <Col xs={8}>{getStatusBadge(user.statusId, statuses)}</Col>
+                        </Row>
+                        <Row className="mb-2">
+                          <Col xs={4} className="fw-bold">Last Active:</Col>
+                          <Col xs={8}>{user.lastLoginAt ? formatDateTime(user.lastLoginAt) : '—'}</Col>
+                        </Row>
+                        <Row>
+                          <Col>
+                            <ActionsDropdown
+                              row={user}
+                              onEdit={() => handleEditUser(user)}
+                              onDelete={() => handleDeleteUser(user)}
+                            />
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </Card.Body>
+          </Card>
+        </div>
       </div>
 
-      {/* Edit User Modal */}
       {selectedUser && (
         <EditUserModal
           visible={showEditModal}
@@ -360,7 +376,6 @@ const Users = () => {
         />
       )}
 
-      {/* Delete User Modal */}
       {selectedUser && (
         <ConfirmationModal
           visible={showDeleteModal}
@@ -377,20 +392,19 @@ const Users = () => {
         />
       )}
 
-      {/* Quick Change Modal */}
       {selectedUser && (
-        <QuickChangeModal
-          visible={showQuickChangeModal}
-          onCancel={() => setShowQuickChangeModal(false)}
-          onConfirm={handleConfirmQuickChange}
-          type={quickChangeData.type}
-          newValue={quickChangeData.newValue}
+        <ViewUserModal
+          visible={showViewModal}
+          onClose={() => setShowViewModal(false)}
           user={selectedUser}
-          loading={changingStatus === selectedUser?.id || changingRole === selectedUser?.id}
-          error={error}
+          onEdit={handleEditUser}
+          onDelete={handleDeleteUser}
+          roles={roles}
+          statuses={statuses}
+          isDarkMode={isDarkMode}
         />
       )}
-    </div>
+    </DefaultLayout>
   );
 };
 
