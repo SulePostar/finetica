@@ -133,3 +133,37 @@
     height: 120px;
   }
 }
+
+.modal-header h4 {
+  margin-bottom: 0px;
+}
+
+.custom-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 0.4rem 0.6rem;
+  margin-left: auto;
+  cursor: pointer;
+  color: #2d3748;
+  opacity: 0.9;
+}
+.custom-close-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.custom-close-btn:hover,
+.custom-close-btn:focus {
+  color: #1a202c;
+  opacity: 1;
+}
+
+[data-coreui-theme='dark'] .custom-close-btn {
+  color: #e6eef8;
+  opacity: 1;
+}
+[data-coreui-theme='dark'] .custom-close-btn:hover,
+[data-coreui-theme='dark'] .custom-close-btn:focus {
+  color: #ffffff;
+}

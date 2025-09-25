@@ -140,3 +140,81 @@
     padding: 20px 15px;
   }
 }
+
+[data-coreui-theme='dark'] .modal-header {
+  background-color: #22262e;
+  border-bottom: 1px solid #3f4146;
+}
+
+[data-coreui-theme='dark'] .modal-footer {
+  background-color: #22262e;
+  border-top: 1px solid #3f4146;
+}
+
+[data-coreui-theme='dark'] .file-input-area {
+  background-color: #272c37;
+  border: 2px dashed #3f4146;
+  border-radius: 12px;
+  padding: 40px 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+[data-coreui-theme='dark'] .file-input-area:hover {
+  border-color: #5b3cc4;
+  background-color: rgba(83, 59, 163, 0.3);
+}
+
+[data-coreui-theme='dark'] .file-input-area.drag-over {
+  border-color: #5b3cc4;
+  background-color: rgba(83, 59, 163, 0.35);
+  border-style: solid;
+}
+
+[data-coreui-theme='dark'] .file-input-area.has-file {
+  border-color: #22543d;
+  background-color: #9ae6b4;
+}
+
+[data-coreui-theme='dark'] .file-input-area.has-file:hover {
+  border-color: #0a4e2e;
+  background-color: #1eeb5f;
+}
+
+[data-coreui-theme='dark'] #fileName {
+  border: 1.5px solid #3f4146;
+}
+
+.upload-modal .custom-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 0.4rem 0.6rem;
+  margin-left: auto;
+  cursor: pointer;
+  color: #2d3748;
+  opacity: 0.9;
+}
+.upload-modal .custom-close-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.upload-modal .custom-close-btn:hover,
+.upload-modal .custom-close-btn:focus {
+  color: #1a202c;
+  opacity: 1;
+}
+
+[data-coreui-theme='dark'] .upload-modal .custom-close-btn {
+  color: #e6eef8;
+  opacity: 1;
+}
+[data-coreui-theme='dark'] .upload-modal .custom-close-btn:hover,
+[data-coreui-theme='dark'] .upload-modal .custom-close-btn:focus {
+  color: #ffffff;
+}
