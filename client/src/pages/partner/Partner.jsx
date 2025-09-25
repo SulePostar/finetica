@@ -29,12 +29,14 @@ const Partner = () => {
     setError('');
   }, []);
 
+
   const handleCloseModal = useCallback(() => {
     setDeleteModalVisible(false);
     setPartnerToDelete(null);
     setLoading(false);
     setError('');
   }, []);
+
 
   const confirmDelete = useCallback(async () => {
     if (!partnerToDelete) return;
@@ -62,56 +64,73 @@ const Partner = () => {
     }
   }, [partnerToDelete, refetchFunction, handleCloseModal, apiEndpoint]);
 
+
   const handleRefetchCallback = useCallback((fetchFn) => {
     setRefetchFunction(() => fetchFn);
   }, []);
 
+
   const columns = [
-    { name: 'ID', selector: (row) => row.id ?? '—', sortable: true, width: '100px' },
-    { name: 'Type', selector: (row) => row.type || '—', sortable: true, width: '150px' },
-    { name: 'Name', selector: (row) => row.name || '—', sortable: true, wrap: true, width: '220px' },
-    { name: 'Short Name', selector: (row) => row.shortName || '—', sortable: true, width: '180px' },
-    { name: 'Country Code', selector: (row) => row.countryCode || '—', sortable: true, width: '160px' },
-    { name: 'VAT Number', selector: (row) => row.vatNumber || '—', sortable: true, width: '180px' },
-    { name: 'Tax ID', selector: (row) => row.taxId || '—', sortable: true, width: '180px' },
-    { name: 'Registration No.', selector: (row) => row.registrationNumber || '—', sortable: true, width: '200px' },
     {
-      name: 'VAT Registered',
-      selector: (row) => row.is_vat_registered,
+      name: 'Short Name',
+      selector: (row) => row.shortName || '—',
       sortable: true,
-      width: '160px',
-      cell: (row) => (
-        <span className={`status-badge ${row.is_vat_registered ? 'active' : 'inactive'}`}>
-          {row.is_vat_registered ? 'Yes' : 'No'}
-        </span>
-      ),
+      minWidth: '160px', 
+      maxWidth: '200px',
+      grow: 0,         
     },
-    { name: 'Address', selector: (row) => row.address || '—', sortable: true, wrap: true, width: '260px' },
-    { name: 'City', selector: (row) => row.city || '—', sortable: true, width: '160px' },
-    { name: 'Postal Code', selector: (row) => row.postalCode || '—', sortable: true, width: '160px' },
-    { name: 'Email', selector: (row) => row.email || '—', sortable: true, width: '240px' },
-    { name: 'Phone', selector: (row) => row.phone || '—', sortable: true, width: '180px' },
-    { name: 'IBAN', selector: (row) => row.iban || '—', sortable: true, width: '260px' },
-    { name: 'Bank Name', selector: (row) => row.bankName || '—', sortable: true, width: '200px' },
-    { name: 'SWIFT Code', selector: (row) => row.swiftCode || '—', sortable: true, width: '160px' },
-    { name: 'Default Currency', selector: (row) => row.defaultCurrency || '—', sortable: true, width: '180px' },
-    { name: 'Language Code', selector: (row) => row.languageCode || '—', sortable: true, width: '180px' },
-    { name: 'Payment Terms', selector: (row) => row.paymentTerms || '—', sortable: true, wrap: true, width: '220px' },
+    {
+      name: 'Email',
+      selector: (row) => row.email || '—',
+      sortable: true,
+      minWidth: '250px', 
+      grow: 1,           
+      wrap: true,
+      hideAtOrBelow: 'md',
+      hideBelow: 1440,
+    },
+    {
+      name: 'Type',
+      selector: (row) => row.type || '—',
+      sortable: true,
+      minWidth: '140px',
+      grow: 0,
+    },
+    {
+      name: 'Bank Name',
+      selector: (row) => row.bankName || '—',
+      sortable: true,
+      minWidth: '170px',
+      wrap: true,
+      grow: 0,
+      hideAtOrBelow: 'md',
+      hideBelow: 1024,
+    },
     {
       name: 'Status',
       selector: (row) => row.isActive,
       sortable: true,
-      width: '120px',
+      minWidth: '120px',
+      center: true,
       cell: (row) => (
         <span className={`status-badge ${row.isActive ? 'active' : 'inactive'}`}>
           {row.isActive ? 'Active' : 'Inactive'}
         </span>
       ),
     },
-    { name: 'Note', selector: (row) => row.note || '—', sortable: true, wrap: true, width: '220px' },
+    {
+      name: 'Payment Terms',
+      selector: (row) => row.paymentTerms,
+      sortable: true,
+      minWidth: '120px',
+      cell: (row) => (
+          row.paymentTerms ? row.paymentTerms : '—'
+      ),
+      hideAtOrBelow: 'md',
+    },
     {
       name: 'Actions',
-      width: '140px',
+      minWidth: '140px',
       cell: (row) => (
         <ActionsDropdown
           row={row}
@@ -130,10 +149,7 @@ const Partner = () => {
     <DefaultLayout>
       <div
         className="table-page-outer"
-        style={{
-          left: sidebarWidth + 24,
-          right: 24,
-        }}
+        style={{ left: sidebarWidth + 24, right: 24 }}
       >
         <div className="partner-table-scroll partner-table-responsive">
           <DynamicTable
@@ -161,3 +177,6 @@ const Partner = () => {
 };
 
 export default Partner;
+
+
+
