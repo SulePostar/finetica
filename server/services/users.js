@@ -16,6 +16,7 @@ class UserService {
           'statusId',
           ['created_at', 'createdAt'],
           ['updated_at', 'updatedAt'],
+          ['last_login_at', 'lastLoginAt']
         ],
         include: [
           { model: Role, as: 'role', attributes: ['id', 'role'] },

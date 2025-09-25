@@ -1,0 +1,111 @@
+.avatar-circle-view-model {
+    width: 50px;
+    height: 50px;
+    background: #6c5ce7 !important;
+    font-size: 14px;
+}
+
+@media (max-width: 576px) {
+    .avatar-circle-view-model {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+}
+
+.button-group {
+    justify-content: flex-end;
+    /* default: right-aligned */
+}
+
+@media (max-width: 320px) {
+    .button-group {
+        justify-content: center;
+        /* center on small screens */
+    }
+}
+
+.btn-bordered {
+    background-color: white;
+    border: 1px solid #ccc;
+}
+
+.btn-bordered:hover {
+    background-color: #f5f5f5;
+    border-color: #f5f5f5;
+    color: #000000;
+}
+
+.text-email {
+    color: #8367deff !important;
+    text-decoration: none !important;
+}
+
+.text-email:hover {
+    text-decoration: underline !important;
+}
+
+.text-header {
+    padding: 0 !important;
+}
+
+[data-coreui-theme="light"] .modal-content {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+[data-coreui-theme="dark"] .modal-content {
+    background-color: #212529 !important;
+    color: #ffffff !important;
+}
+
+[data-coreui-theme="light"] .modal-content {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+[data-coreui-theme="light"] .modal-content .badge {
+    color: #000000 !important;
+}
+
+[data-coreui-theme="light"] .modal-content .small {
+    color: #6c757d !important;
+}
+
+[data-coreui-theme="dark"] .modal-content {
+    background-color: #212529 !important;
+    color: #ffffff !important;
+}
+
+[data-coreui-theme="dark"] .modal-content .badge {
+    color: #ffffff !important;
+}
+
+[data-coreui-theme="dark"] .modal-content .small {
+    color: #adb5bd !important;
+}
+
+[data-coreui-theme="light"] .modal-content .role-badge {
+    background-color: #f1f3f5 !important;
+    color: #000000 !important;
+    border: 1px solid #dee2e6 !important;
+}
+
+[data-coreui-theme="dark"] .modal-content .role-badge {
+    background-color: #f1f3f5 !important;
+    color: #000000 !important;
+    border: 1px solid #dee2e6 !important;
+}
+
+[data-coreui-theme="light"] .modal-content .status-badge {
+    color: #ffffff !important;
+}
+
+[data-coreui-theme="dark"] .modal-content .status-badge {
+    color: #ffffff !important;
+}
+
+[data-coreui-theme="light"] .modal-content .status-badge .badge,
+[data-coreui-theme="dark"] .modal-content .status-badge .badge {
+    color: #ffffff !important;
+}
