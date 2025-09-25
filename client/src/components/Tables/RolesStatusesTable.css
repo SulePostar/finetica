@@ -87,7 +87,6 @@
   box-shadow: var(--card-hover-shadow);
 }
 
-/* ===== Section Header ===== */
 .management-header {
   color: var(--text-primary);
   padding: 0.75rem 1rem;
@@ -100,11 +99,10 @@
 
 .management-title {
   font-size: 1rem;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', sans-serif; 
   font-weight: 700;
 }
 
-/* ===== Add Input + Button ===== */
 .add-input {
   border-radius: 8px;
   border: 1px solid var(--input-border);
@@ -186,7 +184,7 @@
   padding: 0.4rem 0.75rem;
   border-radius: 9999px;
   font-weight: 500;
-  /* background-color: var(--status-bg); */
+  background-color: var(--status-bg);
   color: var(--status-color);
 }
 
