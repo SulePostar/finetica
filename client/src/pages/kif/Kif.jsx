@@ -43,62 +43,47 @@ const Kif = () => {
       name: 'Invoice Number',
       selector: (row) => row.invoiceNumber || '—',
       sortable: true,
-      minWidth: '140px',
       wrap: true,
     },
     {
       name: 'Invoice Type',
       selector: (row) => row.invoiceType || '—',
       sortable: true,
-      width: '200px',
       wrap: true,
-      grow: 0,
-      hideAtOrBelow: 'md',
-      hideBelow: 1024,
     },
     {
       name: 'Customer',
+      width:"140px",
       selector: (row) => row.customerName || '—',
       sortable: true,
-      minWidth: '100px',
-      maxWidth: '150px',
       wrap: true,
     },
     {
       name: 'Invoice Date',
       selector: (row) => row.invoiceDate || '—',
       sortable: true,
-      minWidth: '130px',
-      grow: 0,
       cell: (row) => (row.invoiceDate ? new Date(row.invoiceDate).toLocaleDateString() : '—'),
-      hideAtOrBelow: 'lg',
-      hideBelow: 1024,
     },
     {
       name: 'Due Date',
+      width:"150px",
       selector: (row) => row.dueDate || '—',
       sortable: true,
-      minWidth: '125px',
-      grow: 0,
       cell: (row) => (row.dueDate ? new Date(row.dueDate).toLocaleDateString() : '—'),
-      hideAtOrBelow: 'lg',
-      hideBelow: 1024,
     },
     {
       name: 'Total Amount',
       selector: (row) => (row.totalAmount != null ? row.totalAmount : '—'),
       sortable: true,
-      minWidth: '90px',
-      hideAtOrBelow: 'lg',
       cell: (row) =>
         row.totalAmount != null ? `${parseFloat(row.totalAmount).toFixed(2)} KM` : '—',
       style: { textAlign: 'right' },
     },
     {
       name: 'Review',
+      width:"120px",
       selector: (row) => (row.approvedAt || row.approvedBy ? 'Approved' : 'Pending'),
       sortable: true,
-      minWidth: '120px',
       wrap: true,
       cell: (row) => {
         const status = row.approvedAt || row.approvedBy ? 'approved' : 'pending';
@@ -111,7 +96,6 @@ const Kif = () => {
     },
     {
       name: 'Actions',
-      minWidth: '100px',
       cell: (row) => (
         <ActionsDropdown
           row={row}
