@@ -14,7 +14,7 @@ import {
     CFormInput,
     CBadge,
 } from '@coreui/react';
-import ConfirmationModal from '../Modals/ConfirmationModal';
+import ConfirmationModal from '../Modals/ConfirmationModal/ConfirmationModal';
 import './RolesStatusesTable.css';
 
 const RolesStatusesTable = ({ title, data, nameKey, onAdd, onDelete }) => {
