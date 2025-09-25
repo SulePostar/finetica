@@ -44,45 +44,45 @@ const Kuf = () => {
       selector: (row) => row.invoiceNumber || '—',
       sortable: true,
       wrap: true,
+      width: '190px',
     },
     {
-      name: 'Invoice Type',
+      name: 'Type',
       selector: (row) => row.invoiceType || '—',
       sortable: true,
       wrap: true,
     },
     {
       name: 'Customer',
-      width:"140px",
       selector: (row) => row.customerName || '—',
       sortable: true,
       wrap: true,
     },
     {
       name: 'Invoice Date',
-      width:"158px",
       selector: (row) => row.invoiceDate || '—',
       sortable: true,
       cell: (row) => (row.invoiceDate ? new Date(row.invoiceDate).toLocaleDateString() : '—'),
     },
     {
       name: 'Due Date',
-      width:"132px",
       selector: (row) => row.dueDate || '—',
       sortable: true,
       cell: (row) => (row.dueDate ? new Date(row.dueDate).toLocaleDateString() : '—'),
+      width: '158px',
     },
     {
       name: 'Total Amount',
-      selector: (row) => (row.lumpSum != null ? row.lumpSum : '—'),
+      selector: (row) => (row.lumpSum != null ? row.lumpSum : row.netTotal ?? '—'),
       sortable: true,
       cell: (row) =>
-        row.lumpSum != null ? `${parseFloat(row.lumpSum).toFixed(2)} KM` : '—',
+        row.lumpSum != null
+          ? `${parseFloat(row.lumpSum).toFixed(2)} KM`
+          : `${parseFloat(row.netTotal).toFixed(2)} KM` ?? '—',
       style: { textAlign: 'right' },
     },
     {
       name: 'Review',
-      width:"120px",
       selector: (row) => (row.approvedAt || row.approvedBy ? 'Approved' : 'Pending'),
       sortable: true,
       wrap: true,
@@ -97,6 +97,7 @@ const Kuf = () => {
     },
     {
       name: 'Actions',
+      width: '120px',
       cell: (row) => (
         <ActionsDropdown
           row={row}

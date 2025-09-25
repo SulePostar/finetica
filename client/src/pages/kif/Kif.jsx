@@ -44,16 +44,16 @@ const Kif = () => {
       selector: (row) => row.invoiceNumber || '—',
       sortable: true,
       wrap: true,
+      width: '190px',
     },
     {
-      name: 'Invoice Type',
+      name: 'Type',
       selector: (row) => row.invoiceType || '—',
       sortable: true,
       wrap: true,
     },
     {
       name: 'Customer',
-      width:"140px",
       selector: (row) => row.customerName || '—',
       sortable: true,
       wrap: true,
@@ -66,10 +66,10 @@ const Kif = () => {
     },
     {
       name: 'Due Date',
-      width:"150px",
       selector: (row) => row.dueDate || '—',
       sortable: true,
       cell: (row) => (row.dueDate ? new Date(row.dueDate).toLocaleDateString() : '—'),
+      width: '158px',
     },
     {
       name: 'Total Amount',
@@ -81,7 +81,6 @@ const Kif = () => {
     },
     {
       name: 'Review',
-      width:"120px",
       selector: (row) => (row.approvedAt || row.approvedBy ? 'Approved' : 'Pending'),
       sortable: true,
       wrap: true,
@@ -96,6 +95,7 @@ const Kif = () => {
     },
     {
       name: 'Actions',
+      width: '120px',
       cell: (row) => (
         <ActionsDropdown
           row={row}
