@@ -117,7 +117,7 @@ const Contract = () => {
     selector: (row) => (row.amount != null ? row.amount : '—'),
     sortable: true,
     sortField: 'amount',
-    minWidth: '90px',
+    minWidth: '130px',
     hideAtOrBelow: 'lg',
   },
   {
