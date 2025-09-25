@@ -99,7 +99,7 @@ export const getStatusBadge = (statusId, statuses = []) => {
   let color = 'info';
   if (statusName.toLowerCase().includes('approved')) {
     color = 'success';
-  } else if (statusName.toLowerCase().includes('rejected') || statusName.toLowerCase().includes('deleted')) {
+  } else if (statusName.toLowerCase().includes('rejected')) {
     color = 'danger';
   } else if (statusName.toLowerCase().includes('pending')) {
     color = 'warning';

@@ -142,7 +142,6 @@ class UserService {
           approved: users.filter((user) => user.user_status?.status === 'approved').length,
           pending: users.filter((user) => user.user_status?.status === 'pending').length,
           rejected: users.filter((user) => user.user_status?.status === 'rejected').length,
-          deleted: users.filter((user) => user.user_status?.status === 'deleted').length,
           verified: users.filter((user) => user.is_email_verified).length,
           unverified: users.filter((user) => !user.is_email_verified).length,
           byRole: users.reduce((acc, user) => {
