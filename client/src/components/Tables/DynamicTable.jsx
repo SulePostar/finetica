@@ -9,8 +9,8 @@ import { useWindowWidth } from '../../hooks/useWindowWidth';
 const BREAKPOINTS = { sm: 576, md: 768, lg: 992, xl: 1200 };
 
 function getThresholdPx(col) {
-  if (typeof col.hideBelow === 'number') return col.hideBelow; 
-  if (typeof col.hideAtOrBelow === 'string') return BREAKPOINTS[col.hideAtOrBelow]; 
+  if (typeof col.hideBelow === 'number') return col.hideBelow;
+  if (typeof col.hideAtOrBelow === 'string') return BREAKPOINTS[col.hideAtOrBelow];
   return null;
 }
 
@@ -22,6 +22,7 @@ const DynamicTable = ({
   uploadButton,
   reloadTable,
   onRefetch,
+  noDataComponent,
 }) => {
   const [data, setData] = useState([]);
   const [totalRows, setTotalRows] = useState(0);
@@ -131,6 +132,7 @@ const DynamicTable = ({
               pointerOnHover
               responsive
               dense
+              noDataComponent={noDataComponent}
             />
           )}
         </Card.Body>

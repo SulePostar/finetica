@@ -61,20 +61,22 @@ const InvalidPdfs = () => {
       selector: (row) => row.filename || '—',
       sortable: true,
       wrap: true,
-      width: '25%',
+      minWidth: '200px',
+      maxWidth: '300px',
     },
     {
       name: 'Message',
       selector: (row) => row.message || '—',
       sortable: false,
       wrap: true,
-      width: '25%',
+      minWidth: '200px',
     },
     {
       name: 'Status',
       selector: (row) => row.isValid,
       sortable: true,
-      width: '10%',
+      minWidth: '120px',
+      grow: 0,
       cell: (row) =>
         row.isValid ? (
           <CBadge color="success">valid</CBadge>
@@ -86,7 +88,8 @@ const InvalidPdfs = () => {
       name: 'Processed',
       selector: (row) => row.isProcessed,
       sortable: true,
-      width: '10%',
+      minWidth: '150px',
+      grow: 0,
       cell: (row) =>
         row.isProcessed ? <CBadge color="success">Yes</CBadge> : <CBadge color="danger">No</CBadge>,
     },
@@ -94,17 +97,34 @@ const InvalidPdfs = () => {
       name: 'Processed At',
       selector: (row) => row.processedAt || '—',
       sortable: true,
-      width: '15%',
+      minWidth: '180px',
+      grow: 0,
       cell: (row) => (row.processedAt ? new Date(row.processedAt).toLocaleString() : '—'),
     },
     {
       name: 'Created At',
       selector: (row) => row.createdAt,
       sortable: true,
-      width: '15%',
+      minWidth: '160px',
+      grow: 0,
       cell: (row) => (row.createdAt ? new Date(row.createdAt).toLocaleString() : '—'),
     },
   ];
+
+  const getNoDataMessage = (tabKey) => {
+    switch (tabKey) {
+      case 1:
+        return 'There are no bank transaction records to display';
+      case 2:
+        return 'There are no KIF records to display';
+      case 3:
+        return 'There are no KUF records to display';
+      case 4:
+        return 'There are no contract records to display';
+      default:
+        return 'There are no records to display';
+    }
+  };
 
   return (
     <DefaultLayout>
@@ -172,16 +192,36 @@ const InvalidPdfs = () => {
                   <CCardBody className="p-3 p-md-4">
                     <CTabContent>
                       <CTabPane visible={activeKey === 1} className="fade">
-                        <DynamicTable columns={logColumns} apiEndpoint={endpoints.bank} onRowClick={handleRowClick} />
+                        <DynamicTable
+                          columns={logColumns}
+                          apiEndpoint={endpoints.bank}
+                          onRowClick={handleRowClick}
+                          noDataComponent={<div style={{ padding: '2rem', textAlign: 'center', color: '#6c757d' }}>{getNoDataMessage(1)}</div>}
+                        />
                       </CTabPane>
                       <CTabPane visible={activeKey === 2} className="fade">
-                        <DynamicTable columns={logColumns} apiEndpoint={endpoints.kif} onRowClick={handleRowClick} />
+                        <DynamicTable
+                          columns={logColumns}
+                          apiEndpoint={endpoints.kif}
+                          onRowClick={handleRowClick}
+                          noDataComponent={<div style={{ padding: '2rem', textAlign: 'center', color: '#6c757d' }}>{getNoDataMessage(2)}</div>}
+                        />
                       </CTabPane>
                       <CTabPane visible={activeKey === 3} className="fade">
-                        <DynamicTable columns={logColumns} apiEndpoint={endpoints.kuf} onRowClick={handleRowClick} />
+                        <DynamicTable
+                          columns={logColumns}
+                          apiEndpoint={endpoints.kuf}
+                          onRowClick={handleRowClick}
+                          noDataComponent={<div style={{ padding: '2rem', textAlign: 'center', color: '#6c757d' }}>{getNoDataMessage(3)}</div>}
+                        />
                       </CTabPane>
                       <CTabPane visible={activeKey === 4} className="fade">
-                        <DynamicTable columns={logColumns} apiEndpoint={endpoints.contracts} onRowClick={handleRowClick} />
+                        <DynamicTable
+                          columns={logColumns}
+                          apiEndpoint={endpoints.contracts}
+                          onRowClick={handleRowClick}
+                          noDataComponent={<div style={{ padding: '2rem', textAlign: 'center', color: '#6c757d' }}>{getNoDataMessage(4)}</div>}
+                        />
                       </CTabPane>
                     </CTabContent>
                   </CCardBody>

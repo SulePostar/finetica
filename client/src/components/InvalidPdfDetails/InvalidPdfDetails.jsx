@@ -8,7 +8,7 @@ import api from "../../services/api";
 import AppButton from "../AppButton/AppButton";
 
 const TYPE_TO_PATH = {
-  1: "bank-transactions",
+  1: "transactions",
   2: "kif",
   3: "kuf",
   4: "contracts",

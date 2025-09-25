@@ -53,12 +53,14 @@
   justify-content: center;
 }
 
-.form-input {
-  background-color: #ffffff;
+input.form-control.form-input {
+  background-color: #ffffff !important;
+  color: var(--bs-body-color) !important;
 }
 
-.form-input-disabled {
-  background-color: var(--color-disabled-bg);
+input.form-control.form-input-disabled {
+  background-color: var(--color-disabled-bg) !important;
+  color: var(--bs-body-color) !important;
   cursor: not-allowed;
 }
 
