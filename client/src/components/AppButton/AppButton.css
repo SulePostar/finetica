@@ -28,7 +28,6 @@
     font-weight: 500;
     border-radius: 0.5rem;
     transition: all 0.2s ease-in-out;
-    border: 1px solid transparent;
     cursor: pointer;
 }
 

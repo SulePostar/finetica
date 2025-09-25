@@ -1,16 +1,13 @@
 import React from "react";
 import { CButton } from "@coreui/react";
 import CIcon from '@coreui/icons-react';
-import { cilCheck, cilPencil, cilTrash, cilSave, cilX } from '@coreui/icons';
+import { cilPencil, cilTrash, cilArrowLeft } from '@coreui/icons';
 import "./AppButton.css";
 
-// Map string names to actual icon imports
 const ICONS = {
-    'mdi:check': cilCheck,
     'mdi:pencil': cilPencil,
     'mdi:trash': cilTrash,
-    'mdi:content-save': cilSave,
-    'mdi:close': cilX,
+    'mdi:arrow-left': cilArrowLeft,
 };
 
 const AppButton = ({
@@ -21,7 +18,9 @@ const AppButton = ({
     className = "",
     ...rest
 }) => {
-    const classes = `btn-custom btn-${variant} btn-${size} ${icon && !children ? "btn-icon" : ""} ${className}`;
+
+    const variantClass = className.includes('btn-no-hover') ? '' : `btn-${variant}`;
+    const classes = `btn ${variantClass} btn-${size} ${icon && !children ? "btn-icon" : ""} ${className}`;
 
     return (
         <CButton className={classes} {...rest}>

@@ -2,7 +2,6 @@ import { cilEnvelopeClosed, cilLockLocked } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import {
   CAlert,
-  CButton,
   CCard,
   CCardBody,
   CForm,
@@ -19,6 +18,7 @@ import { loginSuccess } from '../../redux/auth/authSlice';
 import { authService } from '../../services';
 import notify from '../../utilis/toastHelper';
 import { loginFormStyles } from './LoginForm.styles';
+import AppButton from '../AppButton/AppButton';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -151,16 +151,16 @@ const LoginForm = () => {
                     Forgot Password?
                   </Link>
                 </div>
-
-                <CButton
+                <AppButton
                   type="submit"
-                  color="primary"
+                  variant="primary"
                   className="w-100 rounded-pill py-3 mb-4"
                   style={loginFormStyles.loginButton}
                   disabled={loading}
                 >
                   {loading ? 'Signing In...' : 'Login'}
-                </CButton>
+                </AppButton>
+
               </CForm>
 
               <div className="text-center mt-4" style={loginFormStyles.registerText}>

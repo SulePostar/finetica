@@ -5,11 +5,11 @@ import {
     CModalTitle,
     CModalBody,
     CModalFooter,
-    CButton,
     CBadge,
 } from '@coreui/react';
 import { getRoleName, getStatusBadge } from '../../../utilis/formatters';
 import { formatDateTime } from '../../../helpers/formatDate';
+import AppButton from '../../AppButton/AppButton';
 import './ViewUserModal.css';
 
 const ViewUserModal = ({ visible, onClose, user, onEdit, onDelete, roles, statuses, isDarkMode }) => {
@@ -44,12 +44,8 @@ const ViewUserModal = ({ visible, onClose, user, onEdit, onDelete, roles, status
 
                     {/* Right Column: Buttons side by side */}
                     <div className="button-group col d-flex gap-2 mt-2 mb-2 me-2">
-                        <CButton className='btn-bordered' size="s" onClick={() => onEdit(user)}>
-                            Edit
-                        </CButton>
-                        <CButton color="danger" size="s" onClick={() => onDelete(user)}>
-                            Delete
-                        </CButton>
+                        <AppButton variant="edit" onClick={() => onEdit(user)}>Edit</AppButton>
+                        <AppButton variant="danger" onClick={() => onDelete(user)}>Delete</AppButton>
                     </div>
                 </div>
             </CModalHeader>
@@ -63,12 +59,14 @@ const ViewUserModal = ({ visible, onClose, user, onEdit, onDelete, roles, status
                         </CBadge>
                         <div className='small mb-1'>Email</div>
 
-                        <CButton
-                            className='p-0 text-email'
+                        <AppButton
+                            className="p-0 text-email"
+                            variant="none"
                             onClick={() => window.location = `mailto:${user.email}`}
                         >
                             {user.email}
-                        </CButton>
+                        </AppButton>
+
                     </div>
 
                     {/* Right Column - Account Details */}
@@ -99,9 +97,7 @@ const ViewUserModal = ({ visible, onClose, user, onEdit, onDelete, roles, status
             </CModalBody>
 
             <CModalFooter>
-                <CButton color="secondary" onClick={onClose}>
-                    Close
-                </CButton>
+                <AppButton variant="no-hover" onClick={onClose}>Close</AppButton>
             </CModalFooter>
         </CModal>
     );

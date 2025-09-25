@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CForm, CFormInput, CButton, CAlert, CInputGroup, CInputGroupText } from '@coreui/react';
+import { CForm, CFormInput, CAlert, CInputGroup, CInputGroupText } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilEnvelopeClosed, cilArrowLeft } from '@coreui/icons';
 import { authService } from '../../services';
 import notify from '../../utilis/toastHelper';
+import AppButton from '../AppButton/AppButton';
 
 const ForgotPasswordForm = () => {
     const [email, setEmail] = useState('');
@@ -112,16 +113,14 @@ const ForgotPasswordForm = () => {
                                     required
                                 />
                             </CInputGroup>
-
-                            <CButton
+                            <AppButton
                                 type="submit"
-                                color="primary"
+                                variant="primary"
                                 className="w-100 rounded-pill py-3 mb-3"
                                 disabled={loading}
                             >
                                 {loading ? 'Sending...' : 'Send Reset Link'}
-                            </CButton>
-
+                            </AppButton>
                             <div className="text-center">
                                 <p className="mb-0">
                                     Remember your password?{' '}

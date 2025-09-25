@@ -41,14 +41,6 @@
   margin: 0;
 }
 
-.edit-toggle {
-  color: var(--color-white);
-  border: 1px solid var(--color-primary);
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
 .input-group-text {
   background-color: #ffffff;
   border: 1px solid var(--color-border-light);
@@ -84,14 +76,4 @@
   gap: 16px;
   padding-top: 16px;
   background-color: var(--color-bottom-actions-bg);
-}
-
-.profile-button {
-  border: 1px solid var(--color-primary);
-  border-radius: 12px;
-  padding: 16px 24px;
-  font-weight: 600;
-  font-size: 18px;
-  color: var(--color-primary);
-  transition: all 0.2s ease;
 }
