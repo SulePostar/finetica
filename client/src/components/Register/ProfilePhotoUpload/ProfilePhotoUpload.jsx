@@ -76,13 +76,21 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
             </div>
 
             <CModal visible={showModal} onClose={handleCloseModal} alignment="center">
-                <CModalHeader>
+                <CModalHeader closeButton={false}>
                     <h4>Upload Profile Photo</h4>
+                    <button
+                        type="button"
+                        className="custom-close-btn"
+                        onClick={handleCloseModal}
+                        aria-label="Close"
+                    >
+                        &times;
+                    </button>
                 </CModalHeader>
 
                 <CModalBody className="text-center">
                     {hasPhoto && (
-                        <div className="preview-container mb-3">
+                        <div className="preview-container">
                             <img
                                 src={previewUrl || currentPhoto}
                                 alt="Preview"
@@ -106,14 +114,13 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
                             variant="outline"
                             onClick={() => document.getElementById('photo-upload-input')?.click()}
                             disabled={disabled}
-                            className="mb-3"
                         >
                             <CIcon icon={cilCamera} className="me-2" />
                             Choose Photo
                         </CButton>
 
                         <div className="upload-info">
-                            <small className="text-muted">Supported: JPG, PNG, GIF, WebP (Max 5MB)</small>
+                            <small className="upload-info-text">Supported: JPG, PNG, GIF, WebP (Max 5MB)</small>
                         </div>
                     </div>
                 </CModalBody>

@@ -9,7 +9,7 @@ import { PdfViewer } from "../PdfViewer/PdfViewer";
 import api from "../../services/api";
 
 const TYPE_TO_PATH = {
-  1: "bank-transactions",
+  1: "transactions",
   2: "kif",
   3: "kuf",
   4: "contracts",
