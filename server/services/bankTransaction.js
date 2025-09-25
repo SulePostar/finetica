@@ -62,7 +62,7 @@ const getBankTransactionById = async (id) => {
         }
 
         const transactionData = document.toJSON();
-        const pdfUrl = transactionData.fileName ? await supabaseService.getSignedUrl(BUCKET_NAME, transactionData.fileName) : null;
+        const pdfUrl = transactionData.filename ? await supabaseService.getSignedUrl(BUCKET_NAME, transactionData.filename) : null;
 
         return {
             ...transactionData,
@@ -229,22 +229,25 @@ const editBankTransaction = async (id, updatedData) => {
     }
 };
 
-const processBankTransaction = async (fileBuffer, mimeType, fileName, model = "gemini-2.5-flash-lite") => {
+const processBankTransaction = async (fileBuffer, mimeType, filename, model = "gemini-2.5-flash-lite") => {
     try {
         const extractedData = await extractData(fileBuffer, mimeType);
-
+        // Ensure filename is present for DB save
+        if (extractedData) {
+            if (extractedData.data) {
+                extractedData.data.filename = filename;
+            } else {
+                extractedData.filename = filename;
+            }
+        }
         // Validate that the document is actually a bank transaction
         const { isBankTransaction, ...bankTransactionData } = extractedData?.data || extractedData;
-
-        console.log(`File: ${fileName}, isBankTransaction: ${isBankTransaction}`);
-
+        console.log(`File: ${filename}, isBankTransaction: ${isBankTransaction}`);
         if (isBankTransaction === false) {
             throw new AppError('Uploaded file is not a valid bank transaction document. Please upload a bank statement or transaction record.', 400);
         }
-
-
         const bankTransaction = await createBankTransactionFromAI(extractedData);
-        await processUnprocessedFiles(fileName);
+        await processUnprocessedFiles(filename);
         return {
             success: true,
             data: bankTransaction
@@ -307,6 +310,19 @@ const getUnprocessedFiles = async () => {
     }
 };
 
+const setFileInvalid = async (filename) => {
+    try {
+        await BankTransactionProcessingLog.update(
+            { isValid: false, isProcessed: true, processedAt: new Date() },
+            { where: { filename } }
+        );
+        return { success: true, filename };
+    } catch (error) {
+        console.error(`Failed to set file as invalid: ${filename}`, error);
+        return { success: false, error: error.message };
+    }
+};
+
 module.exports = {
     getTransactions,
     getBankTransactionById,
@@ -317,5 +333,6 @@ module.exports = {
     processBankTransaction,
     processUnprocessedFiles,
     getUnprocessedFiles,
-    extractData
+    extractData,
+    setFileInvalid
 };
