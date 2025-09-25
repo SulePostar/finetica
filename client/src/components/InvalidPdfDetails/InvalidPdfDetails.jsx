@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import {
   CSpinner, CRow, CCol, CCard, CCardBody, CCardHeader, CBadge,
-  CFormInput, CFormSelect, CButton, CListGroup, CListGroupItem, CCardText,
+  CFormInput, CFormSelect, CListGroup, CListGroupItem, CCardText,
 } from "@coreui/react";
-import CIcon from "@coreui/icons-react";
-import { cilPencil, cilTrash } from "@coreui/icons";
 import { PdfViewer } from "../PdfViewer/PdfViewer";
 import api from "../../services/api";
+import AppButton from "../AppButton/AppButton";
 
 const TYPE_TO_PATH = {
   1: "bank-transactions",
@@ -93,17 +92,13 @@ const InvalidPdfDetails = ({ id, type }) => {
             <div className="d-flex gap-2">
               {isEditing ? (
                 <>
-                  <CButton color="success" size="sm" onClick={handleSave}>Save</CButton>
-                  <CButton color="secondary" size="sm" onClick={handleCancel}>Cancel</CButton>
+                  <AppButton variant="primary" size="sm">Save</AppButton>
+                  <AppButton variant="no-hover" size="sm" onClick={handleCancel}>Cancel</AppButton>
                 </>
               ) : (
                 <>
-                  <CButton color="secondary" size="sm" onClick={handleEdit}>
-                    <CIcon icon={cilPencil} className="me-1" /> Edit
-                  </CButton>
-                  <CButton color="danger" size="sm" onClick={handleDelete}>
-                    <CIcon icon={cilTrash} className="me-1" /> Delete
-                  </CButton>
+                  <AppButton variant="edit" size="sm" onClick={handleEdit} icon='mdi:pencil' iconClassName="me-1">Edit</AppButton>
+                  <AppButton variant="danger" size="sm" onClick={handleDelete} icon='mdi:trash' iconClassName="me-1">Delete</AppButton>
                 </>
               )}
             </div>

@@ -1,4 +1,4 @@
-import { CButton } from '@coreui/react';
+import AppButton from '../AppButton/AppButton';
 
 const ActionButtons = ({
   isApproveMode = false,
@@ -17,9 +17,7 @@ const ActionButtons = ({
     if (isApproved) {
       return (
         <div className="w-100 d-flex justify-content-center mt-3 gap-2">
-          <CButton color="success" disabled>
-            Approved
-          </CButton>
+          <AppButton variant="success" disabled>Approved</AppButton>
         </div>
       );
     }
@@ -28,23 +26,15 @@ const ActionButtons = ({
     if (isEditing) {
       return (
         <div className="w-100 d-flex justify-content-center mt-3 gap-2">
-          <CButton color="primary" onClick={handleSave}>
-            Save
-          </CButton>
-          <CButton color="danger" onClick={handleCancel}>
-            Cancel
-          </CButton>
+          <AppButton variant="primary" onClick={handleSave}>Save</AppButton>
+          <AppButton variant="no-hover" onClick={handleCancel}>Cancel</AppButton>
         </div>
       );
     }
     return (
       <div className="w-100 d-flex justify-content-center mt-3 gap-2">
-        <CButton color="success" onClick={handleApprove}>
-          Approve
-        </CButton>
-        <CButton color="secondary" onClick={handleEdit}>
-          Edit
-        </CButton>
+        <AppButton variant="success" onClick={handleApprove}>Approve</AppButton>
+        <AppButton variant="edit" onClick={handleEdit}>Edit</AppButton>
       </div>
     );
   }
@@ -54,20 +44,14 @@ const ActionButtons = ({
     if (isSaved) {
       return (
         <div className="w-100 d-flex justify-content-center mt-3 gap-2">
-          <CButton color="success" disabled>
-            Saved
-          </CButton>
+          <AppButton variant="primary">Saved</AppButton>
         </div>
       );
     }
     return (
       <div className="w-100 d-flex justify-content-center mt-3 gap-2">
-        <CButton color="primary" onClick={handleSave}>
-          Save
-        </CButton>
-        <CButton color="danger" onClick={handleCancel}>
-          Cancel
-        </CButton>
+        <AppButton variant="primary">Save</AppButton>
+        <AppButton variant="no-hover">Cancel</AppButton>
       </div>
     )
   }
