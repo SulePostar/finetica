@@ -1,5 +1,5 @@
 import React from 'react';
-import ConfirmationModal from './ConfirmationModal';
+import ConfirmationModal from './ConfirmationModal/ConfirmationModal';
 
 const EditItemModal = ({ visible, onCancel, onConfirm, formData, onFormChange, formFields, loading = false, error = '' }) => {
     return (
