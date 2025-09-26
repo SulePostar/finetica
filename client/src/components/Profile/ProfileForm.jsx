@@ -120,7 +120,7 @@ const ProfileForm = () => {
           }}
         >
           {/* Header */}
-          <div className="d-flex justify-content-between align-items-center mb-4 px-3 pt-3">
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 px-3 pt-3">
             <div>
               <CCardTitle className="form-title">User Profile</CCardTitle>
               <div className="text-muted">
@@ -128,16 +128,18 @@ const ProfileForm = () => {
               </div>
             </div>
             {!isEditable && (
-              <AppButton size="md" type="button" onClick={() => setIsEditable(true)}>
-                Edit Profile
-              </AppButton>
+              <div className="mt-2 mt-md-0">
+                <AppButton size="md" type="button" onClick={() => setIsEditable(true)}>
+                  Edit Profile
+                </AppButton>
+              </div>
             )}
           </div>
 
           {/* Profile Photo Section */}
           <div className="section-box p-3 mb-4">
-            <CCardTitle className="photo-title">Profile Photo</CCardTitle>
-            <div className="text-center">
+            <CCardTitle className="photo-title fs-4">Profile Photo</CCardTitle>
+            <div>
               <ProfilePhotoUpload
                 onPhotoSelect={handlePhotoSelect}
                 disabled={!isEditable}
@@ -199,7 +201,7 @@ const ProfileForm = () => {
                   <AppButton type="submit" variant="primary">
                     Save Changes
                   </AppButton>
-                  <AppButton type="button" variant="secondary" onClick={() => setIsEditable(false)}>
+                  <AppButton variant="no-hover" onClick={() => setIsEditable(false)}>
                     Cancel
                   </AppButton>
                 </div>

@@ -1,38 +1,42 @@
-import React, { useState, useCallback } from 'react';
-import { CModal, CModalBody, CModalHeader, CModalFooter } from '@coreui/react';
+// Updated ProfilePhotoUpload.jsx
+import React, { useState, useCallback, useRef } from 'react';
+import { CModal, CModalBody, CModalHeader, CModalFooter, CModalTitle } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
-import { cilCamera, cilUser } from '@coreui/icons';
+import { cilCamera, cilUser, cilX } from '@coreui/icons';
 import FileUploadService from '../../../services/fileUploadService';
 import notify from '../../../utilis/toastHelper';
 import AppButton from '../../AppButton/AppButton';
-import './ProfilePhotoUpload.styles.css';
+import './ProfilePhotoUpload.css';
 
 const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, currentPhoto }) => {
     const [showModal, setShowModal] = useState(false);
     const [previewUrl, setPreviewUrl] = useState(currentPhoto || null);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [isDragOver, setIsDragOver] = useState(false);
+    const fileInputRef = useRef(null);
 
     const handlePhotoClick = useCallback(() => {
         if (!disabled) setShowModal(true);
     }, [disabled]);
 
-    const handleFileSelect = useCallback(
-        (event) => {
-            const file = event.target.files?.[0];
-            if (!file) return;
+    const handleFileSelect = useCallback((file) => {
+        if (!file) return;
 
-            const validation = FileUploadService.validateImageFile(file);
-            if (!validation.isValid) {
-                notify.onError(validation.error);
-                return;
-            }
+        const validation = FileUploadService.validateImageFile(file);
+        if (!validation.isValid) {
+            notify.onError(validation.error);
+            return;
+        }
 
-            const preview = URL.createObjectURL(file);
-            setSelectedFile(file);
-            setPreviewUrl(preview);
-        },
-        []
-    );
+        const preview = URL.createObjectURL(file);
+        setSelectedFile(file);
+        setPreviewUrl(preview);
+    }, []);
+
+    const handleFileInputChange = useCallback((event) => {
+        const file = event.target.files?.[0];
+        handleFileSelect(file);
+    }, [handleFileSelect]);
 
     const handleSave = useCallback(() => {
         if (selectedFile) {
@@ -47,108 +51,163 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
         setSelectedFile(null);
         onPhotoSelect?.(null);
         onRemove?.();
+        // Reset file input
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
     }, [onPhotoSelect, onRemove]);
+
+    const handleCloseModal = useCallback(() => {
+        setShowModal(false);
+        // Reset to original state when closing without saving
+        if (currentPhoto) {
+            setPreviewUrl(currentPhoto);
+            setSelectedFile(null);
+        } else {
+            setPreviewUrl(null);
+            setSelectedFile(null);
+        }
+        setIsDragOver(false);
+        // Reset file input
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    }, [currentPhoto]);
+
+    // Drag and drop handlers
+    const handleDragOver = useCallback((e) => {
+        e.preventDefault();
+        setIsDragOver(true);
+    }, []);
+
+    const handleDragLeave = useCallback((e) => {
+        e.preventDefault();
+        setIsDragOver(false);
+    }, []);
+
+    const handleDrop = useCallback((e) => {
+        e.preventDefault();
+        setIsDragOver(false);
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleFileSelect(files[0]);
+        }
+    }, [handleFileSelect]);
+
+    const handleDropzoneClick = useCallback(() => {
+        fileInputRef.current?.click();
+    }, []);
 
     return (
         <>
             {/* Avatar Section */}
-            <div className="profile-photo-upload-container">
-                <div
-                    className={`profile-photo-circle ${disabled ? 'disabled' : ''}`}
-                    onClick={handlePhotoClick}
-                    role="button"
-                    tabIndex={disabled ? -1 : 0}
-                    aria-label="Upload profile photo"
-                >
-                    {previewUrl ? (
-                        <img
-                            src={previewUrl}
-                            alt="Profile"
-                            className="profile-photo-preview"
-                            loading="lazy"
-                            crossOrigin="anonymous"
-                        />
-                    ) : (
-                        <div className="profile-photo-placeholder">
-                            <CIcon icon={cilUser} size="xl" />
-                        </div>
-                    )}
-
-                    {!disabled && (
-                        <div className="camera-overlay">
-                            <CIcon icon={cilCamera} size="lg" />
-                        </div>
-                    )}
-                </div>
-
-                <div className="profile-photo-text mt-2">
-                    <div className="photo-title">Profile Picture</div>
-                    <div className="photo-subtitle">
-                        Upload a professional photo that represents you
+            <div className="profile-photo-card align-items-center m-0">
+                <div className="me-3">
+                    <div
+                        className={`profile-photo-circle d-flex align-items-center justify-content-center position-relative overflow-hidden ${disabled ? 'disabled' : ''}`}
+                        onClick={handlePhotoClick}
+                        role="button"
+                        tabIndex={disabled ? -1 : 0}
+                        aria-label="Upload profile photo"
+                    >
+                        {previewUrl ? (
+                            <img
+                                src={previewUrl}
+                                alt="Profile"
+                                className="profile-photo-preview"
+                                loading="lazy"
+                                crossOrigin="anonymous"
+                            />
+                        ) : (
+                            <div className="profile-photo-placeholder">
+                                <CIcon icon={cilUser} size="xl" />
+                            </div>
+                        )}
                     </div>
                 </div>
 
-                {!disabled && (
-                    <AppButton variant="primary" className="mt-3" onClick={handlePhotoClick}>
-                        <CIcon icon={cilCamera} className="me-2" />
-                        Upload Photo
-                    </AppButton>
-                )}
+                <div>
+                    <div className='fs-5 fw-semibold mb-1'>Profile Picture</div>
+                    <div className="photo-subtitle mb-2">
+                        Upload a professional photo that represents you
+                    </div>
+                    {!disabled && (
+                        <AppButton variant="primary" onClick={handlePhotoClick}>
+                            <CIcon icon={cilCamera} className="me-2" />
+                            Upload Photo
+                        </AppButton>
+                    )}
+                </div>
             </div>
 
             {/* Upload Modal */}
-            <CModal visible={showModal} onClose={() => setShowModal(false)} alignment="center">
-                <CModalHeader closeButton={false}>
-                    <h4>Upload Profile Photo</h4>
-                    <button
-                        type="button"
-                        className="custom-close-btn"
-                        onClick={() => setShowModal(false)}
-                        aria-label="Close"
-                    >
-                        &times;
-                    </button>
+            <CModal
+                visible={showModal}
+                onClose={handleCloseModal}
+                alignment="center"
+                backdrop="static"
+            >
+                <CModalHeader closeButton>
+                    <CModalTitle>Upload Profile Photo</CModalTitle>
                 </CModalHeader>
-
                 <CModalBody>
-                    <div className="upload-dropzone">
+                    <div
+                        className={`upload-dropzone ${isDragOver ? 'dragover' : ''} ${previewUrl ? 'd-none' : ''}`}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        onClick={handleDropzoneClick}
+                    >
                         <input
+                            ref={fileInputRef}
                             type="file"
                             accept={FileUploadService.ALLOWED_IMAGE_TYPES.join(',')}
-                            onChange={handleFileSelect}
+                            onChange={handleFileInputChange}
                             id="photo-upload-input"
                             style={{ display: 'none' }}
                         />
-                        <label htmlFor="photo-upload-input" className="dropzone-label">
+                        <div className="dropzone-label">
                             <CIcon icon={cilCamera} size="2xl" className="mb-2" />
                             <p>Drag and drop your photo here, or click to browse</p>
                             <small className="text-muted">PNG, JPG, GIF up to 10MB</small>
-                        </label>
+                        </div>
                     </div>
 
                     {previewUrl && (
-                        <div className="preview-container mt-3">
-                            <img src={previewUrl} alt="Preview" className="photo-preview-large" />
+                        <div className="preview-container">
+                            <div className="position-relative d-inline-block">
+                                <img src={previewUrl} alt="Preview" className="photo-preview-large" />
+                            </div>
                         </div>
                     )}
                 </CModalBody>
 
                 <CModalFooter>
-                    <AppButton
-                        variant="no-hover"
-                        onClick={() => setShowModal(false)}
-                        disabled={disabled}
-                    >
-                        Cancel
-                    </AppButton>
-                    <AppButton variant="primary" onClick={handleSave} disabled={!selectedFile}>
-                        Save
-                    </AppButton>
-                    {previewUrl && (
-                        <AppButton variant="danger" onClick={handleRemovePhoto}>
-                            Remove Photo
+                    <div className="d-flex justify-content-between w-100 align-items-center">
+                        <AppButton
+                            variant="no-hover"
+                            onClick={handleCloseModal}
+                            disabled={disabled}
+                        >
+                            Cancel
                         </AppButton>
-                    )}
+
+                        <div className="d-flex gap-2">
+                            {previewUrl && (
+                                <AppButton variant="danger" onClick={handleRemovePhoto}>
+                                    Remove Photo
+                                </AppButton>
+                            )}
+                            <AppButton
+                                variant="primary"
+                                onClick={handleSave}
+                                disabled={!selectedFile}
+                            >
+                                Save
+                            </AppButton>
+                        </div>
+                    </div>
                 </CModalFooter>
             </CModal>
         </>

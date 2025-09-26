@@ -158,7 +158,6 @@ const ConfirmationModal = ({
       visible={visible}
       onClose={onCancel}
       alignment="center"
-      className="modal-blur-overlay"
       size={isForm ? 'lg' : undefined}
     >
       <CModalHeader closeButton>
