@@ -186,6 +186,7 @@
   grid-template-columns: var(--grid-id) var(--grid-main) var(--grid-actions);
   align-items: center;
   column-gap: 12px;
+  padding-right: 24px;
 }
 
 .col-id { opacity:.85; }
@@ -211,7 +212,7 @@
 .pending-custom {
   background-color: #92400E; 
   color: #FEF3C7;          
-  border: 1px solid #92400E;
+  border: 1.3px solid #92400E;
 }
 
 /* =========================================================
