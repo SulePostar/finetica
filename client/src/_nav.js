@@ -1,5 +1,5 @@
 import { CNavItem, CNavTitle, CNavGroup } from '@coreui/react';
-import { cilHome, cilFile, cilBank, cilSettings, cilUser, cilShieldAlt, cilTag, cilBriefcase, cilWarning } from '@coreui/icons';
+import { cilHome, cilFile, cilBank, cilChart, cilUser, cilShieldAlt, cilTag, cilBriefcase, cilWarning } from '@coreui/icons';
 
 
 const _nav = [
@@ -61,7 +61,7 @@ const _nav = [
   {
     component: CNavGroup,
     name: 'Management',
-    icon: cilSettings,
+    icon: cilChart,
     adminOnly: true,
     items: [
       {

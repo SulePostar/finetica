@@ -31,7 +31,7 @@
 
 /* ===== Card Header ===== */
 .role-status-header {
-  font-family: 'Poppins', sans-serif;
+  /* font-family: 'Poppins', sans-serif; */
   margin-bottom: 1.5rem;
   border-bottom: 1px solid var(--role-card-border);
   padding-bottom: 1rem;
