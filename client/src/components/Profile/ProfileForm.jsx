@@ -2,8 +2,9 @@ import {
   CForm,
   CFormInput,
   CFormLabel,
-  CInputGroup,
-  CInputGroupText,
+
+  CCardTitle,
+  CBadge,
 } from '@coreui/react';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
@@ -11,20 +12,21 @@ import { Card } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { capitalizeFirst } from '../../helpers/capitalizeFirstLetter.js';
 import { formatDateTime } from '../../helpers/formatDate.js';
-import { useSidebarWidth } from '../../hooks/useSidebarWidth'; // <-- NEW
+import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import { setUserProfile } from '../../redux/user/userSlice';
 import FileUploadService from '../../services/fileUploadService';
-import { colors } from '../../styles/colors';
 import notify from '../../utilis/toastHelper';
 import ProfilePhotoUpload from '../Register/ProfilePhotoUpload/ProfilePhotoUpload';
 import './ProfileForm.css';
 import AppButton from '../AppButton/AppButton';
-const url = import.meta.env.VITE_API_BASE_URL
+import { getStatusBadge } from '../../utilis/formatters';
+
+const url = import.meta.env.VITE_API_BASE_URL;
 
 const ProfileForm = () => {
   const dispatch = useDispatch();
   const profile = useSelector((state) => state.user.profile);
-  const sidebarWidth = useSidebarWidth(); // <-- NEW
+  const sidebarWidth = useSidebarWidth();
 
   const [formData, setFormData] = useState(profile || {});
   const [profilePhoto, setProfilePhoto] = useState(null);
@@ -32,9 +34,6 @@ const ProfileForm = () => {
   const [isDarkMode, setIsDarkMode] = useState(
     document.documentElement.getAttribute('data-coreui-theme') === 'dark'
   );
-
-  const [editHover, setEditHover] = useState(false);
-  const [submitHover, setSubmitHover] = useState(false);
 
   useEffect(() => {
     if (profile) setFormData(profile);
@@ -47,6 +46,12 @@ const ProfileForm = () => {
     return () =>
       window.document.documentElement.removeEventListener('ColorSchemeChange', handler);
   }, []);
+
+  const statusesState = useSelector((state) => state.statuses || {});
+  const statuses = statusesState.statuses || [];
+
+  useEffect(() => {
+  }, [statuses, formData?.statusId, formData?.statusName]);
 
   const handleChange = ({ target: { name, value } }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -91,10 +96,22 @@ const ProfileForm = () => {
     }
   };
 
+  const getStatusBadgeFromName = (statusName) => {
+    const s = statusName?.trim().toLowerCase() || '';
+    let color = 'info';
+    if (s === 'approved') color = 'success';
+    else if (s === 'rejected') color = 'danger';
+    else if (s === 'pending') color = 'warning';
+
+    return <CBadge color={color}>{capitalizeFirst(statusName)}</CBadge>;
+  };
+
+
   return (
     <div className="container py-4">
       <div className="row justify-content-center">
-        <Card className="shadow-sm border-0 bg-light dark:bg-dark form-container-card"
+        <Card
+          className="shadow-sm border-0 bg-light dark:bg-dark p-4"
           data-theme={isDarkMode ? 'dark' : 'light'}
           style={{
             marginLeft: sidebarWidth,
@@ -102,115 +119,115 @@ const ProfileForm = () => {
             transition: 'margin-left 0.3s ease, width 0.3s ease',
           }}
         >
-          <div className="d-flex justify-content-center align-items-center mb-4">
-            <h2 className='form-title'>User Profile</h2>
-          </div>
-
-          <div className="text-center mb-4">
-            <ProfilePhotoUpload
-              onPhotoSelect={handlePhotoSelect}
-              disabled={!isEditable}
-              currentPhoto={profile?.profileImage || null}
-              onRemove={() => {
-                notify.onSuccess('Profile photo removed successfully!');
-                setFormData((prev) => ({ ...prev, profileImage: null }));
-                setProfilePhoto(null);
-              }}
-            />
-          </div>
-
-          <CForm onSubmit={handleSubmit}>
-            <div className="d-flex justify-content-end mb-3">
-              <AppButton
-                className={`${isEditable ? 'btn-no-hover' : ''}`}
-                size="sm"
-                type="button"
-                onClick={() => setIsEditable(prev => !prev)}
-              >
-                {isEditable ? 'Cancel' : 'Edit Profile'}
-              </AppButton>
-            </div>
-
-            <CInputGroup className="mb-3">
-              <CInputGroupText className="input-group-text">
-                <CFormLabel className="label-in-input-group-text">First name</CFormLabel>
-              </CInputGroupText>
-              <CFormInput
-                type='text'
-                name='firstName'
-                placeholder='First name'
-                className={isEditable ? "form-input" : "form-input-disabled"}
-                value={formData.firstName || ''}
-                onChange={handleChange}
-                disabled={!isEditable}
-              />
-            </CInputGroup>
-
-            <CInputGroup className="mb-3">
-              <CInputGroupText className="input-group-text">
-                <CFormLabel className="label-in-input-group-text">Last name</CFormLabel>
-              </CInputGroupText>
-              <CFormInput
-                type='text'
-                name='lastName'
-                placeholder='Last name'
-                className={isEditable ? "form-input" : "form-input-disabled"}
-                value={formData.lastName || ''}
-                onChange={handleChange}
-                disabled={!isEditable}
-              />
-            </CInputGroup>
-
-            <CInputGroup className="mb-3">
-              <CInputGroupText className="input-group-text">
-                <CFormLabel className="label-in-input-group-text">Email</CFormLabel>
-              </CInputGroupText>
-              <CFormInput
-                placeholder='Email'
-                className="form-input-disabled"
-                value={formData.email || ''}
-                disabled
-              />
-            </CInputGroup>
-
-            <CInputGroup className="mb-3">
-              <CInputGroupText className="input-group-text">
-                <CFormLabel className="label-in-input-group-text">Role</CFormLabel>
-              </CInputGroupText>
-              <CFormInput className="form-input-disabled" value={capitalizeFirst(formData.roleName)} disabled />
-            </CInputGroup>
-
-            <CInputGroup className="mb-3">
-              <CInputGroupText className="input-group-text">
-                <CFormLabel className="label-in-input-group-text">Status</CFormLabel>
-              </CInputGroupText>
-              <CFormInput className="form-input-disabled" value={capitalizeFirst(formData.statusName)} disabled />
-            </CInputGroup>
-
-            <CInputGroup className="mb-3">
-              <CInputGroupText className="input-group-text">
-                <CFormLabel className="label-in-input-group-text">Last login</CFormLabel>
-              </CInputGroupText>
-              <CFormInput className="form-input-disabled" value={formatDateTime(formData.lastLoginAt)} disabled />
-            </CInputGroup>
-
-            {isEditable && (
-              <div className="d-flex justify-content-center mt-4">
-                <AppButton
-                  type="submit"
-                  variant="primary"
-                  className="profile-button"
-                  size='md'
-                >
-                  Submit Changes
-                </AppButton>
-
+          {/* Header */}
+          <div className="d-flex justify-content-between align-items-center mb-4 px-3 pt-3">
+            <div>
+              <CCardTitle className="form-title">User Profile</CCardTitle>
+              <div className="text-muted">
+                {isEditable ? 'Edit your profile information' : 'View and manage your profile'}
               </div>
+            </div>
+            {!isEditable && (
+              <AppButton size="md" type="button" onClick={() => setIsEditable(true)}>
+                Edit Profile
+              </AppButton>
             )}
-          </CForm>
+          </div>
+
+          {/* Profile Photo Section */}
+          <div className="section-box p-3 mb-4">
+            <CCardTitle className="photo-title">Profile Photo</CCardTitle>
+            <div className="text-center">
+              <ProfilePhotoUpload
+                onPhotoSelect={handlePhotoSelect}
+                disabled={!isEditable}
+                currentPhoto={profile?.profileImage || null}
+                onRemove={() => {
+                  if (isEditable) {
+                    notify.onSuccess('Profile photo removed successfully!');
+                    setFormData((prev) => ({ ...prev, profileImage: null }));
+                    setProfilePhoto(null);
+                  }
+                }}
+              />
+            </div>
+          </div>
+
+          {/* User Info Section */}
+          <div className="section-box p-3">
+            <CForm onSubmit={handleSubmit}>
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <CFormLabel>First Name</CFormLabel>
+                  <CFormInput
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName || ''}
+                    onChange={handleChange}
+                    disabled={!isEditable}
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <CFormLabel>Last Name</CFormLabel>
+                  <CFormInput
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName || ''}
+                    onChange={handleChange}
+                    disabled={!isEditable}
+                  />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <CFormLabel>Email Address</CFormLabel>
+                  <CFormInput value={formData.email || ''} disabled />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <CFormLabel>Role</CFormLabel>
+                  <CFormInput
+                    value={capitalizeFirst(formData.roleName)} disabled
+                  />
+                </div>
+              </div>
+
+              {isEditable && (
+                <div className="d-flex gap-3 mt-3 mb-4">
+                  <AppButton type="submit" variant="primary">
+                    Save Changes
+                  </AppButton>
+                  <AppButton type="button" variant="secondary" onClick={() => setIsEditable(false)}>
+                    Cancel
+                  </AppButton>
+                </div>
+              )}
+
+              <div className="row mt-3">
+                <div className="col-md-6 mb-3">
+                  <div className="d-flex align-items-center gap-2">
+                    <CFormLabel className="mb-0">Account Status:</CFormLabel>
+                    {statuses.length > 0
+                      ? getStatusBadge(formData.statusId, statuses)
+                      : getStatusBadgeFromName(formData.statusName)}
+                  </div>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <CFormLabel>Last Login</CFormLabel>
+                  <CFormInput
+                    className="no-bg-form-input"
+                    value={formatDateTime(formData.lastLoginAt)}
+                    disabled
+                  />
+                </div>
+              </div>
+            </CForm>
+          </div>
         </Card>
-      </div >
-    </div >
+      </div>
+    </div>
   );
 };
 

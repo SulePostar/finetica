@@ -64,7 +64,6 @@
   font-size: 28px !important;
   font-weight: 700 !important;
   color: var(--cui-primary);
-  font-family: 'Segoe UI', sans-serif !important;
 }
 
 .sticky-tabs {
@@ -120,9 +119,11 @@
 [data-coreui-theme='dark'] .invalid-pdfs-container .badge.bg-success {
   background-color: #2e7d32 !important;
 }
+
 [data-coreui-theme='dark'] .invalid-pdfs-container .badge.bg-danger {
   background-color: #c62828 !important;
 }
+
 [data-coreui-theme='dark'] .btn-close {
   filter: invert(1) grayscale(100%) brightness(200%);
 }
