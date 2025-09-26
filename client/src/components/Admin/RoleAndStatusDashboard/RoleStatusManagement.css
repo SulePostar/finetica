@@ -197,18 +197,22 @@
 /* =========================================================
    BUTTONS / BADGES
    ========================================================= */
-.btn-delete {
-  background-color: var(--btn-delete-main) !important;
-  border: 1px solid var(--btn-delete-main) !important;
-  color: #fff !important;
-}
-.btn-delete:hover {
-  background-color: var(--btn-delete-hover) !important;
-  border-color: var(--btn-delete-hover) !important;
+.pill { 
+  border-radius: 999px; 
+  padding: .35rem .7rem; 
+  font-weight:600; 
 }
 
-.pill { border-radius: 999px; padding: .35rem .7rem; font-weight:600; }
-.pill.status-pill { padding: .28rem .6rem; line-height: 1; }
+.pill.status-pill { 
+  padding: .28rem .6rem; 
+  line-height: 1; 
+}
+
+.pending-custom {
+  background-color: #92400E; 
+  color: #FEF3C7;          
+  border: 1px solid #92400E;
+}
 
 /* =========================================================
    RESPONSIVE
@@ -356,7 +360,3 @@
     font-size: 0.78rem;
   }
 }
-
-
-
-

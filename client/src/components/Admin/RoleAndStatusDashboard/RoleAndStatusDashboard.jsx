@@ -8,14 +8,14 @@ import {
   CCard,
   CCardBody,
   CCardHeader,
-  CButton,
   CFormInput,
   CBadge,
   CListGroup,
   CListGroupItem,
 } from '@coreui/react';
-import { cilShieldAlt, cilBolt, cilSettings, cilWarning, cilUser, cilChartLine, cilXCircle } from '@coreui/icons';
+import { cilShieldAlt, cilBolt, cilSettings, cilWarning, cilUser, cilChartLine } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
+import AppButton from '../../AppButton/AppButton'; 
 import './RoleStatusManagement.css';
 
 const normalizeType = (obj) => {
@@ -70,15 +70,15 @@ const RoleAndStatusDashboard = () => {
     });
   }, [dispatch, statusName, statusType]);
 
-    const stats = useMemo(() => {
-        const totalRoles = roles.length;
-        const totalStatuses = statuses.length;
-        const types = statuses.map(normalizeType);
-        const approved = types.filter(t => t === 'Approved').length;
-        const pending  = types.filter(t => t === 'Pending').length;
-        const rejected = types.filter(t => t === 'Rejected').length;
-        return { totalRoles, totalStatuses, approved, pending, rejected };
-    }, [roles, statuses]);
+  const stats = useMemo(() => {
+    const totalRoles = roles.length;
+    const totalStatuses = statuses.length;
+    const types = statuses.map(normalizeType);
+    const approved = types.filter((t) => t === 'Approved').length;
+    const pending = types.filter((t) => t === 'Pending').length;
+    const rejected = types.filter((t) => t === 'Rejected').length;
+    return { totalRoles, totalStatuses, approved, pending, rejected };
+  }, [roles, statuses]);
 
   return (
     <>
@@ -130,7 +130,7 @@ const RoleAndStatusDashboard = () => {
             </CCardBody>
           </CCard>
         </CCol>
-    </CRow>
+      </CRow>
 
       <CRow className="g-4">
         <CCol md={5}>
@@ -147,9 +147,14 @@ const RoleAndStatusDashboard = () => {
                   value={roleName}
                   onChange={(e) => setRoleName(e.target.value)}
                 />
-                <CButton color="success" className="btn-compact" onClick={onAddRole}>
+                <AppButton
+                  variant="success"
+                  className="btn-compact"
+                  onClick={onAddRole}
+                  icon={null}
+                >
                   + Add Role
-                </CButton>
+                </AppButton>
               </div>
 
               <div className="list-wrap list-roles">
@@ -164,12 +169,16 @@ const RoleAndStatusDashboard = () => {
                       <div className="col-id">{r.id ?? (idx + 1)}</div>
                       <div className="col-name">{r.role || r.name}</div>
                       <div className="col-actions">
-                        <CButton
+                        <AppButton
+                          variant="danger"
+                          size="sm"
                           className="btn-compact btn-delete"
+                          icon="mdi:trash"
                           onClick={() => dispatch(deleteRole(r.id))}
+                          title="Delete role"
                         >
                           Delete
-                        </CButton>
+                        </AppButton>
                       </div>
                     </CListGroupItem>
                   ))}
@@ -190,7 +199,7 @@ const RoleAndStatusDashboard = () => {
                 <span className="muted">({statuses.length})</span>
               </div>
               <div className="panel-chips">
-                <CBadge color="warning" className="chip">
+                <CBadge className="pill status-pill pending-custom">
                   {stats.pending} Pending
                 </CBadge>
                 <CBadge color="success" className="chip">
@@ -209,9 +218,13 @@ const RoleAndStatusDashboard = () => {
                   value={statusName}
                   onChange={(e) => setStatusName(e.target.value)}
                 />
-                <CButton color="success" className="btn-compact" onClick={onAddStatus}>
+                <AppButton
+                  variant="success"
+                  className="btn-compact"
+                  onClick={onAddStatus}
+                >
                   + Add Status
-                </CButton>
+                </AppButton>
               </div>
 
               <div className="list-wrap list-statuses">
@@ -248,7 +261,7 @@ const RoleAndStatusDashboard = () => {
                         break;
                       default:
                         badge = (
-                          <CBadge color="warning" className="pill status-pill">
+                          <CBadge className="pill status-pill pending-custom">
                             Pending
                           </CBadge>
                         );
@@ -258,12 +271,16 @@ const RoleAndStatusDashboard = () => {
                         <div className="col-id">{s.id ?? (idx + 1)}</div>
                         <div className="col-name">{badge}</div>
                         <div className="col-actions">
-                          <CButton
+                          <AppButton
+                            variant="danger"
+                            size="sm"
                             className="btn-compact btn-delete"
+                            icon="mdi:trash"
                             onClick={() => dispatch(deleteStatus(s.id))}
+                            title="Delete status"
                           >
                             Delete
-                          </CButton>
+                          </AppButton>
                         </div>
                       </CListGroupItem>
                     );
