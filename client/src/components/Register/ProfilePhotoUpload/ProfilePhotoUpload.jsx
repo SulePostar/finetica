@@ -1,9 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import { CModal, CModalBody, CModalHeader, CModalFooter, CButton } from '@coreui/react';
+import { CModal, CModalBody, CModalHeader, CModalFooter } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilCamera, cilUser } from '@coreui/icons';
 import FileUploadService from '../../../services/fileUploadService';
 import notify from '../../../utilis/toastHelper';
+import AppButton from '../../AppButton/AppButton';
 import './ProfilePhotoUpload.styles.css';
 
 const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, currentPhoto }) => {
@@ -109,15 +110,15 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
                             id="photo-upload-input"
                         />
 
-                        <CButton
-                            color="primary"
-                            variant="outline"
+                        <AppButton
+                            variant="primary"
                             onClick={() => document.getElementById('photo-upload-input')?.click()}
                             disabled={disabled}
                         >
                             <CIcon icon={cilCamera} className="me-2" />
                             Choose Photo
-                        </CButton>
+                        </AppButton>
+
 
                         <div className="upload-info">
                             <small className="upload-info-text">Supported: JPG, PNG, GIF, WebP (Max 5MB)</small>
@@ -126,16 +127,18 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
                 </CModalBody>
 
                 <CModalFooter>
-                    <CButton color="secondary" variant="outline" onClick={handleCloseModal} disabled={disabled}>
-                        Cancel
-                    </CButton>
-                    <CButton color="success" onClick={handleCloseModal}>
-                        Done
-                    </CButton>
+                    <AppButton variant="no-hover" onClick={handleCloseModal} disabled={disabled}>Cancel</AppButton>
+                    <AppButton variant="primary" onClick={handleCloseModal}>Save</AppButton>
+
                     {hasPhoto && (
-                        <CButton color="danger" variant="outline" onClick={handleRemovePhoto} disabled={disabled}>
+                        <AppButton
+                            variant="danger"
+                            onClick={handleRemovePhoto}
+                            disabled={disabled}
+                        >
                             Remove Photo
-                        </CButton>
+                        </AppButton>
+
                     )}
                 </CModalFooter>
             </CModal>

@@ -9,11 +9,11 @@ import {
     CTableHeaderCell,
     CTableBody,
     CTableDataCell,
-    CButton,
     CForm,
     CFormInput,
     CBadge,
 } from '@coreui/react';
+import AppButton from '../AppButton/AppButton';
 import ConfirmationModal from '../Modals/ConfirmationModal/ConfirmationModal';
 import './RolesStatusesTable.css';
 
@@ -85,17 +85,17 @@ const RolesStatusesTable = ({ title, data, nameKey, onAdd, onDelete }) => {
                                         )}
                                     </CTableDataCell>
                                     <CTableDataCell className="text-end">
-                                        <CButton
-                                            color="danger"
+                                        <AppButton
+                                            variant="danger"
                                             size="sm"
-                                            variant="outline"
                                             className="delete-btn"
                                             onClick={() => handleDeleteClick(item)}
                                             disabled={item[nameKey]?.toLowerCase() === 'admin'}
                                             title={item[nameKey]?.toLowerCase() === 'admin' ? 'Cannot delete admin' : ''}
                                         >
                                             Delete
-                                        </CButton>
+                                        </AppButton>
+
                                     </CTableDataCell>
                                 </CTableRow>
                             ))
@@ -116,9 +116,9 @@ const RolesStatusesTable = ({ title, data, nameKey, onAdd, onDelete }) => {
                         value={newValue}
                         onChange={(e) => setNewValue(e.target.value)}
                     />
-                    <CButton type="submit" size="sm" className="add-btn">
+                    <AppButton type="submit" size="sm" variant="primary">
                         Add
-                    </CButton>
+                    </AppButton>
                 </CForm>
             </CCardBody>
             {/* Confirmation Modal for Delete */}

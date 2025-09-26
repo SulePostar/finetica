@@ -5,7 +5,6 @@ import {
   CModalTitle,
   CModalBody,
   CModalFooter,
-  CButton,
   CFormInput,
   CFormSelect,
   CFormLabel,
@@ -13,7 +12,7 @@ import {
   CFormTextarea,
   CBadge,
 } from '@coreui/react';
-
+import AppButton from '../../AppButton/AppButton';
 import './ConfirmationModal.css';
 
 const ConfirmationModal = ({
@@ -180,25 +179,16 @@ const ConfirmationModal = ({
         )}
       </CModalBody>
       <CModalFooter>
-        <CButton
-          color="secondary"
-          onClick={onCancel}
-          disabled={loading}
-          style={{ backgroundColor: '#718096', borderColor: '#718096' }}
-        >
+        <AppButton variant="no-hover" onClick={onCancel} disabled={loading}>
           {cancelText}
-        </CButton>
-        <CButton
-          color={confirmColor}
+        </AppButton>
+        <AppButton
+          variant={confirmColor}
           onClick={handleConfirm}
           disabled={loading}
-          style={{
-            backgroundColor: confirmColor === 'danger' ? '#9B2C2C' : '#5B3CC4',
-            borderColor: confirmColor === 'danger' ? '#9B2C2C' : '#5B3CC4',
-          }}
         >
           {loading ? 'Processing...' : confirmText}
-        </CButton>
+        </AppButton>
       </CModalFooter>
     </CModal>
   );

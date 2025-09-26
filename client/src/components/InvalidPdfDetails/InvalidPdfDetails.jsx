@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import {
   CSpinner, CRow, CCol, CCard, CCardBody, CCardHeader, CBadge,
-  CFormInput, CFormSelect, CButton, CListGroup, CListGroupItem, CCardText,
+  CFormInput, CFormSelect, CListGroup, CListGroupItem, CCardText,
 } from "@coreui/react";
-import CIcon from "@coreui/icons-react";
-import { cilPencil, cilTrash } from "@coreui/icons";
 import { PdfViewer } from "../PdfViewer/PdfViewer";
 import api from "../../services/api";
+import AppButton from "../AppButton/AppButton";
 
 const TYPE_TO_PATH = {
   1: "transactions",
@@ -80,30 +79,26 @@ const InvalidPdfDetails = ({ id, type }) => {
   if (!doc) return <div className="text-danger text-center">Document not found</div>;
 
   return (
-    <CRow className="g-0">
+    <CRow className="g-0 invalid-pdfs-container">
       {/* PDF Viewer */}
-      <CCol md={8} className="border-end bg-light d-flex align-items-center justify-content-center">
+      <CCol md={8} className="border-end d-flex align-items-center justify-content-center pdf-viewer-container">
         {doc.pdfUrl ? <PdfViewer pdfUrl={doc.pdfUrl} /> : <div>No PDF available</div>}
       </CCol>
 
       {/* Details panel */}
-      <CCol md={4} className="bg-white">
-        <CCard className="border-0 shadow-sm rounded-3">
-          <CCardHeader className="d-flex justify-content-center align-items-center bg-white border-bottom">
+      <CCol md={4} className="invalid-pdf-details-panel">
+        <CCard className="border-0 shadow-sm rounded-3 h-100">
+          <CCardHeader className="d-flex justify-content-center align-items-center border-bottom">
             <div className="d-flex gap-2">
               {isEditing ? (
                 <>
-                  <CButton color="success" size="sm" onClick={handleSave}>Save</CButton>
-                  <CButton color="secondary" size="sm" onClick={handleCancel}>Cancel</CButton>
+                  <AppButton variant="primary" size="sm">Save</AppButton>
+                  <AppButton variant="no-hover" size="sm" onClick={handleCancel}>Cancel</AppButton>
                 </>
               ) : (
                 <>
-                  <CButton color="secondary" size="sm" onClick={handleEdit}>
-                    <CIcon icon={cilPencil} className="me-1" /> Edit
-                  </CButton>
-                  <CButton color="danger" size="sm" onClick={handleDelete}>
-                    <CIcon icon={cilTrash} className="me-1" /> Delete
-                  </CButton>
+                  <AppButton variant="edit" size="sm" onClick={handleEdit} icon='mdi:pencil' iconClassName="me-1">Edit</AppButton>
+                  <AppButton variant="danger" size="sm" onClick={handleDelete} icon='mdi:trash' iconClassName="me-1">Delete</AppButton>
                 </>
               )}
             </div>
