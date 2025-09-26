@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
-import { CButton } from '@coreui/react';
+import AppButton from '../AppButton/AppButton';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -42,29 +42,29 @@ export const PdfViewer = ({ pdfUrl }) => {
 
             {/* Controls */}
             <div className="d-flex justify-content-center align-items-center py-2 flex-wrap">
-                <CButton
-                    color="secondary"
+                <AppButton
+                    variant="secondary"
                     size="sm"
                     className="mx-1 my-1"
                     disabled={pageNumber <= 1}
                     onClick={previousPage}
                 >
                     &larr; Previous
-                </CButton>
+                </AppButton>
 
                 <span className="fw-bold mx-3 my-1">
                     Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
                 </span>
 
-                <CButton
-                    color="secondary"
+                <AppButton
+                    variant="secondary"
                     size="sm"
                     className="mx-1 my-1"
                     disabled={pageNumber >= numPages}
                     onClick={nextPage}
                 >
                     Next &rarr;
-                </CButton>
+                </AppButton>
             </div>
         </div>
     );

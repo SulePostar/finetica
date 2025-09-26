@@ -1,7 +1,6 @@
 import { cilCloudUpload, cilDescription, cilFile } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import {
-  CButton,
   CForm,
   CFormInput,
   CFormLabel,
@@ -16,6 +15,7 @@ import { useRef, useState } from 'react';
 import FileUploadService from '../../services/fileUploadService';
 import notify from '../../utilis/toastHelper';
 import './FileUploadModal.css';
+import AppButton from '../AppButton/AppButton';
 
 const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -237,13 +237,11 @@ const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess }) => {
       </CModalBody>
 
       <CModalFooter>
-        <CButton color="secondary" onClick={handleClose} disabled={uploading} variant="outline">
-          Cancel
-        </CButton>
-        <CButton
+        <AppButton variant="no-hover" onClick={handleClose} disabled={uploading}>Cancel</AppButton>
+        <AppButton
           onClick={handleUpload}
           disabled={!selectedFile || uploading}
-          className="upload-primary-button"
+          className="primary"
         >
           {uploading ? (
             <>
@@ -256,7 +254,7 @@ const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess }) => {
               Upload to {bucketName.toUpperCase()}
             </>
           )}
-        </CButton>
+        </AppButton>
       </CModalFooter>
     </CModal>
   );
