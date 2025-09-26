@@ -1,12 +1,10 @@
-import { CButton } from '@coreui/react';
-import { cilArrowLeft, cilPencil } from '@coreui/icons';
-import CIcon from '@coreui/icons-react';
 import { useMemo, useState } from 'react';
 import EditItemModal from '../../components/Modals/EditItemModal';
 import api from '../../services/api';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import DefaultLayout from '../../layout/DefaultLayout';
 import DynamicTable from '../../components/Tables/DynamicTable';
+import AppButton from '../../components/AppButton/AppButton';
 
 
 const DocumentItemsPage = () => {
@@ -62,9 +60,12 @@ const DocumentItemsPage = () => {
         {
             name: 'Actions',
             cell: row => (
-                <CButton size="sm" color="secondary" onClick={() => openEditModal(row, type)}>
-                    <CIcon icon={cilPencil} size="sm" />
-                </CButton>
+                <AppButton
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => openEditModal(row, type)}
+                    icon="mdi:pencil"
+                />
             ),
             ignoreRowClick: true,
             allowOverflow: true,

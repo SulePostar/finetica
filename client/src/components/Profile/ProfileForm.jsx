@@ -1,5 +1,4 @@
 import {
-  CButton,
   CForm,
   CFormInput,
   CFormLabel,
@@ -19,6 +18,7 @@ import { colors } from '../../styles/colors';
 import notify from '../../utilis/toastHelper';
 import ProfilePhotoUpload from '../Register/ProfilePhotoUpload/ProfilePhotoUpload';
 import './ProfileForm.css';
+import AppButton from '../AppButton/AppButton';
 const url = import.meta.env.VITE_API_BASE_URL
 
 const ProfileForm = () => {
@@ -121,24 +121,14 @@ const ProfileForm = () => {
 
           <CForm onSubmit={handleSubmit}>
             <div className="d-flex justify-content-end mb-3">
-              <CButton
-                className="edit-toggle"
-                type="button"
+              <AppButton
+                className={`${isEditable ? 'btn-no-hover' : ''}`}
                 size="sm"
-                onClick={() => setIsEditable((prev) => !prev)}
-                style={{
-                  backgroundColor: editHover ? colors.primary : 'transparent',
-                  color: editHover
-                    ? colors.white
-                    : isDarkMode
-                      ? colors.white
-                      : colors.primary,
-                }}
-                onMouseEnter={() => setEditHover(true)}
-                onMouseLeave={() => setEditHover(false)}
+                type="button"
+                onClick={() => setIsEditable(prev => !prev)}
               >
                 {isEditable ? 'Cancel' : 'Edit Profile'}
-              </CButton>
+              </AppButton>
             </div>
 
             <CInputGroup className="mb-3">
@@ -206,20 +196,15 @@ const ProfileForm = () => {
 
             {isEditable && (
               <div className="d-flex justify-content-center mt-4">
-                <CButton type="submit" className="profile-button"
-                  style={{
-                    backgroundColor: submitHover ? colors.primary : 'transparent',
-                    color: submitHover
-                      ? colors.white
-                      : isDarkMode
-                        ? colors.white
-                        : colors.primary,
-                  }}
-                  onMouseEnter={() => setSubmitHover(true)}
-                  onMouseLeave={() => setSubmitHover(false)}
+                <AppButton
+                  type="submit"
+                  variant="primary"
+                  className="profile-button"
+                  size='md'
                 >
                   Submit Changes
-                </CButton>
+                </AppButton>
+
               </div>
             )}
           </CForm>

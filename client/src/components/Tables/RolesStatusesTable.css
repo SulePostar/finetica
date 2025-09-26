@@ -11,12 +11,15 @@
   --text-primary: #111827;
   --text-muted: #6b7280;
 
-  --input-bg: #ffffff; /* Light mode input */
-  --text-primary: #111827; /* Light mode text */
+  --input-bg: #ffffff;
+  /* Light mode input */
+  --text-primary: #111827;
+  /* Light mode text */
   --input-border: #d1d5db;
   --input-focus-border: #6366f1;
   --input-focus-shadow: rgba(99, 102, 241, 0.15);
-  --input-placeholder: #9ca3af; /* Light mode placeholder */
+  --input-placeholder: #9ca3af;
+  /* Light mode placeholder */
 
   --btn-add-bg: #10b981;
   --btn-add-hover: #059669;
@@ -28,9 +31,12 @@
 
   --table-head-bg: #f3f4f6;
   --table-head-color: #374151;
-  --table-row-bg: #ffffff; /* Light mode default */
-  --table-row-striped: #f8fafc; /* Light mode stripe */
-  --table-row-hover: #f9fafb; /* Light mode hover */
+  --table-row-bg: #ffffff;
+  /* Light mode default */
+  --table-row-striped: #f8fafc;
+  /* Light mode stripe */
+  --table-row-hover: #f9fafb;
+  /* Light mode hover */
 
   --status-bg: #e0e7ff;
   --status-color: #ffffff;
@@ -48,11 +54,13 @@
   --text-primary: #f3f4f6;
   --text-muted: #9ca3af;
 
-  --input-bg: #1f2937; /* Dark mode input */
+  --input-bg: #1f2937;
+  /* Dark mode input */
   --input-border: #4b5563;
   --input-focus-border: #818cf8;
   --input-focus-shadow: rgba(129, 140, 248, 0.3);
-  --input-placeholder: #9ca3af; /* Dark mode placeholder (lighter than dark bg) */
+  --input-placeholder: #9ca3af;
+  /* Dark mode placeholder (lighter than dark bg) */
 
   --btn-add-bg: #059669;
   --btn-add-hover: #047857;
@@ -65,9 +73,12 @@
 
   --table-head-bg: #212631;
   --table-head-color: #f3f4f6;
-  --table-row-bg: #212631; /* Dark mode row */
-  --table-row-striped: #212631; /* Dark mode stripe */
-  --table-row-hover: #212631; /* Dark mode hover */
+  --table-row-bg: #212631;
+  /* Dark mode row */
+  --table-row-striped: #212631;
+  /* Dark mode stripe */
+  --table-row-hover: #212631;
+  /* Dark mode hover */
 
   --status-bg: #4f46e5;
   --status-color: #e0e7ff;
@@ -108,13 +119,17 @@
   border: 1px solid var(--input-border);
   padding: 0.35rem 0.75rem;
   font-size: 0.9rem;
-  background: var(--input-bg); /* <-- Use variable */
-  color: var(--text-primary); /* <-- Text color variable */
+  background: var(--input-bg);
+  /* <-- Use variable */
+  color: var(--text-primary);
+  /* <-- Text color variable */
 }
 
 .add-input::placeholder {
-  color: var(--input-placeholder); /* Use a variable */
-  opacity: 1; /* Make sure it’s visible */
+  color: var(--input-placeholder);
+  /* Use a variable */
+  opacity: 1;
+  /* Make sure it’s visible */
 }
 
 .add-input:focus {
@@ -126,21 +141,6 @@
   outline: none;
 }
 
-.add-btn {
-  border-radius: 8px;
-  font-weight: 500;
-  padding: 0.35rem 0.9rem;
-  font-size: 0.85rem;
-  background-color: var(--btn-add-bg);
-  border: none;
-  color: #fff;
-}
-
-.add-btn:hover {
-  background-color: var(--btn-add-hover);
-}
-
-/* ===== Modern Table ===== */
 /* ===== Modern Table ===== */
 .modern-table {
   width: 100%;
@@ -164,11 +164,13 @@
   font-size: 0.9rem;
   color: var(--text-primary);
   border-bottom: 1px solid var(--header-border);
-  background: inherit; /* Important for dark mode inheritance */
+  background: inherit;
+  /* Important for dark mode inheritance */
 }
 
 .modern-table tbody tr {
-  background: transparent; /* fallback */
+  background: transparent;
+  /* fallback */
 }
 
 .modern-table tbody tr:nth-child(even) {
@@ -178,6 +180,7 @@
 .modern-table tbody tr:hover {
   background: var(--table-row-hover);
 }
+
 /* ===== Status Badges ===== */
 .status-badge {
   font-size: 0.75rem;

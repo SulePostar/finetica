@@ -1,8 +1,5 @@
-// SearchFilters.jsx
-import React from 'react';
-import { CFormInput, CFormSelect, CButton } from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilReload } from '@coreui/icons';
+import { CFormInput, CFormSelect } from '@coreui/react';
+import AppButton from '../../components/AppButton/AppButton';
 import './SearchFilters.css';
 
 const SearchFilters = ({
@@ -48,14 +45,14 @@ const SearchFilters = ({
       {/* Refresh Button */}
       {onRefresh && (
         <div>
-          <CButton
+          <AppButton
             onClick={onRefresh}
-            size="m"
-            className='btn-refreshed'
+            size="md"
+            variant='no-hover'
           >
-            <CIcon icon={cilReload} className="me-1" />
             {refreshLabel}
-          </CButton>
+          </AppButton>
+
         </div>
       )}
     </div>

@@ -32,7 +32,6 @@ export const registerFormCSS = `
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
     box-sizing: border-box;
     z-index: 1000;
   }
@@ -114,30 +113,6 @@ export const registerFormCSS = `
   .register-form .input-group {
     border-radius: 12px !important;
     overflow: hidden !important;
-  }
-  
-  .register-form-button {
-    background-color: ${colors.primary} !important;
-    border: none !important;
-    border-radius: 12px !important;
-    padding: 16px 0 !important;
-    font-weight: 600 !important;
-    font-size: 18px !important;
-    width: 100% !important;
-    margin-top: 16px !important;
-    transition: all 0.2s ease !important;
-    color: ${colors.white} !important;
-  }
-  
-  .register-form-button:hover:not(:disabled) {
-    background-color: ${colors.primaryHover} !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 8px 25px ${colors.buttonHoverShadow} !important;
-  }
-  
-  .register-form-button:disabled {
-    opacity: 0.6 !important;
-    cursor: not-allowed !important;
   }
   
   .register-form-login-link {

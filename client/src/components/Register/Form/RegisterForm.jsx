@@ -1,6 +1,6 @@
 import { cilContact, cilEnvelopeClosed, cilLockLocked, cilUser } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
-import { CAlert, CButton, CForm, CFormInput, CInputGroup, CInputGroupText } from '@coreui/react';
+import { CAlert, CForm, CFormInput, CInputGroup, CInputGroupText, CFormLabel, CFormText } from '@coreui/react';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRegistrationForm } from '../../../hooks/useRegistrationForm';
@@ -9,6 +9,7 @@ import FileUploadService from '../../../services/fileUploadService';
 import notify from '../../../utilis/toastHelper';
 import ProfilePhotoUpload from '../ProfilePhotoUpload';
 import { injectRegisterFormStyles, registerFormStyles } from './RegisterForm.styles';
+import AppButton from '../../AppButton/AppButton';
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -100,8 +101,8 @@ const RegisterForm = () => {
     <div className="register-form-container" key="register-form-2025">
       <div className="register-form-card register-form">
         <div className="register-form-header">
-          <h2 className="register-form-title">Register</h2>
-          <p className="register-form-subtitle">Create your account</p>
+          <CFormLabel className="register-form-title">Register</CFormLabel>
+          <CFormText className="register-form-subtitle">Create your account</CFormText>
         </div>
 
         {error && (
@@ -224,17 +225,21 @@ const RegisterForm = () => {
             <div className="text-danger small mb-2">{getFieldError('confirmPassword')}</div>
           )}
 
-          <CButton type="submit" className="register-form-button" disabled={loading}>
+          <AppButton
+            type="submit"
+            className="w-100"
+            disabled={loading}
+          >
             {loading ? 'Creating Account...' : 'Create Account'}
-          </CButton>
+          </AppButton>
 
           <div className="register-form-login-link">
-            <p>
+            <CFormText>
               Already have an account?{' '}
               <Link to="/login" className="register-form-link">
                 Sign in here
               </Link>
-            </p>
+            </CFormText>
           </div>
         </CForm>
       </div>
