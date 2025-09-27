@@ -27,7 +27,7 @@ module.exports = (sequelize) => {
       },
       direction: {
         type: DataTypes.ENUM('in', 'out'),
-        allowNull: false,
+        allowNull: true, // Now nullable, only required on items
       },
       accountNumber: {
         field: 'account_number',

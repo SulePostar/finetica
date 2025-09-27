@@ -20,12 +20,12 @@ module.exports = (sequelize) => {
             bankName: {
                 field: 'bank_name',
                 type: DataTypes.STRING,
-                allowNull: false,
+                allowNull: true,
             },
             accountNumber: {
                 field: 'account_number',
                 type: DataTypes.STRING,
-                allowNull: false,
+                allowNull: true,
             },
 
             date: {
@@ -34,7 +34,7 @@ module.exports = (sequelize) => {
             },
             direction: {
                 type: DataTypes.ENUM('in', 'out'),
-                allowNull: false,
+                allowNull: true,
             },
             amount: {
                 type: DataTypes.DECIMAL(18, 2),
