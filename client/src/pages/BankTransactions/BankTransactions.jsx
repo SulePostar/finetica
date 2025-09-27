@@ -16,7 +16,7 @@ const BankTransactions = () => {
 
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
   const apiEndpoint = useMemo(
-    () => `${API_BASE}/transactions/bank-transaction-data`,
+    () => `${API_BASE}/bank-transactions`,
     [API_BASE]
   );
 

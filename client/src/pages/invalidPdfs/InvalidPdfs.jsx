@@ -33,7 +33,7 @@ const InvalidPdfs = () => {
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
   const endpoints = {
-    bank: `${API_BASE}/transactions/logs/invalid`,
+    bank: `${API_BASE}/bank-transactions/logs/invalid`,
     kif: `${API_BASE}/kif/logs/invalid`,
     kuf: `${API_BASE}/kuf/logs/invalid`,
     contracts: `${API_BASE}/contracts/logs/invalid`,

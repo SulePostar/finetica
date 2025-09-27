@@ -32,7 +32,7 @@ const DocumentDetails = () => {
     if (path.includes('/kuf/')) return 'kuf';
     if (path.includes('/contracts/')) return 'contract';
     // Use correct type for bank transactions to match backend API
-    if (path.includes('/bank-transactions/')) return 'transactions/bank-transaction-data';
+    if (path.includes('/bank-transactions/')) return 'bank-transactions';
     if (path.includes('/partners/')) return 'partner';
     return null;
   }, [location.pathname]);
@@ -98,7 +98,7 @@ const DocumentDetails = () => {
               />
             )}
             {/* Button to navigate to items page */}
-            {!loading && (documentType === 'kif' || documentType === 'kuf' || documentType === 'transactions/bank-transaction-data') && Array.isArray(formData?.items) && (
+            {!loading && (documentType === 'kif' || documentType === 'kuf' || documentType === 'bank-transactions') && Array.isArray(formData?.items) && (
               <button
                 type="button"
                 className="btn btn-primary details-button"

@@ -16,9 +16,9 @@ const { bankTransactionCreateSchema, bankTransactionUpdateSchema } = require('..
 router.get('/logs/invalid', isAuthenticated, getInvalidBankTransactions);
 router.get('/logs/:id', isAuthenticated, getBankTransactionLog);
 
-router.get('/bank-transaction-data', getBankTransactions);
-router.get('/bank-transaction-data/:id', getTransactionById);
-router.get('/bank-transaction-data/:id/items', getBankTransactionItemsById);
+router.get('/', getBankTransactions);
+router.get('/:id', getTransactionById);
+router.get('/:id/items', getBankTransactionItemsById);
 router.post('/',
     isAuthenticated,
     validate(bankTransactionCreateSchema),

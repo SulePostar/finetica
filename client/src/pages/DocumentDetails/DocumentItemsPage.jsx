@@ -16,7 +16,7 @@ const DocumentItemsPage = () => {
         const path = location.pathname;
         if (path.includes('/kif/')) return 'kif';
         if (path.includes('/kuf/')) return 'kuf';
-        if (path.includes('/bank-transactions/')) return 'transactions/bank-transaction-data';
+        if (path.includes('/bank-transactions/')) return 'bank-transactions';
         return null;
     }, [location.pathname]);
     const API_BASE = import.meta.env.VITE_API_BASE_URL;
@@ -117,8 +117,8 @@ const DocumentItemsPage = () => {
         ? getActionsColumn(kifColumns, 'kif')
         : documentType === 'kuf'
             ? getActionsColumn(kufColumns, 'kuf')
-            : documentType === 'transactions/bank-transaction-data'
-                ? getActionsColumn(bankTransactionColumns, 'bank-transaction-data')
+            : documentType === 'bank-transactions'
+                ? getActionsColumn(bankTransactionColumns, 'bank-transactions')
                 : [];
 
     // Determine back URL
@@ -147,7 +147,7 @@ const DocumentItemsPage = () => {
                 { name: 'vatAmount', label: 'VAT Amount', type: 'number', placeholder: 'VAT Amount' },
                 { name: 'grossSubtotal', label: 'Gross Subtotal', type: 'number', placeholder: 'Gross Subtotal' },
             ];
-        } else if (editModal.type === 'transactions/bank-transaction-data') {
+        } else if (editModal.type === 'bank-transactions') {
             return [
                 { name: 'date', label: 'Date', type: 'date', placeholder: 'Date' },
                 { name: 'description', label: 'Description', type: 'text', placeholder: 'Description' },
