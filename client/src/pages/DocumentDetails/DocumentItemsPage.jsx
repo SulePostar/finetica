@@ -99,19 +99,13 @@ const DocumentItemsPage = () => {
     ];
 
     const bankTransactionColumns = [
-        { name: 'ID', selector: row => row.id, minWidth: '120px', wrap: true },
+        {
+            selector: (row) => row.date || '—',
+            sortable: true,
+            cell: (row) => (row.date ? new Date(row.date).toLocaleDateString() : '—'),
+        },
         { name: 'Description', selector: row => row.description, minWidth: '160px', wrap: true },
         { name: 'Amount', selector: row => row.amount, minWidth: '120px', wrap: true },
-        {
-            name: 'Date', selector: row => {
-                if (!row.date) return '';
-                const d = new Date(row.date);
-                const day = String(d.getDate()).padStart(2, '0');
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const year = String(d.getFullYear()).slice(-2);
-                return `${day}.${month}.${year}`;
-            }, minWidth: '120px', wrap: true
-        },
         { name: 'Bank Name', selector: row => row.bankName, minWidth: '140px', wrap: true },
         { name: 'Account Number', selector: row => row.accountNumber, minWidth: '140px', wrap: true },
         { name: 'Direction', selector: row => row.direction, minWidth: '100px', wrap: true },
@@ -154,10 +148,9 @@ const DocumentItemsPage = () => {
             ];
         } else if (editModal.type === 'transactions/bank-transaction-data') {
             return [
-                { name: 'id', label: 'ID', type: 'text', placeholder: 'ID', readOnly: true },
+                { name: 'date', label: 'Date', type: 'date', placeholder: 'Date' },
                 { name: 'description', label: 'Description', type: 'text', placeholder: 'Description' },
                 { name: 'amount', label: 'Amount', type: 'number', placeholder: 'Amount' },
-                { name: 'date', label: 'Date', type: 'date', placeholder: 'Date' },
                 { name: 'bankName', label: 'Bank Name', type: 'text', placeholder: 'Bank Name' },
                 { name: 'accountNumber', label: 'Account Number', type: 'text', placeholder: 'Account Number' },
                 { name: 'direction', label: 'Direction', type: 'select', options: ['in', 'out'], placeholder: 'Direction' },
