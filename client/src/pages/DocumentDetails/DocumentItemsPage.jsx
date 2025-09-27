@@ -5,6 +5,7 @@ import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import DefaultLayout from '../../layout/DefaultLayout';
 import DynamicTable from '../../components/Tables/DynamicTable';
 import AppButton from '../../components/AppButton/AppButton';
+import './DocumentItemsPage.css';
 
 
 const DocumentItemsPage = () => {
@@ -160,10 +161,13 @@ const DocumentItemsPage = () => {
 
     return (
         <DefaultLayout>
-            <div style={{ marginTop: '30px' }}>
-                <div style={{ maxWidth: '100%', overflowX: 'auto' }}>
+            <div
+                className="table-page-outer"
+                style={{ left: 0, right: 0 }}
+            >
+                <div className="document-items-table-scroll document-items-table-responsive">
                     <DynamicTable
-                        title="Invoice Items"
+                        title="Document Items"
                         columns={columns}
                         apiEndpoint={apiEndpoint}
                         pagination={false}
