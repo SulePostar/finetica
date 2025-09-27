@@ -76,36 +76,45 @@ const DocumentItemsPage = () => {
 
     // Columns for KIF (SalesInvoiceItem)
     const kifColumns = [
-        { name: 'ID', selector: row => row.id },
-        { name: 'Order Number', selector: row => row.orderNumber },
-        { name: 'Description', selector: row => row.description },
-        { name: 'Unit', selector: row => row.unit },
-        { name: 'Quantity', selector: row => row.quantity },
-        { name: 'Unit Price', selector: row => row.unitPrice },
-        { name: 'Net Subtotal', selector: row => row.netSubtotal },
-        { name: 'VAT Amount', selector: row => row.vatAmount },
-        { name: 'Gross Subtotal', selector: row => row.grossSubtotal },
+        { name: 'ID', selector: row => row.id, minWidth: '120px', wrap: true },
+        { name: 'Order Number', selector: row => row.orderNumber, minWidth: '120px', wrap: true },
+        { name: 'Description', selector: row => row.description, minWidth: '160px', wrap: true },
+        { name: 'Unit', selector: row => row.unit, minWidth: '100px', wrap: true },
+        { name: 'Quantity', selector: row => row.quantity, minWidth: '100px', wrap: true },
+        { name: 'Unit Price', selector: row => row.unitPrice, minWidth: '120px', wrap: true },
+        { name: 'Net Subtotal', selector: row => row.netSubtotal, minWidth: '120px', wrap: true },
+        { name: 'VAT Amount', selector: row => row.vatAmount, minWidth: '120px', wrap: true },
+        { name: 'Gross Subtotal', selector: row => row.grossSubtotal, minWidth: '120px', wrap: true },
     ];
 
     // Columns for KUF (PurchaseInvoiceItem)
     const kufColumns = [
-        { name: 'ID', selector: row => row.id },
-        { name: 'Order Number', selector: row => row.orderNumber },
-        { name: 'Description', selector: row => row.description },
-        { name: 'Net Subtotal', selector: row => row.netSubtotal },
-        { name: 'Lump Sum', selector: row => row.lumpSum },
-        { name: 'VAT Amount', selector: row => row.vatAmount },
-        { name: 'Gross Subtotal', selector: row => row.grossSubtotal },
+        { name: 'ID', selector: row => row.id, minWidth: '120px', wrap: true },
+        { name: 'Order Number', selector: row => row.orderNumber, minWidth: '120px', wrap: true },
+        { name: 'Description', selector: row => row.description, minWidth: '160px', wrap: true },
+        { name: 'Net Subtotal', selector: row => row.netSubtotal, minWidth: '120px', wrap: true },
+        { name: 'Lump Sum', selector: row => row.lumpSum, minWidth: '120px', wrap: true },
+        { name: 'VAT Amount', selector: row => row.vatAmount, minWidth: '120px', wrap: true },
+        { name: 'Gross Subtotal', selector: row => row.grossSubtotal, minWidth: '120px', wrap: true },
     ];
 
     const bankTransactionColumns = [
-        { name: 'ID', selector: row => row.id },
-        { name: 'Description', selector: row => row.description },
-        { name: 'Amount', selector: row => row.amount },
-        { name: 'Date', selector: row => row.date },
-        { name: 'Bank Name', selector: row => row.bankName },
-        { name: 'Account Number', selector: row => row.accountNumber },
-        { name: 'Direction', selector: row => row.direction },
+        { name: 'ID', selector: row => row.id, minWidth: '120px', wrap: true },
+        { name: 'Description', selector: row => row.description, minWidth: '160px', wrap: true },
+        { name: 'Amount', selector: row => row.amount, minWidth: '120px', wrap: true },
+        {
+            name: 'Date', selector: row => {
+                if (!row.date) return '';
+                const d = new Date(row.date);
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = String(d.getFullYear()).slice(-2);
+                return `${day}.${month}.${year}`;
+            }, minWidth: '120px', wrap: true
+        },
+        { name: 'Bank Name', selector: row => row.bankName, minWidth: '140px', wrap: true },
+        { name: 'Account Number', selector: row => row.accountNumber, minWidth: '140px', wrap: true },
+        { name: 'Direction', selector: row => row.direction, minWidth: '100px', wrap: true },
     ];
 
 
@@ -158,19 +167,16 @@ const DocumentItemsPage = () => {
 
     return (
         <DefaultLayout>
-            <div
-                style={{
-                    marginTop: '30px'
-                }}
-            >
-                <DynamicTable
-                    title="Invoice Items"
-                    columns={columns}
-                    apiEndpoint={apiEndpoint}
-                    pagination={false}
-                    reloadTable={editModal.visible === false && !modalLoading ? Math.random() : undefined}
-                />
-
+            <div style={{ marginTop: '30px' }}>
+                <div style={{ maxWidth: '100%', overflowX: 'auto' }}>
+                    <DynamicTable
+                        title="Invoice Items"
+                        columns={columns}
+                        apiEndpoint={apiEndpoint}
+                        pagination={false}
+                        reloadTable={editModal.visible === false && !modalLoading ? Math.random() : undefined}
+                    />
+                </div>
                 <EditItemModal
                     visible={editModal.visible}
                     onCancel={closeEditModal}
