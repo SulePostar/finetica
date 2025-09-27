@@ -122,7 +122,13 @@ const DocumentDetails = () => {
                     <CSpinner color="primary" />
                   </div>
                 ) : (
-                  <PdfViewer pdfUrl={pdfUrl} />
+                  <div className="document-pdf">
+                    {pdfUrl ? (
+                      <PdfViewer pdfUrl={pdfUrl} />
+                    ) : (
+                      <div>No PDF available for this transaction.</div>
+                    )}
+                  </div>
                 )}
               </CCardBody>
             </CCard>

@@ -60,11 +60,31 @@ const getBankTransactionById = async (id) => {
 
         if (!document) {
             console.warn(`No BankTransaction found with id: ${id}`);
-            return null;
+            return {
+                id,
+                date: null,
+                amount: null,
+                direction: null,
+                accountNumber: null,
+                description: null,
+                invoiceId: null,
+                partnerId: null,
+                categoryId: null,
+                approvedAt: null,
+                approvedBy: null,
+                fileName: null,
+                pdfUrl: null,
+                items: [],
+                isBankTransaction: false,
+            };
         }
 
         const transactionData = document.toJSON();
-        const pdfUrl = transactionData.fileName ? await supabaseService.getSignedUrl(BUCKET_NAME, transactionData.fileName) : null;
+        let pdfUrl = transactionData.fileName ? await supabaseService.getSignedUrl(BUCKET_NAME, transactionData.fileName) : null;
+        // Sanitize pdfUrl: if falsy, empty, or 'null', set to null
+        if (!pdfUrl || typeof pdfUrl !== 'string' || pdfUrl.trim() === '' || pdfUrl === 'null') {
+            pdfUrl = null;
+        }
 
         // Fetch items for this transaction
         const items = await BankTransactionItem.findAll({

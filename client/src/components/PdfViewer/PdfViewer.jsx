@@ -10,6 +10,10 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 ).toString();
 
 export const PdfViewer = ({ pdfUrl }) => {
+    if (!pdfUrl || typeof pdfUrl !== 'string' || pdfUrl.trim() === '' || pdfUrl === 'null') {
+        return <div>No PDF available for this transaction.</div>;
+    }
+
     const [numPages, setNumPages] = useState(null);
     const [pageNumber, setPageNumber] = useState(1);
 
@@ -24,7 +28,6 @@ export const PdfViewer = ({ pdfUrl }) => {
 
     return (
         <div className="shadow-sm border rounded overflow-hidden">
-
             {/* PDF Display */}
             <div className="d-flex justify-content-center bg-light p-3 overflow-auto">
                 <Document
@@ -39,7 +42,6 @@ export const PdfViewer = ({ pdfUrl }) => {
                     />
                 </Document>
             </div>
-
             {/* Controls */}
             <div className="d-flex justify-content-center align-items-center py-2 flex-wrap">
                 <AppButton
@@ -51,11 +53,9 @@ export const PdfViewer = ({ pdfUrl }) => {
                 >
                     &larr; Previous
                 </AppButton>
-
                 <span className="fw-bold mx-3 my-1">
                     Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
                 </span>
-
                 <AppButton
                     variant="secondary"
                     size="sm"
