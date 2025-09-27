@@ -64,7 +64,7 @@ const getBankTransactionById = async (id) => {
         }
 
         const transactionData = document.toJSON();
-        const pdfUrl = transactionData.filename ? await supabaseService.getSignedUrl(BUCKET_NAME, transactionData.filename) : null;
+        const pdfUrl = transactionData.fileName ? await supabaseService.getSignedUrl(BUCKET_NAME, transactionData.fileName) : null;
 
         // Fetch items for this transaction
         const items = await BankTransactionItem.findAll({

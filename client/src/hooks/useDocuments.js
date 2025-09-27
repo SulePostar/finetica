@@ -22,6 +22,10 @@ const documentServiceMap = {
         getById: BankTransactionsService.getById,
         update: BankTransactionsService.approve,
     },
+    'transactions/bank-transaction-data': {
+        getById: BankTransactionsService.getById,
+        update: BankTransactionsService.approve,
+    },
     partner: {
         getById: PartnerService.getById,
         update: PartnerService.update,
