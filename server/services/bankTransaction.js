@@ -5,6 +5,8 @@ const BANK_TRANSACTIONS_PROMPT = require('../prompts/BankTransactions');
 const bankTransactionSchema = require('../schemas/bankTransactionSchema');
 const { sequelize } = require('../models');
 const supabaseService = require('../utils/supabase/supabaseService');
+const { get } = require('../routes/kif');
+const { or } = require('sequelize');
 
 const MODEL_NAME = 'gemini-2.5-flash-lite';
 const BUCKET_NAME = 'transactions';
@@ -64,13 +66,43 @@ const getBankTransactionById = async (id) => {
         const transactionData = document.toJSON();
         const pdfUrl = transactionData.filename ? await supabaseService.getSignedUrl(BUCKET_NAME, transactionData.filename) : null;
 
+        // Fetch items for this transaction
+        const items = await BankTransactionItem.findAll({
+            where: { transaction_id: id }
+        });
+
         return {
             ...transactionData,
-            pdfUrl
+            pdfUrl,
+            items: items.map(item => item.toJSON())
         };
     } catch (error) {
         console.error("Fetch Document Error:", error);
         throw new AppError('Failed to fetch bank transaction document', 500);
+    }
+};
+
+const getBankTransactionItems = async (id) => {
+    try {
+        const items = await BankTransactionItem.findAll({
+            where: { transaction_id: id }
+        });
+        return items.map(item => item.toJSON());
+    } catch (error) {
+        throw new AppError('Failed to fetch bank transaction items', 500);
+    }
+};
+
+async function editBankTransactionItem(itemId, updatedData) {
+    try {
+        const item = await BankTransactionItem.findByPk(itemId);
+        if (!item) throw new AppError('Bank transaction item not found', 404);
+
+        await item.update(updatedData);
+        return item;
+    } catch (error) {
+        console.error("Update Item Error:", error);
+        throw new AppError('Failed to update bank transaction item', 500);
     }
 };
 
@@ -360,5 +392,7 @@ module.exports = {
     processUnprocessedFiles,
     getUnprocessedFiles,
     extractData,
-    setFileInvalid
+    setFileInvalid,
+    editBankTransactionItem,
+    getBankTransactionItems
 };

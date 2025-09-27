@@ -2,9 +2,11 @@ const express = require('express');
 const router = express.Router();
 const {
     getBankTransactions,
+    getBankTransactionItemsById,
     getTransactionById,
     createBankTransaction,
-    approveTransaction
+    approveTransaction,
+    updateBankTransactionItem
 } = require('../controllers/bankTransaction');
 const { getInvalidBankTransactions, getBankTransactionLog } = require('../controllers/bankTransactionProcessingLog');
 const isAuthenticated = require('../middleware/isAuthenticated');
@@ -16,6 +18,7 @@ router.get('/logs/:id', isAuthenticated, getBankTransactionLog);
 
 router.get('/bank-transaction-data', getBankTransactions);
 router.get('/bank-transaction-data/:id', getTransactionById);
+router.get('/bank-transaction-data/:id/items', getBankTransactionItemsById);
 router.post('/',
     isAuthenticated,
     validate(bankTransactionCreateSchema),

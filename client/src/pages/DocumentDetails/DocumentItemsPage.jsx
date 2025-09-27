@@ -15,6 +15,7 @@ const DocumentItemsPage = () => {
         const path = location.pathname;
         if (path.includes('/kif/')) return 'kif';
         if (path.includes('/kuf/')) return 'kuf';
+        if (path.includes('/bank-transactions/')) return 'transactions/bank-transaction-data';
         return null;
     }, [location.pathname]);
     const API_BASE = import.meta.env.VITE_API_BASE_URL;
@@ -97,7 +98,26 @@ const DocumentItemsPage = () => {
         { name: 'Gross Subtotal', selector: row => row.grossSubtotal },
     ];
 
-    const columns = documentType === 'kif' ? getActionsColumn(kifColumns, 'kif') : getActionsColumn(kufColumns, 'kuf');
+    const bankTransactionColumns = [
+        { name: 'ID', selector: row => row.id },
+        { name: 'Description', selector: row => row.description },
+        { name: 'Amount', selector: row => row.amount },
+        { name: 'Date', selector: row => row.date },
+        { name: 'Bank Name', selector: row => row.bankName },
+        { name: 'Account Number', selector: row => row.accountNumber },
+        { name: 'Direction', selector: row => row.direction },
+    ];
+
+
+    const columns = documentType === 'kif'
+        ? getActionsColumn(kifColumns, 'kif')
+        : documentType === 'kuf'
+            ? getActionsColumn(kufColumns, 'kuf')
+            : documentType === 'transactions/bank-transaction-data'
+                ? getActionsColumn(bankTransactionColumns, 'bank-transaction-data')
+                : [];
+
+    // Determine back URL
     const backUrl = location.state?.backUrl || `/${documentType}/${id}`;
 
     // Modal form fields
@@ -114,7 +134,7 @@ const DocumentItemsPage = () => {
                 { name: 'vatAmount', label: 'VAT Amount', type: 'number', placeholder: 'VAT Amount' },
                 { name: 'grossSubtotal', label: 'Gross Subtotal', type: 'number', placeholder: 'Gross Subtotal' },
             ];
-        } else {
+        } else if (editModal.type === 'kuf') {
             return [
                 { name: 'orderNumber', label: 'Order Number', type: 'text', placeholder: 'Order Number', readOnly: true },
                 { name: 'description', label: 'Description', type: 'text', placeholder: 'Description' },
@@ -122,6 +142,16 @@ const DocumentItemsPage = () => {
                 { name: 'lumpSum', label: 'Lump Sum', type: 'number', placeholder: 'Lump Sum' },
                 { name: 'vatAmount', label: 'VAT Amount', type: 'number', placeholder: 'VAT Amount' },
                 { name: 'grossSubtotal', label: 'Gross Subtotal', type: 'number', placeholder: 'Gross Subtotal' },
+            ];
+        } else if (editModal.type === 'transactions/bank-transaction-data') {
+            return [
+                { name: 'id', label: 'ID', type: 'text', placeholder: 'ID', readOnly: true },
+                { name: 'description', label: 'Description', type: 'text', placeholder: 'Description' },
+                { name: 'amount', label: 'Amount', type: 'number', placeholder: 'Amount' },
+                { name: 'date', label: 'Date', type: 'date', placeholder: 'Date' },
+                { name: 'bankName', label: 'Bank Name', type: 'text', placeholder: 'Bank Name' },
+                { name: 'accountNumber', label: 'Account Number', type: 'text', placeholder: 'Account Number' },
+                { name: 'direction', label: 'Direction', type: 'select', options: ['in', 'out'], placeholder: 'Direction' },
             ];
         }
     };

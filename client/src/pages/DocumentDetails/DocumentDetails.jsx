@@ -97,7 +97,7 @@ const DocumentDetails = () => {
               />
             )}
             {/* Button to navigate to items page */}
-            {!loading && (documentType === 'kif' || documentType === 'kuf') && Array.isArray(formData?.items) && (
+            {!loading && (documentType === 'kif' || documentType === 'kuf' || documentType === 'bank-transactions') && Array.isArray(formData?.items) && (
               <button
                 type="button"
                 className="btn btn-primary details-button"
