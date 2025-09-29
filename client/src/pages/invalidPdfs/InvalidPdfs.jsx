@@ -189,7 +189,7 @@ const InvalidPdfs = () => {
                     </CNav>
                   </CCardHeader>
 
-                  <CCardBody className="p-3 p-md-4">
+                  <CCardBody className="p-3 p-md-4 rounded-bottom">
                     <CTabContent>
                       <CTabPane visible={activeKey === 1} className="fade">
                         <DynamicTable
@@ -232,7 +232,12 @@ const InvalidPdfs = () => {
         </div>
       </div>
 
-      <CModal visible={modalOpen} onClose={() => setModalOpen(false)} size="xl" alignment="center">
+      <CModal
+        visible={modalOpen}
+        onClose={() => setModalOpen(false)}
+        alignment="center"
+        className="pdf-modal"
+      >
         <CModalHeader>
           <CModalTitle>{selectedRow?.filename || 'Document Details'}</CModalTitle>
         </CModalHeader>
