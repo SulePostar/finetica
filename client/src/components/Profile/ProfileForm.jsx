@@ -60,7 +60,6 @@ const ProfileForm = () => {
     if (!file) return;
 
     try {
-      // Upload to server immediately
       const uploadResult = await FileUploadService.uploadProfileImage(
         file,
         formData.firstName,
@@ -69,8 +68,8 @@ const ProfileForm = () => {
 
       if (uploadResult.success && uploadResult.url) {
         const updatedProfile = { ...formData, profileImage: uploadResult.url };
-        setFormData(updatedProfile);           // update local state
-        dispatch(setUserProfile(updatedProfile)); // update Redux
+        setFormData(updatedProfile);
+        dispatch(setUserProfile(updatedProfile));
         notify.onSuccess('Profile photo updated successfully!');
       } else {
         notify.onWarning('Profile image upload failed.');
@@ -213,13 +212,13 @@ const ProfileForm = () => {
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <CFormLabel>Email Address</CFormLabel>
-                  <CFormInput value={formData.email || ''} disabled />
+                  <CFormInput value={formData.email || ''} disabled className='disabled-cursor' />
                 </div>
 
                 <div className="col-md-6 mb-3">
                   <CFormLabel>Role</CFormLabel>
                   <CFormInput
-                    value={capitalizeFirst(formData.roleName)} disabled
+                    value={capitalizeFirst(formData.roleName)} disabled className='disabled-cursor'
                   />
                 </div>
               </div>

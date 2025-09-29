@@ -1,8 +1,7 @@
-// Updated ProfilePhotoUpload.jsx
 import React, { useState, useCallback, useRef } from 'react';
 import { CModal, CModalBody, CModalHeader, CModalFooter, CModalTitle } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
-import { cilCamera, cilUser, cilX } from '@coreui/icons';
+import { cilCamera, cilUser } from '@coreui/icons';
 import FileUploadService from '../../../services/fileUploadService';
 import notify from '../../../utilis/toastHelper';
 import AppButton from '../../AppButton/AppButton';
@@ -13,6 +12,7 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
     const [previewUrl, setPreviewUrl] = useState(currentPhoto || null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [isDragOver, setIsDragOver] = useState(false);
+    const [pendingRemove, setPendingRemove] = useState(false);
     const fileInputRef = useRef(null);
 
     const handlePhotoClick = useCallback(() => {
@@ -39,40 +39,36 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
     }, [handleFileSelect]);
 
     const handleSave = useCallback(async () => {
-        if (selectedFile) {
-            // Immediately upload the file instead of waiting for the form submit
-            await onPhotoSelect?.(selectedFile);
+        if (pendingRemove) {
+            onRemove?.();
+        } else if (selectedFile) {
+            await onPhotoSelect?.(selectedFile)
         }
+
+        setPendingRemove(false);
         setShowModal(false);
-    }, [selectedFile, onPhotoSelect])
+    }, [pendingRemove, selectedFile, onRemove, onPhotoSelect]);
+
 
     const handleRemovePhoto = useCallback(() => {
+        setPendingRemove(true);
         setPreviewUrl(null);
-        setSelectedFile(null);
-        onPhotoSelect?.(null);
-        onRemove?.();
-        // Reset file input
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
-    }, [onPhotoSelect, onRemove]);
+    }, []);
 
     const handleCloseModal = useCallback(() => {
         setShowModal(false);
-        // Reset to original state when closing without saving
-        if (currentPhoto) {
+
+        if (!pendingRemove) {
             setPreviewUrl(currentPhoto);
-            setSelectedFile(null);
-        } else {
-            setPreviewUrl(null);
-            setSelectedFile(null);
+        } else if (pendingRemove && !selectedFile) {
+
+            setPreviewUrl(currentPhoto);
         }
-        setIsDragOver(false);
-        // Reset file input
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
-    }, [currentPhoto]);
+
+        setSelectedFile(null);
+        setPendingRemove(false);
+    }, [currentPhoto, pendingRemove]);
+
 
     // Drag and drop handlers
     const handleDragOver = useCallback((e) => {
@@ -202,7 +198,7 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
                             <AppButton
                                 variant="primary"
                                 onClick={handleSave}
-                                disabled={!selectedFile}
+                                disabled={!selectedFile && !pendingRemove}
                             >
                                 Save
                             </AppButton>

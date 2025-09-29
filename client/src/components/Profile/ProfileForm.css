@@ -24,6 +24,10 @@
   font-weight: 600;
 }
 
+.disabled-cursor {
+  cursor: not-allowed !important;
+}
+
 .no-bg-form-input {
   background-color: transparent !important;
   border-color: transparent !important;
