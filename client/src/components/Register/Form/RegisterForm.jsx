@@ -118,6 +118,9 @@ const RegisterForm = () => {
             currentPhoto={profilePhoto ? URL.createObjectURL(profilePhoto) : null}
           />
 
+          {getFieldError('firstName') && (
+            <div className="text-danger small mb-2 mt-3">{getFieldError('firstName')}</div>
+          )}
           <CInputGroup className="mb-3 mt-3">
             <CInputGroupText style={registerFormStyles.inputGroupText}>
               <CIcon icon={cilUser} style={registerFormStyles.icon} />
@@ -135,10 +138,10 @@ const RegisterForm = () => {
               required
             />
           </CInputGroup>
-          {getFieldError('firstName') && (
-            <div className="text-danger small mb-2">{getFieldError('firstName')}</div>
-          )}
 
+          {getFieldError('lastName') && (
+            <div className="text-danger small mb-2">{getFieldError('lastName')}</div>
+          )}
           <CInputGroup className="mb-3">
             <CInputGroupText style={registerFormStyles.inputGroupText}>
               <CIcon icon={cilContact} style={registerFormStyles.icon} />
@@ -156,10 +159,10 @@ const RegisterForm = () => {
               required
             />
           </CInputGroup>
-          {getFieldError('lastName') && (
-            <div className="text-danger small mb-2">{getFieldError('lastName')}</div>
-          )}
 
+          {getFieldError('email') && (
+            <div className="text-danger small mb-2">{getFieldError('email')}</div>
+          )}
           <CInputGroup className="mb-3">
             <CInputGroupText style={registerFormStyles.inputGroupText}>
               <CIcon icon={cilEnvelopeClosed} style={registerFormStyles.icon} />
@@ -178,10 +181,10 @@ const RegisterForm = () => {
               required
             />
           </CInputGroup>
-          {getFieldError('email') && (
-            <div className="text-danger small mb-2">{getFieldError('email')}</div>
-          )}
 
+          {getFieldError('password') && (
+            <div className="text-danger small mb-2">{getFieldError('password')}</div>
+          )}
           <CInputGroup className="mb-3">
             <CInputGroupText style={registerFormStyles.inputGroupText}>
               <CIcon icon={cilLockLocked} style={registerFormStyles.icon} />
@@ -200,10 +203,10 @@ const RegisterForm = () => {
               required
             />
           </CInputGroup>
-          {getFieldError('password') && (
-            <div className="text-danger small mb-2">{getFieldError('password')}</div>
-          )}
 
+          {getFieldError('confirmPassword') && (
+            <div className="text-danger small mb-2">{getFieldError('confirmPassword')}</div>
+          )}
           <CInputGroup className="mb-4">
             <CInputGroupText style={registerFormStyles.inputGroupText}>
               <CIcon icon={cilLockLocked} style={registerFormStyles.icon} />
@@ -222,9 +225,6 @@ const RegisterForm = () => {
               required
             />
           </CInputGroup>
-          {getFieldError('confirmPassword') && (
-            <div className="text-danger small mb-2">{getFieldError('confirmPassword')}</div>
-          )}
 
           <AppButton
             type="submit"
