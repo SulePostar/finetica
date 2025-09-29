@@ -19,9 +19,8 @@ const AppButton = ({
     className = "",
     ...rest
 }) => {
-
     const variantClass = className.includes('btn-no-hover') ? '' : `btn-${variant}`;
-    const classes = `btn ${variantClass} btn-${size} ${icon && !children ? "btn-icon" : ""} ${className}`;
+    const classes = `btn btn-custom ${variantClass} btn-${size} ${icon && !children ? "btn-icon" : ""} ${className}`;
 
     return (
         <CButton className={classes} {...rest}>
