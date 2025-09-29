@@ -26,6 +26,7 @@
   max-width: 2000px;
   margin: 0 auto;
   width: 100%;
+  padding-bottom: 20px;
 }
 
 .nav-link {
@@ -86,44 +87,8 @@
   }
 }
 
-.invalid-pdfs-container {
-  max-width: 2000px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-[data-coreui-theme='dark'] .invalid-pdfs-container,
-[data-coreui-theme='dark'] .invalid-pdfs-container .card,
-[data-coreui-theme='dark'] .invalid-pdfs-container .list-group-item {
-  background-color: #1e212a !important;
-  color: #f3f4f6 !important;
-  border-color: #2c2f38 !important;
-}
-
-[data-coreui-theme='dark'] .invalid-pdfs-container .card-header,
-[data-coreui-theme='dark'] .invalid-pdfs-container .card-body,
-[data-coreui-theme='dark'] .invalid-pdfs-container .card-footer {
-  background-color: #23262f !important;
-  border-color: #2c2f38 !important;
-  color: #f3f4f6 !important;
-}
-
-
-[data-coreui-theme='dark'] .modal-header,
-[data-coreui-theme='dark'] .modal-body {
-  background-color: #1e212a !important;
-  color: #f3f4f6 !important;
-  border-color: #2c2f38 !important;
-}
-
-[data-coreui-theme='dark'] .invalid-pdfs-container .badge.bg-success {
-  background-color: #2e7d32 !important;
-}
-
-[data-coreui-theme='dark'] .invalid-pdfs-container .badge.bg-danger {
-  background-color: #c62828 !important;
-}
-
-[data-coreui-theme='dark'] .btn-close {
-  filter: invert(1) grayscale(100%) brightness(200%);
+.pdf-modal .modal-dialog {
+  max-width: 1400px;
+  width: calc(100% - 4rem);
+  margin: 1.5rem auto;
 }
