@@ -101,7 +101,7 @@ const BankTransactions = () => {
       >
         <div className="bank-transactions-table-scroll bank-transactions-table-responsive">
           <DynamicTable
-            title="Bank Transactions"
+            title="Bank Statements"
             columns={columns}
             apiEndpoint={apiEndpoint}
             uploadButton={
