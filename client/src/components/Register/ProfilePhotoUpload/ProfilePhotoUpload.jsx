@@ -1,145 +1,215 @@
-import React, { useState, useCallback } from 'react';
-import { CModal, CModalBody, CModalHeader, CModalFooter } from '@coreui/react';
+import React, { useState, useCallback, useRef } from 'react';
+import { CModal, CModalBody, CModalHeader, CModalFooter, CModalTitle } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilCamera, cilUser } from '@coreui/icons';
 import FileUploadService from '../../../services/fileUploadService';
 import notify from '../../../utilis/toastHelper';
 import AppButton from '../../AppButton/AppButton';
-import './ProfilePhotoUpload.styles.css';
+import './ProfilePhotoUpload.css';
 
 const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, currentPhoto }) => {
     const [showModal, setShowModal] = useState(false);
     const [previewUrl, setPreviewUrl] = useState(currentPhoto || null);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [isDragOver, setIsDragOver] = useState(false);
+    const [pendingRemove, setPendingRemove] = useState(false);
+    const fileInputRef = useRef(null);
 
     const handlePhotoClick = useCallback(() => {
         if (!disabled) setShowModal(true);
     }, [disabled]);
 
-    const handleFileSelect = useCallback(
-        (event) => {
-            const file = event.target.files?.[0];
-            if (!file) return;
+    const handleFileSelect = useCallback((file) => {
+        if (!file) return;
 
-            const validation = FileUploadService.validateImageFile(file);
-            if (!validation.isValid) {
-                notify.onError(validation.error);
-                return;
-            }
+        const validation = FileUploadService.validateImageFile(file);
+        if (!validation.isValid) {
+            notify.onError(validation.error);
+            return;
+        }
 
-            const preview = URL.createObjectURL(file);
-            setPreviewUrl(preview);
-            onPhotoSelect?.(file);
-            notify.onSuccess('Photo selected! It will be uploaded when you save.');
-        },
-        [onPhotoSelect]
-    );
+        const preview = URL.createObjectURL(file);
+        setSelectedFile(file);
+        setPreviewUrl(preview);
+    }, []);
+
+    const handleFileInputChange = useCallback((event) => {
+        const file = event.target.files?.[0];
+        handleFileSelect(file);
+    }, [handleFileSelect]);
+
+    const handleSave = useCallback(async () => {
+        if (pendingRemove) {
+            onRemove?.();
+        } else if (selectedFile) {
+            await onPhotoSelect?.(selectedFile)
+        }
+
+        setPendingRemove(false);
+        setShowModal(false);
+    }, [pendingRemove, selectedFile, onRemove, onPhotoSelect]);
 
     const handleRemovePhoto = useCallback(() => {
+        setPendingRemove(true);
         setPreviewUrl(null);
-        onPhotoSelect?.(null);
-        onRemove?.();
-    }, [onPhotoSelect, onRemove, setPreviewUrl]);
+    }, []);
 
+    const handleCloseModal = useCallback(() => {
+        setShowModal(false);
 
-    const handleCloseModal = useCallback(() => setShowModal(false), []);
-    const hasPhoto = Boolean(previewUrl || currentPhoto);
+        if (!pendingRemove) {
+            setPreviewUrl(currentPhoto);
+        } else if (pendingRemove && !selectedFile) {
+            setPreviewUrl(currentPhoto);
+        }
+
+        setSelectedFile(null);
+        setPendingRemove(false);
+    }, [currentPhoto, pendingRemove]);
+
+    // Drag and drop handlers
+    const handleDragOver = useCallback((e) => {
+        e.preventDefault();
+        setIsDragOver(true);
+    }, []);
+
+    const handleDragLeave = useCallback((e) => {
+        e.preventDefault();
+        setIsDragOver(false);
+    }, []);
+
+    const handleDrop = useCallback((e) => {
+        e.preventDefault();
+        setIsDragOver(false);
+
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleFileSelect(files[0]);
+        }
+    }, [handleFileSelect]);
+
+    const handleDropzoneClick = useCallback(() => {
+        fileInputRef.current?.click();
+    }, []);
 
     return (
         <>
-            <div className="profile-photo-upload-container">
-                <div
-                    className={`profile-photo-circle ${disabled ? 'disabled' : ''}`}
-                    onClick={handlePhotoClick}
-                    role="button"
-                    tabIndex={disabled ? -1 : 0}
-                    onKeyDown={(e) => {
-                        if ((e.key === 'Enter' || e.key === ' ') && !disabled) {
-                            e.preventDefault();
-                            handlePhotoClick();
-                        }
-                    }}
-                    aria-label="Upload profile photo"
-                >
-                    {hasPhoto ? (
-                        <img
-                            src={previewUrl || currentPhoto}
-                            alt="Profile"
-                            className="profile-photo-preview"
-                            loading="lazy"
-                            crossOrigin="anonymous"
-                        />
-                    ) : (
-                        <div className="profile-photo-placeholder">
-                            <CIcon icon={cilUser} size="xl" />
-                        </div>
+            {/* Avatar Section */}
+            <div className="profile-photo-card align-items-center m-0">
+                <div className="me-3">
+                    <div
+                        className={`profile-photo-circle d-flex align-items-center justify-content-center position-relative overflow-hidden ${disabled ? 'disabled' : ''}`}
+                        onClick={handlePhotoClick}
+                        role="button"
+                        tabIndex={disabled ? -1 : 0}
+                        aria-label="Upload profile photo"
+                    >
+                        {previewUrl ? (
+                            <img
+                                src={previewUrl}
+                                alt="Profile"
+                                className="profile-photo-preview"
+                                loading="lazy"
+                                crossOrigin="anonymous"
+                            />
+                        ) : (
+                            <div className="profile-photo-placeholder">
+                                <CIcon icon={cilUser} size="xl" />
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="flex-grow-1">
+                    <div className='fs-5 fw-semibold mb-1'>Profile Picture</div>
+                    <div className="photo-subtitle mb-2">
+                        Upload a professional photo that represents you
+                    </div>
+                    {!disabled && (
+                        <AppButton
+                            variant="primary"
+                            onClick={handlePhotoClick}
+                        >
+                            <CIcon icon={cilCamera} className="me-2" />
+                            <span className="btn-text">Upload Photo</span>
+                        </AppButton>
                     )}
                 </div>
             </div>
 
-            <CModal visible={showModal} onClose={handleCloseModal} alignment="center">
-                <CModalHeader closeButton={false}>
-                    <h4>Upload Profile Photo</h4>
-                    <button
-                        type="button"
-                        className="custom-close-btn"
-                        onClick={handleCloseModal}
-                        aria-label="Close"
-                    >
-                        &times;
-                    </button>
+            {/* Upload Modal */}
+            <CModal
+                visible={showModal}
+                onClose={handleCloseModal}
+                alignment="center"
+                backdrop="static"
+            >
+                <CModalHeader closeButton>
+                    <CModalTitle>Upload Profile Photo</CModalTitle>
                 </CModalHeader>
-
-                <CModalBody className="text-center">
-                    {hasPhoto && (
-                        <div className="preview-container">
-                            <img
-                                src={previewUrl || currentPhoto}
-                                alt="Preview"
-                                className="photo-preview"
-                                crossOrigin="anonymous"
-                            />
-                        </div>
-                    )}
-
-                    <div className="upload-section">
+                <CModalBody>
+                    <div
+                        className={`upload-dropzone ${isDragOver ? 'dragover' : ''} ${previewUrl ? 'd-none' : ''}`}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        onClick={handleDropzoneClick}
+                    >
                         <input
+                            ref={fileInputRef}
                             type="file"
                             accept={FileUploadService.ALLOWED_IMAGE_TYPES.join(',')}
-                            onChange={handleFileSelect}
-                            style={{ display: 'none' }}
+                            onChange={handleFileInputChange}
                             id="photo-upload-input"
+                            style={{ display: 'none' }}
                         />
-
-                        <AppButton
-                            variant="primary"
-                            onClick={() => document.getElementById('photo-upload-input')?.click()}
-                            disabled={disabled}
-                        >
-                            <CIcon icon={cilCamera} className="me-2" />
-                            Choose Photo
-                        </AppButton>
-
-
-                        <div className="upload-info">
-                            <small className="upload-info-text">Supported: JPG, PNG, GIF, WebP (Max 5MB)</small>
+                        <div className="dropzone-label">
+                            <CIcon icon={cilCamera} size="2xl" className="mb-2" />
+                            <p>Drag and drop your photo here, or click to browse</p>
+                            <small className="text-muted">PNG, JPG, GIF up to 10MB</small>
                         </div>
                     </div>
+
+                    {previewUrl && (
+                        <div className="preview-container">
+                            <div className="position-relative d-inline-block">
+                                <img src={previewUrl} alt="Preview" className="photo-preview-large" />
+                            </div>
+                        </div>
+                    )}
                 </CModalBody>
 
-                <CModalFooter>
-                    <AppButton variant="no-hover" onClick={handleCloseModal} disabled={disabled}>Cancel</AppButton>
-                    <AppButton variant="primary" onClick={handleCloseModal}>Save</AppButton>
-
-                    {hasPhoto && (
+                <CModalFooter className="modal-footer-responsive">
+                    <div className="d-flex justify-content-between w-100 align-items-center flex-wrap gap-2">
                         <AppButton
-                            variant="danger"
-                            onClick={handleRemovePhoto}
+                            variant="no-hover"
+                            onClick={handleCloseModal}
                             disabled={disabled}
+                            className="flex-grow-1 flex-md-grow-0"
                         >
-                            Remove Photo
+                            Cancel
                         </AppButton>
 
-                    )}
+                        <div className="d-flex gap-2 flex-wrap flex-grow-1 justify-content-end">
+                            {previewUrl && (
+                                <AppButton
+                                    variant="danger"
+                                    onClick={handleRemovePhoto}
+                                    className="flex-grow-1 flex-md-grow-0"
+                                >
+                                    Remove Photo
+                                </AppButton>
+                            )}
+                            <AppButton
+                                variant="primary"
+                                onClick={handleSave}
+                                disabled={!selectedFile && !pendingRemove}
+                                className="flex-grow-1 flex-md-grow-0"
+                            >
+                                Save
+                            </AppButton>
+                        </div>
+                    </div>
                 </CModalFooter>
             </CModal>
         </>

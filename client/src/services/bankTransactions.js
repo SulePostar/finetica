@@ -2,17 +2,17 @@ import api from "./api";
 
 class BankTransactionsService {
     getById(id) {
-        return api.get(`/transactions/bank-transaction-data/${id}`);
+        return api.get(`/bank-transactions/${id}`);
     }
 
     approve(id, payload) {
-        return api.patch(`/transactions/${id}/approve`, payload);
+        return api.patch(`/bank-transactions/${id}/approve`, payload);
     }
     list(params) {
-        return api.get(`/transactions/bank-transaction-data`, { params });
+        return api.get(`/bank- transactions/`, { params });
     }
     createBankTransaction(payload) {
-        return api.post(`/transactions/bank-transaction-data`, payload);
+        return api.post(`/bank-transactions/`, payload);
     }
 }
 

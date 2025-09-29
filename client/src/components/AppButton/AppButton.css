@@ -20,7 +20,6 @@
     --muted: #F1F5F9;
 }
 
-/* Base Button */
 .btn-custom {
     display: inline-flex;
     align-items: center;
@@ -31,7 +30,6 @@
     cursor: pointer;
 }
 
-/* Variants */
 .btn-edit {
     background-color: var(--muted);
     color: var(--primary);
@@ -89,18 +87,12 @@
     color: #111827;
 }
 
-/* Sizes */
-.btn-sm {
-    padding: 0.25rem 0.75rem;
-    font-size: 0.75rem;
+.btn-text {
+    white-space: nowrap;
 }
 
-.btn-md {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-}
-
-.btn-lg {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
+@media (max-width: 480px) {
+    .btn-text {
+        font-size: 0.85rem;
+    }
 }

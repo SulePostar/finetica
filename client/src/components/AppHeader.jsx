@@ -28,6 +28,17 @@ const getDetailPageConfig = (pathname) => {
   if (kufItemMatch) {
     return { route: `/kuf/${kufItemMatch[1]}`, label: 'KUF Invoice' };
   }
+  const bankItemMatch = pathname.match(/^\/bank-transactions\/(\d+)\/items/);
+  if (bankItemMatch) {
+    return {
+      route: `/bank-transactions/${bankItemMatch[1]}`,
+      label: 'Bank Statement',
+    };
+  }
+  // Document details page
+  if (pathname.startsWith('/contracts/') && pathname !== '/contracts') {
+    return { route: '/contracts', label: 'Contracts' };
+  }
   // Invoice details page
   if (pathname.startsWith('/kuf/') && pathname !== '/kuf') {
     return { route: '/kuf', label: 'KUF' };
@@ -36,13 +47,13 @@ const getDetailPageConfig = (pathname) => {
     return { route: '/kif', label: 'KIF' };
   }
   if (pathname.startsWith('/partners/') && pathname !== '/partners') {
-    return { route: '/partners', label: 'PARTNERS' };
+    return { route: '/partners', label: 'Partners' };
   }
   if (pathname.startsWith('/bank-transactions/') && pathname !== '/bank-transactions') {
-    return { route: '/bank-transactions', label: 'Bank Transactions' };
+    return { route: '/bank-transactions', label: 'Bank Statements' };
   }
   if (pathname.startsWith('/contracts/') && pathname !== '/contracts') {
-    return { route: '/contracts', label: 'CONTRACTS' };
+    return { route: '/contracts', label: 'Contracts' };
   }
   return null;
 };
