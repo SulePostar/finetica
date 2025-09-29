@@ -80,7 +80,6 @@ const ProfileForm = () => {
     }
   }, [dispatch, formData]);
 
-
   const handlePhotoRemove = useCallback(async () => {
     try {
       const updatedProfile = { ...formData, profileImage: null };
@@ -92,7 +91,6 @@ const ProfileForm = () => {
       notify.onError('Error removing profile photo.');
     }
   }, [dispatch, formData]);
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -139,12 +137,16 @@ const ProfileForm = () => {
     return <CBadge color={color}>{capitalizeFirst(statusName)}</CBadge>;
   };
 
+  const handleCancel = () => {
+    setFormData(profile || {});
+    setIsEditable(false);
+  };
 
   return (
     <div className="container py-4">
       <div className="row justify-content-center">
         <Card
-          className="shadow-sm border-0 bg-light dark:bg-dark p-4"
+          className="profile-form-card shadow-sm border-0 bg-light dark:bg-dark p-3 p-md-4"
           data-theme={isDarkMode ? 'dark' : 'light'}
           style={{
             marginLeft: sidebarWidth,
@@ -153,16 +155,21 @@ const ProfileForm = () => {
           }}
         >
           {/* Header */}
-          <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 px-3 pt-3">
-            <div>
-              <CCardTitle className="form-title">User Profile</CCardTitle>
-              <div className="text-muted">
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 px-2 px-md-3 pt-2 pt-md-3">
+            <div className="mb-3 mb-md-0">
+              <CCardTitle className="form-title mb-1">User Profile</CCardTitle>
+              <div className="text-muted small">
                 {isEditable ? 'Edit your profile information' : 'View and manage your profile'}
               </div>
             </div>
             {!isEditable && (
-              <div className="mt-2 mt-md-0">
-                <AppButton size="md" type="button" onClick={() => setIsEditable(true)}>
+              <div className="w-100 w-md-auto">
+                <AppButton
+                  size="md"
+                  type="button"
+                  onClick={() => setIsEditable(true)}
+                  className="btn-responsive w-100 w-md-auto"
+                >
                   Edit Profile
                 </AppButton>
               </div>
@@ -171,7 +178,7 @@ const ProfileForm = () => {
 
           {/* Profile Photo Section */}
           <div className="section-box p-3 mb-4">
-            <CCardTitle className="photo-title fs-4">Profile Photo</CCardTitle>
+            <CCardTitle className="photo-title fs-5 fs-md-4 mb-3">Profile Photo</CCardTitle>
             <div>
               <ProfilePhotoUpload
                 onPhotoSelect={handlePhotoSelect}
@@ -186,67 +193,83 @@ const ProfileForm = () => {
           <div className="section-box p-3">
             <CForm onSubmit={handleSubmit}>
               <div className="row">
-                <div className="col-md-6 mb-3">
-                  <CFormLabel>First Name</CFormLabel>
+                <div className="col-12 col-md-6 mb-3">
+                  <CFormLabel className="form-label-responsive">First Name</CFormLabel>
                   <CFormInput
                     type="text"
                     name="firstName"
                     value={formData.firstName || ''}
                     onChange={handleChange}
                     disabled={!isEditable}
+                    className="form-input-responsive"
                   />
                 </div>
 
-                <div className="col-md-6 mb-3">
-                  <CFormLabel>Last Name</CFormLabel>
+                <div className="col-12 col-md-6 mb-3">
+                  <CFormLabel className="form-label-responsive">Last Name</CFormLabel>
                   <CFormInput
                     type="text"
                     name="lastName"
                     value={formData.lastName || ''}
                     onChange={handleChange}
                     disabled={!isEditable}
+                    className="form-input-responsive"
                   />
                 </div>
               </div>
 
               <div className="row">
-                <div className="col-md-6 mb-3">
-                  <CFormLabel>Email Address</CFormLabel>
-                  <CFormInput value={formData.email || ''} disabled className='disabled-cursor' />
+                <div className="col-12 col-md-6 mb-3">
+                  <CFormLabel className="form-label-responsive">Email Address</CFormLabel>
+                  <CFormInput
+                    value={formData.email || ''}
+                    disabled
+                    className='disabled-cursor form-input-responsive'
+                  />
                 </div>
 
-                <div className="col-md-6 mb-3">
-                  <CFormLabel>Role</CFormLabel>
+                <div className="col-12 col-md-6 mb-3">
+                  <CFormLabel className="form-label-responsive">Role</CFormLabel>
                   <CFormInput
-                    value={capitalizeFirst(formData.roleName)} disabled className='disabled-cursor'
+                    value={capitalizeFirst(formData.roleName)}
+                    disabled
+                    className='disabled-cursor form-input-responsive'
                   />
                 </div>
               </div>
 
               {isEditable && (
-                <div className="d-flex gap-3 mt-3 mb-4">
-                  <AppButton type="submit" variant="primary">
+                <div className="d-flex flex-column flex-sm-row gap-2 gap-sm-3 mt-3 mb-4">
+                  <AppButton
+                    type="submit"
+                    variant="primary"
+                    className="btn-responsive flex-grow-1 flex-sm-grow-0"
+                  >
                     Save Changes
                   </AppButton>
-                  <AppButton variant="no-hover" onClick={() => setIsEditable(false)}>
+                  <AppButton
+                    variant="no-hover"
+                    onClick={handleCancel}
+                    className="btn-responsive flex-grow-1 flex-sm-grow-0"
+                  >
                     Cancel
                   </AppButton>
                 </div>
               )}
 
               <div className="row mt-3">
-                <div className="col-md-6 mb-3">
-                  <div className="d-flex align-items-center gap-2">
-                    <CFormLabel className="mb-0">Account Status:</CFormLabel>
+                <div className="col-12 col-md-6 mb-3">
+                  <div className="d-flex align-items-center gap-2 flex-wrap">
+                    <CFormLabel className="mb-0 form-label-responsive">Account Status:</CFormLabel>
                     {statuses.length > 0
                       ? getStatusBadge(formData.statusId, statuses)
                       : getStatusBadgeFromName(formData.statusName)}
                   </div>
                 </div>
-                <div className="col-md-6 mb-3">
-                  <CFormLabel>Last Login</CFormLabel>
+                <div className="col-12 col-md-6 mb-3">
+                  <CFormLabel className="form-label-responsive">Last Login</CFormLabel>
                   <CFormInput
-                    className="no-bg-form-input"
+                    className="no-bg-form-input form-input-responsive"
                     value={formatDateTime(formData.lastLoginAt)}
                     disabled
                   />

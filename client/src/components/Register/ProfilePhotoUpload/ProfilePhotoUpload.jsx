@@ -49,7 +49,6 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
         setShowModal(false);
     }, [pendingRemove, selectedFile, onRemove, onPhotoSelect]);
 
-
     const handleRemovePhoto = useCallback(() => {
         setPendingRemove(true);
         setPreviewUrl(null);
@@ -61,14 +60,12 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
         if (!pendingRemove) {
             setPreviewUrl(currentPhoto);
         } else if (pendingRemove && !selectedFile) {
-
             setPreviewUrl(currentPhoto);
         }
 
         setSelectedFile(null);
         setPendingRemove(false);
     }, [currentPhoto, pendingRemove]);
-
 
     // Drag and drop handlers
     const handleDragOver = useCallback((e) => {
@@ -123,15 +120,18 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
                     </div>
                 </div>
 
-                <div>
+                <div className="flex-grow-1">
                     <div className='fs-5 fw-semibold mb-1'>Profile Picture</div>
                     <div className="photo-subtitle mb-2">
                         Upload a professional photo that represents you
                     </div>
                     {!disabled && (
-                        <AppButton variant="primary" onClick={handlePhotoClick}>
+                        <AppButton
+                            variant="primary"
+                            onClick={handlePhotoClick}
+                        >
                             <CIcon icon={cilCamera} className="me-2" />
-                            Upload Photo
+                            <span className="btn-text">Upload Photo</span>
                         </AppButton>
                     )}
                 </div>
@@ -179,19 +179,24 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
                     )}
                 </CModalBody>
 
-                <CModalFooter>
-                    <div className="d-flex justify-content-between w-100 align-items-center">
+                <CModalFooter className="modal-footer-responsive">
+                    <div className="d-flex justify-content-between w-100 align-items-center flex-wrap gap-2">
                         <AppButton
                             variant="no-hover"
                             onClick={handleCloseModal}
                             disabled={disabled}
+                            className="flex-grow-1 flex-md-grow-0"
                         >
                             Cancel
                         </AppButton>
 
-                        <div className="d-flex gap-2">
+                        <div className="d-flex gap-2 flex-wrap flex-grow-1 justify-content-end">
                             {previewUrl && (
-                                <AppButton variant="danger" onClick={handleRemovePhoto}>
+                                <AppButton
+                                    variant="danger"
+                                    onClick={handleRemovePhoto}
+                                    className="flex-grow-1 flex-md-grow-0"
+                                >
                                     Remove Photo
                                 </AppButton>
                             )}
@@ -199,6 +204,7 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
                                 variant="primary"
                                 onClick={handleSave}
                                 disabled={!selectedFile && !pendingRemove}
+                                className="flex-grow-1 flex-md-grow-0"
                             >
                                 Save
                             </AppButton>
