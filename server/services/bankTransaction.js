@@ -309,8 +309,6 @@ const editBankTransaction = async (id, updatedData) => {
 const processBankTransaction = async (fileBuffer, mimeType, filename, model = "gemini-2.5-flash-lite") => {
     try {
         const extractedData = await extractData(fileBuffer, mimeType);
-        // Log the raw extraction result for debugging
-        console.log('Raw extractedData:', JSON.stringify(extractedData, null, 2));
         // Ensure filename is present for DB save
         if (extractedData) {
             if (extractedData.data) {
