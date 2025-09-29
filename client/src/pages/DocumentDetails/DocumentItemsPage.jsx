@@ -149,7 +149,6 @@ const DocumentItemsPage = () => {
             ];
         } else if (editModal.type === 'bank-transactions') {
             return [
-                { name: 'date', label: 'Date', type: 'date', placeholder: 'Date' },
                 { name: 'description', label: 'Description', type: 'text', placeholder: 'Description' },
                 { name: 'amount', label: 'Amount', type: 'number', placeholder: 'Amount' },
                 { name: 'bankName', label: 'Bank Name', type: 'text', placeholder: 'Bank Name' },

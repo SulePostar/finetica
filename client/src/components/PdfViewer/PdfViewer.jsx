@@ -27,9 +27,14 @@ export const PdfViewer = ({ pdfUrl }) => {
     const nextPage = () => changePage(1);
 
     return (
+<<<<<<< HEAD
         <div className="shadow-sm border rounded overflow-hidden">
+=======
+        <div className="overflow-hidden">
+
+>>>>>>> ace76eb6858bd77afa31ca6d1bd1a52476eb9c4e
             {/* PDF Display */}
-            <div className="d-flex justify-content-center bg-light p-3 overflow-auto">
+            <div className="d-flex justify-content-center border rounded bg-light overflow-auto">
                 <Document
                     file={pdfUrl}
                     onLoadSuccess={onDocumentLoadSuccess}
