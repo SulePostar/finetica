@@ -14,6 +14,7 @@ const AppButton = ({
     variant = "primary",
     size = "md",
     icon,
+    iconClassName = "",
     children,
     className = "",
     ...rest
@@ -24,7 +25,7 @@ const AppButton = ({
 
     return (
         <CButton className={classes} {...rest}>
-            {icon && ICONS[icon] && <CIcon icon={ICONS[icon]} />}
+            {icon && ICONS[icon] && <CIcon icon={ICONS[icon]} className={iconClassName} />}
             {children}
         </CButton>
     );

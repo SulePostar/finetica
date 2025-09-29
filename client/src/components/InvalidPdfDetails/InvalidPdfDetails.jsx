@@ -20,6 +20,10 @@ const InvalidPdfDetails = ({ id, type }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
 
+  const [isDarkMode, setIsDarkMode] = useState(
+    document.documentElement.getAttribute('data-coreui-theme') === 'dark'
+  );
+
   const reqSeqRef = useRef(0);
   const mountedRef = useRef(true);
 
@@ -59,6 +63,14 @@ const InvalidPdfDetails = ({ id, type }) => {
     load();
   }, [id, type]);
 
+  useEffect(() => {
+    const handler = () =>
+      setIsDarkMode(document.documentElement.getAttribute('data-coreui-theme') === 'dark');
+    window.document.documentElement.addEventListener('ColorSchemeChange', handler);
+    return () =>
+      window.document.documentElement.removeEventListener('ColorSchemeChange', handler);
+  }, []);
+
   const handleEdit = () => setIsEditing(true);
   const handleCancel = () => { setFormData(doc); setIsEditing(false); };
   const handleSave = () => { setDoc(formData); setIsEditing(false); };
@@ -79,16 +91,19 @@ const InvalidPdfDetails = ({ id, type }) => {
   if (!doc) return <div className="text-danger text-center">Document not found</div>;
 
   return (
-    <CRow className="g-0 invalid-pdfs-container">
+    <CRow>
       {/* PDF Viewer */}
-      <CCol md={8} className="border-end d-flex align-items-center justify-content-center pdf-viewer-container">
+      <CCol md={8} className="d-flex align-items-center justify-content-center">
         {doc.pdfUrl ? <PdfViewer pdfUrl={doc.pdfUrl} /> : <div>No PDF available</div>}
       </CCol>
 
       {/* Details panel */}
-      <CCol md={4} className="invalid-pdf-details-panel">
-        <CCard className="border-0 shadow-sm rounded-3 h-100">
-          <CCardHeader className="d-flex justify-content-center align-items-center border-bottom">
+      <CCol md={4} className={isDarkMode ? "bg-dark text-light" : "bg-white"}>
+        <CCard
+          className="border-0 shadow rounded-3"
+          style={isDarkMode ? { backgroundColor: '#22262e' } : { backgroundColor: '#fff' }}
+        >
+          <CCardHeader className={`d-flex justify-content-center align-items-center border-none bg-transparent`}>
             <div className="d-flex gap-2">
               {isEditing ? (
                 <>
@@ -104,12 +119,12 @@ const InvalidPdfDetails = ({ id, type }) => {
             </div>
           </CCardHeader>
 
-          <CCardBody>
-            <CCardText className="mb-2 text-muted">Document Information</CCardText>
+          <CCardBody className="mt-3">
+            <CCardText className={isDarkMode ? "text-light h3" : "text-dark h3"}>Document Information</CCardText>
             <CListGroup flush>
               {/* File Name */}
-              <CListGroupItem>
-                <small className="text-muted d-block">File Name</small>
+              <CListGroupItem className={isDarkMode ? "bg-transparent text-light" : "bg-transparent text-dark"}>
+                <small style={{ color: "var(--cui-secondary-color)", display: "block" }}>File Name</small>
                 {isEditing ? (
                   <CFormInput
                     value={formData.filename || ""}
@@ -119,8 +134,8 @@ const InvalidPdfDetails = ({ id, type }) => {
               </CListGroupItem>
 
               {/* Message */}
-              <CListGroupItem>
-                <small className="text-muted d-block">Message</small>
+              <CListGroupItem className={isDarkMode ? "bg-transparent text-light" : "bg-transparent text-dark"}>
+                <small style={{ color: "var(--cui-secondary-color)", display: "block" }}>Message</small>
                 {isEditing ? (
                   <CFormInput
                     value={formData.message || ""}
@@ -130,8 +145,8 @@ const InvalidPdfDetails = ({ id, type }) => {
               </CListGroupItem>
 
               {/* Status */}
-              <CListGroupItem>
-                <small className="text-muted d-block">Status</small>
+              <CListGroupItem className={isDarkMode ? "bg-transparent text-light" : "bg-transparent text-dark"}>
+                <small style={{ color: "var(--cui-secondary-color)", display: "block" }}>Status</small>
                 {isEditing ? (
                   <CFormSelect
                     value={formData.isValid ? "valid" : "invalid"}
@@ -148,8 +163,8 @@ const InvalidPdfDetails = ({ id, type }) => {
               </CListGroupItem>
 
               {/* Processed */}
-              <CListGroupItem>
-                <small className="text-muted d-block">Processed</small>
+              <CListGroupItem className={isDarkMode ? "bg-transparent text-light" : "bg-transparent text-dark"}>
+                <small style={{ color: "var(--cui-secondary-color)", display: "block" }}>Processed</small>
                 {isEditing ? (
                   <CFormSelect
                     value={formData.isProcessed ? "yes" : "no"}
@@ -166,14 +181,14 @@ const InvalidPdfDetails = ({ id, type }) => {
               </CListGroupItem>
 
               {/* Processed At */}
-              <CListGroupItem>
-                <small className="text-muted d-block">Processed At</small>
+              <CListGroupItem className={isDarkMode ? "bg-transparent text-light" : "bg-transparent text-dark"}>
+                <small style={{ color: "var(--cui-secondary-color)", display: "block" }}>Processed At</small>
                 {doc.processedAt ? new Date(doc.processedAt).toLocaleString() : "-"}
               </CListGroupItem>
 
               {/* Created At */}
-              <CListGroupItem>
-                <small className="text-muted d-block">Created At</small>
+              <CListGroupItem className={isDarkMode ? "bg-transparent text-light" : "bg-transparent text-dark"}>
+                <small style={{ color: "var(--cui-secondary-color)", display: "block" }}>Created At</small>
                 {new Date(doc.createdAt).toLocaleString()}
               </CListGroupItem>
             </CListGroup>
