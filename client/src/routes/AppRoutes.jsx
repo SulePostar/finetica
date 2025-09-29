@@ -242,6 +242,14 @@ export default function AppRoutes() {
           }
         />
         <Route
+          path="/bank-transactions/:id/items"
+          element={
+            <ProtectedRoute>
+              <DocumentItemsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/admin/role-status"
           element={
             <ProtectedRoute requiredRole="admin">

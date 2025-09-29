@@ -15,7 +15,7 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: 'Bank Transactions',
+    name: 'Bank Statements',
     to: '/bank-transactions',
     icon: cilBank,
   },

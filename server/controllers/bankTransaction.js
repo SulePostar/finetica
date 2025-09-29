@@ -3,7 +3,9 @@ const {
     getBankTransactionById,
     createBankTransactionManually,
     approveBankTransactionById,
-    editBankTransaction
+    editBankTransaction,
+    editBankTransactionItem,
+    getBankTransactionItems
 } = require('../services/bankTransaction');
 
 const getBankTransactions = async (req, res, next) => {
@@ -23,6 +25,17 @@ const getTransactionById = async (req, res, next) => {
         res.json(document);
     } catch (error) {
         next(error);
+    }
+};
+
+const getBankTransactionItemsById = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const items = await getBankTransactionItems(id);
+        const result = { data: items, total: items.length };
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch bank transaction items' });
     }
 };
 
@@ -58,11 +71,25 @@ const updatedDocument = async (req, res) => {
     }
 }
 
+const updateBankTransactionItem = async (req, res, next) => {
+    try {
+        const { itemId } = req.params;
+        const updatedData = req.body;
+
+        const result = await editBankTransactionItem(itemId, updatedData);
+        res.json(result);
+    } catch (error) {
+        console.error("Update Bank Transaction Item Error:", error);
+        res.status(500).json({ error: 'Failed to update bank transaction item' });
+    }
+};
 
 module.exports = {
     getBankTransactions,
     getTransactionById,
     createBankTransaction,
     approveTransaction,
+    getBankTransactionItemsById,
+    updateBankTransactionItem,
     updatedDocument
 };

@@ -16,7 +16,7 @@ const BankTransactions = () => {
 
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
   const apiEndpoint = useMemo(
-    () => `${API_BASE}/transactions/bank-transaction-data`,
+    () => `${API_BASE}/bank-transactions`,
     [API_BASE]
   );
 
@@ -42,38 +42,20 @@ const BankTransactions = () => {
   }, []);
 
   const columns = [
-    { name: 'Transaction ID', selector: (row) => row.id ?? '—', sortable: true },
     {
       name: 'Date',
       selector: (row) => row.date || '—',
       sortable: true,
-      cell: (row) => (row.date ? new Date(row.date).toLocaleDateString() : '—'),
-      width: '150px',
-    },
-    {
-      name: 'Direction',
-      selector: (row) => row.direction || '—',
-      sortable: true,
-      cell: (row) => (row.direction === 'in' ? 'Expense' : row.direction === 'out' ? 'Income' : '—'),
-      width: '130px',
+      cell: (row) => (row.date ? new Date(row.date).toLocaleDateString() : '—')
     },
     {
       name: 'Category',
       selector: (row) => row.TransactionCategory?.name || '—',
       sortable: true,
       cell: (row) => row.TransactionCategory?.name || '—',
-      width: '200px',
     },
     { name: 'Account Number', selector: (row) => row.accountNumber || '—', sortable: true, width: '200px' },
     { name: 'Description', selector: (row) => row.description || '—', sortable: true, wrap: true, width: '300px' },
-    { name: 'Invoice ID', selector: (row) => row.invoiceId || '—', sortable: true, width: '150px' },
-    {
-      name: 'Partner',
-      selector: (row) => row.BusinessPartner?.name || '—',
-      sortable: true,
-      cell: (row) => row.BusinessPartner?.name || '—',
-      width: '220px',
-    },
     {
       name: 'Amount',
       selector: (row) => (row.amount != null ? row.amount : '—'),
@@ -119,7 +101,7 @@ const BankTransactions = () => {
       >
         <div className="bank-transactions-table-scroll bank-transactions-table-responsive">
           <DynamicTable
-            title="Bank Transactions"
+            title="Bank Statements"
             columns={columns}
             apiEndpoint={apiEndpoint}
             uploadButton={
