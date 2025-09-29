@@ -5,7 +5,7 @@
 }
 
 [data-theme="dark"] .section-box {
-  background: #212529;
+  background: rgb(29 34 42 / 0.95);
 }
 
 .form-title {
@@ -28,4 +28,14 @@
   background-color: transparent !important;
   border-color: transparent !important;
   padding: 0 !important;
+}
+
+[data-coreui-theme="dark"] .form-control.no-bg-form-input,
+[data-coreui-theme="dark"] .form-select.no-bg-form-input,
+.form-control.no-bg-form-input,
+.form-select.no-bg-form-input {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  padding: 0 !important;
+  color: inherit !important;
 }

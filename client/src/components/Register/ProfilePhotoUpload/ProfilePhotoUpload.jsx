@@ -38,13 +38,13 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
         handleFileSelect(file);
     }, [handleFileSelect]);
 
-    const handleSave = useCallback(() => {
+    const handleSave = useCallback(async () => {
         if (selectedFile) {
-            onPhotoSelect?.(selectedFile);
-            notify.onSuccess('Photo selected! It will be uploaded when you save.');
+            // Immediately upload the file instead of waiting for the form submit
+            await onPhotoSelect?.(selectedFile);
         }
         setShowModal(false);
-    }, [selectedFile, onPhotoSelect]);
+    }, [selectedFile, onPhotoSelect])
 
     const handleRemovePhoto = useCallback(() => {
         setPreviewUrl(null);

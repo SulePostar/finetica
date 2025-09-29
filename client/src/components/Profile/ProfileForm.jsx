@@ -2,7 +2,6 @@ import {
   CForm,
   CFormInput,
   CFormLabel,
-
   CCardTitle,
   CBadge,
 } from '@coreui/react';
@@ -57,9 +56,44 @@ const ProfileForm = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePhotoSelect = useCallback((file) => {
-    setProfilePhoto(file);
-  }, []);
+  const handlePhotoSelect = useCallback(async (file) => {
+    if (!file) return;
+
+    try {
+      // Upload to server immediately
+      const uploadResult = await FileUploadService.uploadProfileImage(
+        file,
+        formData.firstName,
+        formData.lastName
+      );
+
+      if (uploadResult.success && uploadResult.url) {
+        const updatedProfile = { ...formData, profileImage: uploadResult.url };
+        setFormData(updatedProfile);           // update local state
+        dispatch(setUserProfile(updatedProfile)); // update Redux
+        notify.onSuccess('Profile photo updated successfully!');
+      } else {
+        notify.onWarning('Profile image upload failed.');
+      }
+    } catch (err) {
+      console.error(err);
+      notify.onError('Error uploading profile image.');
+    }
+  }, [dispatch, formData]);
+
+
+  const handlePhotoRemove = useCallback(async () => {
+    try {
+      const updatedProfile = { ...formData, profileImage: null };
+      setFormData(updatedProfile);
+      dispatch(setUserProfile(updatedProfile));
+      notify.onSuccess('Profile photo removed successfully!');
+    } catch (err) {
+      console.error(err);
+      notify.onError('Error removing profile photo.');
+    }
+  }, [dispatch, formData]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -144,13 +178,7 @@ const ProfileForm = () => {
                 onPhotoSelect={handlePhotoSelect}
                 disabled={!isEditable}
                 currentPhoto={profile?.profileImage || null}
-                onRemove={() => {
-                  if (isEditable) {
-                    notify.onSuccess('Profile photo removed successfully!');
-                    setFormData((prev) => ({ ...prev, profileImage: null }));
-                    setProfilePhoto(null);
-                  }
-                }}
+                onRemove={handlePhotoRemove}
               />
             </div>
           </div>
