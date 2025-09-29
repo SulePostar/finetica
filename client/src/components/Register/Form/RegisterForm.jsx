@@ -115,12 +115,13 @@ const RegisterForm = () => {
           <ProfilePhotoUpload
             onPhotoSelect={handlePhotoSelect}
             disabled={loading}
+            currentPhoto={profilePhoto ? URL.createObjectURL(profilePhoto) : null}
           />
 
           {getFieldError('firstName') && (
             <div className="text-danger small mb-2 mt-3">{getFieldError('firstName')}</div>
           )}
-          <CInputGroup className="mb-3">
+          <CInputGroup className="mb-3 mt-3">
             <CInputGroupText style={registerFormStyles.inputGroupText}>
               <CIcon icon={cilUser} style={registerFormStyles.icon} />
             </CInputGroupText>

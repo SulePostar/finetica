@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { CModal, CModalBody, CModalHeader, CModalFooter, CModalTitle } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilCamera, cilUser } from '@coreui/icons';
@@ -8,6 +9,7 @@ import AppButton from '../../AppButton/AppButton';
 import './ProfilePhotoUpload.css';
 
 const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, currentPhoto }) => {
+    const location = useLocation();
     const [showModal, setShowModal] = useState(false);
     const [previewUrl, setPreviewUrl] = useState(currentPhoto || null);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -95,7 +97,7 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
     return (
         <>
             {/* Avatar Section */}
-            <div className="profile-photo-card align-items-center m-0 mb-4">
+            <div className="profile-photo-card align-items-center m-0">
                 <div className="me-3">
                     <div
                         className={`profile-photo-circle d-flex align-items-center justify-content-center position-relative overflow-hidden ${disabled ? 'disabled' : ''}`}
@@ -125,7 +127,8 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
                     <div className="photo-subtitle mb-2">
                         Upload a professional photo that represents you
                     </div>
-                    {!disabled && (
+                    {/* Only show button if on /profile */}
+                    {!disabled && location.pathname === '/profile' && (
                         <AppButton
                             variant="primary"
                             onClick={handlePhotoClick}
