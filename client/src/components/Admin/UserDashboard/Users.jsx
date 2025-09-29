@@ -1,34 +1,34 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-} from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Card, Spinner, Row, Col } from 'react-bootstrap';
-import DataTable from 'react-data-table-component';
 import { useColorModes } from '@coreui/react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { Card, Col, Row, Spinner } from 'react-bootstrap';
+import DataTable from 'react-data-table-component';
+import { useDispatch, useSelector } from 'react-redux';
 
-import makeCustomStyles from '../../Tables/DynamicTable.styles';
 import { capitalizeFirst } from '../../../helpers/capitalizeFirstLetter';
-import ActionsDropdown from '../../Tables/Dropdown/ActionsDropdown';
 import { formatDateTime } from '../../../helpers/formatDate';
 import ViewUserModal from '../../Modals/ViewUserModal/ViewUserModal';
+import ActionsDropdown from '../../Tables/Dropdown/ActionsDropdown';
+import makeCustomStyles from '../../Tables/DynamicTable.styles';
 
 import './Users.css';
 
 import {
-  fetchUsers,
-  updateUser,
-  deleteUser,
   clearError,
   clearSuccess,
-  selectUsers,
-  selectUsersLoading,
-  selectUsersError,
-  selectUsersSuccess,
-  selectUpdatingUser,
+  deleteUser,
+  fetchUsers,
   selectDeletingUser,
+  selectUpdatingUser,
+  selectUsers,
+  selectUsersError,
+  selectUsersLoading,
+  selectUsersSuccess,
+  updateUser,
 } from '../../../redux/users/usersSlice';
 
 import {
@@ -43,9 +43,9 @@ import {
 } from '../../../redux/statuses/statusesSlice';
 
 import {
-  SearchFilters,
-  EditUserModal,
   ConfirmationModal,
+  EditUserModal,
+  SearchFilters,
 } from '../../index';
 
 import {
@@ -148,6 +148,8 @@ const Users = () => {
   }, [users, selectedUser]);
 
   const handleRefresh = useCallback(() => {
+    setSearchTerm('');
+    setFilterRole('');
     dispatch(fetchUsers());
   }, [dispatch]);
 
