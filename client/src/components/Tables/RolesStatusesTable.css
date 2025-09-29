@@ -98,7 +98,6 @@
   box-shadow: var(--card-hover-shadow);
 }
 
-/* ===== Section Header ===== */
 .management-header {
   color: var(--text-primary);
   padding: 0.75rem 1rem;
@@ -111,11 +110,10 @@
 
 .management-title {
   font-size: 1rem;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', sans-serif; 
   font-weight: 700;
 }
 
-/* ===== Add Input + Button ===== */
 .add-input {
   border-radius: 8px;
   border: 1px solid var(--input-border);
@@ -189,4 +187,23 @@
   padding: 0.4rem 0.75rem;
   border-radius: 9999px;
   font-weight: 500;
+  background-color: var(--status-bg);
+  color: var(--status-color);
+}
+
+/* ===== Delete Button ===== */
+.delete-btn {
+  border-radius: 6px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--btn-delete-color);
+  border: 1px solid var(--btn-delete-border);
+  background: transparent;
+}
+
+.delete-btn:hover {
+  background-color: var(--btn-delete-hover-bg);
+  border-color: var(--btn-delete-hover-border);
+  color: var(--btn-delete-hover-color);
 }
