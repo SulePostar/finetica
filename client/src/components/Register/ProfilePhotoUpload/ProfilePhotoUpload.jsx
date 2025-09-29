@@ -95,7 +95,7 @@ const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, current
     return (
         <>
             {/* Avatar Section */}
-            <div className="profile-photo-card align-items-center m-0">
+            <div className="profile-photo-card align-items-center m-0 mb-4">
                 <div className="me-3">
                     <div
                         className={`profile-photo-circle d-flex align-items-center justify-content-center position-relative overflow-hidden ${disabled ? 'disabled' : ''}`}
