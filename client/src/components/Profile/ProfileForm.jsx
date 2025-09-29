@@ -163,22 +163,18 @@ const ProfileForm = () => {
               </div>
             </div>
             {!isEditable && (
-              <div className="w-100 w-md-auto">
-                <AppButton
-                  size="md"
-                  type="button"
-                  onClick={() => setIsEditable(true)}
-                  className="btn-responsive w-100 w-md-auto"
-                >
-                  Edit Profile
-                </AppButton>
-              </div>
+              <AppButton
+                size="md"
+                type="button"
+                onClick={() => setIsEditable(true)}
+              >
+                Edit Profile
+              </AppButton>
             )}
           </div>
 
           {/* Profile Photo Section */}
           <div className="section-box p-3 mb-4">
-            <CCardTitle className="photo-title fs-5 fs-md-4 mb-3">Profile Photo</CCardTitle>
             <div>
               <ProfilePhotoUpload
                 onPhotoSelect={handlePhotoSelect}

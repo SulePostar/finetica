@@ -117,7 +117,7 @@ const RegisterForm = () => {
             disabled={loading}
           />
 
-          <CInputGroup className="mb-3">
+          <CInputGroup className="mb-3 mt-3">
             <CInputGroupText style={registerFormStyles.inputGroupText}>
               <CIcon icon={cilUser} style={registerFormStyles.icon} />
             </CInputGroupText>
