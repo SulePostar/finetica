@@ -1,10 +1,5 @@
 import { useColorModes } from '@coreui/react';
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Card, Col, Row, Spinner } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,28 +26,13 @@ import {
   updateUser,
 } from '../../../redux/users/usersSlice';
 
-import {
-  fetchRoles,
-  selectRoles,
-  selectRolesLoading,
-} from '../../../redux/roles/rolesSlice';
+import { fetchRoles, selectRoles, selectRolesLoading } from '../../../redux/roles/rolesSlice';
 
-import {
-  fetchStatuses,
-  selectStatuses,
-} from '../../../redux/statuses/statusesSlice';
+import { fetchStatuses, selectStatuses } from '../../../redux/statuses/statusesSlice';
 
-import {
-  ConfirmationModal,
-  EditUserModal,
-  SearchFilters,
-} from '../../index';
+import { ConfirmationModal, EditUserModal, SearchFilters } from '../../index';
 
-import {
-  filterUsers,
-  getRoleName,
-  getStatusBadge,
-} from '../../../utilis/formatters';
+import { filterUsers, getRoleName, getStatusBadge } from '../../../utilis/formatters';
 import notify from '../../../utilis/toastHelper';
 
 import { useSidebarWidth } from '../../../hooks/useSidebarWidth';
@@ -164,11 +144,20 @@ const Users = () => {
   }, []);
 
   const handleUpdateUser = useCallback(
-    (formData) => {
-      dispatch(updateUser({ userId: selectedUser.id, userData: formData }));
+    async (formData) => {
+      const resultAction = await dispatch(
+        updateUser({ userId: selectedUser.id, userData: formData })
+      );
       setShowEditModal(false);
+
+      if (updateUser.fulfilled.match(resultAction)) {
+        const { userId, user } = resultAction.payload;
+        if (userId === currentUser.id) {
+          dispatch(setUserProfile(user));
+        }
+      }
     },
-    [dispatch, selectedUser]
+    [dispatch, selectedUser, currentUser]
   );
 
   const handleConfirmDelete = useCallback(() => {
@@ -242,7 +231,11 @@ const Users = () => {
         minWidth: '140px',
         grow: 0.6,
         cell: (row) => (
-          <ActionsDropdown row={row} onEdit={() => handleEditUser(row)} onDelete={() => handleDeleteUser(row)} />
+          <ActionsDropdown
+            row={row}
+            onEdit={() => handleEditUser(row)}
+            onDelete={() => handleDeleteUser(row)}
+          />
         ),
         ignoreRowClick: true,
       },
@@ -253,10 +246,7 @@ const Users = () => {
   if (loading) {
     return (
       <DefaultLayout>
-        <div
-          className="table-page-outer"
-          style={{ left: sidebarWidth + 24, right: 24 }}
-        >
+        <div className="table-page-outer" style={{ left: sidebarWidth + 24, right: 24 }}>
           <div className="users-table-scroll d-flex justify-content-center align-items-center">
             <Spinner animation="border" variant="primary" />
           </div>
@@ -267,10 +257,7 @@ const Users = () => {
 
   return (
     <DefaultLayout>
-      <div
-        className="table-page-outer"
-        style={{ left: sidebarWidth + 24, right: 24 }}
-      >
+      <div className="table-page-outer" style={{ left: sidebarWidth + 24, right: 24 }}>
         <div className="users-table-scroll users-table-responsive">
           <Card className="my-0 shadow-none border-0 bg-transparent">
             <Card.Body className="p-0">
@@ -329,24 +316,36 @@ const Users = () => {
                     >
                       <Card.Body>
                         <Row className="mb-2">
-                          <Col xs={4} className="fw-bold">Name:</Col>
+                          <Col xs={4} className="fw-bold">
+                            Name:
+                          </Col>
                           <Col xs={8}>{user.fullName}</Col>
                         </Row>
                         <Row className="mb-2">
-                          <Col xs={4} className="fw-bold">Email:</Col>
+                          <Col xs={4} className="fw-bold">
+                            Email:
+                          </Col>
                           <Col xs={8}>{user.email}</Col>
                         </Row>
                         <Row className="mb-2">
-                          <Col xs={4} className="fw-bold">Role:</Col>
+                          <Col xs={4} className="fw-bold">
+                            Role:
+                          </Col>
                           <Col xs={8}>{getRoleName(user, roles)}</Col>
                         </Row>
                         <Row className="mb-2">
-                          <Col xs={4} className="fw-bold">Status:</Col>
+                          <Col xs={4} className="fw-bold">
+                            Status:
+                          </Col>
                           <Col xs={8}>{getStatusBadge(user.statusId, statuses)}</Col>
                         </Row>
                         <Row className="mb-2">
-                          <Col xs={4} className="fw-bold">Last Active:</Col>
-                          <Col xs={8}>{user.lastLoginAt ? formatDateTime(user.lastLoginAt) : '—'}</Col>
+                          <Col xs={4} className="fw-bold">
+                            Last Active:
+                          </Col>
+                          <Col xs={8}>
+                            {user.lastLoginAt ? formatDateTime(user.lastLoginAt) : '—'}
+                          </Col>
                         </Row>
                         <Row>
                           <Col>

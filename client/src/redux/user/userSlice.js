@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { updateUser } from '../users/usersSlice';
 
 export const fetchUserProfile = createAsyncThunk(
   'user/fetchUserProfile',
@@ -102,15 +103,16 @@ const userSlice = createSlice({
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        const { userId, user } = action.payload;
+        if (state.profile.id === userId) {
+          state.profile = { ...state.profile, ...user };
+        }
       });
   },
 });
 
-export const {
-  setUserProfile,
-  clearUserProfile,
-  setUserLoading,
-  setUserError,
-} = userSlice.actions;
+export const { setUserProfile, clearUserProfile, setUserLoading, setUserError } = userSlice.actions;
 
 export default userSlice.reducer;
