@@ -115,6 +115,7 @@ const RegisterForm = () => {
           <ProfilePhotoUpload
             onPhotoSelect={handlePhotoSelect}
             disabled={loading}
+            currentPhoto={profilePhoto ? URL.createObjectURL(profilePhoto) : null}
           />
 
           <CInputGroup className="mb-3 mt-3">
