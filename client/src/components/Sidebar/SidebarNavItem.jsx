@@ -7,7 +7,7 @@ const SidebarNavItem = ({ item, indent, onItemClick }) => {
     const { component: Component, name, badge, icon, adminOnly, ...rest } = item;
 
     return (
-        <Component as="div">
+        <Component>
             {rest.to || rest.href ? (
                 <CNavLink
                     {...(rest.to && { as: NavLink })}
