@@ -1,7 +1,6 @@
 import { CNavItem, CNavTitle, CNavGroup } from '@coreui/react';
 import {
   cilHome,
-  cilChart,
   cilFile,
   cilBank,
   cilChart,

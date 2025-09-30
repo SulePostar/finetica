@@ -8,7 +8,7 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import { useBucketName } from '../../lib/bucketUtils';
 import KufService from '../../services/kuf';
 import { activityLogService } from '../../services/activityLogService';
-import './Kuf.styles.css';
+import './Kuf.css';
 import { useSelector } from 'react-redux';
 
 const Kuf = () => {
@@ -18,6 +18,7 @@ const Kuf = () => {
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
   const apiEndpoint = useMemo(() => `${API_BASE}/kuf`, [API_BASE]);
   const user = useSelector((state) => state.user.profile);
+  const handleView = useCallback((id) => navigate(`/kuf/${id}`), [navigate]);
 
   const [refetchFn, setRefetchFn] = useState(null);
   const onRefetch = useCallback((fn) => setRefetchFn(() => fn), []);
