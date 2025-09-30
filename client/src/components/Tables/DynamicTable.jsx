@@ -93,7 +93,12 @@ const DynamicTable = ({
           {isMobile ? (
             <div className="stacked-table">
               {data.map((row, rowIndex) => (
-                <Card className="mb-3 stacked-row" key={rowIndex}>
+                <Card
+                  className="mb-3 stacked-row"
+                  key={rowIndex}
+                  onClick={() => onRowClick && onRowClick(row)}
+                  style={{ cursor: onRowClick ? 'pointer' : 'default' }}
+                >
                   <Card.Body>
                     {columns.map((col, colIndex) => (
                       <div key={colIndex} className="stacked-cell">

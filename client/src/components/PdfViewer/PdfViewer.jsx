@@ -44,23 +44,25 @@ export const PdfViewer = ({ pdfUrl }) => {
                 </Document>
             </div>
             {/* Controls */}
-            <div className="d-flex justify-content-center align-items-center py-2 flex-wrap">
+            <div className="d-flex flex-column flex-sm-row justify-content-center align-items-center py-2">
                 <AppButton
                     variant="secondary"
                     size="sm"
-                    className="mx-1 my-1"
+                    className="mx-0 mx-sm-1 my-1 my-sm-0"
                     disabled={pageNumber <= 1}
                     onClick={previousPage}
                 >
                     &larr; Previous
                 </AppButton>
-                <span className="fw-bold mx-3 my-1">
-                    Page {pageNumber || (numPages ? 1 : '--')} of {numPages || '--'}
-                </span>
+
+                <div className="fw-bold mx-3 my-1">
+                    Page {pageNumber} of {numPages}
+                </div>
+
                 <AppButton
                     variant="secondary"
                     size="sm"
-                    className="mx-1 my-1"
+                    className="mx-0 mx-sm-1 my-1 my-sm-0"
                     disabled={pageNumber >= numPages}
                     onClick={nextPage}
                 >

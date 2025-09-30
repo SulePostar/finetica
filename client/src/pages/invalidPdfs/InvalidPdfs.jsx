@@ -81,7 +81,7 @@ const InvalidPdfs = () => {
         row.isValid ? (
           <CBadge color="success">valid</CBadge>
         ) : (
-          <CBadge color="warning">invalid</CBadge>
+          <CBadge color="danger">invalid</CBadge>
         ),
     },
     {
@@ -135,17 +135,17 @@ const InvalidPdfs = () => {
           right: 24,
         }}
       >
-        <div className="invalid-pdfs-scroll">
+        <div className="invalid-pdfs-scroll m-4 m-md-3 m-sm-2">
           <CRow className="justify-content-center w-100 mx-0">
             <CCol xs={12}>
-              <div className="invalid-pdfs-container">
+              <div className="invalid-pdfs-container mx-auto pb-3">
                 <CCard className="shadow-sm border-0 rounded-3 custom-card">
                   <CCardHeader className="p-3">
-                    <CCardTitle className="custom-card-title">Invalid PDFs</CCardTitle>
+                    <CCardTitle className="custom-card-title mb-0 fs-2 fw-bold">Invalid PDFs</CCardTitle>
                   </CCardHeader>
 
-                  <CCardHeader className="custom-card-header p-0 sticky-tabs">
-                    <CNav variant="tabs" role="tablist" className="nav-fill flex-column flex-md-row">
+                  <CCardHeader className="custom-card-header p-0">
+                    <CNav variant="tabs" role="tablist" className="nav-fill flex-column flex-md-row flex-nowrap overflow-auto">
                       <CNavItem>
                         <CNavLink
                           active={activeKey === 1}
@@ -196,7 +196,12 @@ const InvalidPdfs = () => {
                           columns={logColumns}
                           apiEndpoint={endpoints.bank}
                           onRowClick={handleRowClick}
-                          noDataComponent={<div style={{ padding: '2rem', textAlign: 'center', color: '#6c757d' }}>{getNoDataMessage(1)}</div>}
+                          pointerOnHover
+                          highlightOnHover
+                          responsive
+                          noDataComponent={<div className="p-4 text-center text-muted">
+                            {getNoDataMessage(1)}
+                          </div>}
                         />
                       </CTabPane>
                       <CTabPane visible={activeKey === 2} className="fade">
@@ -204,7 +209,12 @@ const InvalidPdfs = () => {
                           columns={logColumns}
                           apiEndpoint={endpoints.kif}
                           onRowClick={handleRowClick}
-                          noDataComponent={<div style={{ padding: '2rem', textAlign: 'center', color: '#6c757d' }}>{getNoDataMessage(2)}</div>}
+                          pointerOnHover
+                          highlightOnHover
+                          responsive
+                          noDataComponent={<div className="p-4 text-center text-muted">
+                            {getNoDataMessage(1)}
+                          </div>}
                         />
                       </CTabPane>
                       <CTabPane visible={activeKey === 3} className="fade">
@@ -212,7 +222,12 @@ const InvalidPdfs = () => {
                           columns={logColumns}
                           apiEndpoint={endpoints.kuf}
                           onRowClick={handleRowClick}
-                          noDataComponent={<div style={{ padding: '2rem', textAlign: 'center', color: '#6c757d' }}>{getNoDataMessage(3)}</div>}
+                          pointerOnHover
+                          highlightOnHover
+                          responsive
+                          noDataComponent={<div className="p-4 text-center text-muted">
+                            {getNoDataMessage(1)}
+                          </div>}
                         />
                       </CTabPane>
                       <CTabPane visible={activeKey === 4} className="fade">
@@ -220,7 +235,12 @@ const InvalidPdfs = () => {
                           columns={logColumns}
                           apiEndpoint={endpoints.contracts}
                           onRowClick={handleRowClick}
-                          noDataComponent={<div style={{ padding: '2rem', textAlign: 'center', color: '#6c757d' }}>{getNoDataMessage(4)}</div>}
+                          pointerOnHover
+                          highlightOnHover
+                          responsive
+                          noDataComponent={<div className="p-4 text-center text-muted">
+                            {getNoDataMessage(1)}
+                          </div>}
                         />
                       </CTabPane>
                     </CTabContent>
@@ -236,12 +256,14 @@ const InvalidPdfs = () => {
         visible={modalOpen}
         onClose={() => setModalOpen(false)}
         alignment="center"
-        className="pdf-modal"
+        size="lg"
       >
         <CModalHeader>
           <CModalTitle>{selectedRow?.filename || 'Document Details'}</CModalTitle>
         </CModalHeader>
-        <CModalBody>{selectedRow && <InvalidPdfDetails id={selectedRow.id} type={selectedRow.type} />}</CModalBody>
+        <CModalBody>
+          {selectedRow && <InvalidPdfDetails id={selectedRow.id} type={selectedRow.type} />}
+        </CModalBody>
       </CModal>
     </DefaultLayout>
   );

@@ -15,7 +15,6 @@
 }
 
 .invalid-pdfs-scroll {
-  margin: 2rem;
   max-height: calc(100% - 4rem);
   overflow-y: auto;
   overflow-x: hidden;
@@ -24,9 +23,6 @@
 
 .invalid-pdfs-container {
   max-width: 2000px;
-  margin: 0 auto;
-  width: 100%;
-  padding-bottom: 20px;
 }
 
 .nav-link {
@@ -40,8 +36,7 @@
   color: var(--color-white) !important;
 }
 
-.custom-card-header .nav-link:not(.active):hover,
-.custom-card-header .nav-link:not(.active):focus {
+.custom-card-header .nav-link:not(.active):hover {
   background-color: var(--color-primary-hover) !important;
   color: var(--color-white) !important;
 }
@@ -56,21 +51,8 @@
   color: var(--cui-body-color) !important;
 }
 
-.nav-fill.flex-nowrap.overflow-auto {
-  -webkit-overflow-scrolling: touch;
-}
-
 .custom-card-title {
-  margin-bottom: 0;
-  font-size: 28px !important;
-  font-weight: 700 !important;
   color: var(--cui-primary);
-}
-
-.sticky-tabs {
-  position: sticky;
-  top: 0;
-  z-index: 2;
 }
 
 @media (max-width: 900px) {
@@ -87,8 +69,14 @@
   }
 }
 
-.pdf-modal .modal-dialog {
-  max-width: 1400px;
-  width: calc(100% - 4rem);
-  margin: 1.5rem auto;
+[data-coreui-theme="light"] .modal-content .badge {
+  color: #ffffff !important;
+}
+
+.modal {
+  z-index: 2000 !important;
+}
+
+.modal-backdrop {
+  z-index: 1999 !important;
 }
