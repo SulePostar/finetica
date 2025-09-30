@@ -1,9 +1,8 @@
-import React from 'react';
 import SidebarNavItem from './SidebarNavItem';
 import SidebarNavLinkContent from './SidebarNavLinkContent';
 
 const SidebarNavGroup = ({ item, onItemClick }) => {
-    const { component: Component, name, icon, items, ...rest } = item;
+    const { component: Component, name, icon, items, adminOnly, ...rest } = item;
 
     return (
         <Component
