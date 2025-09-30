@@ -147,20 +147,11 @@ const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess }) => {
       backdrop="static"
       className="upload-modal"
     >
-      <CModalHeader closeButton={false}>
+      <CModalHeader closeButton>
         <div className="d-flex align-items-center">
           <CIcon icon={cilCloudUpload} className="me-2" />
           Upload File to {bucketName.toUpperCase()}
         </div>
-        <button
-          type="button"
-          className="custom-close-btn"
-          onClick={handleClose}
-          disabled={uploading}
-          aria-label="Close"
-        >
-          &times;
-        </button>
       </CModalHeader>
 
       <CModalBody>
