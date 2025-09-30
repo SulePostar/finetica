@@ -1,0 +1,98 @@
+:root {
+    --primary: #5D4EFF;
+    --btn-primary-light: #7C6FFF;
+    --btn-primary-dark: #4631E8;
+    --btn-primary-foreground: #FFFFFF;
+
+    --btn-success: #15803d;
+    --btn-success-hover: #16a34a;
+
+    --btn-danger: #ef4444;
+    --btn-danger-hover: #dc2626;
+
+    --btn-secondary: #e5e7eb;
+    --btn-secondary-hover: #d1d5db;
+
+    --background: #FFFFFF;
+    --foreground: #090A0D;
+    --border: #E2E8F0;
+    --accent: #F8FAFC;
+    --muted: #F1F5F9;
+}
+
+.btn-custom {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.btn-edit {
+    background-color: var(--muted);
+    color: var(--primary);
+}
+
+.btn-edit:hover {
+    background-color: var(--border);
+    color: var(--primary);
+}
+
+
+.btn-primary {
+    background: linear-gradient(90deg, var(--primary), var(--btn-primary-light));
+    color: var(--btn-primary-foreground);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(90deg, #4a3ddb, #6c63ff);
+}
+
+.btn-success {
+    background-color: var(--btn-success);
+    color: #fff;
+}
+
+.btn-success:hover {
+    background-color: var(--btn-success-hover);
+}
+
+.btn-danger {
+    background-color: var(--btn-danger);
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: var(--btn-danger-hover);
+}
+
+.btn-secondary {
+    background-color: var(--btn-secondary);
+    color: #111827;
+}
+
+.btn-secondary:hover {
+    background-color: var(--btn-secondary-hover);
+}
+
+.btn-no-hover {
+    background-color: var(--btn-secondary);
+    color: #111827;
+}
+
+.btn-no-hover:hover {
+    background-color: var(--btn-secondary);
+    color: #111827;
+}
+
+.btn-text {
+    white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+    .btn-text {
+        font-size: 0.85rem;
+    }
+}

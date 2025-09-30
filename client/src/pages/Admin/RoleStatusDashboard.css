@@ -1,0 +1,63 @@
+/* ===== CSS VARIABLES ===== */
+:root {
+  --role-card-bg: #ffffff; /* Light mode card background */
+  --role-card-border: #e5e7eb; /* Light mode border */
+  --role-card-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  --role-card-header-color: #5850a6; /* Light mode header text */
+  --role-card-subtext-color: #6b7280; /* Light mode subtext */
+}
+
+[data-coreui-theme='dark'] {
+  --role-card-bg: #242d3a; /* Dark mode card background */
+  --role-card-border: #374151; /* Dark mode border */
+  --role-card-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  --role-card-header-color: #f3f4f6; /* Dark mode header text */
+  --role-card-subtext-color: #9ca3af; /* Dark mode subtext */
+}
+
+.role-status-page-content {
+  min-height: calc(100vh - 80px); /* Adjust based on header/footer height */
+}
+
+/* ===== Card Container ===== */
+.role-status-card {
+  padding: 1.5rem;
+  animation: fadeIn 0.4s ease;
+  transition: background 0.2s ease, border 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 30px;
+  width: 90%;
+  margin-bottom: 50px;
+}
+
+/* ===== Card Header ===== */
+.role-status-header {
+  /* font-family: 'Poppins', sans-serif; */
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--role-card-border);
+  padding-bottom: 1rem;
+}
+
+.role-status-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--role-card-header-color);
+  margin: 0 0 0.5rem;
+}
+
+.role-status-header p {
+  font-size: 0.95rem;
+  color: var(--role-card-subtext-color);
+  margin: 0;
+}
+
+/* ===== Fade Animation ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

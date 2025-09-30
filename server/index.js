@@ -11,12 +11,12 @@ const kifRouter = require('./routes/kif');
 const kufRouter = require('./routes/kuf');
 const bankTransactionRouter = require('./routes/bankTransaction');
 const activityLogRouter = require('./routes/activityLog');
-const mailRoute = require("./routes/mailRoute");
+const mailRoute = require('./routes/mailRoute');
 const userStatusRouter = require('./routes/userStatus');
 const userRoleRouter = require('./routes/userRoles');
 const { processEmailQueue } = require('./services/emailQueueService');
 
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 const contractRouter = require('./routes/contract');
 const businessPartnerRouter = require('./routes/businessPartner');
 const googleDriveAutoSync = require('./tasks/googleDriveAutoSync');
@@ -33,15 +33,17 @@ const corsOptions = {
   methods: 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
 };
 app.use(cors(corsOptions));
-app.use(session({
-  secret: SECRET,
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    secure: false, // Set `secure: true` only if using HTTPS
-    maxAge: 30 * 24 * 60 * 60 * 1000 // 1 month in milliseconds 
-  }
-}));
+app.use(
+  session({
+    secret: SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: false, // Set `secure: true` only if using HTTPS
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 1 month in milliseconds
+    },
+  })
+);
 
 app.use(express.json());
 app.use(getClientInfo);
@@ -53,7 +55,7 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/files', require('./routes/uploadedFiles'));
 app.use('/api/kif', kifRouter);
 app.use('/api/kuf', kufRouter);
-app.use('/api/transactions', bankTransactionRouter);
+app.use('/api/bank-transactions', bankTransactionRouter);
 app.use('/api/admin', activityLogRouter);
 app.use(mailRoute);
 app.use('/api/contracts', contractRouter);
@@ -62,8 +64,6 @@ app.use('/drive', googleDriveRouter);
 app.use('/api/user-statuses', userStatusRouter);
 app.use('/api/user-roles', userRoleRouter);
 app.use(errorHandler);
-
-
 
 connectToDatabase();
 
@@ -74,6 +74,6 @@ app.listen(PORT, () => {
   console.log(`🟢 Server is running at port: ${PORT}`);
 
   setInterval(() => {
-    processEmailQueue().catch(err => console.error('Error in email queue processor:', err));
+    processEmailQueue().catch((err) => console.error('Error in email queue processor:', err));
   }, 1000 * 60);
 });

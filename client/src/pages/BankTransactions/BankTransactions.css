@@ -1,4 +1,27 @@
-/* bank-transactions Page-Specific Styles */
+:root {
+  --app-header-height: 64px;
+}
+
+.table-page-outer {
+  position: fixed;
+  top: var(--app-header-height, 64px);
+  bottom: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.bank-transactions-table-scroll {
+  margin: 2rem;
+  max-height: calc(100% - 4rem);
+  overflow-y: auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--cui-body-bg, transparent);
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
 
 .status-badge {
   padding: 0.3rem 0.75rem;
@@ -27,26 +50,23 @@
   color: #fef3c7;
 }
 
-/* Default styles - ensuring table can scroll horizontally */
 .bank-transactions-table-responsive .rdt_Table,
 .bank-transactions-table-responsive table {
-  min-width: 1600px;
-  /* This ensures horizontal scrolling */
+  width: 100%;
+  min-width: 1200px;
+  max-width: 100%;
   font-size: 1rem;
 }
 
 @media (min-width: 2000px) {
-  .bank-transactions-table-responsive {
+  .bank-transactions-table-scroll {
     margin: 3rem;
-    height: 75vh;
+    max-height: calc(100% - 6rem);
   }
-
   .bank-transactions-table-responsive .rdt_Table,
   .bank-transactions-table-responsive table {
-    min-width: 2000px;
     font-size: 1.05rem;
   }
-
   .status-badge {
     font-size: 1rem;
     padding: 0.4rem 0.85rem;
@@ -54,17 +74,14 @@
 }
 
 @media (min-width: 2560px) {
-  .bank-transactions-table-responsive {
+  .bank-transactions-table-scroll {
     margin: 4rem;
-    height: 80vh;
+    max-height: calc(100% - 8rem);
   }
-
   .bank-transactions-table-responsive .rdt_Table,
   .bank-transactions-table-responsive table {
-    min-width: 2400px;
     font-size: 1.15rem;
   }
-
   .status-badge {
     font-size: 1.1rem;
     padding: 0.5rem 1rem;
@@ -72,17 +89,14 @@
 }
 
 @media (min-width: 3440px) {
-  .bank-transactions-table-responsive {
+  .bank-transactions-table-scroll {
     margin: 5rem;
-    height: 85vh;
+    max-height: calc(100% - 10rem);
   }
-
   .bank-transactions-table-responsive .rdt_Table,
   .bank-transactions-table-responsive table {
-    min-width: 2800px;
     font-size: 1.25rem;
   }
-
   .status-badge {
     font-size: 1.15rem;
     padding: 0.6rem 1.1rem;
@@ -90,27 +104,31 @@
 }
 
 @media (max-width: 900px) {
-  .bank-transactions-table-responsive {
+  .bank-transactions-table-scroll {
     margin: 1rem;
-    height: 60vh;
+    max-height: calc(100% - 2rem);
+    padding: 1rem;
   }
-
   .bank-transactions-table-responsive .rdt_Table,
   .bank-transactions-table-responsive table {
-    min-width: 1400px;
+    min-width: 900px;
     font-size: 0.85rem;
   }
 }
 
 @media (max-width: 600px) {
-  .bank-transactions-table-responsive {
+  .bank-transactions-table-scroll {
     margin: 0.5rem;
-    height: 50vh;
+    max-height: calc(100% - 1rem);
+    padding: 0.75rem;
   }
-
   .bank-transactions-table-responsive .rdt_Table,
   .bank-transactions-table-responsive table {
-    min-width: 1200px;
+    min-width: 600px;
     font-size: 0.78rem;
   }
+}
+
+.bank-transactions-table-scroll .rdt_TableWrapper {
+  max-height: 100%;
 }

@@ -1,7 +1,6 @@
-import { cilArrowLeft, cilContrast, cilMenu, cilMoon, cilSun } from '@coreui/icons';
+import { cilContrast, cilMenu, cilMoon, cilSun } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import {
-  CButton,
   CDropdown,
   CDropdownItem,
   CDropdownMenu,
@@ -15,6 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './AppHeader.css';
 import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
+import AppButton from './AppButton/AppButton.jsx';
 import '../scss/style.scss';
 
 // Returns route and label for a detail or item details page
@@ -28,6 +28,17 @@ const getDetailPageConfig = (pathname) => {
   if (kufItemMatch) {
     return { route: `/kuf/${kufItemMatch[1]}`, label: 'KUF Invoice' };
   }
+  const bankItemMatch = pathname.match(/^\/bank-transactions\/(\d+)\/items/);
+  if (bankItemMatch) {
+    return {
+      route: `/bank-transactions/${bankItemMatch[1]}`,
+      label: 'Bank Statement',
+    };
+  }
+  // Document details page
+  if (pathname.startsWith('/contracts/') && pathname !== '/contracts') {
+    return { route: '/contracts', label: 'Contracts' };
+  }
   // Invoice details page
   if (pathname.startsWith('/kuf/') && pathname !== '/kuf') {
     return { route: '/kuf', label: 'KUF' };
@@ -36,13 +47,13 @@ const getDetailPageConfig = (pathname) => {
     return { route: '/kif', label: 'KIF' };
   }
   if (pathname.startsWith('/partners/') && pathname !== '/partners') {
-    return { route: '/partners', label: 'PARTNERS' };
+    return { route: '/partners', label: 'Partners' };
   }
   if (pathname.startsWith('/bank-transactions/') && pathname !== '/bank-transactions') {
-    return { route: '/bank-transactions', label: 'Bank Transactions' };
+    return { route: '/bank-transactions', label: 'Bank Statements' };
   }
   if (pathname.startsWith('/contracts/') && pathname !== '/contracts') {
-    return { route: '/contracts', label: 'CONTRACTS' };
+    return { route: '/contracts', label: 'Contracts' };
   }
   return null;
 };
@@ -84,14 +95,15 @@ const AppHeader = ({ isDarkMode, colorMode, setColorMode }) => {
       }}
     >
       {detailPage ? (
-        <CButton
+        <AppButton
           variant="outline"
           onClick={() => navigate(detailPage.route)}
-          className="ms-n3 border rounded-pill px-3 py-2 d-flex align-items-center header-back"
+          icon="mdi:arrow-left"
+          iconClassName="me-2"
+          className="border rounded-pill px-3 py-2 d-flex align-items-center gap-2 header-back"
         >
-          <CIcon icon={cilArrowLeft} className="me-2" />
           Back to {detailPage.label}
-        </CButton>
+        </AppButton>
       ) : (
         <CHeaderToggler
           onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}

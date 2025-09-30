@@ -1,12 +1,12 @@
-import { CButton } from '@coreui/react';
-import { cilArrowLeft, cilPencil } from '@coreui/icons';
-import CIcon from '@coreui/icons-react';
 import { useMemo, useState } from 'react';
 import EditItemModal from '../../components/Modals/EditItemModal';
 import api from '../../services/api';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import DefaultLayout from '../../layout/DefaultLayout';
 import DynamicTable from '../../components/Tables/DynamicTable';
+import AppButton from '../../components/AppButton/AppButton';
+import './DocumentItemsPage.css';
+
 
 const DocumentItemsPage = () => {
     const { id } = useParams();
@@ -16,6 +16,7 @@ const DocumentItemsPage = () => {
         const path = location.pathname;
         if (path.includes('/kif/')) return 'kif';
         if (path.includes('/kuf/')) return 'kuf';
+        if (path.includes('/bank-transactions/')) return 'bank-transactions';
         return null;
     }, [location.pathname]);
     const API_BASE = import.meta.env.VITE_API_BASE_URL;
@@ -61,9 +62,12 @@ const DocumentItemsPage = () => {
         {
             name: 'Actions',
             cell: row => (
-                <CButton size="sm" color="secondary" onClick={() => openEditModal(row, type)}>
-                    <CIcon icon={cilPencil} size="sm" />
-                </CButton>
+                <AppButton
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => openEditModal(row, type)}
+                    icon="mdi:pencil"
+                />
             ),
             ignoreRowClick: true,
             allowOverflow: true,
@@ -73,29 +77,51 @@ const DocumentItemsPage = () => {
 
     // Columns for KIF (SalesInvoiceItem)
     const kifColumns = [
-        { name: 'ID', selector: row => row.id },
-        { name: 'Order Number', selector: row => row.orderNumber },
-        { name: 'Description', selector: row => row.description },
-        { name: 'Unit', selector: row => row.unit },
-        { name: 'Quantity', selector: row => row.quantity },
-        { name: 'Unit Price', selector: row => row.unitPrice },
-        { name: 'Net Subtotal', selector: row => row.netSubtotal },
-        { name: 'VAT Amount', selector: row => row.vatAmount },
-        { name: 'Gross Subtotal', selector: row => row.grossSubtotal },
+        { name: 'ID', selector: row => row.id, minWidth: '120px', wrap: true },
+        { name: 'Order Number', selector: row => row.orderNumber, minWidth: '120px', wrap: true },
+        { name: 'Description', selector: row => row.description, minWidth: '160px', wrap: true },
+        { name: 'Unit', selector: row => row.unit, minWidth: '100px', wrap: true },
+        { name: 'Quantity', selector: row => row.quantity, minWidth: '100px', wrap: true },
+        { name: 'Unit Price', selector: row => row.unitPrice, minWidth: '120px', wrap: true },
+        { name: 'Net Subtotal', selector: row => row.netSubtotal, minWidth: '120px', wrap: true },
+        { name: 'VAT Amount', selector: row => row.vatAmount, minWidth: '120px', wrap: true },
+        { name: 'Gross Subtotal', selector: row => row.grossSubtotal, minWidth: '120px', wrap: true },
     ];
 
     // Columns for KUF (PurchaseInvoiceItem)
     const kufColumns = [
-        { name: 'ID', selector: row => row.id },
-        { name: 'Order Number', selector: row => row.orderNumber },
-        { name: 'Description', selector: row => row.description },
-        { name: 'Net Subtotal', selector: row => row.netSubtotal },
-        { name: 'Lump Sum', selector: row => row.lumpSum },
-        { name: 'VAT Amount', selector: row => row.vatAmount },
-        { name: 'Gross Subtotal', selector: row => row.grossSubtotal },
+        { name: 'ID', selector: row => row.id, minWidth: '120px', wrap: true },
+        { name: 'Order Number', selector: row => row.orderNumber, minWidth: '120px', wrap: true },
+        { name: 'Description', selector: row => row.description, minWidth: '160px', wrap: true },
+        { name: 'Net Subtotal', selector: row => row.netSubtotal, minWidth: '120px', wrap: true },
+        { name: 'Lump Sum', selector: row => row.lumpSum, minWidth: '120px', wrap: true },
+        { name: 'VAT Amount', selector: row => row.vatAmount, minWidth: '120px', wrap: true },
+        { name: 'Gross Subtotal', selector: row => row.grossSubtotal, minWidth: '120px', wrap: true },
     ];
 
-    const columns = documentType === 'kif' ? getActionsColumn(kifColumns, 'kif') : getActionsColumn(kufColumns, 'kuf');
+    const bankTransactionColumns = [
+        {
+            selector: (row) => row.date || '—',
+            sortable: true,
+            cell: (row) => (row.date ? new Date(row.date).toLocaleDateString() : '—'),
+        },
+        { name: 'Description', selector: row => row.description, minWidth: '160px', wrap: true },
+        { name: 'Amount', selector: row => row.amount, minWidth: '120px', wrap: true },
+        { name: 'Bank Name', selector: row => row.bankName, minWidth: '140px', wrap: true },
+        { name: 'Account Number', selector: row => row.accountNumber, minWidth: '140px', wrap: true },
+        { name: 'Direction', selector: row => row.direction, minWidth: '100px', wrap: true },
+    ];
+
+
+    const columns = documentType === 'kif'
+        ? getActionsColumn(kifColumns, 'kif')
+        : documentType === 'kuf'
+            ? getActionsColumn(kufColumns, 'kuf')
+            : documentType === 'bank-transactions'
+                ? getActionsColumn(bankTransactionColumns, 'bank-transactions')
+                : [];
+
+    // Determine back URL
     const backUrl = location.state?.backUrl || `/${documentType}/${id}`;
 
     // Modal form fields
@@ -112,7 +138,7 @@ const DocumentItemsPage = () => {
                 { name: 'vatAmount', label: 'VAT Amount', type: 'number', placeholder: 'VAT Amount' },
                 { name: 'grossSubtotal', label: 'Gross Subtotal', type: 'number', placeholder: 'Gross Subtotal' },
             ];
-        } else {
+        } else if (editModal.type === 'kuf') {
             return [
                 { name: 'orderNumber', label: 'Order Number', type: 'text', placeholder: 'Order Number', readOnly: true },
                 { name: 'description', label: 'Description', type: 'text', placeholder: 'Description' },
@@ -121,19 +147,32 @@ const DocumentItemsPage = () => {
                 { name: 'vatAmount', label: 'VAT Amount', type: 'number', placeholder: 'VAT Amount' },
                 { name: 'grossSubtotal', label: 'Gross Subtotal', type: 'number', placeholder: 'Gross Subtotal' },
             ];
+        } else if (editModal.type === 'bank-transactions') {
+            return [
+                { name: 'description', label: 'Description', type: 'text', placeholder: 'Description' },
+                { name: 'amount', label: 'Amount', type: 'number', placeholder: 'Amount' },
+                { name: 'bankName', label: 'Bank Name', type: 'text', placeholder: 'Bank Name' },
+                { name: 'accountNumber', label: 'Account Number', type: 'text', placeholder: 'Account Number' },
+                { name: 'direction', label: 'Direction', type: 'select', options: ['in', 'out'], placeholder: 'Direction' },
+            ];
         }
     };
 
     return (
         <DefaultLayout>
-            <main>
-                <DynamicTable
-                    title="Invoice Items"
-                    columns={columns}
-                    apiEndpoint={apiEndpoint}
-                    pagination={false}
-                    reloadTable={editModal.visible === false && !modalLoading ? Math.random() : undefined}
-                />
+            <div
+                className="table-page-outer"
+                style={{ left: 0, right: 0 }}
+            >
+                <div className="document-items-table-scroll document-items-table-responsive">
+                    <DynamicTable
+                        title="Document Items"
+                        columns={columns}
+                        apiEndpoint={apiEndpoint}
+                        pagination={false}
+                        reloadTable={editModal.visible === false && !modalLoading ? Math.random() : undefined}
+                    />
+                </div>
                 <EditItemModal
                     visible={editModal.visible}
                     onCancel={closeEditModal}
@@ -144,7 +183,7 @@ const DocumentItemsPage = () => {
                     loading={modalLoading}
                     error={modalError}
                 />
-            </main>
+            </div>
         </DefaultLayout>
     );
 };

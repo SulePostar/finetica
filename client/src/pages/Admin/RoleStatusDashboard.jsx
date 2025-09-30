@@ -3,7 +3,7 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import RoleAndStatusDashboard from '../../components/Admin/RoleAndStatusDashboard/RoleAndStatusDashboard';
 import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import '../../styles/shared/CommonStyles.css';
-import '../../styles/TablePages.css';
+import '../Admin/RoleStatusDashboard.css';
 
 const RoleStatusDashboard = () => {
     const sidebarWidth = useSidebarWidth();
@@ -11,18 +11,22 @@ const RoleStatusDashboard = () => {
     return (
         <DefaultLayout>
             <div
-                className="table-page-outer"
+                className="role-status-page-wrapper"
                 style={{
                     marginLeft: sidebarWidth,
-                    width: `calc(100vw - ${sidebarWidth}px)`,
+                    width: '90%'
                 }}
             >
-                <div className="role-status-dashboard-page"
-                    style={{
-                        width: `calc(100vw - ${sidebarWidth}px)`,
-                        transition: 'margin-left 0.3s ease, width 0.3s ease',
-                    }}>
-                    <RoleAndStatusDashboard />
+                <div
+                    className="role-status-page-content"
+                >
+                    <div className="role-status-card">
+                        <div className="role-status-header">
+                            <h1>Role & Status Management </h1>
+                            <p>Manage user roles and approval statuses in one place</p>
+                        </div>
+                        <RoleAndStatusDashboard />
+                    </div>
                 </div>
             </div>
         </DefaultLayout>

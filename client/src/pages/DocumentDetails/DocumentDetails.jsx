@@ -31,6 +31,7 @@ const DocumentDetails = () => {
     if (path.includes('/kif/')) return 'kif';
     if (path.includes('/kuf/')) return 'kuf';
     if (path.includes('/contracts/')) return 'contract';
+    // Use correct type for bank transactions to match backend API
     if (path.includes('/bank-transactions/')) return 'bank-transactions';
     if (path.includes('/partners/')) return 'partner';
     return null;
@@ -62,8 +63,6 @@ const DocumentDetails = () => {
     : isApproveMode
       ? 'Approve Document'
       : `View ${documentType?.toUpperCase() || 'Document'} Details`;
-
-  console.log('KIF items:', documentType, Array.isArray(formData?.items), formData?.items);
 
   return (
     <DefaultLayout>
@@ -99,7 +98,7 @@ const DocumentDetails = () => {
               />
             )}
             {/* Button to navigate to items page */}
-            {!loading && (documentType === 'kif' || documentType === 'kuf') && Array.isArray(formData?.items) && (
+            {!loading && (documentType === 'kif' || documentType === 'kuf' || documentType === 'bank-transactions') && Array.isArray(formData?.items) && (
               <button
                 type="button"
                 className="btn btn-primary details-button"
@@ -123,7 +122,13 @@ const DocumentDetails = () => {
                     <CSpinner color="primary" />
                   </div>
                 ) : (
-                  <PdfViewer pdfUrl={pdfUrl} />
+                  <div className="document-pdf">
+                    {pdfUrl ? (
+                      <PdfViewer pdfUrl={pdfUrl} />
+                    ) : (
+                      <div>No PDF available for this transaction.</div>
+                    )}
+                  </div>
                 )}
               </CCardBody>
             </CCard>

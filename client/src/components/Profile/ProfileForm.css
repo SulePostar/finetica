@@ -1,97 +1,45 @@
-:root {
-  --color-primary: #5b3cc4;
-  --color-white: #ffffff;
-  --color-border-light: #e2e8f0;
-  --color-border-medium: #d1d5db;
-  --color-card-bg: var(--color-primary);
-  --color-disabled-bg: #e7e7e7ff;
-  --color-bottom-actions-bg: #ffffff;
+.section-box {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
-[data-theme='dark'] {
-  --color-card-bg: #303746ff;
-  --color-disabled-bg: #d4d4d4ff;
-  --color-bottom-actions-bg: #2d3748;
-}
-
-.form-container-card {
-  margin-top: 64px;
-  transition: transform 0.3s ease-in-out;
-  position: relative;
-  width: 100%;
-  max-width: 600px;
-  padding: 20px;
-  background-color: var(--color-card-bg);
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-}
-
-.form-container-card.sidebar-visible {
-  transform: translateX(127px);
-}
-
-.form-container-card.sidebar-hidden {
-  transform: translateX(0);
+[data-theme="dark"] .section-box {
+  background: rgb(29 34 42 / 0.95);
 }
 
 .form-title {
-  color: var(--color-primary);
-  font-size: 36px;
-  font-weight: 600;
-  margin: 0;
-}
-
-.edit-toggle {
-  color: var(--color-white);
-  border: 1px solid var(--color-primary);
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.input-group-text {
-  background-color: #ffffff;
-  border: 1px solid var(--color-border-light);
-  border-right: 2px solid var(--color-border-medium);
-  color: var(--color-primary);
-  padding: 16px;
-  width: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.form-input {
-  background-color: #ffffff;
-}
-
-.form-input-disabled {
-  background-color: var(--color-disabled-bg);
-  cursor: not-allowed;
-}
-
-.label-in-input-group-text {
   margin-bottom: 0;
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  color: var(--cui-primary);
 }
 
-.bottom-actions {
-  position: absolute;
-  bottom: 16px;
-  left: 40px;
-  right: 40px;
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  padding-top: 16px;
-  background-color: var(--color-bottom-actions-bg);
+.text-muted {
+  color: #6c757d !important;
 }
 
-.profile-button {
-  border: 1px solid var(--color-primary);
-  border-radius: 12px;
-  padding: 16px 24px;
+.photo-title {
+  font-size: 20px;
   font-weight: 600;
-  font-size: 18px;
-  color: var(--color-primary);
-  transition: all 0.2s ease;
+}
+
+.disabled-cursor {
+  cursor: not-allowed !important;
+}
+
+.no-bg-form-input {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  padding: 0 !important;
+}
+
+[data-coreui-theme="dark"] .form-control.no-bg-form-input,
+[data-coreui-theme="dark"] .form-select.no-bg-form-input,
+.form-control.no-bg-form-input,
+.form-select.no-bg-form-input {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  padding: 0 !important;
+  color: inherit !important;
 }

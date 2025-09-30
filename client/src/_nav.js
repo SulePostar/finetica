@@ -1,6 +1,16 @@
 import { CNavItem, CNavTitle, CNavGroup } from '@coreui/react';
-import { cilHome, cilChart, cilFile, cilBank, cilSettings, cilUser, cilShieldAlt, cilTag, cilBriefcase, cilWarning } from '@coreui/icons';
-
+import {
+  cilHome,
+  cilChart,
+  cilFile,
+  cilBank,
+  cilChart,
+  cilUser,
+  cilShieldAlt,
+  cilTag,
+  cilBriefcase,
+  cilWarning,
+} from '@coreui/icons';
 
 const _nav = [
   {
@@ -15,7 +25,7 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: 'Bank Transactions',
+    name: 'Bank Statements',
     to: '/bank-transactions',
     icon: cilBank,
   },
@@ -61,7 +71,7 @@ const _nav = [
   {
     component: CNavGroup,
     name: 'Management',
-    icon: cilSettings,
+    icon: cilChart,
     adminOnly: true,
     items: [
       {

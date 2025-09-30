@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { CForm, CFormInput, CButton, CAlert, CInputGroup, CInputGroupText } from '@coreui/react';
+import { CForm, CFormInput, CAlert, CInputGroup, CInputGroupText, CFormText } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilLockLocked, cilArrowLeft } from '@coreui/icons';
 import { authService } from '../../services';
 import notify from '../../utilis/toastHelper';
+import AppButton from '../AppButton/AppButton';
 
 const ResetPasswordForm = () => {
     const [searchParams] = useSearchParams();
@@ -183,23 +184,24 @@ const ResetPasswordForm = () => {
                                 />
                             </CInputGroup>
 
-                            <CButton
+                            <AppButton
                                 type="submit"
-                                color="primary"
+                                variant="primary"
                                 className="w-100 rounded-pill py-3 mb-3"
                                 disabled={loading || !token}
                             >
                                 {loading ? 'Resetting...' : 'Reset Password'}
-                            </CButton>
+                            </AppButton>
 
                             <div className="text-center">
-                                <p className="mb-0">
+                                <CFormText className="mb-0">
                                     Remember your password?{' '}
                                     <Link to="/login" className="text-decoration-none">
                                         Sign in here
                                     </Link>
-                                </p>
+                                </CFormText>
                             </div>
+
                         </CForm>
                     </div>
                 </div>

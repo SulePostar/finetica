@@ -111,8 +111,6 @@ class AuthService {
 
     if (!user) throw new AppError('Invalid credentials', 401);
 
-    if (user.statusId === USER_STATUS.DELETED) throw new AppError('Account deactivated', 403);
-
     if (user.statusId !== USER_STATUS.APPROVED) {
       const statusMessages = {
         1: 'Account is pending admin approval and cannot login',

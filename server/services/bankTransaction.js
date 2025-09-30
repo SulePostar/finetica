@@ -1,12 +1,14 @@
-const { BusinessPartner, TransactionCategory, BankTransaction, BankTransactionProcessingLog } = require('../models');
+const { BusinessPartner, TransactionCategory, BankTransaction, BankTransactionProcessingLog, BankTransactionItem } = require('../models');
 const { processDocument } = require('./aiService');
 const AppError = require('../utils/errorHandler');
 const BANK_TRANSACTIONS_PROMPT = require('../prompts/BankTransactions');
 const bankTransactionSchema = require('../schemas/bankTransactionSchema');
 const { sequelize } = require('../models');
 const supabaseService = require('../utils/supabase/supabaseService');
-const MODEL_NAME = 'gemini-2.5-flash-lite';
+const { get } = require('../routes/kif');
+const { or } = require('sequelize');
 
+const MODEL_NAME = 'gemini-2.5-flash-lite';
 const BUCKET_NAME = 'transactions';
 
 
@@ -58,15 +60,41 @@ const getBankTransactionById = async (id) => {
 
         if (!document) {
             console.warn(`No BankTransaction found with id: ${id}`);
-            return null;
+            return {
+                id,
+                date: null,
+                amount: null,
+                direction: null,
+                accountNumber: null,
+                description: null,
+                invoiceId: null,
+                partnerId: null,
+                categoryId: null,
+                approvedAt: null,
+                approvedBy: null,
+                fileName: null,
+                pdfUrl: null,
+                items: [],
+                isBankTransaction: false,
+            };
         }
 
         const transactionData = document.toJSON();
-        const pdfUrl = transactionData.fileName ? await supabaseService.getSignedUrl(BUCKET_NAME, transactionData.fileName) : null;
+        let pdfUrl = transactionData.fileName ? await supabaseService.getSignedUrl(BUCKET_NAME, transactionData.fileName) : null;
+        // Sanitize pdfUrl: if falsy, empty, or 'null', set to null
+        if (!pdfUrl || typeof pdfUrl !== 'string' || pdfUrl.trim() === '' || pdfUrl === 'null') {
+            pdfUrl = null;
+        }
+
+        // Fetch items for this transaction
+        const items = await BankTransactionItem.findAll({
+            where: { transaction_id: id }
+        });
 
         return {
             ...transactionData,
-            pdfUrl
+            pdfUrl,
+            items: items.map(item => item.toJSON())
         };
     } catch (error) {
         console.error("Fetch Document Error:", error);
@@ -74,58 +102,98 @@ const getBankTransactionById = async (id) => {
     }
 };
 
+const getBankTransactionItems = async (id) => {
+    try {
+        const items = await BankTransactionItem.findAll({
+            where: { transaction_id: id }
+        });
+        return items.map(item => item.toJSON());
+    } catch (error) {
+        throw new AppError('Failed to fetch bank transaction items', 500);
+    }
+};
+
+async function editBankTransactionItem(itemId, updatedData) {
+    try {
+        const item = await BankTransactionItem.findByPk(itemId);
+        if (!item) throw new AppError('Bank transaction item not found', 404);
+
+        await item.update(updatedData);
+        return item;
+    } catch (error) {
+        console.error("Update Item Error:", error);
+        throw new AppError('Failed to update bank transaction item', 500);
+    }
+};
+
 const createBankTransactionFromAI = async (extractedData, options = {}) => {
-    const t = options.transaction || await sequelize.transaction();
-    const shouldCommit = !options.transaction; // Only commit if we created the transaction
+    const externalTx = options.transaction;
+    const { filename } = options;
+    const tx = externalTx || await sequelize.transaction();
 
     try {
-        const { items, filename, isBankTransaction, ...bankTransactionData } = extractedData.data || extractedData;
+        const { items, isBankTransaction, filename: dataFilename, ...bankTransactionData } =
+            extractedData.data || extractedData;
 
-        const dataToSave = {
-            date: bankTransactionData.date,
-            amount: parseFloat(bankTransactionData.amount),
-            direction: bankTransactionData.direction,
-            accountNumber: bankTransactionData.accountNumber,
-            description: bankTransactionData.description,
-            invoiceId: bankTransactionData.invoiceId ? String(bankTransactionData.invoiceId) : null,
-            partnerId: bankTransactionData.partnerId,
-            categoryId: bankTransactionData.categoryId,
-            approvedAt: bankTransactionData.approvedAt,
-            approvedBy: bankTransactionData.approvedBy,
-            fileName: filename
-        };
-        const document = await BankTransaction.create(dataToSave, { transaction: t });
+        // Use filename from options first, then from extractedData
+        const file_name = filename || dataFilename;
 
-        if (items && Array.isArray(items) && items.length > 0) {
-            const itemsToCreate = items.map(item => ({
-                ...item,
-                transactionId: document.id,
+        // If it's not a bank transaction, skip creating a record
+        if (!isBankTransaction) {
+            if (!externalTx) await tx.commit();
+            return { isBankTransaction: false, message: 'Document is not a bank transaction' };
+        }
+
+        // Create main bank transaction (direction is now optional)
+        const document = await BankTransaction.create(
+            {
+                date: bankTransactionData.date,
+                amount: parseFloat(bankTransactionData.amount),
+                // direction is not required on main transaction
+                accountNumber: bankTransactionData.accountNumber,
+                description: bankTransactionData.description,
+                invoiceId: bankTransactionData.invoiceId ? String(bankTransactionData.invoiceId) : null,
+                partnerId: bankTransactionData.partnerId,
+                categoryId: bankTransactionData.categoryId,
+                approvedAt: bankTransactionData.approvedAt,
+                approvedBy: bankTransactionData.approvedBy,
+                fileName: file_name,
                 createdAt: new Date(),
                 updatedAt: new Date(),
-            }));
+            },
+            { transaction: tx }
+        );
 
-            await BankTransaction.bulkCreate(itemsToCreate, { transaction: t });
+        // Create bank transaction items if any
+        if (Array.isArray(items) && items.length) {
+            await BankTransactionItem.bulkCreate(
+                items.map((item) => ({
+                    ...item,
+                    transactionId: document.id,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                })),
+                { transaction: tx }
+            );
         }
 
-        if (shouldCommit) {
-            await t.commit();
-        }
+        if (!externalTx) await tx.commit();
 
         return {
             ...document.toJSON(),
-            items: items || []
+            items: items || [],
+            isBankTransaction: true,
         };
     } catch (error) {
-        if (shouldCommit) {
-            await t.rollback();
-        }
-        console.error("Database Error:", error);
+        if (!externalTx) await tx.rollback();
+        console.error('Database Error:', error);
         throw new AppError('Failed to save bank transaction to database', 500);
     }
 };
 
+
 const createBankTransactionManually = async (bankTransactionData, userId) => {
-    const t = await sequelize.transaction();
+    const transaction = await sequelize.transaction();
     try {
         const { items, ...documentData } = bankTransactionData;
 
@@ -137,8 +205,11 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
             createdAt: new Date(),
             updatedAt: new Date(),
         };
-        const document = await BankTransaction.create(finalDocumentData, { transaction: t });
 
+        // Create the main bank transaction
+        const document = await BankTransaction.create(finalDocumentData, { transaction });
+
+        // Create bank transaction items if they exist
         if (items && Array.isArray(items) && items.length > 0) {
             const itemsToCreate = items.map(item => ({
                 ...item,
@@ -146,28 +217,34 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
                 createdAt: new Date(),
                 updatedAt: new Date(),
             }));
-
-            await BankTransaction.bulkCreate(itemsToCreate, { transaction: t });
+            await BankTransactionItem.bulkCreate(itemsToCreate, { transaction });
         }
 
-        // Fetch the full document including relations
-        const createdData = await BankTransaction.findByPk(document.id, {
+        // Commit first, then fetch fresh data including relations & items
+        await transaction.commit();
+
+        const createdTransaction = await BankTransaction.findByPk(document.id, {
             include: [
-                { model: TransactionCategory },
-                { model: BusinessPartner }
-            ],
-            transaction: t,
+                {
+                    model: BankTransactionItem, // ✅ include items
+                },
+                {
+                    model: TransactionCategory,
+                },
+                {
+                    model: BusinessPartner,
+                }
+            ]
         });
 
-        await t.commit();
-
-        return createdData;
+        return createdTransaction;
     } catch (error) {
-        await t.rollback();
+        await transaction.rollback();
         console.error("Manual Creation Error:", error);
         throw new AppError('Failed to create bank transaction', 500);
     }
 };
+
 
 const approveBankTransactionById = async (id, userId, updatedData = {}) => {
     try {
@@ -229,22 +306,25 @@ const editBankTransaction = async (id, updatedData) => {
     }
 };
 
-const processBankTransaction = async (fileBuffer, mimeType, fileName, model = "gemini-2.5-flash-lite") => {
+const processBankTransaction = async (fileBuffer, mimeType, filename, model = "gemini-2.5-flash-lite") => {
     try {
         const extractedData = await extractData(fileBuffer, mimeType);
-
+        // Ensure filename is present for DB save
+        if (extractedData) {
+            if (extractedData.data) {
+                extractedData.data.filename = filename;
+            } else {
+                extractedData.filename = filename;
+            }
+        }
         // Validate that the document is actually a bank transaction
         const { isBankTransaction, ...bankTransactionData } = extractedData?.data || extractedData;
-
-        console.log(`File: ${fileName}, isBankTransaction: ${isBankTransaction}`);
-
+        console.log(`File: ${filename}, isBankTransaction: ${isBankTransaction}`);
         if (isBankTransaction === false) {
             throw new AppError('Uploaded file is not a valid bank transaction document. Please upload a bank statement or transaction record.', 400);
         }
-
-
         const bankTransaction = await createBankTransactionFromAI(extractedData);
-        await processUnprocessedFiles(fileName);
+        await processUnprocessedFiles(filename);
         return {
             success: true,
             data: bankTransaction
@@ -255,7 +335,6 @@ const processBankTransaction = async (fileBuffer, mimeType, fileName, model = "g
             throw error; // Re-throw AppError with original message and status
         }
         throw new AppError('Failed to process Bank Transaction document', 500);
-
     }
 };
 
@@ -307,6 +386,19 @@ const getUnprocessedFiles = async () => {
     }
 };
 
+const setFileInvalid = async (filename) => {
+    try {
+        await BankTransactionProcessingLog.update(
+            { isValid: false, isProcessed: true, processedAt: new Date() },
+            { where: { filename } }
+        );
+        return { success: true, filename };
+    } catch (error) {
+        console.error(`Failed to set file as invalid: ${filename}`, error);
+        return { success: false, error: error.message };
+    }
+};
+
 module.exports = {
     getTransactions,
     getBankTransactionById,
@@ -317,5 +409,8 @@ module.exports = {
     processBankTransaction,
     processUnprocessedFiles,
     getUnprocessedFiles,
-    extractData
+    extractData,
+    setFileInvalid,
+    editBankTransactionItem,
+    getBankTransactionItems
 };

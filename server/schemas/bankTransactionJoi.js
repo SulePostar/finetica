@@ -1,5 +1,39 @@
 const Joi = require('joi');
 
+const BankTransactionItemSchema = Joi.object({
+    bankName: Joi.string().trim().allow(null, '').optional().messages({
+        'string.base': 'Bank name must be a string',
+    }),
+
+    accountNumber: Joi.string().trim().allow(null, '').optional().messages({
+        'string.base': 'Account number must be a string',
+    }),
+    date: Joi.date().iso().required().messages({
+        'date.base': 'Date must be a valid date',
+        'date.format': 'Date must be in ISO format',
+        'any.required': 'Date is required',
+    }),
+    direction: Joi.string().trim().required().messages({
+        'string.base': 'Direction must be a string',
+        'any.required': 'Direction is required',
+    }),
+    amount: Joi.number().required().messages({
+        'number.base': 'Amount must be a number',
+        'any.required': 'Amount is required',
+    }),
+    currency: Joi.string().trim().allow(null, '').optional().messages({
+        'string.base': 'Currency must be a string',
+    }),
+    referenceNumber: Joi.string().trim().allow(null, '').optional().messages({
+        'string.base': 'Reference number must be a string',
+    }),
+    description: Joi.string().trim().allow(null, '').optional().messages({
+        'string.base': 'Description must be a string',
+    }),
+});
+
+// Main Schema
+
 // Create Schema 
 const bankTransactionCreateSchema = Joi.object({
     date: Joi.date().iso().required().messages({
@@ -56,6 +90,12 @@ const bankTransactionCreateSchema = Joi.object({
         'number.integer': 'Approved by must be an integer',
         'any.required': 'Approved by is required',
     }),
+    items: Joi.array().items(BankTransactionItemSchema).min(1).required().messages({
+        'array.base': 'Items must be an array',
+        'array.min': 'At least one item is required',
+        'any.required': 'Items are required',
+    }),
+
 });
 
 // Update Schema
@@ -108,6 +148,12 @@ const bankTransactionUpdateSchema = Joi.object({
         'number.base': 'Approved by must be a number',
         'number.integer': 'Approved by must be an integer',
     }),
+
+    items: Joi.array().items(BankTransactionItemSchema).min(1).optional().messages({
+        'array.base': 'Items must be an array',
+        'array.min': 'At least one item is required',
+    }),
+
 }).min(1).messages({
     'object.min': 'At least one field must be provided for update',
 });
@@ -149,6 +195,7 @@ const bankTransactionIdSchema = Joi.object({
 });
 
 module.exports = {
+    BankTransactionItemSchema,
     bankTransactionCreateSchema,
     bankTransactionUpdateSchema,
     bankTransactionQuerySchema,

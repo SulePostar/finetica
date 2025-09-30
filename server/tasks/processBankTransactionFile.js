@@ -1,4 +1,4 @@
-const { processBankTransaction, processUnprocessedFiles, getUnprocessedFiles } = require('../services/bankTransaction');
+const { processBankTransaction, processUnprocessedFiles, getUnprocessedFiles, setFileInvalid } = require('../services/bankTransaction');
 const { getFileSource } = require('../utils/fileFetcher');
 const Logger = require('../utils/logger');
 
@@ -29,7 +29,9 @@ const Logger = require('../utils/logger');
 
                 Logger.success(`File ${fileName} processed successfully`);
             } catch (err) {
+                // If not a valid bank transaction, set isValid to false
                 Logger.error(`No file found: ${fileName}:`, err);
+                await setFileInvalid(fileName);
             }
         }
 
