@@ -19,6 +19,7 @@ router.get('/logs/:id', isAuthenticated, getBankTransactionLog);
 router.get('/', getBankTransactions);
 router.get('/:id', getTransactionById);
 router.get('/:id/items', getBankTransactionItemsById);
+router.put('/items/:itemId', updateBankTransactionItem);
 router.post('/',
     isAuthenticated,
     validate(bankTransactionCreateSchema),
