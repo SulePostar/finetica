@@ -69,10 +69,6 @@
   }
 }
 
-[data-coreui-theme="light"] .modal-content .badge {
-  color: #ffffff !important;
-}
-
 .modal {
   z-index: 2000 !important;
 }

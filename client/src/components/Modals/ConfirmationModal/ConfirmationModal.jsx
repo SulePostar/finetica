@@ -31,6 +31,7 @@ const ConfirmationModal = ({
   loading = false,
   error = '',
   showSections = false,
+  isDarkMode
 }) => {
   const [localFormData, setLocalFormData] = useState({});
 
@@ -87,8 +88,10 @@ const ConfirmationModal = ({
       <div key={sectionIndex}>
         {section.type === 'section' && (
           <>
-            {sectionIndex > 0 && <hr className="my-4" />}
-            <CBadge className="section-header mb-3 fs-6">{section.label}</CBadge>
+            {sectionIndex > 0 && <hr className={`my-4 ${isDarkMode ? 'border-light' : 'border-dark'}`} />}
+            <div className={`section-header mb-3 ${isDarkMode ? 'text-light bg-dark' : 'text-dark bg-light'} p-2 rounded`}>
+              <strong>{section.label}</strong>
+            </div>
           </>
         )}
         {section.fields.map((field, fieldIndex) => renderField(field, `${sectionIndex}-${fieldIndex}`))}
@@ -101,11 +104,14 @@ const ConfirmationModal = ({
       return null;
     }
 
+    const inputClassName = isDarkMode ? 'bg-dark text-light border-secondary' : '';
+    const labelClassName = `fw-semibold ${isDarkMode ? 'text-light' : 'text-dark'}`;
+
     if (field.type === 'readonly') {
       return (
         <div key={key} className="mb-3">
-          <CFormLabel className="fw-semibold">{field.label}</CFormLabel>
-          <div className='readonly-field'>
+          <CFormLabel className={labelClassName}>{field.label}</CFormLabel>
+          <div className={`readonly-field p-2 rounded ${isDarkMode ? 'bg-dark text-light border border-secondary' : 'bg-light text-dark border'}`}>
             {field.value}
           </div>
         </div>
@@ -114,7 +120,7 @@ const ConfirmationModal = ({
 
     return (
       <div key={key} className="mb-3">
-        <CFormLabel htmlFor={field.fullName} className="fw-semibold">
+        <CFormLabel htmlFor={field.name} className={labelClassName}>
           {field.label}
         </CFormLabel>
         {field.type === 'select' ? (
@@ -122,7 +128,7 @@ const ConfirmationModal = ({
             id={field.name}
             value={localFormData[field.name] || ''}
             onChange={(e) => handleInputChange(field.name, e.target.value)}
-            className={field.className || ''}
+            className={`${field.className || ''} ${inputClassName}`}
           >
             {(field.options || []).map((option) => (
               <option key={option.value} value={option.value}>
@@ -137,6 +143,7 @@ const ConfirmationModal = ({
             onChange={(e) => handleInputChange(field.name, e.target.value)}
             placeholder={field.placeholder}
             rows={field.rows || 3}
+            className={inputClassName}
           />
         ) : (
           <CFormInput
@@ -145,7 +152,7 @@ const ConfirmationModal = ({
             value={localFormData[field.name] || ''}
             onChange={(e) => handleInputChange(field.name, e.target.value)}
             placeholder={field.placeholder}
-            className={`input ${field.className || ''}`}
+            className={`${field.className || ''} ${inputClassName}`}
             disabled={field.readonly || false}
           />
         )}
@@ -159,11 +166,17 @@ const ConfirmationModal = ({
       onClose={onCancel}
       alignment="center"
       size={isForm ? 'lg' : undefined}
+      className={isDarkMode ? 'dark-modal' : ''}
     >
-      <CModalHeader closeButton>
-        <CModalTitle>{title}</CModalTitle>
+      <CModalHeader
+        closeButton
+        className={isDarkMode ? 'bg-dark text-light border-secondary' : ''}
+      >
+        <CModalTitle className={isDarkMode ? 'text-light' : ''}>
+          {title}
+        </CModalTitle>
       </CModalHeader>
-      <CModalBody>
+      <CModalBody className={isDarkMode ? 'bg-dark text-light' : ''}>
         {error && (
           <CAlert color="danger" className="mb-3">
             {error}
@@ -174,10 +187,10 @@ const ConfirmationModal = ({
             {renderFormFields()}
           </div>
         ) : (
-          <div>{body}</div>
+          <div className={isDarkMode ? 'text-light' : ''}>{body}</div>
         )}
       </CModalBody>
-      <CModalFooter>
+      <CModalFooter className={isDarkMode ? 'bg-dark text-light border-secondary' : ''}>
         <AppButton variant="no-hover" onClick={onCancel} disabled={loading}>
           {cancelText}
         </AppButton>
