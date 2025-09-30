@@ -13,26 +13,11 @@ import {
   CListGroup,
   CListGroupItem,
 } from '@coreui/react';
-import { cilShieldAlt, cilBolt, cilSettings, cilWarning, cilUser, cilChartLine } from '@coreui/icons';
+import { cilUser, cilChartLine } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
-import AppButton from '../../AppButton/AppButton'; 
+import AppButton from '../../AppButton/AppButton';
 import './RoleStatusManagement.css';
-
-const normalizeType = (obj) => {
-  const raw =
-    obj?.type ??
-    obj?.statusType ??
-    obj?.status_type ??
-    obj?.status ??
-    obj?.name ??
-    'Pending';
-
-  const s = String(raw).trim().toLowerCase();
-  if (s.startsWith('approv')) return 'Approved';
-  if (s.startsWith('reject')) return 'Rejected';
-  if (s.startsWith('delete') || s === 'removed') return 'Deleted';
-  return 'Pending';
-};
+import { capitalizeFirst } from '../../../helpers/capitalizeFirstLetter';
 
 const RoleAndStatusDashboard = () => {
   const dispatch = useDispatch();
@@ -70,68 +55,8 @@ const RoleAndStatusDashboard = () => {
     });
   }, [dispatch, statusName, statusType]);
 
-  const stats = useMemo(() => {
-    const totalRoles = roles.length;
-    const totalStatuses = statuses.length;
-    const types = statuses.map(normalizeType);
-    const approved = types.filter((t) => t === 'Approved').length;
-    const pending = types.filter((t) => t === 'Pending').length;
-    const rejected = types.filter((t) => t === 'Rejected').length;
-    return { totalRoles, totalStatuses, approved, pending, rejected };
-  }, [roles, statuses]);
-
   return (
     <>
-      <CRow className="mb-4">
-        <CCol sm={6} md={3}>
-          <CCard className="stat-card">
-            <CCardBody className="flex-center gap-3">
-              <div className="dot"><CIcon icon={cilSettings} size="lg" /></div>
-              <div>
-                <div className="stat-label">Total Roles</div>
-                <div className="stat-value">{stats.totalRoles}</div>
-              </div>
-            </CCardBody>
-          </CCard>
-        </CCol>
-
-        <CCol sm={6} md={3}>
-          <CCard className="stat-card">
-            <CCardBody className="flex-center gap-3">
-              <div className="dot"><CIcon icon={cilShieldAlt} size="lg" /></div>
-              <div>
-                <div className="stat-label">Total Statuses</div>
-                <div className="stat-value">{stats.totalStatuses}</div>
-              </div>
-            </CCardBody>
-          </CCard>
-        </CCol>
-
-        <CCol sm={6} md={3}>
-          <CCard className="stat-card">
-            <CCardBody className="flex-center gap-3">
-              <div className="dot"><CIcon icon={cilBolt} size="lg" /></div>
-              <div>
-                <div className="stat-label">Approved</div>
-                <div className="stat-value">{stats.approved}</div>
-              </div>
-            </CCardBody>
-          </CCard>
-        </CCol>
-
-        <CCol sm={6} md={3}>
-          <CCard className="stat-card">
-            <CCardBody className="flex-center gap-3">
-              <div className="dot dot-subtle"><CIcon icon={cilWarning} size="lg" /></div>
-              <div>
-                <div className="stat-label">Pending</div>
-                <div className="stat-value">{stats.pending}</div>
-              </div>
-            </CCardBody>
-          </CCard>
-        </CCol>
-      </CRow>
-
       <CRow className="g-4">
         <CCol md={5}>
           <CCard className="panel">
@@ -198,17 +123,6 @@ const RoleAndStatusDashboard = () => {
                 <CIcon icon={cilChartLine} size="lg" className="status-header-icon" /> Statuses{' '}
                 <span className="muted">({statuses.length})</span>
               </div>
-              <div className="panel-chips">
-                <CBadge className="pill status-pill pending-custom">
-                  {stats.pending} Pending
-                </CBadge>
-                <CBadge color="success" className="chip">
-                  {stats.approved} Approved
-                </CBadge>
-                <CBadge color="danger" className="chip">
-                  {stats.rejected} Rejected
-                </CBadge>
-              </div>
             </CCardHeader>
 
             <CCardBody>
@@ -235,34 +149,33 @@ const RoleAndStatusDashboard = () => {
                 </div>
                 <CListGroup>
                   {statuses.map((s, idx) => {
-                    const type = normalizeType(s);
                     let badge;
-                    switch (type) {
-                      case 'Approved':
+                    switch (s.status) {
+                      case 'pending':
+                        badge = (
+                          <CBadge className="pill status-pill pending-custom">
+                            Pending
+                          </CBadge>
+                        );
+                        break;
+                      case 'approved':
                         badge = (
                           <CBadge color="success" className="pill status-pill">
                             Approved
                           </CBadge>
                         );
                         break;
-                      case 'Rejected':
+                      case 'rejected':
                         badge = (
                           <CBadge color="danger" className="pill status-pill">
                             Rejected
                           </CBadge>
                         );
                         break;
-                      case 'Deleted':
-                        badge = (
-                          <CBadge color="secondary" className="pill status-pill">
-                            Deleted
-                          </CBadge>
-                        );
-                        break;
                       default:
                         badge = (
-                          <CBadge className="pill status-pill pending-custom">
-                            Pending
+                          <CBadge color="secondary" className="pill status-pill">
+                            {capitalizeFirst(s.status)}
                           </CBadge>
                         );
                     }

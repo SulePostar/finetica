@@ -25,6 +25,14 @@ const AppHeaderDropdown = ({ isDarkMode }) => {
   const handleLogout = () => {
     dispatch(logout());
     notify.onSuccess('Logout successful');
+
+    try {
+      document.documentElement.setAttribute('data-coreui-theme', 'light');
+      document.body.classList.remove('dark-mode');
+    } catch (e) {
+      console.error('Failed to set theme on document', e);
+    }
+
     navigate('/login');
   };
 
