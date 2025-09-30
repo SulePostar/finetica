@@ -17,6 +17,7 @@ const AppButton = ({
     iconClassName = "",
     children,
     className = "",
+    button,
     ...rest
 }) => {
     const variantClass = className.includes('btn-no-hover') ? '' : `btn-${variant}`;

@@ -70,7 +70,7 @@ const DocumentItemsPage = () => {
                 />
             ),
             ignoreRowClick: true,
-            allowOverflow: true,
+            // allowOverflow: true,
             button: true,
         }
     ]);
@@ -105,11 +105,11 @@ const DocumentItemsPage = () => {
             sortable: true,
             cell: (row) => (row.date ? new Date(row.date).toLocaleDateString() : '—'),
         },
-        { name: 'Description', selector: row => row.description, minWidth: '160px', wrap: true },
-        { name: 'Amount', selector: row => row.amount, minWidth: '120px', wrap: true },
-        { name: 'Bank Name', selector: row => row.bankName, minWidth: '140px', wrap: true },
-        { name: 'Account Number', selector: row => row.accountNumber, minWidth: '140px', wrap: true },
-        { name: 'Direction', selector: row => row.direction, minWidth: '100px', wrap: true },
+        { name: 'Description', selector: row => row.description, wrap: true },
+        { name: 'Amount', selector: row => row.amount, wrap: true },
+        { name: 'Bank Name', selector: row => row.bankName, wrap: true },
+        { name: 'Account Number', selector: row => row.accountNumber, wrap: true },
+        { name: 'Direction', selector: row => row.direction, wrap: true },
     ];
 
 

@@ -19,7 +19,6 @@ const ActionsDropdown = ({
       className="action-dropdown"
       drop="up"
       align="end"
-      flip
     >
       <Dropdown.Toggle
         id={`dropdown-${id ?? 'row'}`}
@@ -35,21 +34,19 @@ const ActionsDropdown = ({
         className="action-dropdown-menu"
         role="menu"
         popperConfig={{
-          strategy: 'fixed',                 
+          strategy: 'fixed',
           modifiers: [
-            { name: 'offset', options: { offset: [0, 10] } }, 
+            { name: 'flip', enabled: true }, // <-- add this
+            { name: 'offset', options: { offset: [0, 10] } },
             {
               name: 'preventOverflow',
               options: {
-                boundary: 'viewport',       
+                boundary: 'viewport',
                 altBoundary: true,
                 tether: false,
               },
             },
-            {
-              name: 'computeStyles',
-              options: { adaptive: false }, 
-            },
+            { name: 'computeStyles', options: { adaptive: false } },
           ],
         }}
       >
@@ -65,6 +62,7 @@ const ActionsDropdown = ({
         )}
       </Dropdown.Menu>
     </Dropdown>
+
   );
 };
 
