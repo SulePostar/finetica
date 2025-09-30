@@ -6,6 +6,7 @@ import {
 import { PdfViewer } from "../PdfViewer/PdfViewer";
 import api from "../../services/api";
 import AppButton from "../AppButton/AppButton";
+import '../../pages/invalidPdfs/InvalidPdfs.css'
 
 const TYPE_TO_PATH = {
   1: "transactions",
@@ -107,13 +108,13 @@ const InvalidPdfDetails = ({ id, type }) => {
             <div className="d-flex gap-2">
               {isEditing ? (
                 <>
-                  <AppButton variant="primary" size="sm">Save</AppButton>
-                  <AppButton variant="no-hover" size="sm" onClick={handleCancel}>Cancel</AppButton>
+                  <AppButton variant="primary" size="md">Save</AppButton>
+                  <AppButton variant="no-hover" size="md" onClick={handleCancel}>Cancel</AppButton>
                 </>
               ) : (
                 <>
-                  <AppButton variant="edit" size="sm" onClick={handleEdit} icon='mdi:pencil' iconClassName="me-1">Edit</AppButton>
-                  <AppButton variant="danger" size="sm" onClick={handleDelete} icon='mdi:trash' iconClassName="me-1">Delete</AppButton>
+                  <AppButton variant="edit" size="md" onClick={handleEdit} icon='mdi:pencil' iconClassName="me-1">Edit</AppButton>
+                  <AppButton variant="danger" size="md" onClick={handleDelete} icon='mdi:trash' iconClassName="me-1">Delete</AppButton>
                 </>
               )}
             </div>
