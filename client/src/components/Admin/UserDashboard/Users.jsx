@@ -390,6 +390,7 @@ const Users = () => {
           user={selectedUser}
           loading={deletingUser === selectedUser?.id}
           error={error}
+          isDarkMode={isDarkMode}
         />
       )}
 

@@ -53,20 +53,12 @@
     color: #000000 !important;
 }
 
-[data-coreui-theme="light"] .modal-content .badge {
-    color: #000000 !important;
-}
-
 [data-coreui-theme="light"] .modal-content .small {
     color: #6c757d !important;
 }
 
 [data-coreui-theme="dark"] .modal-content {
     background-color: #212529 !important;
-    color: #ffffff !important;
-}
-
-[data-coreui-theme="dark"] .modal-content .badge {
     color: #ffffff !important;
 }
 
