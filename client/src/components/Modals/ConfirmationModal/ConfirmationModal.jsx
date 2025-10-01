@@ -10,7 +10,7 @@ import {
   CFormLabel,
   CAlert,
   CFormTextarea,
-  CBadge,
+  CBadge
 } from '@coreui/react';
 import AppButton from '../../AppButton/AppButton';
 import './ConfirmationModal.css';
@@ -31,6 +31,7 @@ const ConfirmationModal = ({
   loading = false,
   error = '',
   showSections = false,
+  isDarkMode
 }) => {
   const [localFormData, setLocalFormData] = useState({});
 
@@ -56,7 +57,6 @@ const ConfirmationModal = ({
     }
   };
 
-  // Group fields by section for better organization
   const renderFormFields = () => {
     if (!showSections) {
       return formFields.map((field, index) => renderField(field, index));
@@ -75,7 +75,6 @@ const ConfirmationModal = ({
           currentSectionObj.fields.push(field);
         }
       } else {
-        // Handle fields without sections
         if (!sections.length || sections[sections.length - 1].type !== 'unsectioned') {
           sections.push({ type: 'unsectioned', fields: [] });
         }
@@ -87,8 +86,10 @@ const ConfirmationModal = ({
       <div key={sectionIndex}>
         {section.type === 'section' && (
           <>
-            {sectionIndex > 0 && <hr className="my-4" />}
-            <CBadge className="section-header mb-3 fs-6">{section.label}</CBadge>
+            {sectionIndex > 0 && <hr className="my-4 modal-divider" />}
+            <div className="section-header mb-3 fw-bold fs-6">
+              {section.label}
+            </div>
           </>
         )}
         {section.fields.map((field, fieldIndex) => renderField(field, `${sectionIndex}-${fieldIndex}`))}
@@ -104,7 +105,7 @@ const ConfirmationModal = ({
     if (field.type === 'readonly') {
       return (
         <div key={key} className="mb-3">
-          <CFormLabel className="fw-semibold">{field.label}</CFormLabel>
+          <CFormLabel>{field.label}</CFormLabel>
           <div className='readonly-field'>
             {field.value}
           </div>
@@ -114,7 +115,7 @@ const ConfirmationModal = ({
 
     return (
       <div key={key} className="mb-3">
-        <CFormLabel htmlFor={field.fullName} className="fw-semibold">
+        <CFormLabel htmlFor={field.name}>
           {field.label}
         </CFormLabel>
         {field.type === 'select' ? (
@@ -122,7 +123,6 @@ const ConfirmationModal = ({
             id={field.name}
             value={localFormData[field.name] || ''}
             onChange={(e) => handleInputChange(field.name, e.target.value)}
-            className={field.className || ''}
           >
             {(field.options || []).map((option) => (
               <option key={option.value} value={option.value}>
@@ -161,7 +161,9 @@ const ConfirmationModal = ({
       size={isForm ? 'lg' : undefined}
     >
       <CModalHeader closeButton>
-        <CModalTitle>{title}</CModalTitle>
+        <CModalTitle>
+          {title}
+        </CModalTitle>
       </CModalHeader>
       <CModalBody>
         {error && (
@@ -170,7 +172,7 @@ const ConfirmationModal = ({
           </CAlert>
         )}
         {isForm ? (
-          <div className="modal-form">
+          <div>
             {renderFormFields()}
           </div>
         ) : (

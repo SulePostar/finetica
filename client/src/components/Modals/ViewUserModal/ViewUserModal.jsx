@@ -54,7 +54,9 @@ const ViewUserModal = ({ visible, onClose, user, onEdit, onDelete, roles, status
                 <div className="row">
                     {/* Left Column - Contact Information */}
                     <div className="col-md-6">
-                        <CBadge className='fs-6 text-header'>
+                        <CBadge
+                            className={`fs-6 text-header ${isDarkMode ? 'text-light' : 'text-dark'}`}
+                        >
                             Contact Information
                         </CBadge>
                         <div className='small mb-1'>Email</div>
@@ -71,7 +73,7 @@ const ViewUserModal = ({ visible, onClose, user, onEdit, onDelete, roles, status
 
                     {/* Right Column - Account Details */}
                     <div className="col-md-6">
-                        <CBadge className='fs-6 text-header'>
+                        <CBadge className={`fs-6 text-header ${isDarkMode ? 'text-light' : 'text-dark'}`}>
                             Account Details
                         </CBadge>
                         <div className={`small mb-1 ${isDarkMode ? 'text-light' : 'text-muted'}`}>Last Active</div>
@@ -84,7 +86,7 @@ const ViewUserModal = ({ visible, onClose, user, onEdit, onDelete, roles, status
                 {/* Role Information */}
                 <div className="row mt-4">
                     <div className="col-12">
-                        <CBadge className='fs-6 text-header'>
+                        <CBadge className={`fs-6 text-header ${isDarkMode ? 'text-light' : 'text-dark'}`}>
                             Role Information
                         </CBadge>
                         <div className="d-flex align-items-center mt-1">
