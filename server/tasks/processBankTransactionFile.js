@@ -30,7 +30,7 @@ const Logger = require('../utils/logger');
                 Logger.success(`File ${fileName} processed successfully`);
             } catch (err) {
                 // If not a valid bank transaction, set isValid to false
-                Logger.error(`No file found: ${fileName}:`, err);
+                Logger.error(`File is not a bank transaction: ${fileName}:`, err);
                 await setFileInvalid(fileName);
             }
         }

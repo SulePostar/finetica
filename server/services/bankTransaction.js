@@ -117,7 +117,6 @@ async function editBankTransactionItem(itemId, updatedData) {
     try {
         const item = await BankTransactionItem.findByPk(itemId);
         if (!item) throw new AppError('Bank transaction item not found', 404);
-
         await item.update(updatedData);
         return item;
     } catch (error) {
