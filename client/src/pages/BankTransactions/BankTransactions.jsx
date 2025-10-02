@@ -49,10 +49,10 @@ const BankTransactions = () => {
       cell: (row) => (row.date ? new Date(row.date).toLocaleDateString() : '—')
     },
     {
-      name: 'Category',
-      selector: (row) => row.TransactionCategory?.name || '—',
+      name: 'Name',
+      selector: (row) => row.fileName || '—',
       sortable: true,
-      cell: (row) => row.TransactionCategory?.name || '—',
+      cell: (row) => row.fileName || '—',
     },
     { name: 'Account Number', selector: (row) => row.accountNumber || '—', sortable: true, width: '200px' },
     { name: 'Description', selector: (row) => row.description || '—', sortable: true, wrap: true, width: '300px' },

@@ -38,6 +38,7 @@ const DocumentInfo = ({
             case 'kif': return 'KIF (Sales Invoice) Information';
             case 'kuf': return 'KUF (Purchase Invoice) Information';
             case 'partner': return 'Business Partner Information';
+            case 'bank-transactions': return 'Bank Transaction Information';
             default: return 'Document Information';
         }
     };

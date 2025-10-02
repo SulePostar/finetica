@@ -109,10 +109,6 @@ const bankTransactionUpdateSchema = Joi.object({
         'number.base': 'Amount must be a number',
     }),
 
-    direction: Joi.string().trim().optional().messages({
-        'string.base': 'Direction must be a string',
-    }),
-
     account_number: Joi.string().trim().optional().messages({
         'string.base': 'Account number must be a string',
     }),

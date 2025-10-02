@@ -59,13 +59,13 @@ export const DOCUMENT_FIELD_CONFIGS = {
     { label: 'Amount', key: 'amount' },
     { label: 'Direction', key: 'direction' },
     { label: 'Account Number', key: 'accountNumber' },
-    { label: 'Partner ID', key: 'BusinessPartner.id' },
-    { label: 'Partner Name', key: 'BusinessPartner.name' },
+    { label: 'Partner ID', key: 'businessPartnerId.id' },
+    { label: 'Partner Name', key: 'businessPartnerName' },
     { label: 'Category', key: 'TransactionCategory.name' },
     { label: 'Created at', key: 'created_at' },
     { label: 'Updated at', key: 'updated_at' },
-    { label: 'Approved at', key: 'approved_at' },
-    { label: 'Approved by', key: 'approved_by' }
+    { label: 'Approved at', key: 'approvedAt' },
+    { label: 'Approved by', key: 'ApprovedByUser.fullName' }
   ],
   partner: [
     { label: 'Name', key: 'name' },

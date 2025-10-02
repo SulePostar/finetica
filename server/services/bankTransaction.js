@@ -1,12 +1,12 @@
-const { BusinessPartner, TransactionCategory, BankTransaction, BankTransactionProcessingLog, BankTransactionItem } = require('../models');
+const { BusinessPartner, TransactionCategory, BankTransaction, BankTransactionProcessingLog, BankTransactionItem, User } = require('../models');
 const { processDocument } = require('./aiService');
 const AppError = require('../utils/errorHandler');
 const BANK_TRANSACTIONS_PROMPT = require('../prompts/BankTransactions');
 const bankTransactionSchema = require('../schemas/bankTransactionSchema');
 const { sequelize } = require('../models');
+const { fn, col } = require('sequelize');
 const supabaseService = require('../utils/supabase/supabaseService');
-const { get } = require('../routes/kif');
-const { or } = require('sequelize');
+
 
 const MODEL_NAME = 'gemini-2.5-flash-lite';
 const BUCKET_NAME = 'transactions';
@@ -32,7 +32,16 @@ const getTransactions = async (query = {}) => {
         const data = await BankTransaction.findAll({
             include: [
                 { model: BusinessPartner },
-                { model: TransactionCategory }
+                { model: TransactionCategory },
+                {
+                    model: User,
+                    as: 'ApprovedByUser',
+                    attributes: [
+                        'id',
+                        'firstName',
+                        'lastName'
+                    ]
+                }
             ],
             order: [[sortField, sortOrder.toUpperCase()]],
             offset,
@@ -54,7 +63,16 @@ const getBankTransactionById = async (id) => {
         const document = await BankTransaction.findByPk(id, {
             include: [
                 { model: TransactionCategory },
-                { model: BusinessPartner }
+                { model: BusinessPartner },
+                {
+                    model: User,
+                    as: 'ApprovedByUser',
+                    attributes: ['id', 'firstName', 'lastName', 'email', [
+                        fn('concat', col('ApprovedByUser.first_name'), ' ', col('ApprovedByUser.last_name')),
+                        'fullName'
+                    ]],
+                    required: false
+                }
             ]
         });
 
@@ -232,6 +250,12 @@ const createBankTransactionManually = async (bankTransactionData, userId) => {
                 },
                 {
                     model: BusinessPartner,
+                },
+                {
+                    model: User,
+                    as: 'ApprovedByUser',
+                    attributes: ['id', 'firstName', 'lastName'],
+                    required: false
                 }
             ]
         });
@@ -263,6 +287,12 @@ const approveBankTransactionById = async (id, userId, updatedData = {}) => {
             include: [
                 { model: TransactionCategory, required: false },
                 { model: BusinessPartner, required: false },
+                {
+                    model: User,
+                    as: 'ApprovedByUser',
+                    attributes: ['id', 'firstName', 'lastName'],
+                    required: false
+                }
             ]
         });
 
@@ -296,7 +326,13 @@ const editBankTransaction = async (id, updatedData) => {
         return await BankTransaction.findByPk(id, {
             include: [
                 { model: TransactionCategory },
-                { model: BusinessPartner }
+                { model: BusinessPartner },
+                {
+                    model: sequelize.models.User,
+                    as: 'ApprovedByUser',
+                    attributes: ['id', 'firstName', 'lastName'],
+                    required: false
+                }
             ]
         });
     } catch (error) {
