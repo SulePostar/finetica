@@ -33,7 +33,7 @@ const listInvoices = async ({ page = 1, perPage = 10, sortField, sortOrder = 'as
       order = [[SORT_FIELD_MAP[sortField], (sortOrder || 'asc').toUpperCase()]];
     }
 
-    const { rows, count } = await PurchaseInvoice.findAndCountAll({
+    const rows = await PurchaseInvoice.findAll({
       offset,
       limit,
       order,
@@ -48,6 +48,8 @@ const listInvoices = async ({ page = 1, perPage = 10, sortField, sortOrder = 'as
         }
       ],
     });
+
+    const count = await PurchaseInvoice.count();
 
     const data = rows.map(row => row.get({ plain: true }));
     return { data, total: count };

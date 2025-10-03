@@ -213,7 +213,7 @@ const InvalidPdfs = () => {
                           highlightOnHover
                           responsive
                           noDataComponent={<div className="p-4 text-center text-muted">
-                            {getNoDataMessage(1)}
+                            {getNoDataMessage(2)}
                           </div>}
                         />
                       </CTabPane>
@@ -226,7 +226,7 @@ const InvalidPdfs = () => {
                           highlightOnHover
                           responsive
                           noDataComponent={<div className="p-4 text-center text-muted">
-                            {getNoDataMessage(1)}
+                            {getNoDataMessage(3)}
                           </div>}
                         />
                       </CTabPane>
@@ -239,7 +239,7 @@ const InvalidPdfs = () => {
                           highlightOnHover
                           responsive
                           noDataComponent={<div className="p-4 text-center text-muted">
-                            {getNoDataMessage(1)}
+                            {getNoDataMessage(4)}
                           </div>}
                         />
                       </CTabPane>
