@@ -1,6 +1,7 @@
 import { fetchRoles, addRole, selectRoles, deleteRole, selectRolesLoading } from '../redux/roles/rolesSlice.js';
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { capitalizeFirst } from '../helpers/capitalizeFirstLetter.js';
 
 export function useRoles() {
   const dispatch = useDispatch();
