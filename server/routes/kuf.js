@@ -6,7 +6,7 @@ const {
     approveInvoice,
     getKufItems,
 } = require('../controllers/kuf');
-const { getInvalidKufs, getKufLog } = require('../controllers/kufProcessingLog');
+const { getInvalidKufs, getKufLog, deleteKufLog } = require('../controllers/kufProcessingLog');
 const { updateKufItem } = require('../controllers/kuf');
 const { upload } = require('../services/aiService');
 const isAuthenticated = require('../middleware/isAuthenticated');
@@ -14,6 +14,7 @@ const isAuthenticated = require('../middleware/isAuthenticated');
 // Base routes (matching contract pattern)
 router.get('/logs/invalid', isAuthenticated, getInvalidKufs);
 router.get('/logs/:id', isAuthenticated, getKufLog);
+router.delete('/logs/:id', isAuthenticated, deleteKufLog);
 router.get('/', getInvoiceData);
 router.get('/:id', isAuthenticated, getInvoice);
 router.get('/:id/items', getKufItems);
