@@ -1,45 +1,124 @@
 :root {
+  /* -------------------- */
   /* Colors: Surface */
+  /* -------------------- */
   --color-surface-light: #ffffff;
   --color-surface-dark: #292f3d;
   --color-surface-darker: #22262e;
 
+  /* -------------------- */
   /* Colors: Text */
+  /* -------------------- */
   --color-text-primary-light: #111827;
   --color-text-primary-dark: #f3f4f6;
   --color-text-muted-light: #6b7280;
   --color-text-muted-dark: #9ca3af;
 
+  /* -------------------- */
   /* Inputs */
-  --input-bg: #ffffff;
-  --input-border: #d1d5db;
+  /* -------------------- */
+  --input-bg-light: #ffffff;
+  --input-bg-dark: #1f2937; /* example dark */
+  --input-border-light: #d1d5db;
+  --input-border-dark: #374151;
   --input-focus-border: #6366f1;
   --input-focus-shadow: rgba(99, 102, 241, 0.15);
-  --input-placeholder: #9ca3af;
+  --input-placeholder-light: #9ca3af;
+  --input-placeholder-dark: #9ca3af; /* can change if needed */
 
+  /* -------------------- */
   /* Buttons */
+  /* -------------------- */
   --btn-add-bg: #10b981;
   --btn-add-hover: #059669;
-  --btn-delete-main: #ef4444;
+
+  --btn-delete-bg: #ef4444;
   --btn-delete-hover: #b91c1c;
 
+
+  /* -------------------- */
   /* Table rows */
+  /* -------------------- */
   --table-head-bg: #f3f4f6;
   --table-head-color: #374151;
   --table-row-bg: #ffffff;
   --table-row-striped: #f8fafc;
   --table-row-hover: #f9fafb;
 
-  /* Status badge (fallback) */
+  /* -------------------- */
+  /* Status badges */
+  /* -------------------- */
   --status-bg: #e0e7ff;
   --status-color: #111827;
 
+  /* -------------------- */
   /* Layout helpers */
+  /* -------------------- */
   --card-pad-x: 1rem;
   --grid-id: 60px;
   --grid-main: 1fr;
   --grid-actions: 110px;
+  --app-header-height: 64px;
+
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  --card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  --header-bg: #f9fafb;
+  --header-border: #f1f3f5;
+
+  --border-radius-lg: 12px;
+  --border-radius-md: 10px;
+  --border-radius-sm: 6px;
+
+  --spacing-xs: 0.35rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.25rem;
+  --spacing-xl: 1.5rem;
+
+  --border-color: #5856d6;
+  --info-text: #6c757d;
+  --document-info-bg: #f9f9f9;
+  --document-info-border: #d8d3e4ff;
+  --document-info-hover-bg: #ede9fe;
+  --info-row-border: #e4e4e4;
+  --detail-card-bg: #f8fafc;
+
+  --muted:#f1f5f9;
+  --border:#e2e8f0;
+
+
+
+
+  --primary: #5d4eff;
+  --btn-primary-light: #7c6fff;
+  --btn-primary-dark: #4631e8;
+  --btn-primary-foreground: #ffffff;
+
+  --btn-success: #15803d;
+  --btn-success-hover: #16a34a;
+
+  --btn-secondary: #e5e7eb;
+  --btn-secondary-hover: #d1d5db;
+
+  /* -------------------- */
+  /* CoreUI overrides */
+  /* -------------------- */
+  --cui-primary: #4f46e5;
+  --cui-secondary: #6b7280;
+  --cui-background: #ffffff;
+  --cui-border-color: #e5e7eb;
+  --cui-hover-background: #f9fafb;
+  --cui-font-color: #111827;
+
+
+
+  --btn-danger: #ef4444;
+  --btn-danger-hover: #dc2626;
 }
+
 
 /* ---------- TOKENS (DARK) ---------- */
 [data-coreui-theme='dark'] {
@@ -590,9 +669,7 @@
   }
 }
 
-:root {
-  --app-header-height: 64px;
-}
+
 
 .table-page-outer {
   position: fixed;
@@ -719,27 +796,6 @@ body {
   overflow-x: hidden;
 }
 
-:root {
-  --primary: #5d4eff;
-  --btn-primary-light: #7c6fff;
-  --btn-primary-dark: #4631e8;
-  --btn-primary-foreground: #ffffff;
-
-  --btn-success: #15803d;
-  --btn-success-hover: #16a34a;
-
-  --btn-danger: #ef4444;
-  --btn-danger-hover: #dc2626;
-
-  --btn-secondary: #e5e7eb;
-  --btn-secondary-hover: #d1d5db;
-
-  --background: #ffffff;
-  --foreground: #090a0d;
-  --border: #e2e8f0;
-  --accent: #f8fafc;
-  --muted: #f1f5f9;
-}
 
 .btn-custom {
   display: inline-flex;
@@ -845,28 +901,7 @@ body {
   flex: unset !important;
   display: block !important;
 }
-/* CSS Custom Properties for better maintainability */
-:root {
-  --document-info-bg: #f9f9f9;
-  --document-info-border: #d8d3e4ff;
-  --document-info-hover-bg: #ede9fe;
-  --info-row-border: #e4e4e4;
-  --text-primary: #111;
-  --text-muted: #6c757d;
-  --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.25), 0 5px 15px rgba(0, 0, 0, 0.12);
-  --card-hover-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-  --border-radius-lg: 12px;
-  --border-radius-md: 10px;
-  --border-radius-sm: 6px;
-  --spacing-xs: 0.35rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.25rem;
-  --spacing-xl: 1.5rem;
-  --info-text: #6c757d;
-  --border-color: #5856d6;
-  --detail-card-bg: #f8fafc;
-}
+
 
 [data-coreui-theme='dark'] {
   --document-info-bg: #212631;
@@ -1783,14 +1818,6 @@ body {
   color: #ffffff;
 }
 
-:root {
-  --cui-primary: #4f46e5;
-  --cui-secondary: #6b7280;
-  --cui-background: #ffffff;
-  --cui-border-color: #e5e7eb;
-  --cui-hover-background: #f9fafb;
-  --cui-font-color: #111827;
-}
 [data-coreui-theme='dark'] {
   --cui-primary: #8b5cf6;
   --cui-secondary: #9ca3af;
@@ -1862,49 +1889,7 @@ body {
   color: inherit;
 }
 
-/* ===== CSS VARIABLES ===== */
-:root {
-  --card-bg: #ffffff;
-  --card-border: #e5e7eb;
-  --card-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-  --card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 
-  --header-bg: #f9fafb;
-  --header-border: #f1f3f5;
-
-  --text-primary: #111827;
-  --text-muted: #6b7280;
-
-  --input-bg: #ffffff;
-  /* Light mode input */
-  --text-primary: #111827;
-  /* Light mode text */
-  --input-border: #d1d5db;
-  --input-focus-border: #6366f1;
-  --input-focus-shadow: rgba(99, 102, 241, 0.15);
-  --input-placeholder: #9ca3af;
-  /* Light mode placeholder */
-
-  --btn-add-bg: #10b981;
-  --btn-add-hover: #059669;
-  --btn-delete-color: #dc2626;
-  --btn-delete-border: #fca5a5;
-  --btn-delete-hover-bg: #fee2e2;
-  --btn-delete-hover-border: #ef4444;
-  --btn-delete-hover-color: #b91c1c;
-
-  --table-head-bg: #f3f4f6;
-  --table-head-color: #374151;
-  --table-row-bg: #ffffff;
-  /* Light mode default */
-  --table-row-striped: #f8fafc;
-  /* Light mode stripe */
-  --table-row-hover: #f9fafb;
-  /* Light mode hover */
-
-  --status-bg: #e0e7ff;
-  --status-color: #ffffff;
-}
 
 [data-coreui-theme='dark'] {
   --card-bg: #292f3d;
@@ -2045,7 +2030,7 @@ body {
   background: var(--table-row-hover);
 }
 
-/* ===== Status Badges ===== */
+/* ===== Status Badges =====
 .status-badge {
   font-size: 0.75rem;
   padding: 0.4rem 0.75rem;
@@ -2053,7 +2038,7 @@ body {
   font-weight: 500;
   background-color: var(--status-bg);
   color: var(--status-color);
-}
+} */
 
 /* ===== Delete Button ===== */
 .delete-btn {
