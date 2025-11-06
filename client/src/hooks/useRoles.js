@@ -1,12 +1,12 @@
-import { fetchRoles, addRole, selectRoles, deleteRole } from '../redux/roles/rolesSlice.js';
-import { useEffect, useState, useCallback } from "react";
+import { fetchRoles, addRole, selectRoles, deleteRole, selectRolesLoading } from '../redux/roles/rolesSlice.js';
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 
 export function useRoles() {
   const dispatch = useDispatch();
 
   const roles = useSelector(selectRoles) || [];
+  const rolesLoading = useSelector(selectRolesLoading);
 
 
   useEffect(() => {
@@ -26,11 +26,20 @@ export function useRoles() {
     });
   }, [dispatch, roleName]);
 
+  const roleOptions = useMemo(() => {
+    if (rolesLoading) return [{ value: 'loading', label: 'Loading...' }];
+    return roles
+      .filter((r) => r.id && r.role)
+      .map((r) => ({ value: r.id.toString(), label: capitalizeFirst(r.role) }));
+  }, [roles, rolesLoading]);
+
   return {
     roles,
     roleName,
+    roleOptions,
     setRoleName,
     onAddRole,
     deleteRole: (id) => dispatch(deleteRole(id)),
   };
 }
+
