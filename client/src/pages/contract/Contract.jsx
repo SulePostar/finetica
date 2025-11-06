@@ -25,7 +25,7 @@ const Contract = () => {
 
   const handleDownload = useCallback(async (id) => {
     try {
-      const { data } = await ContractsService.getById(id); 
+      const { data } = await ContractsService.getById(id);
       if (!data?.pdfUrl) return;
 
       const link = document.createElement('a');
@@ -67,7 +67,6 @@ const Contract = () => {
       wrap: true,
       grow: 0,
       hideAtOrBelow: 'md',
-      hideBelow: 1024,
       hideBelow: 1440,
     },
     {
