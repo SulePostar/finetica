@@ -4,7 +4,6 @@ import { Card, Col, Row, Spinner } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { capitalizeFirst } from '../../../helpers/capitalizeFirstLetter';
 import { formatDateTime } from '../../../helpers/formatDate';
 import ViewUserModal from '../../Modals/ViewUserModal/ViewUserModal';
 import ActionsDropdown from '../../Tables/Dropdown/ActionsDropdown';
@@ -26,9 +25,8 @@ import {
   updateUser,
 } from '../../../redux/users/usersSlice';
 
-import { fetchRoles, selectRoles, selectRolesLoading } from '../../../redux/roles/rolesSlice';
-
-import { fetchStatuses, selectStatuses } from '../../../redux/statuses/statusesSlice';
+import { useRoles } from '../../../hooks/useRoles';
+import { useStatuses } from '../../../hooks/useStatuses';
 
 import { ConfirmationModal, EditUserModal, SearchFilters } from '../../index';
 
@@ -65,9 +63,8 @@ const Users = () => {
   const updatingUser = useSelector(selectUpdatingUser);
   const deletingUser = useSelector(selectDeletingUser);
 
-  const roles = useSelector(selectRoles);
-  const rolesLoading = useSelector(selectRolesLoading);
-  const statuses = useSelector(selectStatuses);
+  const { roles, roleOptions } = useRoles();
+  const { statuses } = useStatuses();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('');
@@ -80,8 +77,6 @@ const Users = () => {
 
   useEffect(() => {
     dispatch(fetchUsers());
-    dispatch(fetchRoles());
-    dispatch(fetchStatuses());
   }, [dispatch]);
 
   useEffect(() => {
@@ -165,13 +160,6 @@ const Users = () => {
     setShowDeleteModal(false);
     notify.onWarning(`Deleting user: ${selectedUser.firstName || selectedUser.email}`);
   }, [dispatch, selectedUser]);
-
-  const roleOptions = useMemo(() => {
-    if (rolesLoading) return [{ value: 'loading', label: 'Loading...' }];
-    return roles
-      .filter((r) => r.id && r.role)
-      .map((r) => ({ value: r.id.toString(), label: capitalizeFirst(r.role) }));
-  }, [roles, rolesLoading]);
 
   const columns = useMemo(
     () => [

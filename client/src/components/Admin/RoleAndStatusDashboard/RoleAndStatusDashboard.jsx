@@ -1,7 +1,3 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchRoles, addRole, selectRoles, deleteRole } from '../../../redux/roles/rolesSlice';
-import { fetchStatuses, addStatus, selectStatuses, deleteStatus } from '../../../redux/statuses/statusesSlice';
 import {
   CRow,
   CCol,
@@ -9,7 +5,6 @@ import {
   CCardBody,
   CCardHeader,
   CFormInput,
-  CBadge,
   CListGroup,
   CListGroupItem,
 } from '@coreui/react';
@@ -17,43 +12,13 @@ import { cilUser, cilChartLine } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import AppButton from '../../AppButton/AppButton';
 import './RoleStatusManagement.css';
-import { capitalizeFirst } from '../../../helpers/capitalizeFirstLetter';
+import StatusBadge from './RoleAndStatusDashboardComponents/StatusBadge';
+import { useRoles } from '../../../hooks/useRoles';
+import { useStatuses } from '../../../hooks/useStatuses';
 
 const RoleAndStatusDashboard = () => {
-  const dispatch = useDispatch();
-  const roles = useSelector(selectRoles) || [];
-  const statuses = useSelector(selectStatuses) || [];
-
-  const [roleName, setRoleName] = useState('');
-  const [statusName, setStatusName] = useState('');
-  const [statusType] = useState('Pending');
-
-  useEffect(() => {
-    dispatch(fetchRoles());
-    dispatch(fetchStatuses());
-  }, [dispatch]);
-
-  const onAddRole = useCallback(() => {
-    const name = roleName.trim();
-    if (!name) return;
-    dispatch(addRole({ role: name })).then((res) => {
-      if (!res.error) {
-        setRoleName('');
-        dispatch(fetchRoles());
-      }
-    });
-  }, [dispatch, roleName]);
-
-  const onAddStatus = useCallback(() => {
-    const name = statusName.trim();
-    if (!name) return;
-    dispatch(addStatus({ status: name, type: statusType })).then((res) => {
-      if (!res.error) {
-        setStatusName('');
-        dispatch(fetchStatuses());
-      }
-    });
-  }, [dispatch, statusName, statusType]);
+  const { roles, roleName, setRoleName, onAddRole, deleteRole } = useRoles();
+  const { statuses, statusName, setStatusName, onAddStatus, deleteStatus } = useStatuses();
 
   return (
     <>
@@ -99,7 +64,7 @@ const RoleAndStatusDashboard = () => {
                           size="sm"
                           className="btn-compact btn-delete"
                           icon="mdi:trash"
-                          onClick={() => dispatch(deleteRole(r.id))}
+                          onClick={() => deleteRole(r.id)}
                           title="Delete role"
                         >
                           Delete
@@ -147,57 +112,29 @@ const RoleAndStatusDashboard = () => {
                   <div className="col-name">Status</div>
                   <div className="col-actions">Actions</div>
                 </div>
+
                 <CListGroup>
-                  {statuses.map((s, idx) => {
-                    let badge;
-                    switch (s.status) {
-                      case 'pending':
-                        badge = (
-                          <CBadge className="pill status-pill pending-custom">
-                            Pending
-                          </CBadge>
-                        );
-                        break;
-                      case 'approved':
-                        badge = (
-                          <CBadge color="success" className="pill status-pill">
-                            Approved
-                          </CBadge>
-                        );
-                        break;
-                      case 'rejected':
-                        badge = (
-                          <CBadge color="danger" className="pill status-pill">
-                            Rejected
-                          </CBadge>
-                        );
-                        break;
-                      default:
-                        badge = (
-                          <CBadge color="secondary" className="pill status-pill">
-                            {capitalizeFirst(s.status)}
-                          </CBadge>
-                        );
-                    }
-                    return (
-                      <CListGroupItem key={s.id ?? idx} className="list-row list-row-statuses">
-                        <div className="col-id">{s.id ?? (idx + 1)}</div>
-                        <div className="col-name">{badge}</div>
-                        <div className="col-actions">
-                          <AppButton
-                            variant="danger"
-                            size="sm"
-                            className="btn-compact btn-delete"
-                            icon="mdi:trash"
-                            onClick={() => dispatch(deleteStatus(s.id))}
-                            title="Delete status"
-                          >
-                            Delete
-                          </AppButton>
-                        </div>
-                      </CListGroupItem>
-                    );
-                  })}
+                  {statuses.map((s, idx) => (
+                    <CListGroupItem key={s.id ?? idx} className="list-row list-row-statuses">
+                      <div className="col-id">{s.id ?? (idx + 1)}</div>
+                      <div className="col-name">
+                        <StatusBadge status={s.status} />
+                      </div>
+                      <div className="col-actions">
+                        <AppButton
+                          variant="danger"
+                          size="sm"
+                          className="btn-compact btn-delete"
+                          icon="mdi:trash"
+                          onClick={() => dispatch(deleteStatus(s.id))}
+                          title="Delete status"
+                        >
+                          Delete
+                        </AppButton>
+                      </div>
+                    </CListGroupItem>
+                  ))}
+
                   {statuses.length === 0 && (
                     <CListGroupItem className="empty-row">No statuses yet.</CListGroupItem>
                   )}
