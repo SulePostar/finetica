@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { Card, Col, Container, Row, Spinner } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import api from '../../services/api';
-import './DynamicTable.css';
 import makeCustomStyles from './DynamicTable.styles';
 import { useWindowWidth } from '../../hooks/useWindowWidth';
 

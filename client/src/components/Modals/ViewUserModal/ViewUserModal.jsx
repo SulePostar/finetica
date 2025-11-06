@@ -10,7 +10,6 @@ import {
 import { getRoleName, getStatusBadge } from '../../../utilis/formatters';
 import { formatDateTime } from '../../../helpers/formatDate';
 import AppButton from '../../AppButton/AppButton';
-import './ViewUserModal.css';
 
 const ViewUserModal = ({ visible, onClose, user, onEdit, onDelete, roles, statuses, isDarkMode }) => {
     if (!user) return null;

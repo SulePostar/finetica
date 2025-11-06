@@ -16,8 +16,8 @@ import {
 import { cilUser, cilChartLine } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import AppButton from '../../AppButton/AppButton';
-import './RoleStatusManagement.css';
 import { capitalizeFirst } from '../../../helpers/capitalizeFirstLetter';
+
 
 const RoleAndStatusDashboard = () => {
   const dispatch = useDispatch();

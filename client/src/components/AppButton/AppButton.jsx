@@ -2,7 +2,6 @@ import React from "react";
 import { CButton } from "@coreui/react";
 import CIcon from '@coreui/icons-react';
 import { cilPencil, cilTrash, cilArrowLeft } from '@coreui/icons';
-import "./AppButton.css";
 
 const ICONS = {
     'mdi:pencil': cilPencil,

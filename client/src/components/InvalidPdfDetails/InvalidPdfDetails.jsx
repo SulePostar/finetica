@@ -6,7 +6,6 @@ import {
 import { PdfViewer } from "../PdfViewer/PdfViewer";
 import api from "../../services/api";
 import AppButton from "../AppButton/AppButton";
-import '../../pages/invalidPdfs/InvalidPdfs.css'
 
 const TYPE_TO_PATH = {
   1: "transactions",

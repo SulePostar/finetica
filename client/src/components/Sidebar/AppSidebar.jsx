@@ -9,7 +9,6 @@ import {
 import { useFilteredNavigation } from '../../hooks/useFilteredNavigation';
 import { AppSidebarNav } from './AppSidebarNav';
 import SidebarDriveStatus from './SidebarDriveStatus';
-import './AppSidebar.css';
 import { setDriveConnected } from '../../redux/sidebar/sidebarSlice';
 
 const AppSidebar = ({ isDarkMode }) => {

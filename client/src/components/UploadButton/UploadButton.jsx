@@ -3,7 +3,6 @@ import CIcon from '@coreui/icons-react';
 import { cilCloudUpload } from '@coreui/icons';
 import { FileUploadModal } from '../Modals';
 import AppButton from '../AppButton/AppButton';
-import './UploadButton.css';
 
 const UploadButton = ({
     bucketName,

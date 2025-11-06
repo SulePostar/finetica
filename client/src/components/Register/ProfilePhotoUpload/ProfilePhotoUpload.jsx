@@ -6,7 +6,6 @@ import { cilCamera, cilUser } from '@coreui/icons';
 import FileUploadService from '../../../services/fileUploadService';
 import notify from '../../../utilis/toastHelper';
 import AppButton from '../../AppButton/AppButton';
-import './ProfilePhotoUpload.css';
 
 const ProfilePhotoUpload = ({ onPhotoSelect, onRemove, disabled = false, currentPhoto }) => {
     const location = useLocation();

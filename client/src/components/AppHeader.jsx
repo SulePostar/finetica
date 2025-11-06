@@ -12,7 +12,6 @@ import {
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import './AppHeader.css';
 import AppHeaderDropdown from './header/AppHeaderDropdown.jsx';
 import AppButton from './AppButton/AppButton.jsx';
 import '../scss/style.scss';

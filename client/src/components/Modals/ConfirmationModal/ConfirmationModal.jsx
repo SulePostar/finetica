@@ -13,7 +13,6 @@ import {
   CBadge
 } from '@coreui/react';
 import AppButton from '../../AppButton/AppButton';
-import './ConfirmationModal.css';
 
 const ConfirmationModal = ({
   visible,

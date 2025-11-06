@@ -5,7 +5,6 @@ import {
 } from '../../../utilis/constants/InvoicesData';
 import DocInfoCard from '../DocInfoCard/DocInfoCard';
 import { CFormInput, CFormLabel, CBadge } from '@coreui/react';
-import './DocumentInfo.css';
 
 const DocumentInfo = ({
     data,

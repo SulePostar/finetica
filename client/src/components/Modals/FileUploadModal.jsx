@@ -14,7 +14,6 @@ import {
 import { useRef, useState } from 'react';
 import FileUploadService from '../../services/fileUploadService';
 import notify from '../../utilis/toastHelper';
-import './FileUploadModal.css';
 import AppButton from '../AppButton/AppButton';
 
 const FileUploadModal = ({ visible, onClose, bucketName, onUploadSuccess }) => {

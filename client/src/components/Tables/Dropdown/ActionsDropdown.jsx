@@ -1,6 +1,5 @@
 import { Dropdown } from 'react-bootstrap';
 import { FaEllipsisV } from 'react-icons/fa';
-import './ActionsDropdown.css';
 
 const ActionsDropdown = ({
   row,

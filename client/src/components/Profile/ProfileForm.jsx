@@ -16,7 +16,6 @@ import { setUserProfile } from '../../redux/user/userSlice';
 import FileUploadService from '../../services/fileUploadService';
 import notify from '../../utilis/toastHelper';
 import ProfilePhotoUpload from '../Register/ProfilePhotoUpload/ProfilePhotoUpload';
-import './ProfileForm.css';
 import AppButton from '../AppButton/AppButton';
 import { getStatusBadge } from '../../utilis/formatters';
 

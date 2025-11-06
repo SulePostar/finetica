@@ -15,7 +15,6 @@ import { logout } from '../../redux/auth/authSlice';
 import { NavLink } from 'react-router-dom';
 import notify from '../../utilis/toastHelper';
 import ConfirmationModal from '../Modals/ConfirmationModal/ConfirmationModal';
-import './AppHeaderDropdown.css';
 
 const AppHeaderDropdown = ({ isDarkMode }) => {
   const [showModal, setShowModal] = useState(false);

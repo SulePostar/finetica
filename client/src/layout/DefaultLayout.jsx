@@ -3,7 +3,6 @@ import { useEffect, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { Container } from 'react-bootstrap';
 import { AppHeader, AppSidebar } from '../components/index';
-import './DefaultLayout.css';
 
 const DefaultLayout = ({ children }) => {
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme');

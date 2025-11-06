@@ -10,8 +10,6 @@ import ViewUserModal from '../../Modals/ViewUserModal/ViewUserModal';
 import ActionsDropdown from '../../Tables/Dropdown/ActionsDropdown';
 import makeCustomStyles from '../../Tables/DynamicTable.styles';
 
-import './Users.css';
-
 import {
   clearError,
   clearSuccess,

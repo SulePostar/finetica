@@ -1,0 +1,70 @@
+/* =========================================================
+   DESIGN TOKENS
+   ========================================================= */
+:root {
+  /* Colors: Surface */
+  --color-surface-light: #ffffff;
+  --color-surface-dark: #292f3d;
+  --color-surface-darker: #22262e;
+
+  /* Colors: Text */
+  --color-text-primary-light: #111827;
+  --color-text-primary-dark: #f3f4f6;
+  --color-text-muted-light: #6b7280;
+  --color-text-muted-dark: #9ca3af;
+
+  /* Colors: Brand */
+  --color-primary: #0d6efd;
+  --color-primary-dark: #5aa0ff;
+  --color-secondary: #6c757d;
+  --color-success: #198754;
+  --color-danger: #dc3545;
+  --color-warning: #ffc107;
+
+  /* Colors: State */
+  --color-hover-light: rgba(0, 0, 0, 0.02);
+  --color-hover-dark: rgba(255, 255, 255, 0.05);
+
+  /* Border Colors */
+  --color-border-light: #e5e7eb;
+  --color-border-dark: #374151;
+
+  /* Input Colors */
+  --color-input-bg-light: #ffffff;
+  --color-input-bg-dark: #1f2937;
+  --color-input-border-light: #d1d5db;
+  --color-input-border-dark: #4b5563;
+  --color-input-focus: #6366f1;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  /* Layout */
+  --header-height: 64px;
+  --sidebar-width: 256px;
+  --card-padding: 1rem;
+  --border-radius: 8px;
+  --border-radius-lg: 14px;
+
+  /* Applied Colors - Light Theme */
+  --card-bg: var(--color-surface-light);
+  --card-border: var(--color-border-light);
+  --text-primary: var(--color-text-primary-light);
+  --text-muted: var(--color-text-muted-light);
+  --input-bg: var(--color-input-bg-light);
+  --input-border: var(--color-input-border-light);
+  --header-bg: #f9fafb;
+}
+
+/* Dark theme overrides */
+[data-coreui-theme='dark'] {
+  --card-bg: var(--color-surface-dark);
+  --card-border: var(--color-border-dark);
+  --text-primary: var(--color-text-primary-dark);
+  --text-muted: var(--color-text-muted-dark);
+  --input-bg: var(--color-input-bg-dark);
+  --input-border: var(--color-input-border-dark);
+  --header-bg: var(--color-surface-darker);
+}

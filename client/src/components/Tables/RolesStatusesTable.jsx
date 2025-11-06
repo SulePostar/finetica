@@ -15,7 +15,6 @@ import {
 } from '@coreui/react';
 import AppButton from '../AppButton/AppButton';
 import ConfirmationModal from '../Modals/ConfirmationModal/ConfirmationModal';
-import './RolesStatusesTable.css';
 
 const RolesStatusesTable = ({ title, data, nameKey, onAdd, onDelete }) => {
     const [newValue, setNewValue] = useState('');
