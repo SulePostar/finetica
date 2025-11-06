@@ -1,4 +1,5 @@
 const { findAllInvalid, findById } = require('../services/kifProcessingLog');
+const { KifProcessingLog } = require('../models');
 
 const getInvalidKifs = async (req, res, next) => {
     try {
@@ -20,4 +21,20 @@ const getKifLog = async (req, res, next) => {
     }
 };
 
-module.exports = { getInvalidKifs, getKifLog };
+const deleteKifLog = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const log = await KifProcessingLog.findByPk(id);
+    if (!log) {
+      return res.status(404).json({ error: 'KIF log not found' });
+    }
+
+    await log.destroy();
+    return res.json({ success: true, message: 'KIF log deleted successfully' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { getInvalidKifs, getKifLog, deleteKifLog };

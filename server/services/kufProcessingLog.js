@@ -30,4 +30,5 @@ const findById = async (id) => {
     return { ...log.toJSON(), pdfUrl };
 };
 
+
 module.exports = { findAllInvalid, findById };

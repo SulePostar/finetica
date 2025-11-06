@@ -45,9 +45,19 @@ const InvalidPdfs = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
 
+  // 👇 ovo će nam služiti da natjeramo tabelu da se ponovo učita
+  const [refreshKey, setRefreshKey] = useState(0);
+
   const handleRowClick = (row) => {
+    // aktivni tab ti je u activeKey, pa to ubacujemo u row kao type
     setSelectedRow({ ...row, type: activeKey });
     setModalOpen(true);
+  };
+
+  // kad se obriše u child komponenti
+  const handleDeleted = () => {
+    setModalOpen(false);             // zatvori modal
+    setRefreshKey((prev) => prev + 1); // promijeni key -> DynamicTable se refresha
   };
 
   // Update URL when tab changes
@@ -145,7 +155,11 @@ const InvalidPdfs = () => {
                   </CCardHeader>
 
                   <CCardHeader className="custom-card-header p-0">
-                    <CNav variant="tabs" role="tablist" className="nav-fill flex-column flex-md-row flex-nowrap overflow-auto">
+                    <CNav
+                      variant="tabs"
+                      role="tablist"
+                      className="nav-fill flex-column flex-md-row flex-nowrap overflow-auto"
+                    >
                       <CNavItem>
                         <CNavLink
                           active={activeKey === 1}
@@ -193,54 +207,58 @@ const InvalidPdfs = () => {
                     <CTabContent>
                       <CTabPane visible={activeKey === 1} className="fade">
                         <DynamicTable
+                          key={`bank-${refreshKey}`}
                           columns={logColumns}
                           apiEndpoint={endpoints.bank}
                           onRowClick={handleRowClick}
                           pointerOnHover
                           highlightOnHover
                           responsive
-                          noDataComponent={<div className="p-4 text-center text-muted">
-                            {getNoDataMessage(1)}
-                          </div>}
+                          noDataComponent={
+                            <div className="p-4 text-center text-white">{getNoDataMessage(1)}</div>
+                          }
                         />
                       </CTabPane>
                       <CTabPane visible={activeKey === 2} className="fade">
                         <DynamicTable
+                          key={`kif-${refreshKey}`}
                           columns={logColumns}
                           apiEndpoint={endpoints.kif}
                           onRowClick={handleRowClick}
                           pointerOnHover
                           highlightOnHover
                           responsive
-                          noDataComponent={<div className="p-4 text-center text-muted">
-                            {getNoDataMessage(2)}
-                          </div>}
+                          noDataComponent={
+                            <div className="p-4 text-center text-white">{getNoDataMessage(2)}</div>
+                          }
                         />
                       </CTabPane>
                       <CTabPane visible={activeKey === 3} className="fade">
                         <DynamicTable
+                          key={`kuf-${refreshKey}`}
                           columns={logColumns}
                           apiEndpoint={endpoints.kuf}
                           onRowClick={handleRowClick}
                           pointerOnHover
                           highlightOnHover
                           responsive
-                          noDataComponent={<div className="p-4 text-center text-muted">
-                            {getNoDataMessage(3)}
-                          </div>}
+                          noDataComponent={
+                            <div className="p-4 text-center text-white">{getNoDataMessage(3)}</div>
+                          }
                         />
                       </CTabPane>
                       <CTabPane visible={activeKey === 4} className="fade">
                         <DynamicTable
+                          key={`contracts-${refreshKey}`}
                           columns={logColumns}
                           apiEndpoint={endpoints.contracts}
                           onRowClick={handleRowClick}
                           pointerOnHover
                           highlightOnHover
                           responsive
-                          noDataComponent={<div className="p-4 text-center text-muted">
-                            {getNoDataMessage(4)}
-                          </div>}
+                          noDataComponent={
+                            <div className="p-4 text-center text-white">{getNoDataMessage(4)}</div>
+                          }
                         />
                       </CTabPane>
                     </CTabContent>
@@ -256,13 +274,21 @@ const InvalidPdfs = () => {
         visible={modalOpen}
         onClose={() => setModalOpen(false)}
         alignment="center"
-        size="lg"
+        size="xl"
+        className="pdf-modal"
       >
         <CModalHeader>
           <CModalTitle>{selectedRow?.filename || 'Document Details'}</CModalTitle>
         </CModalHeader>
-        <CModalBody>
-          {selectedRow && <InvalidPdfDetails id={selectedRow.id} type={selectedRow.type} />}
+
+        <CModalBody className="p-0">
+          {selectedRow && (
+            <InvalidPdfDetails
+              id={selectedRow.id}
+              type={selectedRow.type}
+              onDeleted={handleDeleted} 
+            />
+          )}
         </CModalBody>
       </CModal>
     </DefaultLayout>
