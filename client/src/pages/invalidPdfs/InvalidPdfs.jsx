@@ -26,11 +26,14 @@ import { useSidebarWidth } from '../../hooks/useSidebarWidth';
 import DefaultLayout from '../../layout/DefaultLayout';
 import './InvalidPdfs.css';
 
+
 const InvalidPdfs = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const sidebarWidth = useSidebarWidth();
 
+
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 
   const endpoints = {
     bank: `${API_BASE}/bank-transactions/logs/invalid`,
@@ -39,21 +42,26 @@ const InvalidPdfs = () => {
     contracts: `${API_BASE}/contracts/logs/invalid`,
   };
 
+
   const initialTab = Number(searchParams.get('tab')) || 1;
   const [activeKey, setActiveKey] = useState(initialTab);
 
+
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+
 
   const handleRowClick = (row) => {
     setSelectedRow({ ...row, type: activeKey });
     setModalOpen(true);
   };
 
+
   // Update URL when tab changes
   useEffect(() => {
     setSearchParams({ tab: activeKey });
   }, [activeKey, setSearchParams]);
+
 
   const logColumns = [
     {
@@ -111,6 +119,7 @@ const InvalidPdfs = () => {
     },
   ];
 
+
   const getNoDataMessage = (tabKey) => {
     switch (tabKey) {
       case 1:
@@ -125,6 +134,7 @@ const InvalidPdfs = () => {
         return 'There are no records to display';
     }
   };
+
 
   return (
     <DefaultLayout>
@@ -143,6 +153,7 @@ const InvalidPdfs = () => {
                   <CCardHeader className="p-3">
                     <CCardTitle className="custom-card-title mb-0 fs-2 fw-bold">Invalid PDFs</CCardTitle>
                   </CCardHeader>
+
 
                   <CCardHeader className="custom-card-header p-0">
                     <CNav variant="tabs" role="tablist" className="nav-fill flex-column flex-md-row flex-nowrap overflow-auto">
@@ -189,6 +200,7 @@ const InvalidPdfs = () => {
                     </CNav>
                   </CCardHeader>
 
+
                   <CCardBody className="p-3 p-md-4 rounded-bottom">
                     <CTabContent>
                       <CTabPane visible={activeKey === 1} className="fade">
@@ -199,7 +211,7 @@ const InvalidPdfs = () => {
                           pointerOnHover
                           highlightOnHover
                           responsive
-                          noDataComponent={<div className="p-4 text-center text-muted">
+                          noDataComponent={<div className="p-4 text-center text-white">
                             {getNoDataMessage(1)}
                           </div>}
                         />
@@ -212,7 +224,7 @@ const InvalidPdfs = () => {
                           pointerOnHover
                           highlightOnHover
                           responsive
-                          noDataComponent={<div className="p-4 text-center text-muted">
+                          noDataComponent={<div className="p-4 text-center text-white">
                             {getNoDataMessage(2)}
                           </div>}
                         />
@@ -225,7 +237,7 @@ const InvalidPdfs = () => {
                           pointerOnHover
                           highlightOnHover
                           responsive
-                          noDataComponent={<div className="p-4 text-center text-muted">
+                          noDataComponent={<div className="p-4 text-center text-white">
                             {getNoDataMessage(3)}
                           </div>}
                         />
@@ -238,7 +250,7 @@ const InvalidPdfs = () => {
                           pointerOnHover
                           highlightOnHover
                           responsive
-                          noDataComponent={<div className="p-4 text-center text-muted">
+                          noDataComponent={<div className="p-4 text-center text-white">
                             {getNoDataMessage(4)}
                           </div>}
                         />
@@ -252,21 +264,27 @@ const InvalidPdfs = () => {
         </div>
       </div>
 
+
       <CModal
         visible={modalOpen}
         onClose={() => setModalOpen(false)}
         alignment="center"
-        size="lg"
+        size="xl"               
+        className="pdf-modal"  
       >
         <CModalHeader>
           <CModalTitle>{selectedRow?.filename || 'Document Details'}</CModalTitle>
         </CModalHeader>
-        <CModalBody>
+
+
+        <CModalBody className="p-0">
           {selectedRow && <InvalidPdfDetails id={selectedRow.id} type={selectedRow.type} />}
         </CModalBody>
       </CModal>
+
     </DefaultLayout>
   );
 };
+
 
 export default InvalidPdfs;
