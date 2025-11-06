@@ -401,7 +401,6 @@ const Users = () => {
           onDelete={handleDeleteUser}
           roles={roles}
           statuses={statuses}
-          isDarkMode={isDarkMode}
         />
       )}
     </DefaultLayout>

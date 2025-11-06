@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     CModal,
     CModalHeader,
@@ -11,7 +11,32 @@ import { getRoleName, getStatusBadge } from '../../../utilis/formatters';
 import { formatDateTime } from '../../../helpers/formatDate';
 import AppButton from '../../AppButton/AppButton';
 
-const ViewUserModal = ({ visible, onClose, user, onEdit, onDelete, roles, statuses, isDarkMode }) => {
+const ViewUserModal = ({ visible, onClose, user, onEdit, onDelete, roles, statuses }) => {
+    const [isDarkMode, setIsDarkMode] = useState(false);
+    // IMPORTANT NOTE:
+    // This theme dark/light check works and updates on change without reloading page
+    useEffect(() => {
+        // Initial check
+        setIsDarkMode(document.documentElement.getAttribute('data-coreui-theme') === 'dark');
+
+        // Create observer to watch for theme changes
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'data-coreui-theme') {
+                    setIsDarkMode(document.documentElement.getAttribute('data-coreui-theme') === 'dark');
+                }
+            });
+        });
+
+        // Start observing
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['data-coreui-theme']
+        });
+
+        // Cleanup
+        return () => observer.disconnect();
+    }, []);
     if (!user) return null;
 
     return (
