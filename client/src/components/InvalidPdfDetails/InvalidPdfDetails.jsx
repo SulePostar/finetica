@@ -81,10 +81,6 @@ const InvalidPdfDetails = ({ id, type, onDeleted }) => {
       window.document.documentElement.removeEventListener('ColorSchemeChange', handler);
   }, []);
 
-  // const handleEdit = () => setIsEditing(true);
-  // const handleCancel = () => { setFormData(doc); setIsEditing(false); };
-  // const handleSave = () => { setDoc(formData); setIsEditing(false); };
-
   const handleDeleteConfirm = async () => {
     if (!doc) return;
     setDeleting(true);
@@ -94,14 +90,14 @@ const InvalidPdfDetails = ({ id, type, onDeleted }) => {
       const base = TYPE_TO_PATH[type];
       await api.delete(`/${base}/logs/${encodeURIComponent(id)}`);
 
-      setDeleteMessage("✅ Document successfully deleted.");
+      setDeleteMessage("Document successfully deleted.");
       setDoc(null);
 
-      // obavijesti parent da se refresha tabela i zatvori modal
+      // refresh the table and close the modal
       if (onDeleted) onDeleted(id);
     } catch (error) {
       console.error("Delete failed:", error);
-      setDeleteMessage("❌ Failed to delete document.");
+      setDeleteMessage("Failed to delete document.");
     } finally {
       setDeleting(false);
       setShowConfirm(false);
@@ -138,21 +134,8 @@ const InvalidPdfDetails = ({ id, type, onDeleted }) => {
             className="border-0 shadow rounded-3"
             style={isDarkMode ? { backgroundColor: '#22262e' } : { backgroundColor: '#fff' }}
           >
-            <CCardHeader className="d-flex justify-content-center align-items-center border-none bg-transparent">
-              {/* Uklonjen Edit/Save/Cancel, ostavljen samo Delete */}
-              <AppButton
-                variant="danger"
-                size="md"
-                onClick={() => setShowConfirm(true)}
-                disabled={deleting}
-                icon="mdi:trash"
-                iconClassName="me-1"
-              >
-                {deleting ? "Deleting..." : "Delete"}
-              </AppButton>
-            </CCardHeader>
 
-            <CCardBody className="mt-3">
+            <CCardBody className="mt-2">
               <CCardText className={isDarkMode ? "text-light h3" : "text-dark h3"}>
                 Document Information
               </CCardText>
@@ -202,6 +185,20 @@ const InvalidPdfDetails = ({ id, type, onDeleted }) => {
                   {new Date(doc.createdAt).toLocaleString()}
                 </CListGroupItem>
               </CListGroup>
+
+              {/* DELETE button */}
+              <div className="d-flex justify-content-center mt-4">
+                <AppButton
+                  variant="danger"
+                  size="md"
+                  onClick={() => setShowConfirm(true)}
+                  disabled={deleting}
+                  icon="mdi:trash"
+                  iconClassName="me-1"
+                >
+                  {deleting ? "Deleting..." : "Delete"}
+                </AppButton>
+              </div>
             </CCardBody>
           </CCard>
         </CCol>
@@ -215,8 +212,7 @@ const InvalidPdfDetails = ({ id, type, onDeleted }) => {
         title="Delete Document"
         body={
           <p className="mb-0">
-            Are you sure you want to permanently delete <strong>{doc.filename}</strong>?<br />
-            This action cannot be undone.
+            Are you sure you want to permanently delete <strong>{doc.filename}</strong>? This action cannot be undone.
           </p>
         }
         confirmText="Delete"
