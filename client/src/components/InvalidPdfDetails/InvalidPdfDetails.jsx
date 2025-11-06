@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   CSpinner, CRow, CCol, CCard, CCardBody, CCardHeader, CBadge,
-  CFormInput, CFormSelect, CListGroup, CListGroupItem, CCardText,
+  CListGroup, CListGroupItem, CCardText,
 } from "@coreui/react";
 import { PdfViewer } from "../PdfViewer/PdfViewer";
 import api from "../../services/api";
@@ -18,8 +18,10 @@ const TYPE_TO_PATH = {
 const InvalidPdfDetails = ({ id, type }) => {
   const [doc, setDoc] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({});
+
+  // EDIT LOGIKA ZAKOMENTARISANA
+  // const [isEditing, setIsEditing] = useState(false);
+  // const [formData, setFormData] = useState({});
 
   const [isDarkMode, setIsDarkMode] = useState(
     document.documentElement.getAttribute('data-coreui-theme') === 'dark'
@@ -47,7 +49,7 @@ const InvalidPdfDetails = ({ id, type }) => {
 
         if (mountedRef.current && mySeq === reqSeqRef.current) {
           setDoc(data);
-          setFormData(data);
+          // setFormData(data);   // EDIT LOGIKA ZAKOMENTARISANA
         }
       } catch (err) {
         if (mountedRef.current && mySeq === reqSeqRef.current) {
@@ -72,9 +74,11 @@ const InvalidPdfDetails = ({ id, type }) => {
       window.document.documentElement.removeEventListener('ColorSchemeChange', handler);
   }, []);
 
-  const handleEdit = () => setIsEditing(true);
-  const handleCancel = () => { setFormData(doc); setIsEditing(false); };
-  const handleSave = () => { setDoc(formData); setIsEditing(false); };
+  // EDIT LOGIKA ZAKOMENTARISANA
+  // const handleEdit = () => setIsEditing(true);
+  // const handleCancel = () => { setFormData(doc); setIsEditing(false); };
+  // const handleSave = () => { setDoc(formData); setIsEditing(false); };
+
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete this document?")) {
       console.log("Deleting document:", doc?.filename);
@@ -93,70 +97,52 @@ const InvalidPdfDetails = ({ id, type }) => {
 
   return (
     <CRow>
-      {/* PDF Viewer */}
+      {/* LEFT: PDF Viewer */}
       <CCol md={8} className="d-flex align-items-center justify-content-center">
         {doc.pdfUrl ? <PdfViewer pdfUrl={doc.pdfUrl} /> : <div>No PDF available</div>}
       </CCol>
 
-      {/* Details panel */}
+      {/* RIGHT: Details panel */}
       <CCol md={4} className={isDarkMode ? "bg-dark text-light" : "bg-white"}>
         <CCard
           className="border-0 shadow rounded-3"
           style={isDarkMode ? { backgroundColor: '#22262e' } : { backgroundColor: '#fff' }}
         >
-          <CCardHeader className={`d-flex justify-content-center align-items-center border-none bg-transparent`}>
-            <div className="d-flex gap-2">
-              {isEditing ? (
-                <>
-                  <AppButton variant="primary" size="md">Save</AppButton>
-                  <AppButton variant="no-hover" size="md" onClick={handleCancel}>Cancel</AppButton>
-                </>
-              ) : (
-                <>
-                  <AppButton variant="edit" size="md" onClick={handleEdit} icon='mdi:pencil' iconClassName="me-1">Edit</AppButton>
-                  <AppButton variant="danger" size="md" onClick={handleDelete} icon='mdi:trash' iconClassName="me-1">Delete</AppButton>
-                </>
-              )}
-            </div>
+          <CCardHeader className="d-flex justify-content-center align-items-center border-none bg-transparent">
+            {/* Uklonjen Edit/Save/Cancel, ostavljen samo Delete */}
+            <AppButton
+              variant="danger"
+              size="md"
+              onClick={handleDelete}
+              icon='mdi:trash'
+              iconClassName="me-1"
+            >
+              Delete
+            </AppButton>
           </CCardHeader>
 
           <CCardBody className="mt-3">
-            <CCardText className={isDarkMode ? "text-light h3" : "text-dark h3"}>Document Information</CCardText>
+            <CCardText className={isDarkMode ? "text-light h3" : "text-dark h3"}>
+              Document Information
+            </CCardText>
+
             <CListGroup flush>
               {/* File Name */}
               <CListGroupItem className={isDarkMode ? "bg-transparent text-light" : "bg-transparent text-dark"}>
                 <small style={{ color: "var(--cui-secondary-color)", display: "block" }}>File Name</small>
-                {isEditing ? (
-                  <CFormInput
-                    value={formData.filename || ""}
-                    onChange={(e) => setFormData({ ...formData, filename: e.target.value })}
-                  />
-                ) : (doc.filename)}
+                {doc.filename}
               </CListGroupItem>
 
               {/* Message */}
               <CListGroupItem className={isDarkMode ? "bg-transparent text-light" : "bg-transparent text-dark"}>
                 <small style={{ color: "var(--cui-secondary-color)", display: "block" }}>Message</small>
-                {isEditing ? (
-                  <CFormInput
-                    value={formData.message || ""}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  />
-                ) : (doc.message || "-")}
+                {doc.message || "-"}
               </CListGroupItem>
 
               {/* Status */}
               <CListGroupItem className={isDarkMode ? "bg-transparent text-light" : "bg-transparent text-dark"}>
                 <small style={{ color: "var(--cui-secondary-color)", display: "block" }}>Status</small>
-                {isEditing ? (
-                  <CFormSelect
-                    value={formData.isValid ? "valid" : "invalid"}
-                    onChange={(e) => setFormData({ ...formData, isValid: e.target.value === "valid" })}
-                  >
-                    <option value="valid">Valid</option>
-                    <option value="invalid">Invalid</option>
-                  </CFormSelect>
-                ) : doc.isValid ? (
+                {doc.isValid ? (
                   <CBadge color="success">Valid</CBadge>
                 ) : (
                   <CBadge color="danger">Invalid</CBadge>
@@ -166,15 +152,7 @@ const InvalidPdfDetails = ({ id, type }) => {
               {/* Processed */}
               <CListGroupItem className={isDarkMode ? "bg-transparent text-light" : "bg-transparent text-dark"}>
                 <small style={{ color: "var(--cui-secondary-color)", display: "block" }}>Processed</small>
-                {isEditing ? (
-                  <CFormSelect
-                    value={formData.isProcessed ? "yes" : "no"}
-                    onChange={(e) => setFormData({ ...formData, isProcessed: e.target.value === "yes" })}
-                  >
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                  </CFormSelect>
-                ) : doc.isProcessed ? (
+                {doc.isProcessed ? (
                   <CBadge color="success">Yes</CBadge>
                 ) : (
                   <CBadge color="danger">No</CBadge>
