@@ -1,14 +1,25 @@
-import { CForm, CFormInput, CFormLabel, CCardTitle } from '@coreui/react';
-import { Card } from 'react-bootstrap';
-import { useSidebarWidth } from '../../hooks/useSidebarWidth';
-import ProfilePhotoUpload from '../Register/ProfilePhotoUpload/ProfilePhotoUpload';
-import AppButton from '../AppButton/AppButton';
-import StatusBadge from './statusBagde';
-import { useProfileForm } from './useProfileForm';
-import './ProfileForm.css';
+import {
+  CForm,
+  CFormInput,
+  CFormLabel,
+  CCardTitle,
+} from "@coreui/react";
+import { Card } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { formatDateTime } from "../../helpers/formatDate";
+import { useSidebarWidth } from "../../hooks/useSidebarWidth";
+import ProfilePhotoUpload from "../Register/ProfilePhotoUpload/ProfilePhotoUpload";
+import AppButton from "../AppButton/AppButton";
+import StatusBadge from "./StatusBadge";
+import { useProfileForm } from "./useProfileForm";
 
 const ProfileForm = () => {
+  const profile = useSelector((state) => state.user.profile);
+  const statusesState = useSelector((state) => state.statuses || {});
+  const statuses = statusesState.statuses || [];
+
   const sidebarWidth = useSidebarWidth();
+
   const {
     formData,
     isEditable,
@@ -18,30 +29,34 @@ const ProfileForm = () => {
     handleCancel,
     handlePhotoSelect,
     handlePhotoRemove,
-  } = useProfileForm();
+    setIsEditable,
+  } = useProfileForm(profile);
+
+  // Opcionalno: boja teksta za dark mode polja
+  const darkThemeColor = isDarkMode ? "inherit" : "initial";
 
   return (
     <div className="container py-4">
       <div className="row justify-content-center">
         <Card
-          className="profile-form-card shadow-sm border-0 bg-light dark:bg-dark p-3 p-md-4"
-          data-theme={isDarkMode ? 'dark' : 'light'}
+          className={`profile-form-card border-0 shadow-sm p-3 p-md-4 ${isDarkMode ? "bg-dark text-light" : "bg-light"
+            }`}
           style={{
             marginLeft: sidebarWidth,
             width: `calc(100% - ${sidebarWidth}px)`,
-            transition: 'margin-left 0.3s ease, width 0.3s ease',
+            transition: "margin-left 0.3s ease, width 0.3s ease",
           }}
         >
           {/* Header */}
           <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 px-2 px-md-3 pt-2 pt-md-3">
             <div className="mb-3 mb-md-0">
-              <CCardTitle className="form-title mb-1">User Profile</CCardTitle>
+              <CCardTitle className="form-title">User Profile</CCardTitle>
               <div className="text-muted small">
-                {isEditable ? 'Edit your profile information' : 'View and manage your profile'}
+                {isEditable ? "Edit your profile information" : "View and manage your profile"}
               </div>
             </div>
             {!isEditable && (
-              <AppButton size="md" type="button" onClick={() => handleChange({ type: 'editMode', value: true })}>
+              <AppButton size="md" type="button" onClick={() => setIsEditable(true)}>
                 Edit Profile
               </AppButton>
             )}
@@ -52,7 +67,7 @@ const ProfileForm = () => {
             <ProfilePhotoUpload
               onPhotoSelect={handlePhotoSelect}
               disabled={!isEditable}
-              currentPhoto={formData.profileImage || null}
+              currentPhoto={profile?.profileImage || null}
               onRemove={handlePhotoRemove}
             />
           </div>
@@ -62,56 +77,76 @@ const ProfileForm = () => {
             <CForm onSubmit={handleSubmit}>
               <div className="row">
                 <div className="col-12 col-md-6 mb-3">
-                  <CFormLabel className="form-label-responsive">First Name</CFormLabel>
+                  <CFormLabel>First Name</CFormLabel>
                   <CFormInput
                     type="text"
                     name="firstName"
-                    value={formData.firstName || ''}
+                    value={formData.firstName || ""}
                     onChange={handleChange}
                     disabled={!isEditable}
-                    className="form-input-responsive"
+                    style={{
+                      cursor: isEditable ? "text" : "not-allowed",
+                      color: darkThemeColor,
+                    }}
                   />
                 </div>
 
                 <div className="col-12 col-md-6 mb-3">
-                  <CFormLabel className="form-label-responsive">Last Name</CFormLabel>
+                  <CFormLabel>Last Name</CFormLabel>
                   <CFormInput
                     type="text"
                     name="lastName"
-                    value={formData.lastName || ''}
+                    value={formData.lastName || ""}
                     onChange={handleChange}
                     disabled={!isEditable}
-                    className="form-input-responsive"
+                    style={{
+                      cursor: isEditable ? "text" : "not-allowed",
+                      color: darkThemeColor,
+                    }}
                   />
                 </div>
               </div>
 
               <div className="row">
                 <div className="col-12 col-md-6 mb-3">
-                  <CFormLabel className="form-label-responsive">Email Address</CFormLabel>
+                  <CFormLabel>Email Address</CFormLabel>
                   <CFormInput
-                    value={formData.email || ''}
+                    value={formData.email || ""}
                     disabled
-                    className='disabled-cursor form-input-responsive'
+                    style={{
+                      cursor: "not-allowed",
+                      color: darkThemeColor,
+                    }}
                   />
                 </div>
 
                 <div className="col-12 col-md-6 mb-3">
-                  <CFormLabel className="form-label-responsive">Role</CFormLabel>
+                  <CFormLabel>Role</CFormLabel>
                   <CFormInput
-                    value={formData.roleName || ''}
+                    value={formData.roleName || ""}
                     disabled
-                    className='disabled-cursor form-input-responsive'
+                    style={{
+                      cursor: "not-allowed",
+                      color: darkThemeColor,
+                    }}
                   />
                 </div>
               </div>
 
               {isEditable && (
                 <div className="d-flex flex-column flex-sm-row gap-2 gap-sm-3 mt-3 mb-4">
-                  <AppButton type="submit" variant="primary" className="btn-responsive flex-grow-1 flex-sm-grow-0">
+                  <AppButton
+                    type="submit"
+                    variant="primary"
+                    className="btn-responsive flex-grow-1 flex-sm-grow-0"
+                  >
                     Save Changes
                   </AppButton>
-                  <AppButton variant="no-hover" onClick={handleCancel} className="btn-responsive flex-grow-1 flex-sm-grow-0">
+                  <AppButton
+                    variant="no-hover"
+                    onClick={handleCancel}
+                    className="btn-responsive flex-grow-1 flex-sm-grow-0"
+                  >
                     Cancel
                   </AppButton>
                 </div>
@@ -120,16 +155,24 @@ const ProfileForm = () => {
               <div className="row mt-3">
                 <div className="col-12 col-md-6 mb-3">
                   <div className="d-flex align-items-center gap-2 flex-wrap">
-                    <CFormLabel className="mb-0 form-label-responsive">Account Status:</CFormLabel>
-                    <StatusBadge statusName={formData.statusName} />
+                    <CFormLabel className="mb-0">Account Status:</CFormLabel>
+                    <StatusBadge
+                      statusId={formData.statusId}
+                      statusName={formData.statusName}
+                      statuses={statuses}
+                    />
                   </div>
                 </div>
                 <div className="col-12 col-md-6 mb-3">
-                  <CFormLabel className="form-label-responsive">Last Login</CFormLabel>
+                  <CFormLabel>Last Login</CFormLabel>
                   <CFormInput
-                    className="no-bg-form-input form-input-responsive"
-                    value={formData.lastLoginAt || ''}
+                    className="border-0 bg-transparent p-0 text-body"
+                    value={formatDateTime(formData.lastLoginAt)}
                     disabled
+                    style={{
+                      cursor: "not-allowed",
+                      color: darkThemeColor,
+                    }}
                   />
                 </div>
               </div>
