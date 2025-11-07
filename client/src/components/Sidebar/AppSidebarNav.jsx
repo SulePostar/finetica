@@ -10,7 +10,12 @@ export const AppSidebarNav = ({ items, onItemClick }) => (
   <CSidebarNav as={SimpleBar}>
     {items?.map((item, index) =>
       item.items ? (
-        <SidebarNavGroup key={index} item={item} onItemClick={onItemClick} />
+        <SidebarNavGroup 
+          key={index} 
+          item={item} 
+          idx={String(index)}
+          onItemClick={onItemClick} 
+        />
       ) : (
         <SidebarNavItem key={index} item={item} onItemClick={onItemClick} />
       )
