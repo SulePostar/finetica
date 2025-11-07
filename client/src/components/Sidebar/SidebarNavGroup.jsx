@@ -1,13 +1,14 @@
 import SidebarNavItem from './SidebarNavItem';
 import SidebarNavLinkContent from './SidebarNavLinkContent';
 
-const SidebarNavGroup = ({ item, onItemClick }) => {
+const SidebarNavGroup = ({ item, idx, onItemClick }) => {
     const { component: Component, name, icon, items, adminOnly, ...rest } = item;
 
     return (
         <Component
             compact
             as="div"
+            idx={idx}
             toggler={<SidebarNavLinkContent name={name} icon={icon} />}
             {...rest}
         >
@@ -16,6 +17,7 @@ const SidebarNavGroup = ({ item, onItemClick }) => {
                     <SidebarNavGroup
                         key={subIndex}
                         item={subItem}
+                        idx={`${idx}-${subIndex}`}
                         onItemClick={onItemClick}
                     />
                 ) : (
