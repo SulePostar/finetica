@@ -13,8 +13,6 @@ export const fetchRoles = createAsyncThunk('roles/fetchRoles', async (_, { rejec
 
 export const addRole = createAsyncThunk('roles/addRole', async (roleData, { rejectWithValue }) => {
     try {
-        //novo
-
         const { id, ...payload } = roleData;
         const response = await api.post('/user-roles', payload);
         return response.data;
