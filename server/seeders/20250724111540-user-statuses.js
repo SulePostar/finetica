@@ -21,19 +21,16 @@ module.exports = {
       'user_statuses',
       [
         {
-          id: 1,
           status: 'pending',
           created_at: new Date(),
           updated_at: new Date(),
         },
         {
-          id: 2,
           status: 'approved',
           created_at: new Date(),
           updated_at: new Date(),
         },
         {
-          id: 3,
           status: 'rejected',
           created_at: new Date(),
           updated_at: new Date(),
