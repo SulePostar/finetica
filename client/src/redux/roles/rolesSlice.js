@@ -13,7 +13,10 @@ export const fetchRoles = createAsyncThunk('roles/fetchRoles', async (_, { rejec
 
 export const addRole = createAsyncThunk('roles/addRole', async (roleData, { rejectWithValue }) => {
     try {
-        const response = await api.post('/user-roles', roleData);
+        //novo
+
+        const { id, ...payload } = roleData;
+        const response = await api.post('/user-roles', payload);
         return response.data;
     } catch (error) {
         return rejectWithValue(error.response.data.message);
@@ -70,7 +73,7 @@ const rolesSlice = createSlice({
                 state.error = null;
             })
             .addCase(addRole.fulfilled, (state, action) => {
-                state.roles.push(action.payload);
+                state.roles.push(action.payload.data);
                 state.success = 'Role added successfully';
             })
             .addCase(addRole.rejected, (state, action) => {
