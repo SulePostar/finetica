@@ -5,7 +5,6 @@ import api from '../../services/api';
 export const fetchRoles = createAsyncThunk('roles/fetchRoles', async (_, { rejectWithValue }) => {
     try {
         const response = await api.get('/user-roles');
-        console.log('Fetched roles:', response.data);
         return response.data;
     } catch (error) {
         return rejectWithValue(error.response.data.message);
@@ -14,8 +13,7 @@ export const fetchRoles = createAsyncThunk('roles/fetchRoles', async (_, { rejec
 
 export const addRole = createAsyncThunk('roles/addRole', async (roleData, { rejectWithValue }) => {
     try {
-        const { id, ...payload } = roleData;
-        const response = await api.post('/user-roles', payload);
+        const response = await api.post('/user-roles', roleData);
         return response.data;
     } catch (error) {
         return rejectWithValue(error.response.data.message);
