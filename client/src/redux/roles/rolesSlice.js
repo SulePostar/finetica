@@ -5,6 +5,7 @@ import api from '../../services/api';
 export const fetchRoles = createAsyncThunk('roles/fetchRoles', async (_, { rejectWithValue }) => {
     try {
         const response = await api.get('/user-roles');
+        console.log('Fetched roles:', response.data);
         return response.data;
     } catch (error) {
         return rejectWithValue(error.response.data.message);

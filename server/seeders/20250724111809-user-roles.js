@@ -21,13 +21,11 @@ module.exports = {
       'user_roles',
       [
         {
-          id: 1,
           role: 'admin',
           created_at: new Date(),
           updated_at: new Date(),
         },
         {
-          id: 2,
           role: 'user',
           created_at: new Date(),
           updated_at: new Date(),
