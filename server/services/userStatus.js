@@ -36,12 +36,13 @@ class UserStatusService {
             throw new AppError('Status name is required and must be a string', 400);
         }
 
-        const existingStatus = await UserStatus.findOne({ where: { status: statusName } });
+        const normalized = statusName.trim().toLowerCase();
+        const existingStatus = await UserStatus.findOne({ where: { status: normalized } });
         if (existingStatus) {
             throw new AppError('Status already exists', 400);
         }
 
-        const newStatus = await UserStatus.create({ status: statusName });
+        const newStatus = await UserStatus.create({ status: normalized });
         return {
             statusCode: 201,
             message: 'User status created successfully',
