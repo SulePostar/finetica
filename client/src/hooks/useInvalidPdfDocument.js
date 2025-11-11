@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import api from '../../services/api';
+import api from '../services/api';
 
 const TYPE_TO_PATH = {
     1: "transactions",

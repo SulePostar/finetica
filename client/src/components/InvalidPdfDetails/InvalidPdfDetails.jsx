@@ -3,7 +3,7 @@ import {
   CSpinner, CRow, CCol, CCard, CCardBody, CCardText,
 } from '@coreui/react';
 import { PdfViewer } from "../PdfViewer/PdfViewer";
-import { useInvalidPdfDocument } from './useInvalidPdfDocument';
+import { useInvalidPdfDocument } from '../../hooks/useInvalidPdfDocument';
 import { DocumentInformation } from './DocumentInformation';
 import { DocumentActions } from './DocumentActions';
 import '../../pages/invalidPdfs/InvalidPdfs.css';
