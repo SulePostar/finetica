@@ -56,20 +56,7 @@ const AppSidebar = ({ isDarkMode }) => {
     }
   }, [sidebarShow]);
 
-  /*
-    useEffect(() => {
-      const handleResize = () => {
-        if (window.innerWidth <= 1024 && sidebarShow) {
-          dispatch({ type: 'set', sidebarShow: false });
-        } else if (window.innerWidth > 1024 && !sidebarShow) {
-          dispatch({ type: 'set', sidebarShow: true });
-        }
-      };
-  
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }, [sidebarShow, dispatch]);
-    */
+
   useEffect(() => {
     let resizeTimeout;
     const handleResize = () => {
