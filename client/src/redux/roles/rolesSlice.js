@@ -70,7 +70,7 @@ const rolesSlice = createSlice({
                 state.error = null;
             })
             .addCase(addRole.fulfilled, (state, action) => {
-                state.roles.push(action.payload);
+                state.roles.push(action.payload.data);
                 state.success = 'Role added successfully';
             })
             .addCase(addRole.rejected, (state, action) => {
