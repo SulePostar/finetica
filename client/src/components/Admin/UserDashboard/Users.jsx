@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { capitalizeFirst } from '../../../helpers/capitalizeFirstLetter';
 import { formatDateTime } from '../../../helpers/formatDate';
+import { sortDataTableColumn } from '../../../helpers/sortDataTableColumn';
 import ViewUserModal from '../../Modals/ViewUserModal/ViewUserModal';
 import ActionsDropdown from '../../Tables/Dropdown/ActionsDropdown';
 import makeCustomStyles from '../../Tables/DynamicTable.styles';
@@ -179,6 +180,7 @@ const Users = () => {
         name: 'Name',
         selector: (row) => row.fullName,
         sortable: true,
+        sortFunction: (rowA, rowB) => sortDataTableColumn(rowA.fullName, rowB.fullName),
         minWidth: '220px',
         grow: 2,
         cell: (row) => (
