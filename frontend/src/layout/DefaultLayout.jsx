@@ -2,7 +2,7 @@ const DefaultLayout = ({ children }) => {
     return (
         <div className="flex min-h-screen bg-background text-foreground">
             {/* Sidebar */}
-            <aside className="hidden md:flex w-64 flex-col border-r border-gray-200 bg-card p-4">
+            <aside className="hidden md:flex w-64 flex-col border-r border-gray-200 p-4">
                 {/* Sidebar content will be added here */}
             </aside>
 
