@@ -3,7 +3,7 @@ import DefaultLayout from "@/layout/DefaultLayout"
 function App() {
   return (
     <DefaultLayout>
-      <h1 className="text-2xl font-semibold bg-color-chart-1">Dashboard</h1>
+      <h1 className="text-2xl font-semibold">Dashboard</h1>
     </DefaultLayout>
   )
 }
