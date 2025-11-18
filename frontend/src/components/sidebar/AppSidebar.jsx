@@ -1,10 +1,10 @@
 import * as React from "react"
 import {
-    BookOpen,
-    Bot,
+    LayoutDashboard,
+    File,
     Settings2,
-    SquareTerminal,
 } from "lucide-react"
+import symphonyLogo from "@/assets/images/symphonylogo.png"
 
 import { SidebarNav } from "@/components/sidebar/SidebarNav"
 import {
@@ -13,94 +13,53 @@ import {
     SidebarFooter,
     SidebarHeader,
     SidebarRail,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
 // This is sample data.
 const data = {
     navMain: [
         {
-            title: "Playground",
+            title: "Dashboard",
             url: "#",
-            icon: SquareTerminal,
+            icon: LayoutDashboard,
             isActive: true,
-            items: [
-                {
-                    title: "History",
-                    url: "#",
-                },
-                {
-                    title: "Starred",
-                    url: "#",
-                },
-                {
-                    title: "Settings",
-                    url: "#",
-                },
-            ],
         },
         {
-            title: "Models",
+            title: "Invoices",
             url: "#",
-            icon: Bot,
+            icon: File,
             items: [
                 {
-                    title: "Genesis",
+                    title: "KIF",
                     url: "#",
                 },
                 {
-                    title: "Explorer",
-                    url: "#",
-                },
-                {
-                    title: "Quantum",
+                    title: "KUF",
                     url: "#",
                 },
             ],
         },
         {
-            title: "Documentation",
+            title: "Bank Statements",
             url: "#",
-            icon: BookOpen,
-            items: [
-                {
-                    title: "Introduction",
-                    url: "#",
-                },
-                {
-                    title: "Get Started",
-                    url: "#",
-                },
-                {
-                    title: "Tutorials",
-                    url: "#",
-                },
-                {
-                    title: "Changelog",
-                    url: "#",
-                },
-            ],
+            icon: LayoutDashboard,
         },
         {
-            title: "Settings",
+            title: "Management",
             url: "#",
             icon: Settings2,
             items: [
                 {
-                    title: "General",
+                    title: "Users",
                     url: "#",
                 },
                 {
-                    title: "Team",
+                    title: "Roles & Permissions",
                     url: "#",
-                },
-                {
-                    title: "Billing",
-                    url: "#",
-                },
-                {
-                    title: "Limits",
-                    url: "#",
-                },
+                }
             ],
         },
     ],
@@ -110,6 +69,21 @@ export function AppSidebar({ ...props }) {
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton size="lg" asChild>
+                            <a href="#">
+                                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                                    <img src={symphonyLogo} alt="Symphony Logo" className="object-cover rounded" />
+                                </div>
+                                <div className="flex flex-col gap-0.5 leading-none">
+                                    <span className="font-medium">Symphony</span>
+                                    <span className="">Finetica</span>
+                                </div>
+                            </a>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
             </SidebarHeader>
             <SidebarContent>
                 <SidebarNav items={data.navMain} />
