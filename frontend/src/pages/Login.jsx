@@ -53,6 +53,7 @@ export default function LoginPage() {
                     <Mail className="h-5 w-5 text-indigo-600" />
                   </div>
                   <input
+                    id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -69,6 +70,7 @@ export default function LoginPage() {
                     <Lock className="h-5 w-5 text-indigo-600" />
                   </div>
                   <input
+                    id="password"
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
