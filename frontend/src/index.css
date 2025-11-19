@@ -75,7 +75,6 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-
 @theme inline {
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -116,17 +115,9 @@
 
 @layer base {
   * {
-    border-color: hsl(var(--border));
-    @apply outline-ring/50;
+    @apply border-border outline-ring/50;
   }
-
   body {
-    /* Let Tailwind handle colors */
     @apply bg-background text-foreground;
-
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-                 "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
-                 "Segoe UI Emoji", "Segoe UI Symbol";
-    line-height: 1.5;
   }
 }
