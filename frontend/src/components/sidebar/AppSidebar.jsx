@@ -54,11 +54,15 @@ const data = {
             items: [
                 {
                     title: "Users",
-                    url: "#",
+                    url: "/management/users",
                 },
                 {
                     title: "Roles & Permissions",
-                    url: "#",
+                    url: "/management/roles",
+                },
+                {
+                    title: "Role and Status Management",
+                    url: "/management/status",
                 }
             ],
         },
