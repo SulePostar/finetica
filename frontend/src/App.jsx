@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button"
+import AppRoutes from "./routes/AppRoutes"
 
 function App() {
   return (
-    <div className="p-8 space-y-4">
+    <><AppRoutes /><div className="p-8 space-y-4">
       <h1 className="text-3xl font-bold">Hello World with Tailwind CSS & shadcn/ui!</h1>
       <div className="flex gap-4 flex-wrap">
         <Button onClick={() => alert('Default button clicked')}>Default Button</Button>
@@ -12,7 +13,7 @@ function App() {
         <Button variant="ghost">Ghost</Button>
         <Button variant="link">Link</Button>
       </div>
-    </div>
+    </div></>
   )
 }
 
