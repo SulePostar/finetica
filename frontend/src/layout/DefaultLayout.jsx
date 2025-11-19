@@ -1,6 +1,7 @@
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import { Separator } from "@radix-ui/react-separator";
+import AppHeaderDropdown from "@/components/header/AppHeaderDropdown";
 
 const DefaultLayout = ({ children }) => {
     return (
@@ -12,10 +13,13 @@ const DefaultLayout = ({ children }) => {
                     {/* Main Content Area */}
                     <div className="flex flex-1 flex-col">
                         {/* Header */}
-                        <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border">
+                        <header className="flex h-16 shrink-0 items-center justify-between border-b border-border px-4">
                             <div className="flex items-center gap-2 px-3">
                                 <SidebarTrigger />
                                 <Separator orientation="vertical" className="mr-2 h-4" />
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <AppHeaderDropdown />
                             </div>
                         </header>
 
