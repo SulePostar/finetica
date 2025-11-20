@@ -34,17 +34,17 @@ const data = {
             items: [
                 {
                     title: "KIF",
-                    url: "/kif",
+                    url: "/#",
                 },
                 {
                     title: "KUF",
-                    url: "/kuf",
+                    url: "/#",
                 },
             ],
         },
         {
             title: "Bank Statements",
-            url: "/bank-statements",
+            url: "/#",
             icon: LayoutDashboard,
         },
         {
