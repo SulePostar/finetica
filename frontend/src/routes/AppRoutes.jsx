@@ -15,7 +15,7 @@ export default function AppRoutes() {
             <Route
                 path="/"
                 element={
-                    <DefaultLayout />
+                    <h1 className="text-2xl font-semibold" >Home Page Placeholder</h1>
                 }
             />
             <Route
@@ -51,7 +51,7 @@ export default function AppRoutes() {
 
             {/* Fallback for unknown routes */}
 
-            <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );
 }
