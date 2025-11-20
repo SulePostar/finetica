@@ -67,7 +67,7 @@ const data = {
 
 export function AppSidebar({ ...props }) {
     return (
-        <Sidebar collapsible="icon" {...props}>
+        <Sidebar collapsible="icon" variant="sidebar" {...props}>
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>

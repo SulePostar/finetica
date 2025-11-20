@@ -1,11 +1,27 @@
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import AppHeader from "@/components/header/AppHeader";
+import { useState, useEffect } from "react";
 
 const DefaultLayout = ({ children }) => {
+    const [sidebarOpen, setSidebarOpen] = useState(true);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 1024) {
+                setSidebarOpen(false);
+            } else {
+                setSidebarOpen(true);
+            }
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     return (
         <div className="flex min-h-screen bg-background text-foreground">
-            <SidebarProvider>
+            <SidebarProvider open={sidebarOpen} onOpenChange={setSidebarOpen}>
                 {/* Sidebar */}
                 <AppSidebar />
                 <SidebarInset>
