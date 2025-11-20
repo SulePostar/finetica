@@ -1,5 +1,5 @@
 import { ChevronRight } from "lucide-react"
-
+import { useNavigate } from "react-router-dom"
 import {
     Collapsible,
     CollapsibleContent,
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sidebar"
 
 export function SidebarNav({ items }) {
+    const navigate = useNavigate()
     return (
         <SidebarGroup>
             <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -30,7 +31,13 @@ export function SidebarNav({ items }) {
                     >
                         <SidebarMenuItem>
                             <CollapsibleTrigger asChild>
-                                <SidebarMenuButton tooltip={item.title}>
+                                <SidebarMenuButton tooltip={item.title}
+                                    onClick={() => {
+                                        if (!item.items || item.items.length === 0) {
+                                            navigate(item.url)
+                                        }
+                                    }}
+                                >
                                     {item.icon && <item.icon />}
                                     <span>{item.title}</span>
                                     {item.items && item.items.length > 0 && (
@@ -42,10 +49,8 @@ export function SidebarNav({ items }) {
                                 <SidebarMenuSub>
                                     {item.items?.map((subItem) => (
                                         <SidebarMenuSubItem key={subItem.title}>
-                                            <SidebarMenuSubButton asChild>
-                                                <a href={subItem.url}>
-                                                    <span>{subItem.title}</span>
-                                                </a>
+                                            <SidebarMenuSubButton onClick={() => navigate(subItem.url)}>
+                                                <span>{subItem.title}</span>
                                             </SidebarMenuSubButton>
                                         </SidebarMenuSubItem>
                                     ))}
