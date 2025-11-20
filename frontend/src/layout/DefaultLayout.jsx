@@ -1,6 +1,6 @@
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
-import { Separator } from "@radix-ui/react-separator";
+import AppHeader from "@/components/header/AppHeader";
 
 const DefaultLayout = ({ children }) => {
     return (
@@ -12,13 +12,7 @@ const DefaultLayout = ({ children }) => {
                     {/* Main Content Area */}
                     <div className="flex flex-1 flex-col">
                         {/* Header */}
-                        <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border">
-                            <div className="flex items-center gap-2 px-3">
-                                <SidebarTrigger />
-                                <Separator orientation="vertical" className="mr-2 h-4" />
-                            </div>
-                        </header>
-
+                        <AppHeader />
                         {/* Page Content */}
                         <main className="flex-1 overflow-y-auto p-4 md:p-6">
                             <div className="mx-auto max-w-7xl">{children}</div>
