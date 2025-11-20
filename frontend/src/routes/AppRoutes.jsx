@@ -1,5 +1,5 @@
-import { Navigate, Routes, Route } from 'react-router-dom'
 import React from 'react';
+import { Navigate, Routes, Route } from 'react-router-dom'
 import ProfilePage from '@/pages/ProfilePage';
 
 const BankStatements = React.lazy(() => import('../pages/BankStatements'));
@@ -7,8 +7,7 @@ const Kuf = React.lazy(() => import('../pages/Kuf'));
 const Contacts = React.lazy(() => import('../pages/Contacts'));
 const Partner = React.lazy(() => import('../pages/PartnersPage'));
 const Kif = React.lazy(() => import('../pages/Kif'));
-const Register = () => import('../pages/Register');
-
+import Register from '@/pages/Register';
 
 export default function AppRoutes() {
     return (
