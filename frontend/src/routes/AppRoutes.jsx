@@ -2,8 +2,6 @@ import { Navigate, Routes, Route } from 'react-router-dom'
 import React from 'react';
 
 const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
-// const Register = React.lazy(() => import('../pages/Register'));
-// const LoginPage = React.lazy(() => import('../pages/Login'));
 const BankStatements = React.lazy(() => import('../pages/BankStatements'));
 const Kuf = React.lazy(() => import('../pages/Kuf'));
 const Contacts = React.lazy(() => import('../pages/Contacts'));
@@ -14,18 +12,6 @@ const Kif = React.lazy(() => import('../pages/Kif'));
 export default function AppRoutes() {
     return (
         <Routes>
-            {/* <Route
-                path="/register"
-                element={
-                    <Register />
-                }
-            />
-            <Route
-                path="/login"
-                element={
-                    <LoginPage />
-                }
-            /> */}
             <Route
                 path="/"
                 element={
