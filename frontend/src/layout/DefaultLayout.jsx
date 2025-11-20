@@ -23,6 +23,7 @@ const DefaultLayout = ({ children }) => {
                             {/* Footer content will be added here */}
                         </footer>
                     </div>
+
                 </SidebarInset>
             </SidebarProvider>
         </div>
