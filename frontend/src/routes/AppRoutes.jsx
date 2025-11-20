@@ -1,7 +1,6 @@
 import { Navigate, Routes, Route } from 'react-router-dom'
 import React from 'react';
 
-const DefaultLayout = React.lazy(() => import('../layout/DefaultLayout'));
 const BankStatements = React.lazy(() => import('../pages/BankStatements'));
 const Kuf = React.lazy(() => import('../pages/Kuf'));
 const Contacts = React.lazy(() => import('../pages/Contacts'));
