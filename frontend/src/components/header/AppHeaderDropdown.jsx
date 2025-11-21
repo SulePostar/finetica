@@ -5,11 +5,14 @@ import {
     DropdownMenuLabel,
     DropdownMenuItem,
     DropdownMenuSeparator
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
+import { useNavigate } from "react-router-dom";
 import { User, LogOut } from "lucide-react"
 
 const AppHeaderDropdown = () => {
+    const navigate = useNavigate();
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger
@@ -23,7 +26,10 @@ const AppHeaderDropdown = () => {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+                <DropdownMenuItem
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={() => navigate("/profile")}
+                >
                     <User className="h-4 w-4" />
                     Profile
                 </DropdownMenuItem>
