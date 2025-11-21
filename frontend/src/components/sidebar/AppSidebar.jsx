@@ -54,23 +54,11 @@ const data = {
             items: [
                 {
                     title: "Users",
-<<<<<<< HEAD
-                    url: "/management/users",
-                },
-                {
-                    title: "Roles & Permissions",
-                    url: "/management/roles",
-                },
-                {
-                    title: "Role and Status Management",
-                    url: "/management/status",
-=======
                     url: "/users",
                 },
                 {
                     title: "Roles & Permissions",
                     url: "/roles-permissions",
->>>>>>> 050c4e798b42fe1780cc48188d40404b26ab2069
                 }
             ],
         },
