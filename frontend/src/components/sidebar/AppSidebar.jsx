@@ -23,7 +23,7 @@ const data = {
     navMain: [
         {
             title: "Dashboard",
-            url: "#",
+            url: "/",
             icon: LayoutDashboard,
             isActive: true,
         },
@@ -34,17 +34,17 @@ const data = {
             items: [
                 {
                     title: "KIF",
-                    url: "#",
+                    url: "/kif",
                 },
                 {
                     title: "KUF",
-                    url: "#",
+                    url: "/kuf",
                 },
             ],
         },
         {
             title: "Bank Statements",
-            url: "#",
+            url: "/bank-statements",
             icon: LayoutDashboard,
         },
         {
@@ -54,6 +54,7 @@ const data = {
             items: [
                 {
                     title: "Users",
+<<<<<<< HEAD
                     url: "/management/users",
                 },
                 {
@@ -63,6 +64,13 @@ const data = {
                 {
                     title: "Role and Status Management",
                     url: "/management/status",
+=======
+                    url: "/users",
+                },
+                {
+                    title: "Roles & Permissions",
+                    url: "/roles-permissions",
+>>>>>>> 050c4e798b42fe1780cc48188d40404b26ab2069
                 }
             ],
         },
