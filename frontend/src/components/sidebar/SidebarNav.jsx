@@ -16,38 +16,35 @@ import {
 } from "@/components/ui/sidebar"
 
 export function SidebarNav({ items }) {
+
     return (
         <SidebarGroup>
             <SidebarGroupLabel>Platform</SidebarGroupLabel>
+
             <SidebarMenu>
                 {items.map((item) => {
-                    const hasSubItems = item.items && item.items.length > 0;
+                    const hasSubItems = item.items?.length > 0
 
                     return hasSubItems ? (
-                        // --- Collapsible item ---
                         <Collapsible
                             key={item.title}
                             asChild
-                            defaultOpen={item.isActive}
-                            className="group/collapsible"
-                        >
+                            defaultOpen={item.isActive}>
                             <SidebarMenuItem>
                                 <CollapsibleTrigger asChild>
                                     <SidebarMenuButton tooltip={item.title}>
                                         {item.icon && <item.icon />}
                                         <span>{item.title}</span>
-                                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                        <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
                                     </SidebarMenuButton>
                                 </CollapsibleTrigger>
 
                                 <CollapsibleContent>
                                     <SidebarMenuSub>
-                                        {item.items.map((subItem) => (
-                                            <SidebarMenuSubItem key={subItem.title}>
+                                        {item.items.map((sub) => (
+                                            <SidebarMenuSubItem key={sub.title}>
                                                 <SidebarMenuSubButton asChild>
-                                                    <a href={subItem.url}>
-                                                        <span>{subItem.title}</span>
-                                                    </a>
+                                                    <a href={sub.url}>{sub.title}</a>
                                                 </SidebarMenuSubButton>
                                             </SidebarMenuSubItem>
                                         ))}
@@ -56,7 +53,6 @@ export function SidebarNav({ items }) {
                             </SidebarMenuItem>
                         </Collapsible>
                     ) : (
-                        // --- Single item ---
                         <SidebarMenuItem key={item.title}>
                             <SidebarMenuButton asChild tooltip={item.title}>
                                 <a href={item.url}>
@@ -65,7 +61,7 @@ export function SidebarNav({ items }) {
                                 </a>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
-                    );
+                    )
                 })}
             </SidebarMenu>
         </SidebarGroup>
