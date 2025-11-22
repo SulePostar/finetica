@@ -6,6 +6,7 @@ const Contacts = React.lazy(() => import('../pages/Contacts'));
 const Partner = React.lazy(() => import('../pages/PartnersPage'));
 const Kif = React.lazy(() => import('../pages/Kif'));
 import Register from '@/pages/Register';
+import RolesPermissionsTable from '@/components/tables/RolesPermissionsTable';
 
 export default function AppRoutes() {
     return (
@@ -50,6 +51,12 @@ export default function AppRoutes() {
                 path="/partners"
                 element={
                     <Partner />
+                }
+            />
+            <Route
+                path="/roles-permissions"
+                element={
+                    <RolesPermissionsTable />
                 }
             />
 
