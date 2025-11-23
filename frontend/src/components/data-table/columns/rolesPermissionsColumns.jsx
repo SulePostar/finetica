@@ -1,10 +1,11 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export function getRolesPermissionsColumns(type = "roles", onDelete) {
     return [
         {
             id: "index",
-            header: "No",
+            header: "Row",
             cell: ({ row }) => row.index + 1,
         },
         {
@@ -14,26 +15,19 @@ export function getRolesPermissionsColumns(type = "roles", onDelete) {
                 const value = row.original.name;
 
                 if (type === "permissions") {
-                    // Odredi boju badge-a na osnovu statusa
-                    let color;
-                    switch (value.toLowerCase()) {
-                        case "approved":
-                            color = "bg-green-500 text-white";
-                            break;
-                        case "pending":
-                            color = "bg-yellow-500 text-black";
-                            break;
-                        case "rejected":
-                            color = "bg-red-500 text-white";
-                            break;
-                        default:
-                            color = "bg-gray-300 text-black";
-                    }
+                    const statusStyles = {
+                        approved: "bg-chart-2 text-primary-foreground",
+                        pending: "bg-chart-4 text-primary",
+                        rejected: "bg-destructive text-destructive-foreground",
+                        default: "bg-muted text-muted-foreground",
+                    };
+
+                    const key = value.toLowerCase();
+                    const color = statusStyles[key] || statusStyles.default;
 
                     return (<Badge className={color}>{value.charAt(0).toUpperCase() + value.slice(1)}</Badge>);
                 }
 
-                // Ako je role → običan tekst
                 return <span className="font-medium">{value}</span>;
             },
         },
@@ -42,14 +36,12 @@ export function getRolesPermissionsColumns(type = "roles", onDelete) {
             header: "Actions",
             cell: ({ row }) => {
                 const item = row.original;
-
                 return (
-                    <button
-                        className="text-red-600 hover:underline"
-                        onClick={() => onDelete(item)}
+                    <Button
+                        variant="destructive" onClick={() => onDelete(item)}
                     >
                         Delete
-                    </button>
+                    </Button>
                 );
             },
         },

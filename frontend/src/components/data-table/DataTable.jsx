@@ -3,7 +3,6 @@ import {
     getCoreRowModel,
     useReactTable,
 } from "@tanstack/react-table";
-
 import {
     Table,
     TableHeader,
@@ -13,9 +12,8 @@ import {
     TableCell,
 } from "@/components/ui/table";
 
-import { Button } from "@/components/ui/button"; // za delete dugme
-
 export default function DataTable({ columns, data }) {
+    // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data,
         columns,
@@ -23,15 +21,15 @@ export default function DataTable({ columns, data }) {
     });
 
     return (
-        <div className="border border-gray-200 rounded-xl shadow-md overflow-x-auto">
-            <Table className="min-w-full divide-y divide-gray-200">
-                <TableHeader className="bg-gray-100">
+        <div className="border border-border rounded-xl shadow-md overflow-x-auto bg-card">
+            <Table className="min-w-full table-fixed divide-y divide-border">
+                <TableHeader className="bg-muted">
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
                             {headerGroup.headers.map((header) => (
                                 <TableHead
                                     key={header.id}
-                                    className="px-6 py-4 text-left text-base font-bold text-gray-800"
+                                    className="px-6 py-4 text-left text-base font-bold text-muted-foreground"
                                 >
                                     {flexRender(
                                         header.column.columnDef.header,
@@ -48,12 +46,12 @@ export default function DataTable({ columns, data }) {
                         table.getRowModel().rows.map((row) => (
                             <TableRow
                                 key={row.id}
-                                className="hover:bg-gray-50 transition-colors"
+                                className="hover:bg-muted/50 transition-colors"
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell
                                         key={cell.id}
-                                        className="px-6 py-3 text-sm text-gray-800"
+                                        className="px-6 py-3 text-sm text-foreground"
                                     >
                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                     </TableCell>
@@ -64,7 +62,7 @@ export default function DataTable({ columns, data }) {
                         <TableRow>
                             <TableCell
                                 colSpan={columns.length}
-                                className="text-center text-gray-400 py-6"
+                                className="text-center py-6 text-muted-foreground"
                             >
                                 No results.
                             </TableCell>
