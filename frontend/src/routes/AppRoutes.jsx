@@ -5,6 +5,7 @@ const Kuf = React.lazy(() => import('../pages/Kuf'));
 const Contacts = React.lazy(() => import('../pages/Contacts'));
 const Partner = React.lazy(() => import('../pages/PartnersPage'));
 const Kif = React.lazy(() => import('../pages/Kif'));
+const Users = React.lazy(() => import('../pages/Users'));
 import Register from '@/pages/Register';
 
 export default function AppRoutes() {
@@ -50,6 +51,12 @@ export default function AppRoutes() {
                 path="/partners"
                 element={
                     <Partner />
+                }
+            />
+            <Route
+                path="/users"
+                element={
+                    <Users />
                 }
             />
 
