@@ -1,27 +1,20 @@
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import AppHeader from "@/components/header/AppHeader";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { useState, useEffect } from "react";
 
 const DefaultLayout = ({ children }) => {
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const isBreakpoint = useMediaQuery(`(min-width: 1024px)`);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(isBreakpoint);
 
     useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth < 1024) {
-                setSidebarOpen(false);
-            } else {
-                setSidebarOpen(true);
-            }
-        };
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+        setIsSidebarOpen(isBreakpoint);
+    }, [isBreakpoint]);
 
     return (
         <div className="flex min-h-screen bg-background text-foreground">
-            <SidebarProvider open={sidebarOpen} onOpenChange={setSidebarOpen}>
+            <SidebarProvider open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
                 {/* Sidebar */}
                 <AppSidebar />
                 <SidebarInset>
