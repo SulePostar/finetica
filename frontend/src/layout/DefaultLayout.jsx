@@ -19,7 +19,7 @@ const DefaultLayout = ({ children }) => {
                         </main>
 
                         {/* Footer */}
-                        <footer className="border-t border-gray-200 bg-card py-4">
+                        <footer className="border-t bg-card py-4">
                             {/* Footer content will be added here */}
                         </footer>
                     </div>

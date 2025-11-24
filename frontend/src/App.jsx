@@ -1,12 +1,16 @@
 import { Button } from "@/components/ui/button"
 import AppRoutes from "./routes/AppRoutes"
 import DefaultLayout from "./layout/DefaultLayout"
+import { ThemeProvider } from "./components/theme/ThemeProvider"
 
 function App() {
   return (
-    <DefaultLayout>
-      <AppRoutes />
-    </DefaultLayout>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+
+      <DefaultLayout>
+        <AppRoutes />
+      </DefaultLayout>
+    </ThemeProvider>
   )
 }
 
