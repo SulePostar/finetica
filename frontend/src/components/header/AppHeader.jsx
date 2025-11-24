@@ -1,7 +1,7 @@
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@radix-ui/react-separator"
 import AppHeaderDropdown from "@/components/header/AppHeaderDropdown"
-import { ModeToggle } from "../theme/ThemeToggle"
+import { ThemeToggle } from "../theme/ThemeToggle"
 
 const AppHeader = () => {
     return (
@@ -13,7 +13,7 @@ const AppHeader = () => {
             </div>
             {/* Right side */}
             <div className="flex items-center gap-4">
-                <ModeToggle />
+                <ThemeToggle />
                 <AppHeaderDropdown />
             </div>
         </header>
