@@ -7,7 +7,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import './index.css';
 import App from './App.jsx';
 
-// Create the query client
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')).render(
