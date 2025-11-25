@@ -26,6 +26,8 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
+import { ThemeToggle } from "../theme/ThemeToggle"
+
 const sidebarNavigation = [
     {
         label: "Overview",
@@ -65,19 +67,19 @@ const sidebarNavigation = [
 
 export function AppSidebar({ ...props }) {
     return (
-        <Sidebar collapsible="icon" variant="sidebar" {...props}>
+        <Sidebar collapsible="icon" variant="sidebar" className="transition-all duration-300 ease-in-out" {...props}>
 
             {/* Logo */}
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
+                        <SidebarMenuButton asChild tooltip="Finetica Home">
                             <a href="/">
                                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
                                     <img src={symphonyLogo} alt="Symphony Logo" className="object-cover rounded" />
                                 </div>
 
-                                <div className="flex flex-col gap-0 leading-none">
+                                <div className="flex flex-col gap-0 leading-none group-data-[collapsible=icon]:hidden">
                                     <span className="font-semibold text-lg">Finetica</span>
                                 </div>
                             </a>
@@ -93,18 +95,27 @@ export function AppSidebar({ ...props }) {
 
             {/* Footer User */}
             <SidebarFooter>
-                <div className="flex items-center gap-3 px-3 py-4">
-                    <div className="bg-purple-600 text-white flex size-10 rounded-full items-center justify-center font-semibold">
-                        JD
+                <div className="flex items-center justify-between px-3 py-4 group-data-[collapsible=icon]:hidden">
+
+                    {/* Left side - user info */}
+                    <div className="flex items-center gap-3">
+                        <div className="bg-purple-600 text-white flex size-10 rounded-full items-center justify-center font-semibold">
+                            JD
+                        </div>
+
+                        <div className="flex flex-col leading-tight text-sm">
+                            <span className="font-medium">John Doe</span>
+                            <span className="text-gray-500">john@example.com</span>
+                        </div>
                     </div>
-                    <div className="flex flex-col leading-tight text-sm">
-                        <span className="font-medium">John Doe</span>
-                        <span className="text-gray-500">john@example.com</span>
-                    </div>
+
+                    {/* Right side - theme toggle */}
+                    <ThemeToggle />
                 </div>
             </SidebarFooter>
 
+
             <SidebarRail />
         </Sidebar>
-    )
+    );
 }

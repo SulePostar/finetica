@@ -1,9 +1,9 @@
-import { ChevronRight } from "lucide-react"
+import { ChevronRight } from "lucide-react";
 import {
     Collapsible,
     CollapsibleContent,
     CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from "@/components/ui/collapsible";
 import {
     SidebarGroup,
     SidebarGroupLabel,
@@ -13,14 +13,17 @@ import {
     SidebarMenuSub,
     SidebarMenuSubButton,
     SidebarMenuSubItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 export function SidebarNav({ groups }) {
     return (
         <>
             {groups.map((group) => (
-                <SidebarGroup key={group.label}>
-                    <SidebarGroupLabel className="text-xs font-semibold text-gray-400 uppercase tracking-wide mt-5 mb-2 px-3">
+                <SidebarGroup
+                    key={group.label}
+                    className="group-data-[collapsible=icon]:border-t border/10 group-data-[collapsible=icon]:backdrop-blur-sm group-data-[collapsible=icon]:py-4"
+                >
+                    <SidebarGroupLabel className="text-xs font-semibold text-gray-400 uppercase tracking-wide mt-5 mb-2 px-3 group-data-[collapsible=icon]:hidden">
                         {group.label}
                     </SidebarGroupLabel>
 
@@ -32,11 +35,17 @@ export function SidebarNav({ groups }) {
                                         <CollapsibleTrigger asChild>
                                             <SidebarMenuButton tooltip={item.title}>
                                                 <item.icon className="size-6" />
-                                                <span>{item.title}</span>
-                                                <ChevronRight className="ml-auto size-5 group-data-[collapsed=true]/sidebar:size-7" />
+                                                <span className="group-data-[collapsible=icon]:hidden">
+                                                    {item.title}
+                                                </span>
+
+                                                <ChevronRight
+                                                    className="ml-auto size-5 transition-transform duration-200 group-data-[state=open]:rotate-90 group-data-[collapsible=icon]:hidden"
+                                                />
                                             </SidebarMenuButton>
                                         </CollapsibleTrigger>
-                                        <CollapsibleContent>
+
+                                        <CollapsibleContent className="overflow-hidden transition-all duration-300 ease-in-out data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
                                             <SidebarMenuSub>
                                                 {group.items.map((sub) => (
                                                     <SidebarMenuSubItem key={sub.title}>
@@ -54,7 +63,7 @@ export function SidebarNav({ groups }) {
                                     <SidebarMenuButton asChild tooltip={item.title}>
                                         <a href={item.url}>
                                             <item.icon className="size-5" />
-                                            <span>{item.title}</span>
+                                            <span className="group-data-[collapsible=icon]:hidden">{item.title}</span>
                                         </a>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
