@@ -1,8 +1,9 @@
 import * as React from "react"
 import {
     LayoutDashboard,
-    File,
-    Settings2,
+    FileText,
+    Landmark,
+    Settings,
 } from "lucide-react"
 import symphonyLogo from "@/assets/images/symphonylogo.png"
 
@@ -30,7 +31,7 @@ const data = {
         {
             title: "Invoices",
             url: "#",
-            icon: File,
+            icon: FileText,
             items: [
                 {
                     title: "KIF",
@@ -45,12 +46,12 @@ const data = {
         {
             title: "Bank Statements",
             url: "/bank-statements",
-            icon: LayoutDashboard,
+            icon: Landmark,
         },
         {
             title: "Management",
             url: "#",
-            icon: Settings2,
+            icon: Settings,
             items: [
                 {
                     title: "Users",
@@ -67,7 +68,7 @@ const data = {
 
 export function AppSidebar({ ...props }) {
     return (
-        <Sidebar collapsible="icon" {...props}>
+        <Sidebar collapsible="icon" variant="sidebar" {...props}>
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
