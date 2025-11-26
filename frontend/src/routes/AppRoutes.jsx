@@ -13,7 +13,7 @@ export default function AppRoutes() {
             <Route
                 path="/"
                 element={
-                    <h1 className="text-2xl font-semibold" >Home Page Placeholder</h1>
+                    <h1 className="text-2xl font-semibold" ></h1>
                 }
             />
             <Route

@@ -21,7 +21,7 @@ const DefaultLayout = ({ children }) => {
                     {/* Main Content Area */}
                     <div className="flex flex-1 flex-col">
                         {/* Header */}
-                        <AppHeader />
+                        {/* <AppHeader /> */}
                         {/* Page Content */}
                         <main className="flex-1 overflow-y-auto p-4 md:p-6">
                             <div className="mx-auto max-w-7xl">{children}</div>
