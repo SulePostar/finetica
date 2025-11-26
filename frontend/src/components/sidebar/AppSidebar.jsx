@@ -1,6 +1,5 @@
 import * as React from "react";
 import symphonyLogo from "@/assets/images/symphonylogo.png";
-
 import {
     LayoutDashboard,
     CreditCard,
@@ -31,7 +30,7 @@ import {
 
 import { ThemeToggle } from "../theme/ThemeToggle";
 
-const sidebarNavigation = [
+const SIDEBAR_NAVIGATION = [
     {
         label: "Overview",
         items: [
@@ -43,12 +42,10 @@ const sidebarNavigation = [
             { title: "Partners", url: "/partners", icon: Briefcase },
         ],
     },
-
     {
         label: "Issues",
         items: [{ title: "PDF Issues", url: "/pdf-issues", icon: AlertTriangle }],
     },
-
     {
         label: "Administration",
         items: [
@@ -56,7 +53,6 @@ const sidebarNavigation = [
             { title: "Roles & Permissions", url: "/roles-permissions", icon: Shield },
         ],
     },
-
     {
         label: "Support",
         items: [
@@ -66,103 +62,119 @@ const sidebarNavigation = [
     },
 ];
 
+const USER = {
+    name: "John Doe",
+    email: "john@example.com",
+    initials: "JD",
+};
+
+// Extracted collapse pill component
 const SidebarCollapsePill = () => {
-    const { state, toggleSidebar } = useSidebar()
-    const isCollapsed = state === "collapsed"
+    const { state, toggleSidebar } = useSidebar();
+    const isCollapsed = state === "collapsed";
+    const Icon = isCollapsed ? ChevronRight : ChevronLeft;
 
     return (
         <button
             onClick={toggleSidebar}
             type="button"
             className="
-                absolute top-1/2 left-full z-50
-                -translate-y-1/2 -translate-x-1/2
-                flex items-center justify-center
-                h-10 w-10 rounded-full
-
-                bg-gradient-to-br from-[#6B2BFF] to-[#9E4DFF]
-
-                transition-all duration-300
-                hover:scale-[1.08]
-            "
+        absolute top-1/2 left-full z-50
+        -translate-y-1/2 -translate-x-1/2
+        flex items-center justify-center
+        h-10 w-10 rounded-full
+        bg-[#6C69FF]
+        transition-all duration-300
+        hover:scale-105
+        focus:outline-none focus:ring-2 focus:ring-white/50
+      "
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-            {isCollapsed ? (
-                <ChevronRight className="h-5 w-5 text-white" />
-            ) : (
-                <ChevronLeft className="h-5 w-5 text-white" />
-            )}
+            <Icon className="h-5 w-5 text-white" />
         </button>
-    )
-}
+    );
+};
 
+// Extracted logo component
+const SidebarLogo = () => (
+    <SidebarMenu>
+        <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip="Finetica Home">
+                <a href="/" className="flex items-center gap-3 no-underline">
+                    <div className="flex aspect-square size-8 items-center justify-center rounded-xl bg-background/20 dark:bg-foreground/10">
+                        <img
+                            src={symphonyLogo}
+                            alt="Symphony Logo"
+                            className="object-cover rounded"
+                        />
+                    </div>
+                    <div className="flex flex-col gap-0 leading-none group-data-[collapsible=icon]:hidden">
+                        <span className="font-semibold text-lg text-foreground dark:text-white">
+                            Finetica
+                        </span>
+                    </div>
+                </a>
+            </SidebarMenuButton>
+        </SidebarMenuItem>
+    </SidebarMenu>
+);
 
-export function AppSidebar({ ...props }) {
+// Extracted user info component
+const UserInfo = () => (
+    <div className="flex items-center gap-3">
+        <div className="bg-[#6C69FF] text-white flex size-10 rounded-full items-center justify-center font-semibold">
+            {USER.initials}
+        </div>
+        <div className="flex flex-col leading-tight text-sm">
+            <span className="font-medium text-foreground">{USER.name}</span>
+            <span className="text-muted-foreground">{USER.email}</span>
+        </div>
+    </div>
+);
+
+// Collapsed user avatar component
+const CollapsedUserAvatar = () => (
+    <div className="bg-[#6C69FF] text-white flex size-10 rounded-full items-center justify-center font-semibold">
+        {USER.initials}
+    </div>
+);
+
+export function AppSidebar(props) {
     return (
         <Sidebar
             collapsible="icon"
             variant="sidebar"
             className="
-            transition-all duration-300 ease-in-out
-            bg-gradient-to-b from-[#5A1AFF]/90 to-[#8C33FF]/90 
-            border-r border-white/10 
-            backdrop-blur-xl"
+        transition-all duration-300 ease-in-out
+        bg-[#6C69FF]
+        border-r border-white/10 
+        backdrop-blur-xl
+      "
             {...props}
         >
-            {/* Rail (thin area s desne strane) */}
             <SidebarRail />
 
-            {/* Svi sadržaji + pill u jednom relative wrapperu (u sidebar-inner) */}
             <div className="relative flex flex-1 flex-col">
-                {/* Polukružna strelica – centrirana po visini cijelog sidebara */}
                 <SidebarCollapsePill />
 
-                {/* Logo */}
                 <SidebarHeader>
-                    <SidebarMenu>
-                        <SidebarMenuItem>
-                            <SidebarMenuButton asChild tooltip="Finetica Home">
-                                <a href="/">
-                                    <div className="flex aspect-square size-8 items-center justify-center rounded-xl bg-white/10">
-                                        <img
-                                            src={symphonyLogo}
-                                            alt="Symphony Logo"
-                                            className="object-cover rounded"
-                                        />
-                                    </div>
-
-                                    <div className="flex flex-col gap-0 leading-none group-data-[collapsible=icon]:hidden">
-                                        <span className="font-semibold text-lg text-white">
-                                            Finetica
-                                        </span>
-                                    </div>
-                                </a>
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-                    </SidebarMenu>
+                    <SidebarLogo />
                 </SidebarHeader>
 
-                {/* Navigation */}
                 <SidebarContent className="pt-4">
-                    <SidebarNav groups={sidebarNavigation} />
+                    <SidebarNav groups={SIDEBAR_NAVIGATION} />
                 </SidebarContent>
 
-                {/* Footer User */}
                 <SidebarFooter>
+                    {/* Expanded state */}
                     <div className="flex items-center justify-between px-3 py-4 group-data-[collapsible=icon]:hidden">
-                        {/* Left side - user info */}
-                        <div className="flex items-center gap-3">
-                            <div className="bg-purple-600 text-white flex size-10 rounded-full items-center justify-center font-semibold">
-                                JD
-                            </div>
-
-                            <div className="flex flex-col leading-tight text-sm">
-                                <span className="font-medium text-white">John Doe</span>
-                                <span className="text-gray-400">john@example.com</span>
-                            </div>
-                        </div>
-
-                        {/* Right side - theme toggle */}
+                        <UserInfo />
                         <ThemeToggle />
+                    </div>
+
+                    {/* Collapsed state */}
+                    <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center py-4">
+                        <CollapsedUserAvatar />
                     </div>
                 </SidebarFooter>
             </div>
