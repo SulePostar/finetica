@@ -28,8 +28,8 @@ const DefaultLayout = ({ children }) => {
                         </main>
 
                         {/* Footer */}
-                        <footer className="border-t bg-card py-4">
-                            {/* Footer content will be added here */}
+                        <footer className="border-t bg-card py-4 text-center text-sm text-muted-foreground">
+                            <p>© {new Date().getFullYear()} Finetica. All rights reserved.</p>
                         </footer>
                     </div>
                 </SidebarInset>
