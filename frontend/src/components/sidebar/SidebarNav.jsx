@@ -82,26 +82,16 @@ export function SidebarNav({ groups }) {
                                         asChild
                                         tooltip={item.title}
                                         className={cn(
-                                            "relative overflow-hidden transition-all duration-300 ease-out rounded my border border-transparent",
-
-                                            // COLLAPSE LOGIC
-                                            "group-data-[collapsible=icon]:mx-auto",
-                                            "group-data-[collapsible=icon]:size-10",
-                                            "group-data-[collapsible=icon]:justify-center",
-                                            "group-data-[collapsible=icon]:p-0",
+                                            "relative overflow-hidden transition-all duration-300 ease-out rounded border border-transparent",
                                             "w-[95%]",
-                                            "group-data-[collapsible=icon]:w-10",
-
                                             // Light
                                             "text-slate-600",
                                             // Dark
                                             "dark:text-white/80",
-
                                             // Light
                                             "hover:bg-slate-100 hover:text-slate-900",
                                             // Dark
                                             "dark:hover:bg-white/10 dark:hover:text-white dark:hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]",
-
                                             "hover:scale-[1.02]",
 
                                             isActive && [
@@ -110,7 +100,6 @@ export function SidebarNav({ groups }) {
 
                                                 // Dark Mode Active
                                                 "dark:bg-[#6C69FF]/15 dark:border-[#6C69FF] dark:text-white",
-
                                                 "font-medium",
                                                 "translate-x-1 group-data-[collapsible=icon]:translate-x-0",
                                             ]

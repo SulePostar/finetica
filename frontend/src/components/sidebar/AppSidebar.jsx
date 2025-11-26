@@ -11,8 +11,6 @@ import {
     Tag,
     Briefcase,
     Shield,
-    ChevronLeft,
-    ChevronRight,
 } from "lucide-react";
 
 import { SidebarNav } from "@/components/sidebar/SidebarNav";
@@ -27,8 +25,8 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar";
-
 import { ThemeToggle } from "../theme/ThemeToggle";
+import { SidebarCollapsePill } from "./SidebarCollapsePill";
 
 const SIDEBAR_NAVIGATION = [
     {
@@ -68,34 +66,6 @@ const USER = {
     initials: "JD",
 };
 
-// Extracted collapse pill component
-const SidebarCollapsePill = () => {
-    const { state, toggleSidebar } = useSidebar();
-    const isCollapsed = state === "collapsed";
-    const Icon = isCollapsed ? ChevronRight : ChevronLeft;
-
-    return (
-        <button
-            onClick={toggleSidebar}
-            type="button"
-            className="
-        absolute top-1/2 left-full z-50
-        -translate-y-1/2 -translate-x-1/2
-        flex items-center justify-center
-        h-10 w-10 rounded-full
-        bg-[#6C69FF]
-        transition-all duration-300
-        hover:scale-105
-        focus:outline-none focus:ring-2 focus:ring-white/50
-      "
-            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-            <Icon className="h-5 w-5 text-white" />
-        </button>
-    );
-};
-
-// Extracted logo component
 const SidebarLogo = () => (
     <SidebarMenu>
         <SidebarMenuItem>
@@ -119,7 +89,6 @@ const SidebarLogo = () => (
     </SidebarMenu>
 );
 
-// Extracted user info component
 const UserInfo = () => (
     <div className="flex items-center gap-3">
         <div className="bg-[#6C69FF] text-white flex size-10 rounded-full items-center justify-center font-semibold">
@@ -132,7 +101,7 @@ const UserInfo = () => (
     </div>
 );
 
-// Collapsed user avatar component
+
 const CollapsedUserAvatar = () => (
     <div className="bg-[#6C69FF] text-white flex size-10 rounded-full items-center justify-center font-semibold">
         {USER.initials}
@@ -144,12 +113,7 @@ export function AppSidebar(props) {
         <Sidebar
             collapsible="icon"
             variant="sidebar"
-            className="
-        transition-all duration-300 ease-in-out
-        bg-[#6C69FF]
-        border-r border-white/10 
-        backdrop-blur-xl
-      "
+            className="transition-all duration-300 ease-in-out bg-[#6C69FF] border-r border-white/10 backdrop-blur-xl"
             {...props}
         >
             <SidebarRail />
