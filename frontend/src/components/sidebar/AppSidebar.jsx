@@ -1,96 +1,104 @@
-import * as React from "react"
+import * as React from "react";
 import {
     LayoutDashboard,
-    File,
-    Settings2,
-} from "lucide-react"
-import symphonyLogo from "@/assets/images/symphonylogo.png"
+    CreditCard,
+    AlertTriangle,
+    Users,
+    HelpCircle,
+    LogOut,
+    FileSignature,
+    Tag,
+    Briefcase,
+    Shield,
+} from "lucide-react";
 
-import { SidebarNav } from "@/components/sidebar/SidebarNav"
+import { SidebarNav } from "@/components/sidebar/SidebarNav";
 import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
     SidebarHeader,
     SidebarRail,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
-// This is sample data.
-const data = {
-    navMain: [
-        {
-            title: "Dashboard",
-            url: "/",
-            icon: LayoutDashboard,
-            isActive: true,
-        },
-        {
-            title: "Invoices",
-            url: "#",
-            icon: File,
-            items: [
-                {
-                    title: "KIF",
-                    url: "/kif",
-                },
-                {
-                    title: "KUF",
-                    url: "/kuf",
-                },
-            ],
-        },
-        {
-            title: "Bank Statements",
-            url: "/bank-statements",
-            icon: LayoutDashboard,
-        },
-        {
-            title: "Management",
-            url: "#",
-            icon: Settings2,
-            items: [
-                {
-                    title: "Users",
-                    url: "/users",
-                },
-                {
-                    title: "Roles & Permissions",
-                    url: "/roles-permissions",
-                }
-            ],
-        },
-    ],
-}
+import { ThemeToggle } from "../theme/ThemeToggle";
+import { SidebarCollapsePill } from "./SidebarCollapsePill";
+import { SidebarLogo } from "./SidebarLogo";
+import { SidebarUserInfo } from "./SidebarUserInfo";
+import { CollapsedUserAvatar } from "./CollapsedUserAvatar";
 
-export function AppSidebar({ ...props }) {
+const SIDEBAR_NAVIGATION = [
+    {
+        label: "Overview",
+        items: [
+            { title: "Dashboard", url: "/", icon: LayoutDashboard },
+            { title: "Bank Statements", url: "/bank-statements", icon: CreditCard },
+            { title: "Contracts", url: "/contracts", icon: FileSignature },
+            { title: "KIF", url: "/kif", icon: Tag },
+            { title: "KUF", url: "/kuf", icon: Tag },
+            { title: "Partners", url: "/partners", icon: Briefcase },
+        ],
+    },
+    {
+        label: "Issues",
+        items: [{ title: "PDF Issues", url: "/pdf-issues", icon: AlertTriangle }],
+    },
+    {
+        label: "Administration",
+        items: [
+            { title: "Users", url: "/users", icon: Users },
+            { title: "Roles & Permissions", url: "/roles-permissions", icon: Shield },
+        ],
+    },
+    {
+        label: "Support",
+        items: [
+            { title: "Help", url: "/help", icon: HelpCircle },
+            { title: "Log Out", url: "/logout", icon: LogOut },
+        ],
+    },
+];
+
+const USER = {
+    name: "John Doe",
+    email: "john@example.com",
+    initials: "JD",
+};
+
+export function AppSidebar(props) {
     return (
-        <Sidebar collapsible="icon" {...props}>
-            <SidebarHeader>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <a href="#">
-                                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                                    <img src={symphonyLogo} alt="Symphony Logo" className="object-cover rounded" />
-                                </div>
-                                <div className="flex flex-col gap-0.5 leading-none">
-                                    <span className="font-medium">Symphony</span>
-                                    <span className="">Finetica</span>
-                                </div>
-                            </a>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            </SidebarHeader>
-            <SidebarContent>
-                <SidebarNav items={data.navMain} />
-            </SidebarContent>
-            <SidebarFooter>
-            </SidebarFooter>
+        <Sidebar
+            collapsible="icon"
+            variant="sidebar"
+            className="transition-all duration-300 ease-in-out bg-[#6C69FF] border-r border-white/10 backdrop-blur-xl"
+            {...props}
+        >
             <SidebarRail />
+
+            <div className="relative flex flex-1 flex-col">
+                <SidebarCollapsePill />
+
+                <SidebarHeader>
+                    <SidebarLogo />
+                </SidebarHeader>
+
+                <SidebarContent className="pt-4">
+                    <SidebarNav groups={SIDEBAR_NAVIGATION} />
+                </SidebarContent>
+
+                <SidebarFooter>
+                    {/* Expanded state */}
+                    <div className="flex items-center justify-between px-3 py-4 group-data-[collapsible=icon]:hidden">
+                        <SidebarUserInfo user={USER} />
+                        <ThemeToggle />
+                    </div>
+
+                    {/* Collapsed state */}
+                    <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center py-4">
+                        <CollapsedUserAvatar initials={USER.initials} />
+                    </div>
+                </SidebarFooter>
+            </div>
         </Sidebar>
-    )
+    );
 }
