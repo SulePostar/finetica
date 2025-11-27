@@ -1,48 +1,12 @@
 import React, { useEffect, useState } from "react"
 import { Moon, Sun } from "lucide-react"
-
-function useTheme() {
-    const [theme, setTheme] = useState("system")
-    const [mounted, setMounted] = useState(false)
-
-    useEffect(() => {
-        setMounted(true)
-        const savedTheme = localStorage.getItem("theme")
-        if (savedTheme) {
-            setTheme(savedTheme)
-        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-            setTheme("dark")
-        }
-    }, [])
-
-    useEffect(() => {
-        if (!mounted) return
-
-        const root = window.document.documentElement
-        root.classList.remove("light", "dark")
-
-        if (theme === "system") {
-            const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-                ? "dark"
-                : "light"
-            root.classList.add(systemTheme)
-        } else {
-            root.classList.add(theme)
-        }
-
-        localStorage.setItem("theme", theme)
-    }, [theme, mounted])
-
-    return { theme, setTheme, mounted }
-}
+import { useTheme } from "@/hooks/useTheme"
 
 export function ThemeToggle() {
     const { theme, setTheme, mounted } = useTheme()
 
-    // Avoid hydration mismatch by rendering nothing until mounted
     if (!mounted) return null
 
-    // Determine if effectively dark for the toggle state
     const isDark =
         theme === "dark" ||
         (theme === "system" &&
@@ -53,7 +17,7 @@ export function ThemeToggle() {
         <div className="px-2">
             <button
                 onClick={() => setTheme(isDark ? "light" : "dark")}
-                className={`relative w-16 h-8 rounded-full p-1 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 ${isDark ? "bg-[#6C69FF]" : "bg-amber-400"
+                className={`relative w-16 h-8 rounded-full p-1 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-900 ${isDark ? "bg-[#6C69FF]" : "bg-slate-300"
                     }`}
                 aria-label="Toggle Theme"
             >
@@ -83,5 +47,4 @@ export function ThemeToggle() {
     )
 }
 
-// Add default export to support both named and default imports
 export default ThemeToggle
