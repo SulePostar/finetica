@@ -1,6 +1,7 @@
 import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { useBankTransactions } from "@/queries/BankStatementsPage";
+import { Badge } from "@/components/ui/badge";
 
 const bankStatementsColumns = [
     {
@@ -38,20 +39,24 @@ const bankStatementsColumns = [
         accessorKey: "approvedAt",
         header: "Status",
         cell: ({ row }) => {
-            const approvedAt = row.original.approvedAt;
-            if (approvedAt) {
-                return (
-                    <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                        Approved
-                    </span>
-                );
-            }
+            const approved = row.original.approvedAt || row.original.approvedBy;
+            const value = approved ? 'approved' : 'pending';
+            const statusStyles = {
+                approved: "bg-chart-2 text-primary-foreground",
+                pending: "bg-chart-4 text-primary-foreground",
+                rejected: "bg-destructive text-primary-foreground",
+                default: "bg-muted text-muted-foreground",
+            };
+            const color = statusStyles[value] || statusStyles.default;
             return (
-                <span className="inline-flex items-center rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
-                    Pending
-                </span>
+                <Badge className={color}>
+                    {value
+                        ? value.charAt(0).toUpperCase() +
+                        value.slice(1)
+                        : "—"}
+                </Badge>
             );
-        }
+        },
     },
 ];
 
