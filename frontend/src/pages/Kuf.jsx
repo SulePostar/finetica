@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import DynamicTable from "@/components/table/DynamicTable";
+import PageTitle from "@/components/shared-ui/PageTitle";
 
 const Kuf = () => {
     const mockKufData = [
@@ -19,7 +20,7 @@ const Kuf = () => {
             invoiceDate: "08/09/2025",
             dueDate: "07/12/2025",
             totalAmount: "52969.00",
-            review: "Approved",
+            review: "Rejected",
         },
         {
             id: 2,
@@ -115,14 +116,6 @@ const Kuf = () => {
 
     function getKufColumns(onAction) {
         return [
-            // Index kolona
-            // {
-            //     id: "index",
-            //     header: "Row",
-            //     cell: ({ row }) => row.index + 1,
-            // },
-
-            // Invoice Number
             {
                 accessorKey: "invoiceNumber",
                 header: "Invoice Number",
@@ -132,36 +125,26 @@ const Kuf = () => {
                     </span>
                 ),
             },
-
-            // Type
             {
                 accessorKey: "type",
                 header: "Type",
                 cell: ({ row }) => row.original.type || "—",
             },
-
-            // Customer
             {
                 accessorKey: "customer",
                 header: "Customer",
                 cell: ({ row }) => row.original.customer || "—",
             },
-
-            // Invoice Date
             {
                 accessorKey: "invoiceDate",
                 header: "Invoice Date",
                 cell: ({ row }) => row.original.invoiceDate || "—",
             },
-
-            // Due Date
             {
                 accessorKey: "dueDate",
                 header: "Due Date",
                 cell: ({ row }) => row.original.dueDate || "—",
             },
-
-            // Total Amount
             {
                 accessorKey: "totalAmount",
                 header: "Total Amount",
@@ -170,8 +153,6 @@ const Kuf = () => {
                     return value ? `${value} KM` : "—";
                 },
             },
-
-            // Review Badge
             {
                 accessorKey: "review",
                 header: "Review",
@@ -179,9 +160,9 @@ const Kuf = () => {
                     const value = row.original.review?.toLowerCase();
 
                     const statusStyles = {
-                        approved: "bg-green-600 text-white",
-                        pending: "bg-orange-500 text-white",
-                        rejected: "bg-red-600 text-white",
+                        approved: "bg-chart-2 text-primary-foreground",
+                        pending: "bg-chart-4 text-primary-foreground",
+                        rejected: "bg-destructive text-primary-foreground",
                         default: "bg-muted text-muted-foreground",
                     };
 
@@ -197,8 +178,6 @@ const Kuf = () => {
                     );
                 },
             },
-
-            // Actions column
             {
                 id: "actions",
                 header: "Actions",
@@ -238,7 +217,7 @@ const Kuf = () => {
 
     return (
         <>
-            <h2>This is the Kuf page.</h2>
+            <PageTitle text="KUF - Purchase Invoices" />
             <DynamicTable columns={getKufColumns((item) => console.log("Action on:", item))} data={mockKufData} />
         </>
     );
