@@ -12,14 +12,7 @@ import PageTitle from "@/components/shared-ui/PageTitle";
 import { useKufInvoices } from "@/queries/Kuf";
 
 const Kuf = () => {
-
-
     const { data, isPending } = useKufInvoices();
-
-    console.log("data", data);
-    console.log(data);
-    console.log(isPending);
-
 
     function getKufColumns(onAction) {
         return [
