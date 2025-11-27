@@ -57,6 +57,12 @@ const SIDEBAR_NAVIGATION = [
             { title: "Log Out", url: "/logout", icon: LogOut },
         ],
     },
+    {
+        label: "System Settings",
+        items: [
+
+        ],
+    }
 ];
 
 const USER = {
@@ -84,13 +90,15 @@ export function AppSidebar(props) {
 
                 <SidebarContent className="pt-4">
                     <SidebarNav groups={SIDEBAR_NAVIGATION} />
+                    <div className="px-3">
+                        <ThemeToggle />
+                    </div>
                 </SidebarContent>
 
                 <SidebarFooter>
                     {/* Expanded state */}
                     <div className="flex items-center justify-between px-3 py-4 group-data-[collapsible=icon]:hidden">
                         <SidebarUserInfo user={USER} />
-                        <ThemeToggle />
                     </div>
 
                     {/* Collapsed state */}
