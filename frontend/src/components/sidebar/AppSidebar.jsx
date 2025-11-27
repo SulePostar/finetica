@@ -1,5 +1,4 @@
 import * as React from "react";
-import symphonyLogo from "@/assets/images/symphonylogo.png";
 import {
     LayoutDashboard,
     CreditCard,
@@ -20,13 +19,13 @@ import {
     SidebarFooter,
     SidebarHeader,
     SidebarRail,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    useSidebar,
 } from "@/components/ui/sidebar";
+
 import { ThemeToggle } from "../theme/ThemeToggle";
 import { SidebarCollapsePill } from "./SidebarCollapsePill";
+import { SidebarLogo } from "./SidebarLogo";
+import { SidebarUserInfo } from "./SidebarUserInfo";
+import { CollapsedUserAvatar } from "./CollapsedUserAvatar";
 
 const SIDEBAR_NAVIGATION = [
     {
@@ -66,48 +65,6 @@ const USER = {
     initials: "JD",
 };
 
-const SidebarLogo = () => (
-    <SidebarMenu>
-        <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip="Finetica Home">
-                <a href="/" className="flex items-center gap-3 no-underline">
-                    <div className="flex aspect-square size-8 items-center justify-center rounded-xl bg-background/20 dark:bg-foreground/10">
-                        <img
-                            src={symphonyLogo}
-                            alt="Symphony Logo"
-                            className="object-cover rounded"
-                        />
-                    </div>
-                    <div className="flex flex-col gap-0 leading-none group-data-[collapsible=icon]:hidden">
-                        <span className="font-semibold text-lg text-foreground dark:text-white">
-                            Finetica
-                        </span>
-                    </div>
-                </a>
-            </SidebarMenuButton>
-        </SidebarMenuItem>
-    </SidebarMenu>
-);
-
-const UserInfo = () => (
-    <div className="flex items-center gap-3">
-        <div className="bg-[#6C69FF] text-white flex size-10 rounded-full items-center justify-center font-semibold">
-            {USER.initials}
-        </div>
-        <div className="flex flex-col leading-tight text-sm">
-            <span className="font-medium text-foreground">{USER.name}</span>
-            <span className="text-muted-foreground">{USER.email}</span>
-        </div>
-    </div>
-);
-
-
-const CollapsedUserAvatar = () => (
-    <div className="bg-[#6C69FF] text-white flex size-10 rounded-full items-center justify-center font-semibold">
-        {USER.initials}
-    </div>
-);
-
 export function AppSidebar(props) {
     return (
         <Sidebar
@@ -132,13 +89,13 @@ export function AppSidebar(props) {
                 <SidebarFooter>
                     {/* Expanded state */}
                     <div className="flex items-center justify-between px-3 py-4 group-data-[collapsible=icon]:hidden">
-                        <UserInfo />
+                        <SidebarUserInfo user={USER} />
                         <ThemeToggle />
                     </div>
 
                     {/* Collapsed state */}
                     <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center py-4">
-                        <CollapsedUserAvatar />
+                        <CollapsedUserAvatar initials={USER.initials} />
                     </div>
                 </SidebarFooter>
             </div>
