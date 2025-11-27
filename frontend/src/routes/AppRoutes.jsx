@@ -1,5 +1,7 @@
 import React from 'react';
 import { Navigate, Routes, Route } from 'react-router-dom'
+import ProfilePage from '@/pages/ProfilePage';
+
 const BankStatements = React.lazy(() => import('../pages/BankStatements'));
 const Kuf = React.lazy(() => import('../pages/Kuf'));
 const Contacts = React.lazy(() => import('../pages/Contacts'));
@@ -13,7 +15,7 @@ export default function AppRoutes() {
             <Route
                 path="/"
                 element={
-                    <h1 className="text-2xl font-semibold" >Home Page Placeholder</h1>
+                    <h1 className="text-2xl font-semibold" ></h1>
                 }
             />
             <Route
@@ -53,6 +55,12 @@ export default function AppRoutes() {
                 }
             />
 
+            <Route
+                path="/profile"
+                element={
+                    <ProfilePage />
+                }
+            />
             {/* Fallback for unknown routes */}
 
             <Route path="*" element={<Navigate to="/" replace />} />
