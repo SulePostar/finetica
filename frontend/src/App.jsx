@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button"
 import AppRoutes from "./routes/AppRoutes"
 import DefaultLayout from "./layout/DefaultLayout"
 import { ThemeProvider } from "./components/theme/ThemeProvider"
