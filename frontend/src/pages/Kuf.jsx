@@ -121,7 +121,7 @@ const Kuf = () => {
     return (
         <>
             <PageTitle text="KUF - Purchase Invoices" />
-            <DynamicTable columns={getKufColumns((item) => console.log("Action on:", item))} data={data.data} />
+            <DynamicTable columns={getKufColumns((item) => console.log("Action on:", item))} data={data.data ? data.data : []} />
         </>
     );
 }
