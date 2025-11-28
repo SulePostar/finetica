@@ -1,7 +1,7 @@
 import apiClient from './axios';
 
-export const getItems = async () => {
-    const { data } = await apiClient.get("/kuf");
+export const getItems = async (filters) => {
+    const { data } = await apiClient.get("/kuf", { params: filters });
     return data;
 };
 

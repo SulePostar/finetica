@@ -14,6 +14,11 @@ import { useKufInvoices } from "@/queries/Kuf";
 const Kuf = () => {
     const { data, isPending } = useKufInvoices();
 
+    const formatDate = (date) => {
+        if (!date) return "—";
+        return new Intl.DateTimeFormat("en-GB").format(new Date(date));
+    };
+
     function getKufColumns(onAction) {
         return [
             {
@@ -38,12 +43,12 @@ const Kuf = () => {
             {
                 accessorKey: "invoiceDate",
                 header: "Invoice Date",
-                cell: ({ row }) => row.original.invoiceDate || "—",
+                cell: ({ row }) => formatDate(row.original.invoiceDate),
             },
             {
                 accessorKey: "dueDate",
                 header: "Due Date",
-                cell: ({ row }) => row.original.dueDate || "—",
+                cell: ({ row }) => formatDate(row.original.dueDate),
             },
             {
                 accessorKey: "totalAmount",
