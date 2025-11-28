@@ -1,10 +1,7 @@
-import React from "react";
-import { useTheme } from "@/hooks/useTheme";
+import { useTheme } from "@/components/theme/useTheme";
 
 export function ThemeToggle() {
-    const { theme, setTheme, mounted } = useTheme();
-    if (!mounted) return null;
-
+    const { theme, setTheme } = useTheme();
     const isDark = theme === "dark";
 
     return (
@@ -18,14 +15,12 @@ export function ThemeToggle() {
         >
             <div
                 className={`
-                    w-4 h-4 bg-white rounded-full shadow-md
-                    transform transition-transform duration-300
+                    w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300
                     ${isDark ? "translate-x-7" : "translate-x-0"}
                 `}
             />
         </button>
     );
 }
-
 
 export default ThemeToggle;
