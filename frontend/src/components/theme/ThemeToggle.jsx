@@ -1,6 +1,6 @@
 import { useTheme } from "@/components/theme/useTheme";
 
-export function ThemeToggle() {
+export default function ThemeToggle() {
     const { theme, setTheme } = useTheme();
     const isDark = theme === "dark";
 
@@ -22,5 +22,3 @@ export function ThemeToggle() {
         </button>
     );
 }
-
-export default ThemeToggle;

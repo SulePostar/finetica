@@ -18,6 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 
 import AppearanceCard from "@/components/sidebar/AppearanceCard";
+import CollapsedThemeIcon from "../theme/CollapsedThemeIcon";
 
 export function SidebarNav({ groups }) {
     const currentPath =
@@ -38,6 +39,10 @@ export function SidebarNav({ groups }) {
 
                             <div className="px-3 py-2 group-data-[collapsible=icon]:hidden">
                                 <AppearanceCard />
+                            </div>
+
+                            <div className="hidden group-data-[collapsible=icon]:flex justify-center">
+                                <CollapsedThemeIcon />
                             </div>
                         </SidebarGroup>
                     );

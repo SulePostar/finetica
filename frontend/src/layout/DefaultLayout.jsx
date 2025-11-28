@@ -1,6 +1,5 @@
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
-import AppHeader from "@/components/header/AppHeader";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useState, useEffect } from "react";
 
@@ -20,8 +19,6 @@ const DefaultLayout = ({ children }) => {
                 <SidebarInset>
                     {/* Main Content Area */}
                     <div className="flex flex-1 flex-col">
-                        {/* Header */}
-                        {/* <AppHeader /> */}
                         {/* Page Content */}
                         <main className="flex-1 overflow-y-auto p-4 md:p-6">
                             <div className="mx-auto max-w-7xl">{children}</div>
