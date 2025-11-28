@@ -78,24 +78,24 @@ export function AppSidebar(props) {
         >
             <SidebarRail />
 
-            <div className="relative flex flex-1 flex-col">
+            <div className="relative flex flex-1 flex-col min-h-0">
                 <SidebarCollapsePill />
 
                 <SidebarHeader>
                     <SidebarLogo />
                 </SidebarHeader>
 
-                <SidebarContent className="pt-4">
+                <SidebarContent
+                    className="pt-4 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
+                >
                     <SidebarNav groups={SIDEBAR_NAVIGATION} />
                 </SidebarContent>
 
                 <SidebarFooter>
-                    {/* Expanded state */}
                     <div className="flex items-center justify-between px-3 py-4 group-data-[collapsible=icon]:hidden">
                         <SidebarUserInfo user={USER} />
                     </div>
 
-                    {/* Collapsed state */}
                     <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center py-4">
                         <CollapsedUserAvatar initials={USER.initials} />
                     </div>
