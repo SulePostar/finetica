@@ -1,36 +1,28 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 
 export function useTheme() {
-    const [theme, setTheme] = useState("system")
-    const [mounted, setMounted] = useState(false)
+    const [theme, setTheme] = useState("light");
+    const [mounted, setMounted] = useState(false);
 
+    // Load from localStorage on mount
     useEffect(() => {
-        setMounted(true)
-        const savedTheme = localStorage.getItem("theme")
-        if (savedTheme) {
-            setTheme(savedTheme)
-        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-            setTheme("dark")
+        const saved = localStorage.getItem("theme");
+        if (saved === "light" || saved === "dark") {
+            setTheme(saved);
         }
-    }, [])
+        setMounted(true);
+    }, []);
 
+    // Apply theme class to HTML
     useEffect(() => {
-        if (!mounted) return
+        if (!mounted) return;
 
-        const root = window.document.documentElement
-        root.classList.remove("light", "dark")
+        const root = document.documentElement;
+        root.classList.remove("light", "dark");
+        root.classList.add(theme);
 
-        if (theme === "system") {
-            const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-                ? "dark"
-                : "light"
-            root.classList.add(systemTheme)
-        } else {
-            root.classList.add(theme)
-        }
+        localStorage.setItem("theme", theme);
+    }, [theme, mounted]);
 
-        localStorage.setItem("theme", theme)
-    }, [theme, mounted])
-
-    return { theme, setTheme, mounted }
+    return { theme, setTheme, mounted };
 }

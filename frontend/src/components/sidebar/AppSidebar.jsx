@@ -21,7 +21,6 @@ import {
     SidebarRail,
 } from "@/components/ui/sidebar";
 
-import { ThemeToggle } from "../theme/ThemeToggle";
 import { SidebarCollapsePill } from "./SidebarCollapsePill";
 import { SidebarLogo } from "./SidebarLogo";
 import { SidebarUserInfo } from "./SidebarUserInfo";
@@ -59,9 +58,7 @@ const SIDEBAR_NAVIGATION = [
     },
     {
         label: "System Settings",
-        items: [
-
-        ],
+        custom: "appearance",
     }
 ];
 
@@ -90,9 +87,6 @@ export function AppSidebar(props) {
 
                 <SidebarContent className="pt-4">
                     <SidebarNav groups={SIDEBAR_NAVIGATION} />
-                    <div className="px-3">
-                        <ThemeToggle />
-                    </div>
                 </SidebarContent>
 
                 <SidebarFooter>
