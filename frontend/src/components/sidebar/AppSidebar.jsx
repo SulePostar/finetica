@@ -48,7 +48,7 @@ const SIDEBAR_NAVIGATION = [
         label: "Administration",
         items: [
             { title: "Users", url: "/users", icon: Users },
-            { title: "Roles & Permissions", url: "/roles-permissions", icon: Shield },
+            { title: "Roles & Statuses", url: "/roles-statuses", icon: Shield },
         ],
     },
     {

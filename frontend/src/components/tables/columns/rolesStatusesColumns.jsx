@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-export function getRolesPermissionsColumns(type = "roles", onDelete) {
+export function getRolesStatusesColumns(type = "roles", onDelete, nameKey) {
     return [
         {
             id: "index",
@@ -9,12 +9,12 @@ export function getRolesPermissionsColumns(type = "roles", onDelete) {
             cell: ({ row }) => row.index + 1,
         },
         {
-            accessorKey: "name",
-            header: type === "roles" ? "Role" : "Permission",
+            accessorKey: nameKey,
+            header: type === "roles" ? "Role" : "Status",
             cell: ({ row }) => {
-                const value = row.original.name;
+                const value = row.original[nameKey];
 
-                if (type === "permissions") {
+                if (type === "statuses") {
                     const statusStyles = {
                         approved: "bg-chart-2 text-primary-foreground",
                         pending: "bg-chart-4 text-primary-foreground",
@@ -22,10 +22,10 @@ export function getRolesPermissionsColumns(type = "roles", onDelete) {
                         default: "bg-muted text-muted-foreground",
                     };
 
-                    const key = value.toLowerCase();
+                    const key = value?.toLowerCase() || "None";
                     const color = statusStyles[key] || statusStyles.default;
 
-                    return (<Badge className={color}>{value.charAt(0).toUpperCase() + value.slice(1)}</Badge>);
+                    return (<Badge className={color}>{value?.charAt(0).toUpperCase() + value?.slice(1)}</Badge>);
                 }
 
                 return <span className="font-medium">{value}</span>;

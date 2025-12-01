@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import DynamicTable from "../table/DynamicTable";
 import PageTitle from "../shared-ui/PageTitle";
 
-const RolesPermissionsTable = ({ title, onAdd, placeholder, columns, data }) => {
+const RolesStatusesTable = ({ title, onAdd, placeholder, columns, data }) => {
     const [input, setInput] = useState("");
 
     return (
@@ -38,4 +38,4 @@ const RolesPermissionsTable = ({ title, onAdd, placeholder, columns, data }) => 
     );
 };
 
-export default RolesPermissionsTable;
+export default RolesStatusesTable;
