@@ -5,12 +5,20 @@ export function getRolesStatusesColumns(type = "roles", onDelete, nameKey) {
     return [
         {
             id: "index",
-            header: "Row",
-            cell: ({ row }) => row.index + 1,
+            header: () => <div className="text-center w-full">Row</div>,
+            cell: ({ row }) => (
+                <div className="text-center w-full">
+                    {row.index + 1}
+                </div>
+            ),
         },
         {
             accessorKey: nameKey,
-            header: type === "roles" ? "Role" : "Status",
+            header: () => (
+                <div className="text-center w-full">
+                    {type === "roles" ? "Role" : "Status"}
+                </div>
+            ),
             cell: ({ row }) => {
                 const value = row.original[nameKey];
 
@@ -25,23 +33,36 @@ export function getRolesStatusesColumns(type = "roles", onDelete, nameKey) {
                     const key = value?.toLowerCase() || "None";
                     const color = statusStyles[key] || statusStyles.default;
 
-                    return (<Badge className={color}>{value?.charAt(0).toUpperCase() + value?.slice(1)}</Badge>);
+                    return (
+                        <div className="flex justify-center w-full">
+                            <Badge className={color}>
+                                {value?.charAt(0).toUpperCase() + value?.slice(1)}
+                            </Badge>
+                        </div>
+                    );
                 }
 
-                return <span className="font-medium">{value}</span>;
+                return (
+                    <div className="flex justify-center w-full font-medium">
+                        {value}
+                    </div>
+                );
             },
         },
         {
             id: "actions",
-            header: "Actions",
+            header: () => <div className="text-center w-full">Actions</div>,
             cell: ({ row }) => {
                 const item = row.original;
                 return (
-                    <Button
-                        variant="destructive" onClick={() => onDelete(item)}
-                    >
-                        Delete
-                    </Button>
+                    <div className="flex justify-center w-full">
+                        <Button
+                            variant="destructive"
+                            onClick={() => onDelete(item)}
+                        >
+                            Delete
+                        </Button>
+                    </div>
                 );
             },
         },

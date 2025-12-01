@@ -20,7 +20,7 @@ const RolesStatusesTable = ({ title, onAdd, placeholder, columns, data }) => {
                     if (input.trim()) onAdd(input);
                     setInput("");
                 }}
-                className="flex gap-2 mb-4"
+                className="flex gap-2 mb-4 mt-4"
             >
                 <Input
                     placeholder={placeholder}
