@@ -1,6 +1,6 @@
 import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
-import { useKifItems } from "@/queries/KifQueries";
+import { useKifList } from "@/queries/KifQueries";
 import { Badge } from "@/components/ui/Badge";
 
 export const columns = [
@@ -69,7 +69,7 @@ export const columns = [
 ];
 
 const Kif = () => {
-    const { data: response, isLoading, isError, error } = useKifItems();
+    const { data: response, isLoading, isError, error } = useKifList();
 
     if (isLoading) {
         return (
