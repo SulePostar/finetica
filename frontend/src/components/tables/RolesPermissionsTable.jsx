@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import DataTable from "../data-table/DataTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import DynamicTable from "../table/DynamicTable";
 
 const RolesPermissionsTable = ({ title, onAdd, placeholder, columns, data }) => {
     const [input, setInput] = useState("");
@@ -28,7 +28,7 @@ const RolesPermissionsTable = ({ title, onAdd, placeholder, columns, data }) => 
                 </Button>
             </form>
 
-            <DataTable columns={columns} data={data} />
+            <DynamicTable columns={columns} data={data} />
 
         </div>
     );
