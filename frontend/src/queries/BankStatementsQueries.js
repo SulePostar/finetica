@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getBankTransactions, getBankTransactionById } from "../api/BankStatementsPage";
+import { getBankTransactions, getBankTransactionById } from "../api/BankStatements";
 
 export const bankTransactionKeys = {
   all: ["bank-transactions"],
@@ -11,7 +11,7 @@ export const bankTransactionKeys = {
   detail: (id) => [...bankTransactionKeys.details(), id],
 };
 
-// GET - list of items
+// GET - list of bank statements
 export const useBankTransactions = (filters = {}) => {
   return useQuery({
     queryKey: bankTransactionKeys.list("all"),

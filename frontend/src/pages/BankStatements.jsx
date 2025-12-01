@@ -1,6 +1,6 @@
 import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
-import { useBankTransactions } from "@/queries/BankStatementsPage";
+import { useBankTransactions } from "@/queries/BankStatementsQueries";
 import { Badge } from "@/components/ui/badge";
 
 const bankStatementsColumns = [
