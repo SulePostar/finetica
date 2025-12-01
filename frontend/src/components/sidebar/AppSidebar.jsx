@@ -26,6 +26,8 @@ import { SidebarLogo } from "./SidebarLogo";
 import { SidebarUserInfo } from "./SidebarUserInfo";
 import { CollapsedUserAvatar } from "./CollapsedUserAvatar";
 
+import { Link } from "react-router-dom";
+
 const SIDEBAR_NAVIGATION = [
     {
         label: "Overview",
@@ -90,14 +92,17 @@ export function AppSidebar(props) {
                 >
                     <SidebarNav groups={SIDEBAR_NAVIGATION} />
                 </SidebarContent>
-
                 <SidebarFooter>
-                    <div className="flex items-center justify-between px-3 py-4 group-data-[collapsible=icon]:hidden">
-                        <SidebarUserInfo user={USER} />
+                    <div className="flex items-center justify-between px-3 py-4 group-data-[collapsible=icon]:hidden pointer-events-auto">
+                        <Link to="/profile" className="block w-full cursor-pointer">
+                            <SidebarUserInfo user={USER} />
+                        </Link>
                     </div>
 
-                    <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center py-4">
-                        <CollapsedUserAvatar initials={USER.initials} />
+                    <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center py-4 pointer-events-auto">
+                        <Link to="/profile" className="cursor-pointer">
+                            <CollapsedUserAvatar initials={USER.initials} />
+                        </Link>
                     </div>
                 </SidebarFooter>
             </div>
