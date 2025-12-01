@@ -1,25 +1,25 @@
 import apiClient from './axios';
 
-export const getItems = async (filters) => {
+export const getAllKufs = async (filters) => {
     const { data } = await apiClient.get("/kuf", { params: filters });
     return data;
 };
 
-export const getItemById = async (id) => {
+export const getKufById = async (id) => {
     const { data } = await apiClient.get(`/kuf/${id}`);
     return data;
 };
 
-export const createItem = async (payload) => {
+export const createKuf = async (payload) => {
     const { data } = await apiClient.post("/kuf", payload);
     return data;
 };
 
-export const updateItem = async ({ id, ...payload }) => {
+export const updateKuf = async ({ id, ...payload }) => {
     const { data } = await apiClient.put(`/kuf/${id}`, payload);
     return data;
 };
 
-export const deleteItem = async (id) => {
+export const deleteKuf = async (id) => {
     await apiClient.delete(`/kuf/${id}`);
 };

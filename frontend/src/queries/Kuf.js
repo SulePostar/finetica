@@ -1,4 +1,4 @@
-import { getItems } from "@/api/Kuf";
+import { getAllKufs } from "@/api/Kuf";
 import { useQuery, } from "@tanstack/react-query";
 
 export const kufKeys = {
@@ -14,6 +14,6 @@ export const useKufInvoices = (filters = {}) => {
     return useQuery({
         queryKey: kufKeys.list(filters),
         queryFn: () =>
-            getItems(filters),
+            getAllKufs(filters),
     });
 };
