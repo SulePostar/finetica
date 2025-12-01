@@ -10,12 +10,10 @@ import { MoreHorizontal } from "lucide-react";
 import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { useKufInvoices } from "@/queries/Kuf";
-import { useState } from "react";
 
 const Kuf = () => {
-    const [page, setPage] = useState(1);
-    const perPage = 10;
-    const { data, isPending } = useKufInvoices({ page, perPage });
+    const { data, isPending } = useKufInvoices();
+
     const formatDate = (date) => {
         if (!date) return "—";
         return new Intl.DateTimeFormat("en-GB").format(new Date(date));
@@ -128,11 +126,7 @@ const Kuf = () => {
     return (
         <>
             <PageTitle text="KUF - Purchase Invoices" />
-            <DynamicTable columns={getKufColumns((item) => console.log("Action on:", item))} data={data.data ? data.data : []} total={data?.total || 0}
-                page={page}
-                perPage={perPage}
-                onPageChange={setPage}
-            />
+            <DynamicTable columns={getKufColumns((item) => console.log("Action on:", item))} data={data.data ? data.data : []} />
         </>
     );
 }

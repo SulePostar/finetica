@@ -8,20 +8,12 @@ import {
     TableRow,
 } from "@/components/ui/table"
 
-const DynamicTable = ({ columns, data, total, onPageChange, perPage, page }) => {
+const DynamicTable = ({ columns, data }) => {
     const table = useReactTable({
         data,
         columns,
-        pageCount: Math.ceil(total / perPage),
-        state: {
-            pagination: {
-                pageIndex: page - 1,
-                pageSize: perPage,
-            },
-        },
-        manualPagination: true,
         getCoreRowModel: getCoreRowModel(),
-    });
+    })
 
     return (
         <div className="rounded-md border">
@@ -64,23 +56,6 @@ const DynamicTable = ({ columns, data, total, onPageChange, perPage, page }) => 
                     )}
                 </TableBody>
             </Table>
-            <div className="flex items-center justify-end p-2 gap-2">
-                <button
-                    disabled={page === 1}
-                    onClick={() => onPageChange(page - 1)}
-                    className="border px-3 py-1 rounded"
-                >
-                    Prev
-                </button>
-                <span>Page {page} of {Math.ceil(total / perPage)}</span>
-                <button
-                    disabled={page >= Math.ceil(total / perPage)}
-                    onClick={() => onPageChange(page + 1)}
-                    className="border px-3 py-1 rounded"
-                >
-                    Next
-                </button>
-            </div>
         </div>
     )
 }
