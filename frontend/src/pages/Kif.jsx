@@ -69,9 +69,9 @@ export const columns = [
 ];
 
 const Kif = () => {
-    const { data: response, isLoading, isError, error } = useKifList();
+    const { data: response, isPending, isError, error } = useKifList();
 
-    if (isLoading) {
+    if (isPending) {
         return (
             <>
                 <PageTitle text="Kif" />
