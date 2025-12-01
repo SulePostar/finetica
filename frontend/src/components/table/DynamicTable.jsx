@@ -73,7 +73,6 @@ const DynamicTable = ({ columns, data, total, onPageChange, perPage, page }) => 
                     onPageChange={onPageChange}
                 />
             </div>
-
         </div>
     )
 }

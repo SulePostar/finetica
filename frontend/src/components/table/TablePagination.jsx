@@ -20,7 +20,7 @@ export default function TablePagination({ page, perPage, total, onPageChange }) 
     }
 
     return (
-        <Pagination>
+        <Pagination className="flex items-center justify-end">
             <PaginationContent>
                 <PaginationItem>
                     <PaginationPrevious
