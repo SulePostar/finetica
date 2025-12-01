@@ -51,7 +51,7 @@ function PaginationLink({
     <a
       aria-current={isActive ? "page" : undefined}
       data-slot="pagination-link"
-      data-active={isActive}
+      data-active={isActive ? "true" : "false"}
       className={cn(buttonVariants({
         variant: disabled ? "disabled" : isActive ? "outline" : "ghost",
         size,

@@ -30,8 +30,8 @@ export default function TablePagination({ page, perPage, total, onPageChange }) 
                 </PaginationItem>
 
                 {pages.map((p) => (
-                    <PaginationItem key={p} active={p === page}>
-                        <PaginationLink onClick={() => onPageChange(p)}>
+                    <PaginationItem key={p}>
+                        <PaginationLink isActive={p === page} onClick={() => onPageChange(p)}>
                             {p}
                         </PaginationLink>
                     </PaginationItem>
