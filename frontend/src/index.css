@@ -38,6 +38,13 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --heading-color: #5850a6;
+
+  --table-header: #6c69ff; /* bg-[#6C69FF] */
+  --table-row-even: #d4d3ff; /* bg-[#D4D3FF] */
+  --table-row-even-hover: #ecebff; /* hover:bg-[#ECEBFF] */
+  --table-row-odd: #a19fff; /* bg-[#A19FFF] */
+  --table-row-odd-hover: #b3b0ff; /* hover:bg-[#B3B0FF] */
+  --table-border-light: #ecebff; /* border-[#ECEBFF] */
 }
 
 .dark {
@@ -75,6 +82,13 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
   --heading-color: #ffffff;
+
+  --table-header: #5654cc; /* dark:bg-[#5654CC] */
+  --table-row-even: #434199; /* dark:bg-[#434199] */
+  --table-row-even-hover: #5654cc; /* dark:hover:bg-[#5654CC] */
+  --table-row-odd: #302e66; /* dark:bg-[#302E66] */
+  --table-row-odd-hover: #5654cc; /* dark:hover:bg-[#5654CC] */
+  --table-border-dark: #1c1b33; /* dark:border-[#1C1B33] */
 }
 
 @theme inline {
@@ -114,6 +128,14 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  --color-table-header: var(--table-header);
+  --color-table-row-even: var(--table-row-even);
+  --color-table-row-even-hover: var(--table-row-even-hover);
+  --color-table-row-odd: var(--table-row-odd);
+  --color-table-row-odd-hover: var(--table-row-odd-hover);
+  --color-table-border-light: var(--table-border-light);
+  --color-table-border-dark: var(--table-border-dark);
 }
 
 @layer base {
