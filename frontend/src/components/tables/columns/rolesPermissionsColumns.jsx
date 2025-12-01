@@ -17,8 +17,8 @@ export function getRolesPermissionsColumns(type = "roles", onDelete) {
                 if (type === "permissions") {
                     const statusStyles = {
                         approved: "bg-chart-2 text-primary-foreground",
-                        pending: "bg-chart-4 text-primary",
-                        rejected: "bg-destructive text-destructive-foreground",
+                        pending: "bg-chart-4 text-primary-foreground",
+                        rejected: "bg-destructive text-primary-foreground",
                         default: "bg-muted text-muted-foreground",
                     };
 
