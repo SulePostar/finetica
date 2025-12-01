@@ -11,7 +11,7 @@ export const bankTransactionKeys = {
   detail: (id) => [...bankTransactionKeys.details(), id],
 };
 
-// GET - list of bank statements
+// GET - list of bank transactions
 export const useBankTransactions = (filters = {}) => {
   return useQuery({
     queryKey: bankTransactionKeys.list("all"),

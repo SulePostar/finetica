@@ -61,9 +61,9 @@ const bankStatementsColumns = [
 ];
 
 const BankStatements = () => {
-    const { data, isLoading, isError, error } = useBankTransactions();
+    const { data, isPending, isError, error } = useBankTransactions();
 
-    if (isLoading) {
+    if (isPending) {
         return (
             <div>
                 <p className="mt-4 text-sm text-muted-foreground">Loading bank statements...</p>
