@@ -1,6 +1,38 @@
+import { Badge } from "@/components/ui/badge";
+import DynamicTable from "@/components/table/DynamicTable";
+import PageTitle from "@/components/shared-ui/PageTitle";
+import { useKufInvoices } from "@/queries/Kuf";
+import { useState } from "react";
+import { getKufColumns } from "@/components/tables/columns/kufColumns";
+import { Spinner } from "@/components/ui/spinner";
+import IsError from "@/components/shared-ui/IsError";
+
 const Kuf = () => {
+    const [page, setPage] = useState(1);
+    const perPage = 10;
+    const { data, isPending, error, isError, refetch } = useKufInvoices({ page, perPage });
+
+    if (isPending) return <div className="flex items-center justify-center h-40">
+        <Spinner className="size-10" />
+    </div>;
+
+    if (isError) {
+        return (
+            <>
+                <PageTitle text="KUF - Purchase Invoices" />
+                <IsError error={error} onRetry={() => refetch()} title="Failed to load KUF" showDetails={true} />
+            </>
+        );
+    }
     return (
-        <h2>This is the Kuf page.</h2>
+        <>
+            <PageTitle text="KUF - Purchase Invoices" />
+            <DynamicTable columns={getKufColumns((item) => console.log("Action on:", item))} data={data.data ? data.data : []} total={data?.total || 0}
+                page={page}
+                perPage={perPage}
+                onPageChange={setPage}
+            />
+        </>
     );
 }
 export default Kuf;

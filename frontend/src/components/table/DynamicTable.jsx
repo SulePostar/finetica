@@ -7,11 +7,20 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import TablePagination from "./TablePagination"
 
-const DynamicTable = ({ columns, data }) => {
+const DynamicTable = ({ columns, data, total, onPageChange, perPage, page }) => {
     const table = useReactTable({
         data,
         columns,
+        pageCount: Math.ceil(total / perPage),
+        state: {
+            pagination: {
+                pageIndex: page - 1,
+                pageSize: perPage,
+            },
+        },
+        manualPagination: true,
         getCoreRowModel: getCoreRowModel(),
     })
 
@@ -56,6 +65,14 @@ const DynamicTable = ({ columns, data }) => {
                     )}
                 </TableBody>
             </Table>
+            <div className="flex items-center justify-end p-2 gap-2">
+                <TablePagination
+                    page={page}
+                    perPage={perPage}
+                    total={total}
+                    onPageChange={onPageChange}
+                />
+            </div>
         </div>
     )
 }

@@ -8,7 +8,9 @@ const {
 const isAuthenticated = require('../middleware/isAuthenticated');
 
 const router = express.Router();
-router.get('/', isAuthenticated, getAllUserRoles);
+router.get('/',
+    // isAuthenticated
+    getAllUserRoles);
 router.get('/:id', isAuthenticated, getUserRoleById);
 router.post('/', isAuthenticated, createUserRole);
 router.delete('/:id', isAuthenticated, deleteUserRole);
