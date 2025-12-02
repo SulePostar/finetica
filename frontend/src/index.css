@@ -38,6 +38,9 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --heading-color: #5850a6;
+  --spurple: #6c69ff;
+  --green: #22c55e;
+  --green-foreground: #166534;
 }
 
 .dark {
@@ -75,6 +78,9 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
   --heading-color: #ffffff;
+  --spurple: #6c69ff;
+  --green: #22c55e;
+  --green-foreground: #86efac;
 }
 
 @theme inline {
@@ -114,6 +120,9 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-spurple: var(--spurple);
+  --color-green: var(--green);
+  --color-green-foreground: var(--green-foreground);
 }
 
 @layer base {
