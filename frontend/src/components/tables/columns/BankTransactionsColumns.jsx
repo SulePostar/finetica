@@ -1,13 +1,7 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { ReviewStatusBadge } from "@/components/shared-ui/ReviewStatusBadge";
 
 export function getBankTransactionsColumns(onDelete) {
     return [
-        {
-            id: "index",
-            header: "Row",
-            cell: ({ row }) => row.index + 1,
-        },
         {
             accessorKey: "date",
             header: "Date",
@@ -46,20 +40,7 @@ export function getBankTransactionsColumns(onDelete) {
                 const approved = row.original.approvedAt || row.original.approvedBy;
                 const value = approved ? "approved" : "pending";
 
-                const statusStyles = {
-                    approved: "bg-chart-2 text-primary-foreground",
-                    pending: "bg-chart-4 text-primary-foreground",
-                    rejected: "bg-destructive text-primary-foreground",
-                    default: "bg-muted text-muted-foreground",
-                };
-
-                const color = statusStyles[value] || statusStyles.default;
-
-                return (
-                    <Badge className={color}>
-                        {value.charAt(0).toUpperCase() + value.slice(1)}
-                    </Badge>
-                );
+                return <ReviewStatusBadge status={value} />;
             },
         },
     ];
