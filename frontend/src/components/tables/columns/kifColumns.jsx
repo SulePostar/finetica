@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
 import { formatDateTime } from "@/helpers/formatDate";
 import { formatValue } from "@/helpers/formatValue";
+import { ReviewStatusBadge } from "@/components/shared-ui/ReviewStatusBadge";
 
 export function getKifColumns(onDelete) {
     return [
@@ -51,16 +52,7 @@ export function getKifColumns(onDelete) {
                 const approved = row.original.approvedAt || row.original.approvedBy;
                 const value = approved ? "approved" : "pending";
 
-                const statusStyles = {
-                    approved: "bg-chart-2 text-primary-foreground",
-                    pending: "bg-chart-4 text-primary-foreground",
-                    rejected: "bg-destructive text-primary-foreground",
-                    default: "bg-muted text-muted-foreground",
-                };
-
-                const color = statusStyles[value] || statusStyles.default;
-
-                return <Badge className={color}>{capitalizeFirst(value)}</Badge>;
+                return <ReviewStatusBadge status={value} />
             },
         },
         {
