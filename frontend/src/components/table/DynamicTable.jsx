@@ -31,7 +31,7 @@ const DynamicTable = ({ columns, data, total, onPageChange, perPage, page }) => 
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow
                             key={headerGroup.id}
-                            className="bg-heading hover:bg-table-header !border-b-2 border-table-border-light dark:bg-purple-black "
+                            className="bg-table-header hover:bg-table-header !border-b-2 border-table-border-light dark:bg-gray-background"
                         >
                             {headerGroup.headers.map((header) => {
                                 return (
@@ -55,11 +55,7 @@ const DynamicTable = ({ columns, data, total, onPageChange, perPage, page }) => 
                             <TableRow
                                 key={row.id}
                                 data-state={row.getIsSelected() && "selected"}
-                                className={
-                                    row.index % 2 === 0
-                                        ? "bg-table-row-even hover:bg-table-row-even-hover text-black/70 dark:text-white/95"    // even rows
-                                        : "bg-table-row-odd hover:bg-table-row-odd-hover text-white"                            // odd rows
-                                }
+                                className="bg-table-row-even dark:bg-light-gray hover:bg-table-row-even-hover text-black/70 dark:text-white/95"
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id}
@@ -79,7 +75,7 @@ const DynamicTable = ({ columns, data, total, onPageChange, perPage, page }) => 
                     )}
                 </TableBody>
             </Table>
-            <div className="flex items-center justify-end py-4 p-2 gap-2 text-white bg-heading dark:bg-purple-black !border-t-2 border-table-border-light dark:border-table-border-dark">
+            <div className="flex items-center justify-end py-4 p-2 gap-2 text-white bg-table-header dark:bg-gray-background !border-t-2 border-table-border-light dark:border-table-border-dark">
                 <TablePagination
                     page={page}
                     perPage={perPage}

@@ -62,7 +62,7 @@ const Kuf = () => {
             },
             {
                 accessorKey: "review",
-                header: "Review",
+                header: () => <span className="inline-flex items-center px-5.5 py-0.5">Review</span>,
                 cell: ({ row }) => {
                     const approved = row.original.approvedAt || row.original.approvedBy;
 
@@ -78,7 +78,7 @@ const Kuf = () => {
                     const color = statusStyles[value] || statusStyles.default;
 
                     return (
-                        <Badge className={color}>
+                        <Badge className={`${color} w-30 justify-center`}>
                             {value
                                 ? value.charAt(0).toUpperCase() +
                                 value.slice(1)
