@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate, Routes, Route } from 'react-router-dom'
 import ProfilePage from '@/pages/ProfilePage';
 
-const BankStatements = React.lazy(() => import('../pages/BankStatements'));
+const BankTransactions = React.lazy(() => import('../pages/BankTransactions'));
 const Kuf = React.lazy(() => import('../pages/Kuf'));
 const Contacts = React.lazy(() => import('../pages/Contacts'));
 const Partner = React.lazy(() => import('../pages/PartnersPage'));
@@ -13,7 +13,7 @@ import RoleAndStatusManagement from '@/pages/RoleAndStatusManagement';
 
 export default function AppRoutes() {
     return (
-        <Routes>
+        <Routes>x
             <Route
                 path="/"
                 element={
@@ -35,7 +35,7 @@ export default function AppRoutes() {
             <Route
                 path="/bank-statements"
                 element={
-                    <BankStatements />
+                    <BankTransactions />
                 }
             />
             <Route

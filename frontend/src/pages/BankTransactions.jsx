@@ -1,13 +1,13 @@
 import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
-import { useBankTransactions } from "@/queries/BankStatementsQueries";
+import { useBankTransactions } from "@/queries/BankTransactionsQueries";
 import { Spinner } from "@/components/ui/spinner";
 import IsError from "@/components/shared-ui/IsError";
-import { getBankStatementsColumns } from "@/components/tables/columns/BankTransactionsColumns";
+import { getBankTransactionsColumns } from "@/components/tables/columns/BankTransactionsColumns";
 import { useState } from "react";
 import { PanelsLeftBottom } from "lucide-react";
 
-const BankStatements = () => {
+const BankTransactions = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
     const { data, isPending, isError, error, refetch } = useBankTransactions({ page, perPage });
@@ -33,9 +33,9 @@ const BankStatements = () => {
 
     return (
         <div>
-            <PageTitle text="Bank Statements" />
+            <PageTitle text="Bank Transactions" />
             <DynamicTable
-                columns={getBankStatementsColumns()}
+                columns={getBankTransactionsColumns()}
                 data={rows}
                 total={total}
                 page={page}
@@ -46,4 +46,4 @@ const BankStatements = () => {
     );
 }
 
-export default BankStatements;
+export default BankTransactions;

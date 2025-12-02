@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-export function getBankStatementsColumns(onDelete) {
+export function getBankTransactionsColumns(onDelete) {
     return [
         {
             id: "index",
