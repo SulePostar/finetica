@@ -7,10 +7,12 @@ import IsError from "@/components/shared-ui/IsError";
 import { Spinner } from "@/components/ui/spinner";
 
 const Kif = () => {
-    const { data: response, isPending, isError, error } = useKifList();
-
     const [page, setPage] = useState(1);
     const perPage = 10;
+    const { data: response, isPending, isError, error, } = useKifList({ page, perPage });
+
+
+
 
     const columns = getKifColumns((item) => {
         console.log("Delete:", item);
@@ -40,10 +42,12 @@ const Kif = () => {
             <DynamicTable
                 columns={columns}
                 data={response?.data || []}
+                total={response?.total || 0}
                 page={page}
                 perPage={perPage}
                 onPageChange={setPage}
             />
+
         </>
     );
 };
