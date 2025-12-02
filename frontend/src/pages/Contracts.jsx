@@ -3,6 +3,7 @@ import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { useContracts } from "../queries/useContracts";
 import { Badge } from "@/components/ui/badge";
+import { Spinner } from '@/components/ui/spinner.jsx';
 
 const dummyContracts = [
   {
@@ -105,7 +106,11 @@ export default function Contracts() {
   const paginatedRows = allRows.slice(startIndex, endIndex);
 
   if (isPending) {
-    return <p className="mt-4 text-sm text-muted-foreground">Loading contracts...</p>;
+    return(
+    <div className="flex items-center justify-center h-40">
+      <Spinner className="size-10" />
+    </div>
+    );
   }
 
   if (isError) {
