@@ -39,10 +39,6 @@ const dummyContracts = [
 
 const contractColumns = [
   {
-    accessorKey: "id",
-    header: "ID"
-  },
-  {
     accessorKey: "partner_name",
     header: "Partner",
     cell: ({ row }) => row.original.partner_name || row.original.businessPartner?.name || "—"
@@ -92,8 +88,7 @@ const contractColumns = [
     header: "Amount",
     cell: ({ row }) => {
       const amount = row.original.amount;
-      const currency = row.original.currency || "USD";
-      return amount ? `${currency} ${parseFloat(amount).toFixed(2)}` : "—";
+      return amount ? `${parseFloat(amount).toFixed(2)}` : "—";
     },
   },
 ];
