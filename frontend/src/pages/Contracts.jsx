@@ -8,6 +8,12 @@ import { Badge } from "@/components/ui/badge";
 const dummyContracts = [
     { id: 1, name: "Contract A", customer_name: "Acme Corp", amount: 12000, status: "active" },
     { id: 2, name: "Contract B", customer_name: "Globex Inc", amount: 8000, status: "pending" },
+    { id: 3, name: "Contract C", customer_name: "Soylent Co", amount: 15000, status: "canceled" },
+    { id: 4, name: "Contract D", customer_name: "Initech", amount: 5000, status: "active" },
+    { id: 5, name: "Contract E", customer_name: "Umbrella Corp", amount: 20000, status: "pending" },
+    { id: 6, name: "Contract F", customer_name: "Hooli", amount: 11000, status: "active" },
+    { id: 7, name: "Contract G", customer_name: "Vehement Capital Partners", amount: 9500, status: "canceled" },
+    { id: 8, name: "Contract H", customer_name: "Massive Dynamic", amount: 13000, status: "active" }
 ];
 
 
