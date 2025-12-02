@@ -12,7 +12,6 @@ import PageTitle from "@/components/shared-ui/PageTitle";
 import { useKufInvoices } from "@/queries/Kuf";
 import { useState } from "react";
 
-
 const Kuf = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
