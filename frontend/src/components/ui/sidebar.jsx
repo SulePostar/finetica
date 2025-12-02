@@ -52,7 +52,20 @@ function SidebarProvider({
   const isMobile = false;
   const [openMobile, setOpenMobile] = useState(false);
 
-  const [_open, _setOpen] = useState(defaultOpen);
+  const [_open, _setOpen] = useState(() => {
+    if (typeof document !== "undefined") {
+      const cookie = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith(`${SIDEBAR_COOKIE_NAME}=`));
+
+      if (cookie) {
+        const value = cookie.split("=")[1];
+        return value === "true";
+      }
+    }
+
+    return defaultOpen;
+  });
   const open = openProp ?? _open;
 
   const setOpen = useCallback((value) => {
