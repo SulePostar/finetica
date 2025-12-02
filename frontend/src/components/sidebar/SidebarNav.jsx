@@ -69,7 +69,7 @@ export function SidebarNav({ groups }) {
                                                     <SidebarMenuButton
                                                         tooltip={item.title}
                                                         className={cn(
-                                                            "transition-all px-3 rounded-md",
+                                                            "transition-all px-3 rounded-xl",
                                                             "text-slate-600 dark:text-white/80",
                                                             "hover:bg-indigo-50 hover:text-indigo-700",
                                                             "dark:hover:bg-[#6C69FF]/20 dark:hover:text-white",
@@ -116,7 +116,7 @@ export function SidebarNav({ groups }) {
                                             asChild
                                             tooltip={item.title}
                                             className={cn(
-                                                "relative overflow-hidden transition-all duration-300 ease-out rounded border border-transparent",
+                                                "relative overflow-hidden transition-all duration-300 ease-out rounded-lg border border-transparent",
                                                 "w-[95%]",
                                                 "flex items-center gap-4 py-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full",
                                                 "text-slate-600 dark:text-white/80",

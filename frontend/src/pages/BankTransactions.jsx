@@ -5,7 +5,6 @@ import { Spinner } from "@/components/ui/spinner";
 import IsError from "@/components/shared-ui/IsError";
 import { getBankTransactionsColumns } from "@/components/tables/columns/BankTransactionsColumns";
 import { useState } from "react";
-import { PanelsLeftBottom } from "lucide-react";
 
 const BankTransactions = () => {
     const [page, setPage] = useState(1);
