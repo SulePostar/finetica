@@ -25,19 +25,19 @@ const DynamicTable = ({ columns, data, total, onPageChange, perPage, page }) => 
     })
 
     return (
-        <div className="rounded-lg overflow-hidden border">
+        <div className="w-[90vw] mx-auto rounded-4xl overflow-hidden border">
             <Table>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow
                             key={headerGroup.id}
-                            className="bg-table-header hover:bg-table-header !border-b-2 border-table-border-light dark:border-table-border-dark"
+                            className="bg-heading hover:bg-table-header !border-b-2 border-table-border-light dark:bg-purple-black "
                         >
                             {headerGroup.headers.map((header) => {
                                 return (
                                     <TableHead
                                         key={header.id}
-                                        className="font-bold text-white py-4"
+                                        className="font-bold text-white p-5 py-6 text-[16px]"
                                     >
                                         {header.isPlaceholder ? null : flexRender(
                                             header.column.columnDef.header,
@@ -49,7 +49,7 @@ const DynamicTable = ({ columns, data, total, onPageChange, perPage, page }) => 
                         </TableRow>
                     ))}
                 </TableHeader>
-                <TableBody>
+                <TableBody className="divide-y">
                     {table.getRowModel().rows?.length ? (
                         table.getRowModel().rows.map((row) => (
                             <TableRow
@@ -62,7 +62,9 @@ const DynamicTable = ({ columns, data, total, onPageChange, perPage, page }) => 
                                 }
                             >
                                 {row.getVisibleCells().map((cell) => (
-                                    <TableCell key={cell.id}>
+                                    <TableCell key={cell.id}
+                                        className="px-6 py-3 whitespace-nowrap text-[15px] text-table-text-color !font-bold dark:text-white border-b-2 border-white dark:border-white/60"
+                                    >
                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                     </TableCell>
                                 ))}
@@ -77,7 +79,7 @@ const DynamicTable = ({ columns, data, total, onPageChange, perPage, page }) => 
                     )}
                 </TableBody>
             </Table>
-            <div className="flex items-center justify-end p-2 gap-2 text-white bg-table-header !border-t-2 border-table-border-light dark:border-table-border-dark">
+            <div className="flex items-center justify-end py-4 p-2 gap-2 text-white bg-heading dark:bg-purple-black !border-t-2 border-table-border-light dark:border-table-border-dark">
                 <TablePagination
                     page={page}
                     perPage={perPage}

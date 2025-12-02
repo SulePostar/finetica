@@ -69,10 +69,10 @@ const Kuf = () => {
                     const value = approved ? 'approved' : 'pending';
 
                     const statusStyles = {
-                        approved: "bg-chart-2 text-primary-foreground",
-                        pending: "bg-chart-4 text-primary-foreground",
-                        rejected: "bg-destructive text-primary-foreground",
-                        default: "bg-muted text-muted-foreground",
+                        approved: "bg-chart-2/60 font-bold border-chart-2",
+                        pending: "bg-chart-4/60 dark:bg-chart-3/60 font-bold border-chart-4 dark:border-chart-3",
+                        rejected: "bg-destructive/60 font-bold border-destructive",
+                        default: "bg-muted/60 font-bold border-muted-foreground",
                     };
 
                     const color = statusStyles[value] || statusStyles.default;
