@@ -11,13 +11,6 @@ const Kif = () => {
     const perPage = 10;
     const { data: response, isPending, isError, error, } = useKifList({ page, perPage });
 
-
-
-
-    const columns = getKifColumns((item) => {
-        console.log("Delete:", item);
-    });
-
     if (isPending) {
         return (
             <>
@@ -29,9 +22,9 @@ const Kif = () => {
 
     if (isError) {
         return (
-            <>:
+            <>
                 <PageTitle text="Kif" />
-                <isError error={error} />
+                <IsError error={error} />
             </>
         );
     }
@@ -40,9 +33,7 @@ const Kif = () => {
         <>
             <PageTitle text="Kif" />
             <DynamicTable
-                columns={columns}
-                data={response?.data || []}
-                total={response?.total || 0}
+                columns={getKifColumns((item) => console.log("Action on:", item))} data={response.data ? response.data : []} total={response?.total || 0}
                 page={page}
                 perPage={perPage}
                 onPageChange={setPage}

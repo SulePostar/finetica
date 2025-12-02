@@ -1,5 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
+import { formatDateTime } from "@/helpers/formatDate";
+import { formatValue } from "@/helpers/formatValue";
 
 export function getKifColumns(onDelete) {
     return [
@@ -11,40 +14,34 @@ export function getKifColumns(onDelete) {
         {
             accessorKey: "invoiceNumber",
             header: "Invoice Number",
-            cell: ({ row }) => row.original.invoiceNumber || "—",
+            cell: ({ row }) => formatValue(row.original.invoiceNumber),
         },
         {
             accessorKey: "invoiceType",
             header: "Type",
-            cell: ({ row }) => row.original.invoiceType || "—",
+            cell: ({ row }) => formatValue(row.original.invoiceType),
         },
         {
             accessorKey: "customerName",
             header: "Customer",
-            cell: ({ row }) => row.original.customerName || "—",
+            cell: ({ row }) => formatValue(row.original.customerName),
         },
         {
             accessorKey: "invoiceDate",
             header: "Invoice Date",
-            cell: ({ row }) => {
-                const value = row.original.invoiceDate;
-                return value ? new Date(value).toLocaleDateString() : "—";
-            },
+            cell: ({ row }) => formatDateTime(row.original.invoiceDate),
         },
         {
             accessorKey: "dueDate",
             header: "Due Date",
-            cell: ({ row }) => {
-                const value = row.original.dueDate;
-                return value ? new Date(value).toLocaleDateString() : "—";
-            },
+            cell: ({ row }) => formatDateTime(row.original.dueDate),
         },
         {
             accessorKey: "totalAmount",
             header: "Total Amount",
             cell: ({ row }) => {
                 const value = row.original.totalAmount;
-                return value != null ? `${parseFloat(value).toFixed(2)} KM` : "—";
+                return value != null ? `${parseFloat(value).toFixed(2)}` : "—";
             },
         },
         {
@@ -63,28 +60,17 @@ export function getKifColumns(onDelete) {
 
                 const color = statusStyles[value] || statusStyles.default;
 
-                return (
-                    <Badge className={color}>
-                        {value.charAt(0).toUpperCase() + value.slice(1)}
-                    </Badge>
-                );
+                return <Badge className={color}>{capitalizeFirst(value)}</Badge>;
             },
         },
         {
             id: "actions",
             header: "Actions",
-            cell: ({ row }) => {
-                const item = row.original;
-
-                return (
-                    <Button
-                        variant="destructive"
-                        onClick={() => onDelete(item)}
-                    >
-                        Delete
-                    </Button>
-                );
-            },
+            cell: ({ row }) => (
+                <Button variant="destructive" onClick={() => onDelete(row.original)}>
+                    Delete
+                </Button>
+            ),
         },
     ];
 }
