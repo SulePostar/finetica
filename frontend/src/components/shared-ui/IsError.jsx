@@ -5,7 +5,7 @@ import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
 /**
- * Custom reusable component to render Query and other errors in a consistent format.
+ * Custom reusable component to render TanStack Query and other errors in a consistent format.
  * 
  * @error: error object from the query, display error
  * @onRetry: OPTIONAL callback button (e.g., refetch, retry, action)
@@ -26,21 +26,9 @@ const IsError = ({ error, onRetry, title = 'Something went wrong', showDetails =
         error?.message ??
         String(error);
 
-    const details = (() => {
-        try {
-            if (error?.response && error.response.data) return error.response.data;
-            if (typeof error === 'object') return error;
-            return String(error);
-        } catch (e) {
-            return String(error, e);
-        }
-    })();
-
-    // const details =
-    //     error?.response?.data ??
-    //     (typeof error === "object" ? error : String(error));
-
-    // Also ask about where should i put the file, since this isnt only shared-UI, it has logic as well
+    const details =
+        error?.response?.data ??
+        (typeof error === "object" ? error : String(error));
 
     return (
         <Card className="my-4 border-destructive/30">
