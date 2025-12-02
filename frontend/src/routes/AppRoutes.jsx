@@ -71,7 +71,7 @@ export default function AppRoutes() {
             />
 
             <Route
-                path="/roles-permissions"
+                path="/roles-statuses"
                 element={
                     <RoleAndStatusManagement />
                 }
