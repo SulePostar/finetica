@@ -7,7 +7,9 @@ const Kuf = React.lazy(() => import('../pages/Kuf'));
 const Contacts = React.lazy(() => import('../pages/Contacts'));
 const Partner = React.lazy(() => import('../pages/PartnersPage'));
 const Kif = React.lazy(() => import('../pages/Kif'));
+const Users = React.lazy(() => import('../pages/Users'));
 import Register from '@/pages/Register';
+import RoleAndStatusManagement from '@/pages/RoleAndStatusManagement';
 
 export default function AppRoutes() {
     return (
@@ -54,11 +56,24 @@ export default function AppRoutes() {
                     <Partner />
                 }
             />
+            <Route
+                path="/users"
+                element={
+                    <Users />
+                }
+            />
 
             <Route
                 path="/profile"
                 element={
                     <ProfilePage />
+                }
+            />
+
+            <Route
+                path="/roles-permissions"
+                element={
+                    <RoleAndStatusManagement />
                 }
             />
             {/* Fallback for unknown routes */}
