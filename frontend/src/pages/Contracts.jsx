@@ -5,38 +5,95 @@ import { useContracts } from "../queries/useContracts";
 import { Badge } from "@/components/ui/badge";
 
 const dummyContracts = [
-  { id: 1, name: "Contract A", customer_name: "Acme Corp", amount: 12000, status: "active" },
-  { id: 2, name: "Contract B", customer_name: "Globex Inc", amount: 8000, status: "pending" },
-  { id: 3, name: "Contract C", customer_name: "Soylent Co", amount: 15000, status: "canceled" },
-  { id: 4, name: "Contract D", customer_name: "Initech", amount: 5000, status: "active" },
-  { id: 5, name: "Contract E", customer_name: "Umbrella Corp", amount: 20000, status: "pending" },
-  { id: 6, name: "Contract F", customer_name: "Hooli", amount: 11000, status: "active" },
-  { id: 7, name: "Contract G", customer_name: "Vehement Capital Partners", amount: 9500, status: "canceled" },
-  { id: 8, name: "Contract H", customer_name: "Massive Dynamic", amount: 13000, status: "active" }
+  {
+    id: 1,
+    partner_name: "Acme Corp",
+    contract_number: "CTR-2024-001",
+    contract_type: "Service Agreement",
+    start_date: "2024-01-15",
+    end_date: "2025-01-15",
+    amount: 12000,
+    is_active: true
+  },
+  {
+    id: 2,
+    partner_name: "Globex Inc",
+    contract_number: "CTR-2024-002",
+    contract_type: "License Agreement",
+    start_date: "2024-02-01",
+    end_date: "2025-02-01",
+    amount: 8000,
+    is_active: false
+  },
+  {
+    id: 3,
+    partner_name: "Soylent Co",
+    contract_number: "CTR-2024-003",
+    contract_type: "Maintenance Contract",
+    start_date: "2024-03-10",
+    end_date: "2025-03-10",
+    amount: 15000,
+    is_active: false
+  },
 ];
 
 const contractColumns = [
-  { accessorKey: "id", header: "ID" },
-  { accessorKey: "name", header: "Contract Name" },
-  { accessorKey: "customer_name", header: "Customer" },
+  {
+    accessorKey: "id",
+    header: "ID"
+  },
+  {
+    accessorKey: "partner_name",
+    header: "Partner",
+    cell: ({ row }) => row.original.partner_name || row.original.businessPartner?.name || "—"
+  },
+  {
+    accessorKey: "contract_number",
+    header: "Contract Number",
+    cell: ({ row }) => row.original.contract_number || row.original.contractNumber || "—"
+  },
+  {
+    accessorKey: "contract_type",
+    header: "Type",
+    cell: ({ row }) => row.original.contract_type || row.original.contractType || "—"
+  },
+  {
+    accessorKey: "start_date",
+    header: "Start Date",
+    cell: ({ row }) => {
+      const date = row.original.start_date || row.original.startDate;
+      return date ? new Date(date).toLocaleDateString() : "—";
+    }
+  },
+  {
+    accessorKey: "end_date",
+    header: "End Date",
+    cell: ({ row }) => {
+      const date = row.original.end_date || row.original.endDate;
+      return date ? new Date(date).toLocaleDateString() : "—";
+    }
+  },
+  {
+    accessorKey: "is_active",
+    header: "Status",
+    cell: ({ row }) => {
+      const isActive = row.original.is_active ?? row.original.isActive ?? false;
+      const statusStyles = {
+        active: "bg-chart-2 text-primary-foreground",
+        inactive: "bg-muted text-muted-foreground",
+      };
+      const status = isActive ? "active" : "inactive";
+      const color = statusStyles[status];
+      return <Badge className={color}>{status}</Badge>;
+    },
+  },
   {
     accessorKey: "amount",
     header: "Amount",
-    cell: ({ row }) => row.original.amount ? parseFloat(row.original.amount).toFixed(2) : "—",
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
     cell: ({ row }) => {
-      const value = row.original.status ?? "pending";
-      const statusStyles = {
-        active: "bg-chart-2 text-primary-foreground",
-        pending: "bg-chart-4 text-primary-foreground",
-        canceled: "bg-destructive text-primary-foreground",
-        default: "bg-muted text-muted-foreground",
-      };
-      const color = statusStyles[value] || statusStyles.default;
-      return <Badge className={color}>{value}</Badge>;
+      const amount = row.original.amount;
+      const currency = row.original.currency || "USD";
+      return amount ? `${currency} ${parseFloat(amount).toFixed(2)}` : "—";
     },
   },
 ];
