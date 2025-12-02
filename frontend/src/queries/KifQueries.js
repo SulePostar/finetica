@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getKifsById, getKifs } from "@/api/Kif";
 
 export const kifKeys = {
-    all: ["kif-items"],
+    all: ["kif"],
     lists: () => [...kifKeys.all, "list"],
     list: (filters) => [...kifKeys.lists(), { filters }],
     details: () => [...kifKeys.all, "detail"],
