@@ -14,8 +14,8 @@ export const bankTransactionKeys = {
 // GET - list of bank transactions
 export const useBankTransactions = (filters = {}) => {
   return useQuery({
-    queryKey: bankTransactionKeys.list("all"),
-    queryFn: () => getBankTransactions(),
+    queryKey: bankTransactionKeys.list(filters),
+    queryFn: () => getBankTransactions(filters),
     // Optional: enabled if you need to wait for some condition
     // enabled: !!someCondition,
   });

@@ -3,8 +3,8 @@ import apiClient from './axios';
 const BASE_PATH = "/bank-transactions";
 
 // GET - list of bank transactions
-export const getBankTransactions = async () => {
-  const { data } = await apiClient.get(`${BASE_PATH}/`);
+export const getBankTransactions = async (filters) => {
+  const { data } = await apiClient.get(`${BASE_PATH}/`, { params: filters });
   return data;
 };
 

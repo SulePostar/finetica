@@ -1,72 +1,21 @@
 import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { useBankTransactions } from "@/queries/BankStatementsQueries";
-import { Badge } from "@/components/ui/badge";
-
-const bankStatementsColumns = [
-    {
-        accessorKey: "date",
-        header: "Date",
-        cell: ({ row }) => {
-            const date = row.original.date;
-            return date ? new Date(date).toLocaleDateString() : '—';
-        }
-    },
-    {
-        accessorKey: "TransactionCategory.name",
-        header: "Category",
-        cell: ({ row }) => row.original.TransactionCategory?.name || '—'
-    },
-    {
-        accessorKey: "accountNumber",
-        header: "Account Number",
-        cell: ({ row }) => row.original.accountNumber || '—'
-    },
-    {
-        accessorKey: "description",
-        header: "Description",
-        cell: ({ row }) => row.original.description || '—'
-    },
-    {
-        accessorKey: "amount",
-        header: "Amount",
-        cell: ({ row }) => {
-            const amount = row.original.amount;
-            return amount ? `${parseFloat(amount).toFixed(2)}` : '—';
-        }
-    },
-    {
-        accessorKey: "approvedAt",
-        header: "Status",
-        cell: ({ row }) => {
-            const approved = row.original.approvedAt || row.original.approvedBy;
-            const value = approved ? 'approved' : 'pending';
-            const statusStyles = {
-                approved: "bg-chart-2 text-primary-foreground",
-                pending: "bg-chart-4 text-primary-foreground",
-                rejected: "bg-destructive text-primary-foreground",
-                default: "bg-muted text-muted-foreground",
-            };
-            const color = statusStyles[value] || statusStyles.default;
-            return (
-                <Badge className={color}>
-                    {value
-                        ? value.charAt(0).toUpperCase() +
-                        value.slice(1)
-                        : "—"}
-                </Badge>
-            );
-        },
-    },
-];
+import { Spinner } from "@/components/ui/spinner";
+import IsError from "@/components/shared-ui/IsError";
+import { getBankStatementsColumns } from "@/components/tables/columns/BankTransactionsColumns";
+import { useState } from "react";
+import { PanelsLeftBottom } from "lucide-react";
 
 const BankStatements = () => {
-    const { data, isPending, isError, error } = useBankTransactions();
+    const [page, setPage] = useState(1);
+    const perPage = 10;
+    const { data, isPending, isError, error, refetch } = useBankTransactions({ page, perPage });
 
     if (isPending) {
         return (
-            <div>
-                <p className="mt-4 text-sm text-muted-foreground">Loading bank statements...</p>
+            <div className="flex items-center justify-center h-40">
+                <Spinner className="size-10" />
             </div>
         );
     }
@@ -74,20 +23,25 @@ const BankStatements = () => {
     if (isError) {
         return (
             <div>
-                <PageTitle text="Bank Statements" subtitle="Bank Statements" />
-                <p className="mt-4 text-sm text-red-600">
-                    Error while loading bank statements: {error.message}
-                </p>
+                <IsError error={error} onRetry={() => refetch()} title="Failed to load Bank Transactions" showDetails={true} />
             </div>
         );
     }
 
     const rows = data?.data ?? [];
+    const total = data?.total ?? 0;
 
     return (
         <div>
             <PageTitle text="Bank Statements" />
-            <DynamicTable columns={bankStatementsColumns} data={rows} />
+            <DynamicTable
+                columns={getBankStatementsColumns()}
+                data={rows}
+                total={total}
+                page={page}
+                perPage={perPage}
+                onPageChange={setPage}
+            />
         </div>
     );
 }
