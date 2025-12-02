@@ -3,6 +3,7 @@ import PageTitle from "@/components/shared-ui/PageTitle";
 import { getRolesStatusesColumns } from "@/components/tables/columns/rolesStatusesColumns";
 import { useRoles, useStatuses } from "@/queries/rolesAndStatuses";
 import RolesStatusesTable from "@/components/tables/RolesStatusesTable";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function RoleAndStatusManagement() {
     const columns = getRolesStatusesColumns("roles", (item) => { console.log("Delete", item); }, "role");
@@ -11,7 +12,9 @@ export default function RoleAndStatusManagement() {
     const { data: rolesData, isPending: rolesPending, } = useRoles();
     const { data: statusData, isPending: statusPending, } = useStatuses();
 
-    if (statusPending || rolesPending) return <p>Loading...</p>;
+    if (statusPending || rolesPending) return <div className="flex items-center justify-center h-40">
+        <Spinner className="size-10" />
+    </div>;
 
     return (
         <div>
