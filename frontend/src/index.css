@@ -48,6 +48,9 @@
   --table-text-color: #434199; /* text-[#434199] */
 
   --gray-background: #2a2a2a;
+  --spurple: #6c69ff;
+  --green: #22c55e;
+  --green-foreground: #166534;
 }
 
 .dark {
@@ -95,6 +98,9 @@
   --purple-black: #20173681;
   --gray-background: #2a2a2a;
   --light-gray: #696969;
+  --spurple: #6c69ff;
+  --green: #22c55e;
+  --green-foreground: #86efac;
 }
 
 @theme inline {
@@ -147,6 +153,9 @@
   --color-purple-black: var(--purple-black);
   --color-gray-background: var(--gray-background);
   --color-light-gray: var(--light-gray);
+  --color-spurple: var(--spurple);
+  --color-green: var(--green);
+  --color-green-foreground: var(--green-foreground);
 }
 
 @layer base {

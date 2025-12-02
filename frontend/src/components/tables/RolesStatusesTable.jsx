@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import DynamicTable from "../table/DynamicTable";
 import PageTitle from "../shared-ui/PageTitle";
 
-const RolesPermissionsTable = ({ title, onAdd, placeholder, columns, data }) => {
+const RolesStatusesTable = ({ title, onAdd, placeholder, columns, data }) => {
     const [input, setInput] = useState("");
 
     return (
@@ -20,7 +20,7 @@ const RolesPermissionsTable = ({ title, onAdd, placeholder, columns, data }) => 
                     if (input.trim()) onAdd(input);
                     setInput("");
                 }}
-                className="flex gap-2 mb-4"
+                className="flex gap-2 mb-4 mt-4"
             >
                 <Input
                     placeholder={placeholder}
@@ -38,4 +38,4 @@ const RolesPermissionsTable = ({ title, onAdd, placeholder, columns, data }) => 
     );
 };
 
-export default RolesPermissionsTable;
+export default RolesStatusesTable;
