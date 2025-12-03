@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import {
     DropdownMenu,
     DropdownMenuTrigger,
@@ -9,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 import { formatDateTime } from "@/helpers/formatDate";
 import { formatValue } from "@/helpers/formatValue";
-import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
+import { ReviewStatusBadge } from "@/components/shared-ui/ReviewStatusBadge";
 
 export function getKufColumns(onAction) {
     return [
@@ -57,19 +56,8 @@ export function getKufColumns(onAction) {
 
                 const value = approved ? 'approved' : 'pending';
 
-                const statusStyles = {
-                    approved: "bg-chart-2 text-primary-foreground",
-                    pending: "bg-chart-4 text-primary-foreground",
-                    rejected: "bg-destructive text-primary-foreground",
-                    default: "bg-muted text-muted-foreground",
-                };
-
-                const color = statusStyles[value] || statusStyles.default;
-
                 return (
-                    <Badge className={color}>
-                        {formatValue(capitalizeFirst(value))}
-                    </Badge>
+                    <ReviewStatusBadge status={value} />
                 );
             },
         },
