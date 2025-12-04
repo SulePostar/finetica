@@ -65,16 +65,32 @@ function PaginationPrevious({
       size="default"
       disabled={disabled}
       className={cn(
-        "gap-1 px-3 min-w-[90px] flex items-center justify-center",
+        `
+        flex items-center justify-center gap-1
+        min-w-[95px] px-3 py-1
+
+        rounded-full border
+        bg-white text-table-text-color
+        dark:bg-gray-background dark:text-heading-color
+        border-table-border-light dark:border-table-border-dark
+
+        hover:bg-spurple hover:!text-white /* it needs the ! because we need to override the default behavior */
+        transition-colors duration-150
+
+        disabled:opacity-40 
+        disabled:hover:bg-white disabled:dark:hover:bg-gray-background
+        disabled:cursor-not-allowed
+        `,
         className
       )}
       {...props}
     >
-      <ChevronLeftIcon />
+      <ChevronLeftIcon className="size-4" />
       <span className="hidden sm:block">Previous</span>
     </PaginationLink>
   );
 }
+
 function PaginationNext({
   className,
   disabled = false,
@@ -86,16 +102,32 @@ function PaginationNext({
       size="default"
       disabled={disabled}
       className={cn(
-        "gap-1 px-1 min-w-[95px] flex items-center justify-start",
+        `
+        flex items-center justify-center gap-1
+        min-w-[95px] px-3 py-1
+
+        rounded-full border
+        bg-white text-table-text-color 
+        dark:bg-gray-background dark:text-spurple
+        border-table-border-light dark:border-table-border-dark
+
+        hover:bg-spurple hover:!text-white
+        transition-colors duration-150
+
+        disabled:opacity-40 
+        disabled:hover:bg-white disabled:dark:hover:bg-gray-background
+        disabled:cursor-not-allowed
+        `,
         className
       )}
       {...props}
     >
       <span className="hidden sm:block">Next</span>
-      <ChevronRightIcon />
+      <ChevronRightIcon className="size-4" />
     </PaginationLink>
   );
 }
+
 function PaginationEllipsis({
   className,
   ...props

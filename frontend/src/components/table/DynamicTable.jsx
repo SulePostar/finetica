@@ -16,8 +16,8 @@ const DynamicTable = ({
     onPageChange,
     perPage,
     page,
-    header,   // npr. <PageTitle ... />
-    toolbar,  // npr. Upload dugme
+    header,
+    toolbar,
 }) => {
     const table = useReactTable({
         data,
@@ -54,7 +54,7 @@ const DynamicTable = ({
 
             <div className="border-t border-table-border-light dark:border-table-border-dark" />
 
-            <div className="overflow-hidden rounded-md">
+            <div className="overflow-hidden rounded-md border-table-border-light dark:border-table-border-dark">
                 <Table className="min-w-full">
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -65,7 +65,7 @@ const DynamicTable = ({
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
-                                        className="px-6 py-3 text-xs text-center font-semibold uppercase tracking-wide text-muted-foreground"
+                                        className="px-6 py-3 text-s text-center font-semibold uppercase tracking-wide text-table-text-color"
                                     >
                                         {header.isPlaceholder
                                             ? null
@@ -100,7 +100,7 @@ const DynamicTable = ({
                                         {row.getVisibleCells().map((cell) => (
                                             <TableCell
                                                 key={cell.id}
-                                                className="px-6 py-3 text-center whitespace-nowrap text-[15px] text-table-text-color dark:text-white/95 font-medium align-middle"
+                                                className="px-6 py-3 text-center whitespace-nowrap text-[15px] text-muted-foreground dark:text-white/95 font-medium align-middle"
                                             >
                                                 {flexRender(
                                                     cell.column.columnDef.cell,
@@ -126,9 +126,6 @@ const DynamicTable = ({
             </div>
 
             <div className="flex items-center justify-between px-6 py-3 text-xs bg-table-header/5 dark:bg-gray-background border-t border-table-border-light dark:border-table-border-dark">
-                <span className="text-muted-foreground whitespace-nowrap">
-                    {start}–{end} of {total}
-                </span>
                 <TablePagination
                     page={page}
                     perPage={perPage}

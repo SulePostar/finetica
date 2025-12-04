@@ -39,7 +39,7 @@ const BankTransactions = () => {
     const total = data?.total ?? 0;
 
     return (
-        <div className="pt-8">
+        <div className="pt-20">
             <DynamicTable
                 header={
                     <PageTitle
