@@ -5,7 +5,7 @@ const PageTitle = ({ text, subtitle, compact = false, className = "" }) => {
 
     return (
         <div className={`${spacing} ${className}`}>
-            <h1 className="text-3xl font-semibold tracking-tight text-heading text-heading-color dark:text-[#6c69ff]">
+            <h1 className="text-3xl font-semibold tracking-tight text-heading text-table-header dark:text-[#6c69ff]">
                 {text}
             </h1>
             {subtitle && (

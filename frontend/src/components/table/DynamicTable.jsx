@@ -34,7 +34,7 @@ const DynamicTable = ({
     })
 
     return (
-        <div className="w-full mx-auto rounded-2xl border border-table-border-light dark:border-gray-background bg-card shadow-sm">
+        <div className="w-full mx-auto rounded-2xl border border-table-border-light dark:border-gray-background bg-card shadow-lg">
 
             {(header || toolbar) && (
                 <div className="flex items-center justify-between px-6 pt-4 pb-2">
@@ -56,7 +56,7 @@ const DynamicTable = ({
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
-                                        className="px-6 py-3 text-s text-center font-semibold uppercase tracking-wide text-table-text-color dark:text-[#6c69ff]"
+                                        className="px-6 py-3 text-s text-center font-semibold uppercase tracking-wide text-table-header  dark:text-[#6c69ff]"
                                     >
                                         {flexRender(
                                             header.column.columnDef.header,
