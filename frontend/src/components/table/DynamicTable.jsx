@@ -25,7 +25,7 @@ const DynamicTable = ({ columns, data, total, onPageChange, perPage, page }) => 
     })
 
     return (
-        <div className="w-[90vw] mx-auto rounded-4xl overflow-hidden border">
+        <div className="w-full mx-auto rounded-xl overflow-hidden border">
             <Table>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
