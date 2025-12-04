@@ -38,6 +38,16 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --heading-color: #5850a6;
+
+  --table-header: #6c69ff; /* bg-[#6C69FF] */
+  --table-row-even: #dbdbea; /* bg-[#D4D3FF] */
+  --table-row-even-hover: #ecebff; /* hover:bg-[#ECEBFF] */
+  --table-row-odd: #a19fff; /* bg-[#A19FFF] */
+  --table-row-odd-hover: #b3b0ff; /* hover:bg-[#B3B0FF] */
+  --table-border-light: #ecebff; /* border-[#ECEBFF] */
+  --table-text-color: #434199; /* text-[#434199] */
+
+  --gray-background: #2a2a2a;
   --spurple: #6c69ff;
   --green: #22c55e;
   --green-foreground: #166534;
@@ -78,6 +88,16 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
   --heading-color: #ffffff;
+
+  --table-header: #5c44a4; /* dark:bg-[#5654CC] */
+  --table-row: #42307081; /* dark:bg-[#434199] */
+  --table-row-even-hover: #5654cc; /* dark:hover:bg-[#5654CC] */
+  --table-row-odd: #574b77b7; /* dark:bg-[#302E66] */
+  --table-row-odd-hover: #5654cc; /* dark:hover:bg-[#5654CC] */
+  --table-border-dark: #1c1b33; /* dark:border-[#1C1B33] */
+  --purple-black: #20173681;
+  --gray-background: #2a2a2a;
+  --light-gray: #696969;
   --spurple: #6c69ff;
   --green: #22c55e;
   --green-foreground: #86efac;
@@ -120,6 +140,19 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  --color-table-header: var(--table-header);
+  --color-table-row: var(--table-row);
+  --color-table-row-even-hover: var(--table-row-even-hover);
+  --color-table-row-odd: var(--table-row-odd);
+  --color-table-row-odd-hover: var(--table-row-odd-hover);
+  --color-table-border-light: var(--table-border-light);
+  --color-table-border-dark: var(--table-border-dark);
+  --color-table-text-color: var(--table-text-color);
+
+  --color-purple-black: var(--purple-black);
+  --color-gray-background: var(--gray-background);
+  --color-light-gray: var(--light-gray);
   --color-spurple: var(--spurple);
   --color-green: var(--green);
   --color-green-foreground: var(--green-foreground);
