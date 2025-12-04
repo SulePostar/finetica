@@ -27,19 +27,19 @@ const badgeVariants = cva(
 )
 
 function Badge({
-  className,
-  variant,
-  asChild = false,
-  ...props
+    className,
+    variant,
+    asChild = false,
+    ...props
 }) {
-  const Comp = asChild ? Slot : "span"
+    const Comp = asChild ? Slot : "span"
 
-  return (
-    <Comp
-      data-slot="badge"
-      className={cn(badgeVariants({ variant }), className)}
-      {...props} />
-  );
+    return (
+        <Comp
+            data-slot="badge"
+            className={cn(badgeVariants({ variant }), className)}
+            {...props} />
+    );
 }
 
 export { Badge, badgeVariants }
