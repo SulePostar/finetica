@@ -4,6 +4,7 @@
   },
   "dependencies": {
     "@coreui/icons": "^3.0.1",
+    "@radix-ui/react-avatar": "^1.1.11",
     "@tanstack/react-query": "^4.36.1",
     "@tanstack/react-query-devtools": "^4.36.1",
     "lucide-react": "^0.542.0",

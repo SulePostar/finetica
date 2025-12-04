@@ -4,10 +4,8 @@ import {
   ChevronRightIcon,
   MoreHorizontalIcon,
 } from "lucide-react"
-
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button";
-
 function Pagination({
   className,
   ...props
@@ -21,7 +19,6 @@ function Pagination({
       {...props} />
   );
 }
-
 function PaginationContent({
   className,
   ...props
@@ -33,13 +30,11 @@ function PaginationContent({
       {...props} />
   );
 }
-
 function PaginationItem({
   ...props
 }) {
   return <li data-slot="pagination-item" className="cursor-pointer" {...props} />;
 }
-
 function PaginationLink({
   className,
   disabled = false,
@@ -59,7 +54,6 @@ function PaginationLink({
       {...props} />
   );
 }
-
 function PaginationPrevious({
   className,
   disabled = false,
@@ -68,15 +62,19 @@ function PaginationPrevious({
   return (
     <PaginationLink
       aria-label="Go to previous page"
-      size="default" disabled={disabled}
-      className={cn("gap-1 px-2.5 sm:pl-2.5", className)}
-      {...props}>
+      size="default"
+      disabled={disabled}
+      className={cn(
+        "gap-1 px-3 min-w-[90px] flex items-center justify-center",
+        className
+      )}
+      {...props}
+    >
       <ChevronLeftIcon />
       <span className="hidden sm:block">Previous</span>
     </PaginationLink>
   );
 }
-
 function PaginationNext({
   className,
   disabled = false,
@@ -85,15 +83,19 @@ function PaginationNext({
   return (
     <PaginationLink
       aria-label="Go to next page"
-      size="default" disabled={disabled}
-      className={cn("gap-1 px-2.5 sm:pr-2.5", className)}
-      {...props}>
+      size="default"
+      disabled={disabled}
+      className={cn(
+        "gap-1 px-1 min-w-[95px] flex items-center justify-start",
+        className
+      )}
+      {...props}
+    >
       <span className="hidden sm:block">Next</span>
       <ChevronRightIcon />
     </PaginationLink>
   );
 }
-
 function PaginationEllipsis({
   className,
   ...props
@@ -109,7 +111,6 @@ function PaginationEllipsis({
     </span>
   );
 }
-
 export {
   Pagination,
   PaginationContent,

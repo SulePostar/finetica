@@ -8,8 +8,10 @@ const DefaultLayout = ({ children }) => {
                 <AppSidebar />
                 <SidebarInset>
                     <div className="flex flex-1 flex-col">
-                        <main className="flex-1 overflow-y-auto p-4 md:p-6">
-                            <div className="mx-auto max-w-7xl">{children}</div>
+                        <main className="flex-1 overflow-y-auto xl:px-26 2xl:px-26">
+                            <div className="w-full mx-auto max-w-[900px] xl:max-w-[950px] 2xl:max-w-[2000px]">
+                                {children}
+                            </div>
                         </main>
 
                         <footer className="border-t bg-card py-4 text-center text-sm text-muted-foreground w-full">
