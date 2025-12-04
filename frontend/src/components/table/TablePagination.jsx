@@ -26,19 +26,24 @@ export default function TablePagination({ page, perPage, total, onPageChange }) 
                     <PaginationPrevious
                         disabled={page === 1}
                         onClick={() => page > 1 && onPageChange(page - 1)}
+                        className="hover:text-table-header hover:dark:bg-white"
                     />
                 </PaginationItem>
 
                 {pages.map((p) => (
                     <PaginationItem key={p}>
-                        <PaginationLink isActive={p === page} onClick={() => onPageChange(p)}>
+                        <PaginationLink
+                            isActive={p === page}
+                            onClick={() => onPageChange(p)}
+                            className="data-[active=true]:text-table-header hover:text-table-header dark:text-white hover:dark:bg-white hover:dark:text-table-header"
+                        >
                             {p}
                         </PaginationLink>
                     </PaginationItem>
                 ))}
 
                 {totalPages > endPage && (
-                    <PaginationItem>
+                    <PaginationItem >
                         <PaginationEllipsis />
                     </PaginationItem>
                 )}
@@ -47,9 +52,10 @@ export default function TablePagination({ page, perPage, total, onPageChange }) 
                     <PaginationNext
                         disabled={page === totalPages || totalPages === 0}
                         onClick={() => page < totalPages && onPageChange(page + 1)}
+                        className="hover:text-table-header hover:dark:bg-white"
                     />
                 </PaginationItem>
             </PaginationContent>
-        </Pagination>
+        </Pagination >
     );
 }
