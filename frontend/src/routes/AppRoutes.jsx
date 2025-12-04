@@ -8,6 +8,7 @@ const Contacts = React.lazy(() => import('../pages/Contacts'));
 const Partner = React.lazy(() => import('../pages/PartnersPage'));
 const Kif = React.lazy(() => import('../pages/Kif'));
 const Users = React.lazy(() => import('../pages/Users'));
+const InvalidPdfs = React.lazy(() => import('../pages/InvalidPDFs'))
 import Register from '@/pages/Register';
 import RoleAndStatusManagement from '@/pages/RoleAndStatusManagement';
 
@@ -74,6 +75,13 @@ export default function AppRoutes() {
                 path="/roles-statuses"
                 element={
                     <RoleAndStatusManagement />
+                }
+            />
+
+            <Route
+                path="/pdf-issues"
+                element={
+                    <InvalidPdfs />
                 }
             />
             {/* Fallback for unknown routes */}
