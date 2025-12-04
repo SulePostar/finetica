@@ -1,11 +1,15 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
 import { formatDateTime } from "@/helpers/formatDate";
 import { formatValue } from "@/helpers/formatValue";
 import { ReviewStatusBadge } from "@/components/shared-ui/ReviewStatusBadge";
+import ActionsDropdown from "@/components/dropdown/ActionsDropdown";
 
-export function getKifColumns(onDelete) {
+export function getKifColumns(onAction) { // Changed from onDelete to onAction
+    const kifActions = [
+        { key: "action1", label: "Action 1" },
+        { key: "action2", label: "Action 2" },
+        { key: "action3", label: "Action 3" },
+    ];
+
     return [
         {
             id: "index",
@@ -58,11 +62,15 @@ export function getKifColumns(onDelete) {
         {
             id: "actions",
             header: "Actions",
-            cell: ({ row }) => (
-                <Button variant="destructive" onClick={() => onDelete(row.original)}>
-                    Delete
-                </Button>
-            ),
+            cell: ({ row }) => {
+                return (
+                    <ActionsDropdown
+                        item={row.original}
+                        actions={kifActions}
+                        onAction={onAction}
+                    />
+                )
+            },
         },
     ];
 }
