@@ -39,8 +39,11 @@ export function getBankTransactionsColumns(onDelete) {
             cell: ({ row }) => {
                 const approved = row.original.approvedAt || row.original.approvedBy;
                 const value = approved ? "approved" : "pending";
-
-                return <ReviewStatusBadge status={value} />;
+                return (
+                    <div className="flex justify-center">
+                        <ReviewStatusBadge status={value} />
+                    </div>
+                );
             },
         },
     ];
