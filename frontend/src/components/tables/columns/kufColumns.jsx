@@ -1,7 +1,7 @@
 import { formatDateTime } from "@/helpers/formatDate";
 import { formatValue } from "@/helpers/formatValue";
 import { ReviewStatusBadge } from "@/components/shared-ui/ReviewStatusBadge";
-import ActionsDropdown from "@/components/dropdown/ActionsDropdown";
+import ActionsDropdown from "@/components/ActionsDropdown";
 
 export function getKufColumns(onAction) {
     const kufActions = [
