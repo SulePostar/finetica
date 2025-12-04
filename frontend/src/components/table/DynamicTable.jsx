@@ -56,7 +56,7 @@ const DynamicTable = ({
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
-                                        className="px-6 py-3 text-s text-center font-semibold uppercase tracking-wide text-table-text-color dark:text-[#5850a6]"
+                                        className="px-6 py-3 text-s text-center font-semibold uppercase tracking-wide text-table-text-color dark:text-[#6c69ff]"
                                     >
                                         {flexRender(
                                             header.column.columnDef.header,
