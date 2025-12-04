@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge";
+import { ReviewStatusBadge } from "@/components/shared-ui/ReviewStatusBadge";
 import { Button } from "@/components/ui/button";
 
 export function getRolesStatusesColumns(type = "roles", onDelete, nameKey) {
@@ -23,21 +23,9 @@ export function getRolesStatusesColumns(type = "roles", onDelete, nameKey) {
                 const value = row.original[nameKey];
 
                 if (type === "statuses") {
-                    const statusStyles = {
-                        approved: "bg-chart-2 text-primary-foreground",
-                        pending: "bg-chart-4 text-primary-foreground",
-                        rejected: "bg-destructive text-primary-foreground",
-                        default: "bg-muted text-muted-foreground",
-                    };
-
-                    const key = value?.toLowerCase() || "None";
-                    const color = statusStyles[key] || statusStyles.default;
-
                     return (
                         <div className="flex justify-center w-full">
-                            <Badge className={color}>
-                                {value?.charAt(0).toUpperCase() + value?.slice(1)}
-                            </Badge>
+                            <ReviewStatusBadge status={value} />
                         </div>
                     );
                 }
