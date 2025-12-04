@@ -69,16 +69,17 @@ function PaginationPrevious({
         flex items-center justify-center gap-1
         min-w-[95px] px-3 py-1
 
-        rounded-full border
+        rounded-full border 
         bg-white text-table-text-color
-        dark:bg-gray-background dark:text-heading-color
-        border-table-border-light dark:border-table-border-dark
+        dark:bg-card dark:text-white
+        border-table-border-light dark:border-[#3a3a3a]
 
-        hover:bg-spurple hover:!text-white /* it needs the ! because we need to override the default behavior */
+        hover:bg-spurple hover:!text-white 
+        dark:hover:!text-black
         transition-colors duration-150
 
         disabled:opacity-40 
-        disabled:hover:bg-white disabled:dark:hover:bg-gray-background
+        disabled:hover:bg-white disabled:dark:hover:bg-card
         disabled:cursor-not-allowed
         `,
         className
@@ -108,14 +109,16 @@ function PaginationNext({
 
         rounded-full border
         bg-white text-table-text-color 
-        dark:bg-gray-background dark:text-spurple
-        border-table-border-light dark:border-table-border-dark
+        dark:bg-card dark:text-white
+        border-table-border-light dark:border-[#3a3a3a]
 
         hover:bg-spurple hover:!text-white
+        dark:hover:bg-white dark:hover:!text-black
+
         transition-colors duration-150
 
         disabled:opacity-40 
-        disabled:hover:bg-white disabled:dark:hover:bg-gray-background
+        disabled:hover:bg-white disabled:dark:hover:bg-card
         disabled:cursor-not-allowed
         `,
         className
