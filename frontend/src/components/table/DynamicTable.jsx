@@ -25,7 +25,7 @@ const DynamicTable = ({ columns, data, total, onPageChange, perPage, page }) => 
     })
 
     return (
-        <div className="w-[90vw] mx-auto rounded-4xl overflow-hidden border">
+        <div className="w-full mx-auto rounded-xl overflow-hidden">
             <Table>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -37,7 +37,7 @@ const DynamicTable = ({ columns, data, total, onPageChange, perPage, page }) => 
                                 return (
                                     <TableHead
                                         key={header.id}
-                                        className="font-bold text-white p-5 py-6 text-[16px]"
+                                        className="font-bold text-white p-5 py-6 text-[16px] text-center"
                                     >
                                         {header.isPlaceholder ? null : flexRender(
                                             header.column.columnDef.header,
@@ -59,7 +59,7 @@ const DynamicTable = ({ columns, data, total, onPageChange, perPage, page }) => 
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id}
-                                        className="px-6 py-3 whitespace-nowrap text-[15px] text-table-text-color !font-bold dark:text-white border-b-2 border-white dark:border-white/60"
+                                        className="px-6 py-3 whitespace-nowrap text-[15px] text-table-text-color !font-bold dark:text-white border-b-2 border-white dark:border-white/60 text-center"
                                     >
                                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                     </TableCell>
