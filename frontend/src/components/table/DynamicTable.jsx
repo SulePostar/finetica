@@ -98,7 +98,7 @@ const DynamicTable = ({ columns: initialColumns, data, total, onPageChange, perP
     }, [updateColumnVisibility]);
 
     return (
-        <div className="w-full mx-auto rounded-4xl overflow-hidden border">
+        <div className="w-full mx-auto rounded-xl overflow-hidden">
             <Table className="table-fixed w-full">
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -111,7 +111,7 @@ const DynamicTable = ({ columns: initialColumns, data, total, onPageChange, perP
                                 return (
                                     <TableHead
                                         key={header.id}
-                                        className={`font-bold text-white p-4 py-5 text-[16px] truncate overflow-hidden ${isExpander ? 'w-[50px] p-2 text-center' : ''}`}
+                                        className={`font-bold text-white p-4 py-5 text-[16px] text-center truncate overflow-hidden ${isExpander ? 'w-[50px] p-2 text-center' : ''}`}
                                     >
                                         {header.isPlaceholder ? null : flexRender(
                                             header.column.columnDef.header,
@@ -134,7 +134,7 @@ const DynamicTable = ({ columns: initialColumns, data, total, onPageChange, perP
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}
-                                            className="px-4 sm:px-6 py-3 text-[15px] text-table-text-color !font-bold dark:text-white border-b-2 border-white dark:border-white/60 truncate overflow-hidden"
+                                            className="px-4 sm:px-6 py-3 text-[15px] text-table-text-color !font-bold dark:text-white border-b-2 border-white dark:border-white/60 truncate overflow-hidden text-center"
                                         >
                                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                         </TableCell>
