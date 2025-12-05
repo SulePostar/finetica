@@ -1,38 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
 
-const breakpoints = {
-    sm: 640,
-    md: 768,
-    lg: 1024,
-    xl: 1280,
-};
-
-const getBreakpoint = (width) => {
-    if (width >= breakpoints.xl) return 'xl';
-    if (width >= breakpoints.lg) return 'lg';
-    if (width >= breakpoints.md) return 'md';
-    if (width >= breakpoints.sm) return 'sm';
-    return 'default';
+const queries = {
+    sm: "(min-width: 640px)",
+    md: "(min-width: 768px)",
+    lg: "(min-width: 1024px)",
+    xl: "(min-width: 1280px)",
 };
 
 export function useTailwindBreakpoint() {
-    const [breakpoint, setBreakpoint] = useState(getBreakpoint(window.innerWidth));
+    const getCurrent = () => {
+        if (window.matchMedia(queries.xl).matches) return "xl";
+        if (window.matchMedia(queries.lg).matches) return "lg";
+        if (window.matchMedia(queries.md).matches) return "md";
+        if (window.matchMedia(queries.sm).matches) return "sm";
+        return "default";
+    };
+
+    const [breakpoint, setBreakpoint] = useState(getCurrent);
 
     useEffect(() => {
-        const handleResize = () => {
-            setBreakpoint(getBreakpoint(window.innerWidth));
-        };
+        const mqs = Object.values(queries).map((q) => window.matchMedia(q));
 
-        let timeoutId = null;
-        const debouncedHandleResize = () => {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(handleResize, 150);
-        };
+        const listener = () => setBreakpoint(getCurrent());
 
-        window.addEventListener('resize', debouncedHandleResize);
-        handleResize();
-        return () => window.removeEventListener('resize', debouncedHandleResize);
+        mqs.forEach((mq) => mq.addEventListener("change", listener));
+
+        return () => {
+            mqs.forEach((mq) => mq.removeEventListener("change", listener));
+        };
     }, []);
 
     return breakpoint;
 }
+
+
