@@ -35,7 +35,7 @@ export default function TablePagination({ page, perPage, total, onPageChange }) 
                         <PaginationLink
                             isActive={p === page}
                             onClick={() => onPageChange(p)}
-                            className="data-[active=true]:text-table-header hover:text-table-header dark:text-white hover:dark:bg-white hover:dark:text-table-header"
+                            className="data-[active=true]:text-table-text-color hover:text-table-header dark:text-white hover:dark:bg-white hover:dark:text-table-header"
                         >
                             {p}
                         </PaginationLink>
