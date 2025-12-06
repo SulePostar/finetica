@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 const queries = {
+    xs: "(min-width: 400px)",
     sm: "(min-width: 640px)",
     md: "(min-width: 768px)",
     lg: "(min-width: 1024px)",
@@ -13,6 +14,7 @@ export function useTailwindBreakpoint() {
         if (window.matchMedia(queries.lg).matches) return "lg";
         if (window.matchMedia(queries.md).matches) return "md";
         if (window.matchMedia(queries.sm).matches) return "sm";
+        if (window.matchMedia(queries.xs).matches) return "xs";
         return "default";
     };
 
