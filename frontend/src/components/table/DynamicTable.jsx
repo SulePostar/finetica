@@ -126,16 +126,13 @@ const DynamicTable = ({ columns: initialColumns, data, total, onPageChange, perP
                                                 >
                                                     <Tooltip delayDuration={800}>
                                                         <TooltipTrigger asChild>
-                                                            {/* Tvoj postojeći div sa truncate klasama */}
                                                             <div className="max-w-[14ch] sm:max-w-[18ch] md:max-w-[22ch] overflow-hidden text-ellipsis whitespace-nowrap text-center cursor-default">
                                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                             </div>
                                                         </TooltipTrigger>
 
-                                                        {/* Sadržaj koji se prikazuje na hover */}
                                                         <TooltipContent className="max-w-[300px] break-words bg-black text-white dark:bg-white dark:text-black">
                                                             <p>
-                                                                {/* Ovdje renderujemo istu stvar, ali bez limita */}
                                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                             </p>
                                                         </TooltipContent>
