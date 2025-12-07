@@ -11,6 +11,12 @@ import {
 import TablePagination from "./TablePagination";
 import { useTailwindBreakpoint } from "./useTailwindBreakpoint";
 import { ChevronRight, ChevronDown } from "lucide-react";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const DynamicTable = ({ columns: initialColumns, data, total, onPageChange, perPage, page }) => {
 
@@ -63,133 +69,138 @@ const DynamicTable = ({ columns: initialColumns, data, total, onPageChange, perP
         data,
         columns,
         pageCount: Math.ceil(total / perPage),
-        manualPagination: true,
         state: {
             pagination: {
                 pageIndex: page - 1,
                 pageSize: perPage,
             },
         },
+        manualPagination: true,
         getCoreRowModel: getCoreRowModel(),
     });
 
     return (
         <div className="w-full mx-auto rounded-xl overflow-hidden">
             {breakpoint !== "default" ? (
-                <Table className="table-fixed w-full">
-                    <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow
-                                key={headerGroup.id}
-                                className="bg-table-header hover:bg-table-header !border-b-2 border-table-border-light dark:bg-gray-background"
-                            >
-                                {headerGroup.headers.map((header) => {
-                                    const isExpander = header.column.id === "expander";
-                                    return (
-                                        <TableHead
-                                            key={header.id}
-                                            className={`font-bold text-white p-4 py-5 text-[16px] text-center truncate ${isExpander ? "w-[50px] p-2" : ""
-                                                }`}
+                <TooltipProvider>
+
+                    <Table className="table-fixed w-full">
+                        <TableHeader>
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <TableRow
+                                    key={headerGroup.id}
+                                    className="bg-table-header hover:bg-table-header !border-b-2 border-table-border-light dark:bg-gray-background"
+                                >
+                                    {headerGroup.headers.map((header) => {
+                                        const isExpander = header.column.id === "expander";
+                                        return (
+                                            <TableHead
+                                                key={header.id}
+                                                className={`font-bold text-white p-5 py-6  text-[16px] text-center truncate ${isExpander ? "w-[50px] p-2" : ""
+                                                    }`}
+                                            >
+                                                {header.isPlaceholder
+                                                    ? null
+                                                    : flexRender(header.column.columnDef.header, header.getContext())}
+                                            </TableHead>
+                                        );
+                                    })}
+                                </TableRow>
+                            ))}
+                        </TableHeader>
+
+                        <TableBody className="divide-y">
+                            {table.getRowModel().rows?.length ? (
+                                table.getRowModel().rows.map((row) => (
+                                    <React.Fragment key={row.id}>
+                                        <TableRow
+                                            key={row.id}
+                                            data-state={row.getIsSelected() && "selected"}
+                                            className="bg-table-row-even dark:bg-light-gray hover:bg-table-row-even-hover text-black/70 dark:text-white/95 truncate"
                                         >
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(header.column.columnDef.header, header.getContext())}
-                                        </TableHead>
-                                    );
-                                })}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
+                                            {row.getVisibleCells().map((cell) => (
 
-                    <TableBody className="divide-y">
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
-                                <React.Fragment key={row.id}>
-                                    <TableRow
-
-                                        key={row.id}
-
-                                        data-state={row.getIsSelected() && "selected"}
-
-                                        className="bg-table-row-even dark:bg-light-gray hover:bg-table-row-even-hover text-black/70 dark:text-white/95 truncate"
-
-                                    >
-
-                                        {row.getVisibleCells().map((cell) => (
-
-                                            <TableCell
-                                                key={cell.id}
-                                                className="px-3 py-3 text-[15px] text-table-text-color !font-bold dark:text-white border-b-2 border-white dark:border-white/60"
-                                            >
-                                                <div
-                                                    className=" max-w-[14ch] sm:max-w-[18ch]   md:max-w-[22ch] overflow-hidden text-ellipsis whitespace-nowrap text-center"
+                                                <TableCell
+                                                    key={cell.id}
+                                                    className="px-3 py-3 text-[15px] text-table-text-color !font-bold dark:text-white border-b-2 border-white dark:border-white/60"
                                                 >
-
-                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                </div>
-                                            </TableCell>
-
-                                        ))}
-                                    </TableRow>
-
-
-                                    {expandedRows[row.id] && needsExpander && (
-                                        <TableRow className="bg-gray-100 dark:bg-gray-800/80 border-b-2 border-white dark:border-white/60">
-                                            <TableCell className="p-0 border-none" />
-                                            <TableCell
-                                                colSpan={row.getVisibleCells().length - 1}
-                                                className="p-4 text-sm"
-                                            >
-                                                <div className="grid gap-2">
-                                                    {initialColumns.slice(visibleLimit).map((col) => {
-                                                        const value =
-                                                            col.cell
-                                                                ? flexRender(col.cell, {
-                                                                    row,
-                                                                    table,
-                                                                    getValue: () => row.original[col.accessorKey],
-                                                                })
-                                                                : row.original[col.accessorKey];
-
-                                                        return (
-                                                            <div
-                                                                key={col.id}
-                                                                className="flex justify-between items-center border-b border-gray-300 dark:border-gray-700 last:border-b-0 pb-1"
-                                                            >
-                                                                <strong className="font-semibold text-gray-700 dark:text-gray-400">
-                                                                    {col.header.toString()}:
-                                                                </strong>
-                                                                <span className="text-right truncate max-w-[60%]">
-                                                                    {value}
-                                                                </span>
+                                                    <Tooltip delayDuration={800}>
+                                                        <TooltipTrigger asChild>
+                                                            {/* Tvoj postojeći div sa truncate klasama */}
+                                                            <div className="max-w-[14ch] sm:max-w-[18ch] md:max-w-[22ch] overflow-hidden text-ellipsis whitespace-nowrap text-center cursor-default">
+                                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                             </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </TableCell>
+                                                        </TooltipTrigger>
+
+                                                        {/* Sadržaj koji se prikazuje na hover */}
+                                                        <TooltipContent className="max-w-[300px] break-words bg-black text-white dark:bg-white dark:text-black">
+                                                            <p>
+                                                                {/* Ovdje renderujemo istu stvar, ali bez limita */}
+                                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                            </p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TableCell>
+                                            ))}
                                         </TableRow>
-                                    )}
-                                </React.Fragment>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
-                                    No results.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
 
+                                        {expandedRows[row.id] && needsExpander && (
+                                            <TableRow className="bg-table-row-even dark:bg-light-gray border-b-2  dark:border-white/60">
+                                                <TableCell className="p-0 border-none" />
+                                                <TableCell
+                                                    colSpan={row.getVisibleCells().length - 1}
+                                                    className="p-4 text-sm"
+                                                >
+                                                    <div className="grid gap-2">
+                                                        {initialColumns.slice(visibleLimit).map((col, index) => {
+                                                            const value =
+                                                                col.cell
+                                                                    ? flexRender(col.cell, {
+                                                                        row,
+                                                                        table,
+                                                                        getValue: () => row.original[col.accessorKey],
+                                                                    })
+                                                                    : row.original[col.accessorKey];
+                                                            return (
+                                                                <div
+                                                                    key={index}
+                                                                    className="flex justify-between items-center border-b border-gray-300 dark:border-gray-700 last:border-b-0 pb-1"
+                                                                >
+                                                                    <strong className="font-semibold ">
+                                                                        {typeof col.header === "function"
+                                                                            ? flexRender(col.header, table)
+                                                                            : col.header}
+                                                                    </strong>
+                                                                    <span className="text-right truncate max-w-[60%]">
+                                                                        {value}
+                                                                    </span>
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </React.Fragment>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
+                                        No results.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </TooltipProvider>
             ) : (
-
                 <div className="px-2 py-4 space-y-4">
                     {table.getRowModel().rows.map((row) => (
                         <div
                             key={row.id}
                             className="bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-300 dark:border-gray-700 p-4"
                         >
-                            {initialColumns.map((col) => {
+                            {initialColumns.map((col, index) => {
                                 const value =
                                     col.cell
                                         ? flexRender(col.cell, {
@@ -200,13 +211,17 @@ const DynamicTable = ({ columns: initialColumns, data, total, onPageChange, perP
                                         : row.original[col.accessorKey];
 
                                 return (
-                                    <div key={col.id} className="mb-3 flex flex-col gap-0.5">
-                                        <p className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                                            {col.header.toString()}
-                                        </p>
-                                        <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                                    <div key={index} className="mb-3 flex flex-col gap-0.5">
+                                        <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                                            <strong className="font-semibold text-gray-700 dark:text-gray-400">
+                                                {typeof col.header === "function"
+                                                    ? flexRender(col.header, table)
+                                                    : col.header}
+                                            </strong>
+                                        </div>
+                                        <div className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                                             {value}
-                                        </p>
+                                        </div>
                                     </div>
                                 );
                             })}
