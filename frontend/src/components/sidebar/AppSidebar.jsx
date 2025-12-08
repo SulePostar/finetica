@@ -69,43 +69,47 @@ const USER = {
     email: "john@example.com",
     initials: "JD",
 };
-
 export function AppSidebar(props) {
     return (
         <Sidebar
             collapsible="icon"
             variant="sidebar"
-            className="transition-all duration-300 ease-in-out bg-[#6C69FF] border-r border-white/10 backdrop-blur-xl"
+            className="
+                fixed top-0 left-0 z-50 w-[var(--sidebar-width)]
+                transition-all duration-300 ease-in-out 
+                bg-spurple
+                border-r border-white/10 
+                backdrop-blur-xl
+                flex flex-col
+            "
             {...props}
         >
             <SidebarRail />
 
-            <div className="relative flex flex-1 flex-col min-h-0">
-                <SidebarCollapsePill />
+            <SidebarCollapsePill />
 
-                <SidebarHeader>
-                    <SidebarLogo />
-                </SidebarHeader>
+            <SidebarHeader>
+                <SidebarLogo />
+            </SidebarHeader>
 
-                <SidebarContent
-                    className="pt-4 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
-                >
-                    <SidebarNav groups={SIDEBAR_NAVIGATION} />
-                </SidebarContent>
-                <SidebarFooter>
-                    <div className="flex items-center justify-between px-3 py-4 group-data-[collapsible=icon]:hidden pointer-events-auto">
-                        <Link to="/profile" className="block w-full cursor-pointer">
-                            <SidebarUserInfo user={USER} />
-                        </Link>
-                    </div>
+            <SidebarContent
+                className="flex-1 min-h-0 pt-4 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
+            >
+                <SidebarNav groups={SIDEBAR_NAVIGATION} />
+            </SidebarContent>
 
-                    <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center py-4 pointer-events-auto">
-                        <Link to="/profile" className="cursor-pointer">
-                            <CollapsedUserAvatar initials={USER.initials} />
-                        </Link>
-                    </div>
-                </SidebarFooter>
-            </div>
+            <SidebarFooter>
+                <div className="flex items-center justify-between px-3 py-4 group-data-[collapsible=icon]:hidden pointer-events-auto">
+                    <Link to="/profile" className="block w-full cursor-pointer">
+                        <SidebarUserInfo user={USER} />
+                    </Link>
+                </div>
+                <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center py-4 pointer-events-auto">
+                    <Link to="/profile" className="cursor-pointer">
+                        <CollapsedUserAvatar initials={USER.initials} />
+                    </Link>
+                </div>
+            </SidebarFooter>
         </Sidebar>
     );
 }
