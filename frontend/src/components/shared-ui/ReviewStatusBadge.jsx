@@ -15,7 +15,7 @@ export function ReviewStatusBadge({ status }) {
     const color = STATUS_STYLES[safeValue] || STATUS_STYLES.default;
 
     return (
-        <Badge className={color}>
+        <Badge className={`${color} m-auto`}>
             {capitalizeFirst(safeValue)}
         </Badge>
     );
