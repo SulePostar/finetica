@@ -29,7 +29,7 @@ const DynamicTable = ({ columns: initialColumns, data, total, onPageChange, perP
     const visibleLimit = useMemo(() => {
         switch (breakpoint) {
             case "default": return 1;
-            case "xs": return 2;
+            case "xs": return 3;
             case "sm": return 4;
             case "md": return 6;
             case "lg":
@@ -126,7 +126,7 @@ const DynamicTable = ({ columns: initialColumns, data, total, onPageChange, perP
                                                 >
                                                     <Tooltip delayDuration={800}>
                                                         <TooltipTrigger asChild>
-                                                            <div className="max-w-[14ch] sm:max-w-[18ch] md:max-w-[22ch] overflow-hidden text-ellipsis whitespace-nowrap text-center cursor-default">
+                                                            <div className="max-w-[18ch] sm:max-w-[22ch] md:max-w-[26ch] overflow-hidden text-ellipsis whitespace-nowrap text-center cursor-default">
                                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                                             </div>
                                                         </TooltipTrigger>
