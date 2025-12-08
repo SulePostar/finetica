@@ -23,7 +23,7 @@ export default function RoleAndStatusManagement() {
             <PageTitle text={"Roles and Statuses"} />
 
             {/* RESPONSIVE: stack on mobile, side-by-side on larger screens */}
-            <div className="flex flex-col md:flex-row gap-6 p-4">
+            <div className="flex flex-col lg:flex-row gap-6 p-4">
                 <RolesStatusesTable
                     columns={columns}
                     data={rolesData.data}
