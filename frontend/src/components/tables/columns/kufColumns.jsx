@@ -51,6 +51,7 @@ export function getKufColumns(onAction) {
         {
             accessorKey: "review",
             header: "Review",
+            meta: { isComponent: true },
             cell: ({ row }) => {
                 const approved = row.original.approvedAt || row.original.approvedBy;
 
@@ -64,6 +65,7 @@ export function getKufColumns(onAction) {
         {
             id: "actions",
             header: "Actions",
+            meta: { isComponent: true },
             cell: ({ row }) => {
                 const item = row.original;
 

@@ -36,11 +36,12 @@ export function getBankTransactionsColumns(onDelete) {
         {
             id: "status",
             header: "Status",
+            meta: { isComponent: true },
             cell: ({ row }) => {
                 const approved = row.original.approvedAt || row.original.approvedBy;
                 const value = approved ? "approved" : "pending";
                 return (
-                    <div className="flex justify-center">
+                    <div className="flex items-center justify-center">
                         <ReviewStatusBadge status={value} />
                     </div>
                 );
