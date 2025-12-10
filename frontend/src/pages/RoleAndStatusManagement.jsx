@@ -11,12 +11,16 @@ export default function RoleAndStatusManagement() {
     const { data: rolesData, isPending: rolesPending } = useRoles();
     const { data: statusData, isPending: statusPending } = useStatuses();
 
-    if (statusPending || rolesPending)
+    if (statusPending || rolesPending) {
         return (
-            <div className="flex items-center justify-center h-40">
-                <Spinner className="size-10" />
-            </div>
+            <>
+                <PageTitle text="Roles and Statuses" />
+                <div className="flex items-center justify-center h-40">
+                    <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
+                </div>
+            </>
         );
+    }
 
     return (
         <div>

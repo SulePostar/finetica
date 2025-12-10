@@ -114,24 +114,21 @@ export function SidebarNav({ groups }) {
                                     <SidebarMenuItem key={item.title}>
                                         <SidebarMenuButton
                                             asChild
-                                            tooltip={item.title}
                                             className={cn(
-                                                "relative overflow-hidden transition-all duration-300 ease-out rounded-lg border border-transparent",
-                                                "w-[95%]",
-                                                "flex items-center gap-4 py-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full",
+                                                "relative overflow-hidden transition-all duration-300 ease-out rounded-md border border-transparent",
+                                                "w-full md:w-[220px]",
+                                                "flex items-center gap-2 py-1.5 px-2",
                                                 "text-slate-600 dark:text-white/80",
-                                                "hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-[#6C69FF]/20 dark:hover:text-white transition-all",
-                                                "hover:scale-[1.02]",
+                                                "hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-[#6C69FF]/20 dark:hover:text-white",
 
                                                 isActive && [
-                                                    "bg-indigo-50 text-indigo-600 border-indigo-200",
-                                                    "dark:bg-[#6C69FF]/15 dark:border-[#6C69FF] dark:text-white",
-                                                    "font-medium",
-                                                    "translate-x-1 group-data-[collapsible=icon]:translate-x-0",
+                                                    "bg-[#6C69FF]/15",
+                                                    "border-l-4 border-[#6C69FF]",
+                                                    "text-[#6C69FF]",
+                                                    "font-semibold",
                                                 ]
                                             )}
                                         >
-
                                             <a href={item.url} className="flex items-center gap-4 w-full">
                                                 <item.icon
                                                     className={cn(
@@ -140,7 +137,6 @@ export function SidebarNav({ groups }) {
                                                         "scale-110 dark:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
                                                     )}
                                                 />
-
                                                 <span className="group-data-[collapsible=icon]:hidden">
                                                     {item.title}
                                                 </span>
