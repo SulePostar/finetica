@@ -42,7 +42,7 @@ const SIDEBAR_NAVIGATION = [
     },
     {
         label: "Issues",
-        items: [{ title: "PDF Issues", url: "/pdf-issues", icon: AlertTriangle }],
+        items: [{ title: "Invalid PDFs", url: "/invalid-pdfs", icon: AlertTriangle }],
     },
     {
         label: "Administration",

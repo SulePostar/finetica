@@ -79,7 +79,7 @@ export default function AppRoutes() {
             />
 
             <Route
-                path="/pdf-issues"
+                path="/invalid-pdfs"
                 element={
                     <InvalidPdfs />
                 }
