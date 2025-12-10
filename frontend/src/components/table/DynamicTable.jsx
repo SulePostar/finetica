@@ -38,7 +38,6 @@ const DynamicTable = ({
         data,
         columns,
         pageCount: Math.ceil(total / perPage),
-
         state: {
             pagination: {
                 pageIndex: page - 1,
@@ -53,8 +52,6 @@ const DynamicTable = ({
 
     return (
         <div className="w-full mx-auto rounded-2xl border border-table-border-light dark:border-gray-background bg-card shadow-lg">
-
-            {/* Header, Toolbar, and Column Visibility Controls */}
             {(header || toolbar || table.getAllColumns().some(c => c.getCanHide())) && (
                 <div className="flex items-center justify-between px-6 pt-4 pb-2">
                     <div className="flex-1 min-w-0">{header}</div>
