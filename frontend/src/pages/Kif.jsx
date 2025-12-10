@@ -5,11 +5,16 @@ import { getKifColumns } from "@/components/tables/columns/kifColumns";
 import { useState } from "react";
 import IsError from "@/components/shared-ui/IsError";
 import { Spinner } from "@/components/ui/spinner";
+import UploadButton from "@/components/shared-ui/UploadButton";
 
 const Kif = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
     const { data: response, isPending, isError, error, } = useKifList({ page, perPage });
+
+    const handleFileUpload = (file) => {
+        console.log("File uploaded:", file);
+    };
 
     if (isPending) {
         return (
@@ -35,11 +40,18 @@ const Kif = () => {
         <div className="pt-20">
             <DynamicTable
                 header={
-                    <PageTitle
-                        text="Kif"
-                        subtitle="Overview of all Kif files"
-                        compact
-                    />
+                    <div className="flex items-center justify-between">
+                        <PageTitle
+                            text="Kif"
+                            subtitle="Overview of all Kif files"
+                            compact
+                        />
+                        <UploadButton
+                            onUploadSuccess={handleFileUpload}
+                            buttonText="Upload Kif"
+                            className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+                        />
+                    </div>
                 }
                 columns={getKifColumns((item) => console.log("Action on:", item))} data={response.data ? response.data : []} total={response?.total || 0}
                 page={page}
