@@ -1,4 +1,12 @@
-import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table"
+"use client"
+
+import * as React from "react"
+import {
+    flexRender,
+    getCoreRowModel,
+    useReactTable,
+} from "@tanstack/react-table"
+import { useState } from "react"
 import {
     Table,
     TableBody,
@@ -7,6 +15,13 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import {
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import TablePagination from "./TablePagination"
 
 const DynamicTable = ({
@@ -19,27 +34,64 @@ const DynamicTable = ({
     header,
     toolbar,
 }) => {
+
+    const [columnVisibility, setColumnVisibility] = useState({})
+
     const table = useReactTable({
         data,
         columns,
         pageCount: Math.ceil(total / perPage),
+
         state: {
             pagination: {
                 pageIndex: page - 1,
                 pageSize: perPage,
             },
+            columnVisibility,
         },
         manualPagination: true,
         getCoreRowModel: getCoreRowModel(),
+        onColumnVisibilityChange: setColumnVisibility,
     })
 
     return (
         <div className="w-full mx-auto rounded-2xl border border-table-border-light dark:border-gray-background bg-card shadow-lg">
 
-            {(header || toolbar) && (
+            {/* Header, Toolbar, and Column Visibility Controls */}
+            {(header || toolbar || table.getAllColumns().some(c => c.getCanHide())) && (
                 <div className="flex items-center justify-between px-6 pt-4 pb-2">
                     <div className="flex-1 min-w-0">{header}</div>
-                    {toolbar && <div className="flex items-center gap-2">{toolbar}</div>}
+
+                    <div className="flex items-center gap-2">
+                        {toolbar}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline">
+                                    Columns
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                {table
+                                    .getAllColumns()
+                                    // Only show columns that are allowed to be hidden
+                                    .filter((column) => column.getCanHide())
+                                    .map((column) => {
+                                        return (
+                                            <DropdownMenuCheckboxItem
+                                                key={column.id}
+                                                className="capitalize"
+                                                checked={column.getIsVisible()}
+                                                onCheckedChange={(value) =>
+                                                    column.toggleVisibility(!!value)
+                                                }
+                                            >
+                                                {column.id}
+                                            </DropdownMenuCheckboxItem>
+                                        )
+                                    })}
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 </div>
             )}
 
@@ -58,10 +110,12 @@ const DynamicTable = ({
                                         key={header.id}
                                         className="px-6 py-3 text-s text-center font-semibold uppercase tracking-wide text-table-header  dark:text-[#6c69ff]"
                                     >
-                                        {flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
-                                        )}
+                                        {header.isPlaceholder
+                                            ? null
+                                            : flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -102,7 +156,6 @@ const DynamicTable = ({
                     </TableBody>
                 </Table>
             </div>
-
             <div className="flex items-center rounded-md justify-between px-6 py-3 text-xs bg-table-header/5 dark:bg-gray-background border-t border-table-border-light dark:border-gray-background">
                 <TablePagination
                     page={page}
