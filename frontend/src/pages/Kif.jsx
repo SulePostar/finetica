@@ -32,16 +32,22 @@ const Kif = () => {
     }
 
     return (
-        <>
-            <PageTitle text="Kif" />
+        <div className="pt-20">
             <DynamicTable
+                header={
+                    <PageTitle
+                        text="Kif"
+                        subtitle="Overview of all Kif files"
+                        compact
+                    />
+                }
                 columns={getKifColumns((item) => console.log("Action on:", item))} data={response.data ? response.data : []} total={response?.total || 0}
                 page={page}
                 perPage={perPage}
                 onPageChange={setPage}
             />
 
-        </>
+        </div>
     );
 };
 
