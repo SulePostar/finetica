@@ -15,11 +15,7 @@ export function getKufColumns(onAction) {
         {
             accessorKey: "invoiceNumber",
             header: "Invoice Number",
-            cell: ({ row }) => (
-                <span className="font-medium">
-                    {formatValue(row.original.invoiceNumber)}
-                </span>
-            ),
+            cell: ({ row }) => formatValue(row.original.invoiceNumber)
         },
         {
             accessorKey: "invoiceType",

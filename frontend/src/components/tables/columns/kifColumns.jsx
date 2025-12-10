@@ -8,11 +8,6 @@ import { ReviewStatusBadge } from "@/components/shared-ui/ReviewStatusBadge";
 export function getKifColumns(onDelete) {
     return [
         {
-            id: "index",
-            header: "Row",
-            cell: ({ row }) => row.index + 1,
-        },
-        {
             accessorKey: "invoiceNumber",
             header: "Invoice Number",
             cell: ({ row }) => formatValue(row.original.invoiceNumber),
