@@ -75,8 +75,14 @@ export function AppSidebar(props) {
         <Sidebar
             collapsible="icon"
             variant="sidebar"
-            className="transition-all duration-300 ease-in-out bg-[#6C69FF] border-r border-white/10 backdrop-blur-xl"
-            {...props}
+            className="
+                fixed top-0 left-0 z-50 w-[var(--sidebar-width)]
+                transition-all duration-300 ease-in-out 
+                bg-spurple
+                border-r border-white/10 
+                backdrop-blur-xl
+                flex flex-col
+            "            {...props}
         >
             <SidebarRail />
 
