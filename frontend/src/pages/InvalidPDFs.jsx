@@ -20,7 +20,7 @@ const InvalidPdfs = () => {
                         <TabsList
                             className="
                                 flex flex-col gap-2
-                                md:grid md:grid-cols-4
+                                lg:grid lg:grid-cols-4
                                 bg-transparent
                                 h-auto p-0 mb-3 sm:mb-4 md:mb-4 xl:mb-6
                                 w-full
@@ -38,10 +38,8 @@ const InvalidPdfs = () => {
                                             w-full
                                             px-4 py-3 
                                             rounded-lg font-medium transition-all
-                                            justify-start
-                                            md:justify-center
-                                            overflow-hidden
-                                            min-w-0
+                                            
+                                            justify-center
 
                                             data-[state=active]:bg-spurple 
                                             data-[state=active]:text-white 
@@ -58,7 +56,7 @@ const InvalidPdfs = () => {
                                         "
                                     >
                                         <Icon className="w-4 h-4 xl:w-5 xl:h-5 flex-shrink-0" />
-                                        <span className="text-sm xl:text-base truncate">{tab.label}</span>
+                                        <span className="text-sm xl:text-base">{tab.label}</span>
                                     </TabsTrigger>
                                 );
                             })}
