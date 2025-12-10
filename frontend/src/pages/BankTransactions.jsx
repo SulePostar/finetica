@@ -9,7 +9,10 @@ import { useState } from "react";
 const BankTransactions = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
-    const { data, isPending, isError, error, refetch } = useBankTransactions({ page, perPage });
+    const { data, isPending, isError, error, refetch } = useBankTransactions({
+        page,
+        perPage,
+    });
 
     if (isPending) {
         return (
@@ -25,7 +28,12 @@ const BankTransactions = () => {
     if (isError) {
         return (
             <div>
-                <IsError error={error} onRetry={() => refetch()} title="Failed to load Bank Transactions" showDetails={true} />
+                <IsError
+                    error={error}
+                    onRetry={() => refetch()}
+                    title="Failed to load Bank Transactions"
+                    showDetails={true}
+                />
             </div>
         );
     }
@@ -34,9 +42,15 @@ const BankTransactions = () => {
     const total = data?.total ?? 0;
 
     return (
-        <div>
-            <PageTitle text="Bank Transactions" />
+        <div className="pt-20">
             <DynamicTable
+                header={
+                    <PageTitle
+                        text="Bank Transactions"
+                        subtitle="Overview of all bank transactions"
+                        compact
+                    />
+                }
                 columns={getBankTransactionsColumns()}
                 data={rows}
                 total={total}
@@ -46,6 +60,6 @@ const BankTransactions = () => {
             />
         </div>
     );
-}
+};
 
 export default BankTransactions;
