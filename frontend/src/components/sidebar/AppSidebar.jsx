@@ -81,8 +81,8 @@ export function AppSidebar(props) {
                 bg-spurple
                 border-r border-white/10 
                 backdrop-blur-xl
-                flex flex-col
-            "            {...props}
+                flex flex-col"
+            {...props}
         >
             <SidebarRail />
 
