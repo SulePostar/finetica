@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FileText, CreditCard, FileCheck, FileSignature } from "lucide-react";
 import { cn } from "@/lib/utils";
+import PageTitle from "@/components/shared-ui/PageTitle";
 
 const InvalidPdfs = () => {
     const [activeTab, setActiveTab] = useState("bank");
@@ -15,9 +16,7 @@ const InvalidPdfs = () => {
         <div className="min-h-screen flex items-center justify-center bg-background p-4">
             <div className="w-full">
                 <div className="min-h-[85vh] mt-4 mb-4 bg-secondary dark:bg-secondary text-foreground p-4 sm:p-6 md:p-6 xl:p-8 transition-colors rounded-lg">
-                    <h1 className="text-2xl sm:text-3xl md:text-3xl xl:text-4xl font-bold text-spurple mb-3 sm:mb-4 md:mb-4 xl:mb-6">
-                        PDF Issues
-                    </h1>
+                    <PageTitle text="PDF Issues" subtitle="Overview of all PDF issues" compact/>
                     <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 xl:gap-4 mb-3 sm:mb-4 md:mb-4 xl:mb-6">
                         {tabs.map((tab) => {
                             const Icon = tab.icon;
