@@ -12,10 +12,16 @@ const Kuf = () => {
     const perPage = 10;
     const { data, isPending, error, isError, refetch } = useKufInvoices({ page, perPage });
 
-    if (isPending) return <div className="flex items-center justify-center h-40">
-        <Spinner className="size-10" />
-    </div>;
-
+    if (isPending) {
+        return (
+            <>
+                <PageTitle text="Kuf" />
+                <div className="flex items-center justify-center h-40">
+                    <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
+                </div>
+            </>
+        );
+    }
     if (isError) {
         return (
             <>
@@ -26,7 +32,7 @@ const Kuf = () => {
     }
     return (
         <>
-            <PageTitle text="KUF - Purchase Invoices" />
+            <PageTitle text="Kuf" />
             <DynamicTable columns={getKufColumns((item) => console.log("Action on:", item))} data={data.data ? data.data : []} total={data?.total || 0}
                 page={page}
                 perPage={perPage}

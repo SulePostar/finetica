@@ -46,7 +46,7 @@ export function getBankTransactionsColumns(onAction) {
                 const approved = row.original.approvedAt || row.original.approvedBy;
                 const value = approved ? "approved" : "pending";
                 return (
-                    <div className="flex justify-center">
+                    <div className="flex items-center justify-center">
                         <ReviewStatusBadge status={value} />
                     </div>
                 );
