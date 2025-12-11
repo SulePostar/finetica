@@ -42,7 +42,7 @@ const SIDEBAR_NAVIGATION = [
     },
     {
         label: "Issues",
-        items: [{ title: "PDF Issues", url: "/pdf-issues", icon: AlertTriangle }],
+        items: [{ title: "Invalid PDFs", url: "/invalid-pdfs", icon: AlertTriangle }],
     },
     {
         label: "Administration",
@@ -75,7 +75,13 @@ export function AppSidebar(props) {
         <Sidebar
             collapsible="icon"
             variant="sidebar"
-            className="transition-all duration-300 ease-in-out bg-[#6C69FF] border-r border-white/10 backdrop-blur-xl"
+            className="
+                fixed top-0 left-0 z-50 w-[var(--sidebar-width)]
+                transition-all duration-300 ease-in-out 
+                bg-spurple
+                border-r border-white/10 
+                backdrop-blur-xl
+                flex flex-col"
             {...props}
         >
             <SidebarRail />

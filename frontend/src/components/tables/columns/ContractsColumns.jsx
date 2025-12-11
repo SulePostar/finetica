@@ -43,6 +43,7 @@ export function getContractsColumns(onAction) {
         {
             accessorKey: "is_active",
             header: "Status",
+            meta: { isComponent: true },
             cell: ({ row }) => {
                 const isActive = row.original.is_active ?? row.original.isActive ?? false;
                 const statusStyles = {
@@ -57,6 +58,7 @@ export function getContractsColumns(onAction) {
         {
             accessorKey: "amount",
             header: "Amount",
+            meta: { isComponent: true },
             cell: ({ row }) => {
                 const amount = row.original.amount;
                 return amount ? `${parseFloat(amount).toFixed(2)}` : "—";
