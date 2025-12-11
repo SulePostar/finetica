@@ -19,7 +19,7 @@ export default function UploadButton({ onUploadSuccess, buttonText = "Upload", v
                 size={size}
                 className={className}
             >
-                <CloudUpload className="w-4 h-4 mr-2" />
+                <CloudUpload className="w-4 h-4 mr-0.5" />
                 {buttonText}
             </Button>
 
