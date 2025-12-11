@@ -1,5 +1,6 @@
 import { ReviewStatusBadge } from "@/components/shared-ui/ReviewStatusBadge";
 import ActionsDropdown from "@/components/ActionsDropdown";
+import { formatDateTime } from "@/helpers/formatDate";
 
 export function getBankTransactionsColumns(onAction) {
     const bankStatementsActions = [
@@ -11,10 +12,7 @@ export function getBankTransactionsColumns(onAction) {
         {
             accessorKey: "date",
             header: "Date",
-            cell: ({ row }) => {
-                const date = row.original.date;
-                return date ? new Date(date).toLocaleDateString() : "—";
-            },
+            cell: ({ row }) => formatDateTime(row.original.date),
         },
         {
             accessorKey: "TransactionCategory.name",
