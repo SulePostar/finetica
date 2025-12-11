@@ -9,7 +9,7 @@ export function Toaster() {
             theme="system"
             toastOptions={{
                 unstyled: false,
-                duration: 3500,
+                duration: 2500,
             }}
         />
     );
