@@ -4,7 +4,9 @@ import DynamicTable from "@/components/table/DynamicTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export default function Users() {
+import ActionsDropdown from "@/components/ActionsDropdown";
+
+export default function Users({ onAction }) {
     const data = [
         {
             name: "Temp User",
@@ -14,6 +16,11 @@ export default function Users() {
             lastActive: "--",
             actions: "...",
         },
+    ];
+
+    const userActions = [
+        { key: "action1", label: "Action 1" },
+        { key: "action2", label: "Action 2" },
     ];
 
     const columns = [
@@ -43,9 +50,17 @@ export default function Users() {
             cell: ({ row }) => row.original.lastActive,
         },
         {
-            accessorKey: "actions",
+            id: "actions",
             header: "Actions",
-            cell: () => <>…</>,
+            cell: ({ row }) => {
+                return (
+                    <ActionsDropdown
+                        item={row.original}
+                        actions={userActions}
+                        onAction={onAction}
+                    />
+                )
+            },
         },
     ];
 
