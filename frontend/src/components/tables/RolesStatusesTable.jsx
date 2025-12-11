@@ -10,9 +10,7 @@ const RolesStatusesTable = ({ title, onAdd, placeholder, columns, data }) => {
     return (
         <div className="flex-1">
             <h2 className="text-xl font-semibold mb-3">{title}</h2>
-            <PageTitle subtitle={"Manage "
-                + title
-            } />
+
 
             <form
                 onSubmit={(e) => {
