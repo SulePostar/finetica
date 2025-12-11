@@ -58,6 +58,7 @@ export function getKifColumns(onAction) { // Changed from onDelete to onAction
         {
             id: "actions",
             header: "Actions",
+            meta: { isComponent: true },
             cell: ({ row }) => {
                 return (
                     <ActionsDropdown
