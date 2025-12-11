@@ -13,7 +13,9 @@ router.get('/',
     // isAuthenticated
     getAllUserStatuses);
 router.get('/:id', isAuthenticated, getUserStatusById);
-router.post('/', isAuthenticated, createUserStatus);
+router.post('/',
+    // isAuthenticated,
+    createUserStatus);
 router.delete('/:id', isAuthenticated, deleteUserStatus);
 
 module.exports = router;
