@@ -9,10 +9,11 @@ const RolesStatusesTable = ({ title, onAdd, placeholder, columns, data }) => {
 
     return (
         <div className="flex-1">
-            <h2 className="text-xl font-semibold mb-3">{title}</h2>
-            <PageTitle subtitle={"Manage "
-                + title
-            } />
+            <PageTitle
+                text={title}
+                subtitle={"Manage " + title.toLowerCase()}
+                compact
+            />
 
             <form
                 onSubmit={(e) => {
@@ -27,7 +28,7 @@ const RolesStatusesTable = ({ title, onAdd, placeholder, columns, data }) => {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                 />
-                <Button type="submit">
+                <Button type="submit" disabled={!input.trim()} >
                     Add
                 </Button>
             </form>
