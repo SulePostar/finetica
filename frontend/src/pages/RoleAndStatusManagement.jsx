@@ -24,26 +24,30 @@ export default function RoleAndStatusManagement() {
 
     return (
         <div>
-            <PageTitle text={"Roles and Statuses"} />
+            <div>
+                <PageTitle text={"Roles and Statuses"} />
 
-            {/* RESPONSIVE: stack on mobile, side-by-side on larger screens */}
-            <div className="flex flex-col lg:flex-row gap-6 p-4">
-                <RolesStatusesTable
-                    columns={columns}
-                    data={rolesData.data}
-                    title="Roles"
-                    placeholder="New role name"
-                    onAdd={(name) => { console.log("Add role:", name); }}
-                />
+                {/* RESPONSIVE: stack on mobile, side-by-side on larger screens */}
+                <div className="flex flex-col 2xl:flex-row gap-6 p-4">
 
-                <RolesStatusesTable
-                    columns={statuses}
-                    data={statusData.data}
-                    title="Statuses"
-                    placeholder="New status name"
-                    onAdd={(name) => { console.log("Add status:", name); }}
-                />
+                    <RolesStatusesTable
+                        columns={columns}
+                        data={rolesData.data}
+                        title="Roles"
+                        placeholder="New role name"
+                        onAdd={(name) => { console.log("Add role:", name); }}
+                    />
+
+                    <RolesStatusesTable
+                        columns={statuses}
+                        data={statusData.data}
+                        title="Statuses"
+                        placeholder="New status name"
+                        onAdd={(name) => { console.log("Add status:", name); }}
+                    />
+                </div>
             </div>
+
         </div>
     );
 }
