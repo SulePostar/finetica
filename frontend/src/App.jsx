@@ -5,9 +5,7 @@ import { ThemeProvider } from "./components/theme/ThemeProvider"
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <DefaultLayout>
-        <AppRoutes />
-      </DefaultLayout>
+      <AppRoutes />
     </ThemeProvider>
   )
 }

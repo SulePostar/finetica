@@ -5,6 +5,7 @@ import { Spinner } from "@/components/ui/spinner";
 import IsError from "@/components/shared-ui/IsError";
 import { getBankTransactionsColumns } from "@/components/tables/columns/BankTransactionsColumns";
 import { useState } from "react";
+import DefaultLayout from "@/layout/DefaultLayout";
 
 const BankTransactions = () => {
     const [page, setPage] = useState(1);
@@ -42,23 +43,25 @@ const BankTransactions = () => {
     const total = data?.total ?? 0;
 
     return (
-        <div className="pt-20">
-            <DynamicTable
-                header={
-                    <PageTitle
-                        text="Bank Transactions"
-                        subtitle="Overview of all bank transactions"
-                        compact
-                    />
-                }
-                columns={getBankTransactionsColumns()}
-                data={rows}
-                total={total}
-                page={page}
-                perPage={perPage}
-                onPageChange={setPage}
-            />
-        </div>
+        <DefaultLayout>
+            <div className="pt-20">
+                <DynamicTable
+                    header={
+                        <PageTitle
+                            text="Bank Transactions"
+                            subtitle="Overview of all bank transactions"
+                            compact
+                        />
+                    }
+                    columns={getBankTransactionsColumns()}
+                    data={rows}
+                    total={total}
+                    page={page}
+                    perPage={perPage}
+                    onPageChange={setPage}
+                />
+            </div>
+        </DefaultLayout>
     );
 };
 
