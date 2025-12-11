@@ -36,6 +36,7 @@ export function getBankTransactionsColumns(onDelete) {
         {
             id: "status",
             header: "Status",
+            meta: { isComponent: true },
             cell: ({ row }) => {
                 const approved = row.original.approvedAt || row.original.approvedBy;
                 const value = approved ? "approved" : "pending";

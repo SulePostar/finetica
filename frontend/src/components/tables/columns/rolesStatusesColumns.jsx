@@ -19,6 +19,7 @@ export function getRolesStatusesColumns(type = "roles", onDelete, nameKey) {
                     {type === "roles" ? "Role" : "Status"}
                 </div>
             ),
+            meta: { isComponent: true },
             cell: ({ row }) => {
                 const value = row.original[nameKey];
 
@@ -40,6 +41,7 @@ export function getRolesStatusesColumns(type = "roles", onDelete, nameKey) {
         {
             id: "actions",
             header: () => <div className="text-center w-full">Actions</div>,
+            meta: { isComponent: true },
             cell: ({ row }) => {
                 const item = row.original;
                 return (
