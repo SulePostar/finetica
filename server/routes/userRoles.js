@@ -12,7 +12,9 @@ router.get('/',
     // isAuthenticated
     getAllUserRoles);
 router.get('/:id', isAuthenticated, getUserRoleById);
-router.post('/', isAuthenticated, createUserRole);
+router.post('/',
+    //isAuthenticated, 
+    createUserRole);
 router.delete('/:id', isAuthenticated, deleteUserRole);
 
 module.exports = router;
