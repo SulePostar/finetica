@@ -8,11 +8,6 @@ import { ReviewStatusBadge } from "@/components/shared-ui/ReviewStatusBadge";
 export function getKifColumns(onDelete) {
     return [
         {
-            id: "index",
-            header: "Row",
-            cell: ({ row }) => row.index + 1,
-        },
-        {
             accessorKey: "invoiceNumber",
             header: "Invoice Number",
             cell: ({ row }) => formatValue(row.original.invoiceNumber),
@@ -48,6 +43,7 @@ export function getKifColumns(onDelete) {
         {
             accessorKey: "status",
             header: "Status",
+            meta: { isComponent: true },
             cell: ({ row }) => {
                 const approved = row.original.approvedAt || row.original.approvedBy;
                 const value = approved ? "approved" : "pending";
@@ -58,6 +54,7 @@ export function getKifColumns(onDelete) {
         {
             id: "actions",
             header: "Actions",
+            meta: { isComponent: true },
             cell: ({ row }) => (
                 <Button variant="destructive" onClick={() => onDelete(row.original)}>
                     Delete
