@@ -54,7 +54,7 @@ const Kuf = () => {
                         />
                         <UploadButton
                             onUploadSuccess={handleFileUpload}
-                            buttonText="Upload Kuf"
+                            buttonText="Upload"
                             className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
                         />
                     </div>
