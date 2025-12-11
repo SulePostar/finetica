@@ -9,3 +9,10 @@ export const getAllStatuses = async () => {
     const { data } = await apiClient.get("/user-statuses");
     return data;
 };
+
+export const createRole = async (roleName) => {
+    const { data } = await apiClient.post("/user-roles", {
+        role: roleName
+    });
+    return data;
+};
