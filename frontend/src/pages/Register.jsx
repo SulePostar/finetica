@@ -5,14 +5,17 @@ import { Card, CardDescription, CardHeader, CardTitle, CardContent } from "@/com
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Contact, Lock, Mail, ShieldCheck, User } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
     const { register, handleSubmit, watch, formState: { errors } } = useForm({
         mode: "onChange",
     });
+    const navigate = useNavigate();
 
     function onSubmit(data) {
         console.log("Form submitted:", data);
+        navigate("/dashboard");
     }
 
     return (

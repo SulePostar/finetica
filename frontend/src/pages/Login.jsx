@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const { register, handleSubmit, formState: { errors },
   } = useForm();
 
   const onSubmit = (data) => {
     console.log("Form submitted:", data);
+    // After successful login logic, redirect to home
+    navigate('/dashboard');
   };
 
   return (
@@ -143,14 +147,12 @@ const Login = () => {
               {/* Sign Up */}
               <div className="text-center pt-4">
                 <p className="text-gray-600">
-                  Don't have an account?{" "}
-                  <button
-                    type="button"
-                    onClick={() => console.log("Sign up clicked")}
-                    className="font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
-                  >
-                    Sign Up
-                  </button>
+                  Don't have an account?
+                  <a
+                    href="/register"
+                    className="pl-2 font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                  > Sign Up
+                  </a>
                 </p>
               </div>
             </form>

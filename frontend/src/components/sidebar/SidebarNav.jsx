@@ -1,5 +1,6 @@
 import React from "react";
 import { ChevronRight } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 import {
     Collapsible,
     CollapsibleContent,
@@ -21,8 +22,8 @@ import AppearanceCard from "@/components/sidebar/AppearanceCard";
 import CollapsedThemeIcon from "../theme/CollapsedThemeIcon";
 
 export function SidebarNav({ groups }) {
-    const currentPath =
-        typeof window !== "undefined" ? window.location.pathname : "";
+    const location = useLocation();
+    const currentPath = location.pathname;
 
     return (
         <>
@@ -129,7 +130,7 @@ export function SidebarNav({ groups }) {
                                                 ]
                                             )}
                                         >
-                                            <a href={item.url} className="flex items-center gap-4 w-full">
+                                            <Link to={item.url} className="flex items-center gap-4 w-full">
                                                 <item.icon
                                                     className={cn(
                                                         "size-5 transition-transform duration-300",
@@ -140,7 +141,7 @@ export function SidebarNav({ groups }) {
                                                 <span className="group-data-[collapsible=icon]:hidden">
                                                     {item.title}
                                                 </span>
-                                            </a>
+                                            </Link>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 );

@@ -67,6 +67,7 @@ export function getContractsColumns(onAction) {
         {
             id: "actions",
             header: "Actions",
+            meta: { isComponent: true },
             cell: ({ row }) => {
                 return (
                     <ActionsDropdown
