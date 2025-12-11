@@ -60,7 +60,7 @@ export default function Contracts() {
             />
           </div>
         }
-        columns={getContractsColumns()}
+        columns={getContractsColumns((item) => console.log("Action on:", item))}
         data={paginatedRows}
         total={allRows.length}
         page={currentPage}
