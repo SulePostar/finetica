@@ -3,7 +3,7 @@ import { AppSidebar } from "@/components/sidebar/AppSidebar";
 
 const DefaultLayout = ({ children }) => {
     return (
-        <div className="flex min-h-screen bg-background text-foreground">
+        <div className="flex w-full overflow-hidden bg-background text-foreground">
             <SidebarProvider>
                 <AppSidebar />
                 <SidebarInset>

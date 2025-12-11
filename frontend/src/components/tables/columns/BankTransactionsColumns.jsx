@@ -1,6 +1,12 @@
 import { ReviewStatusBadge } from "@/components/shared-ui/ReviewStatusBadge";
+import ActionsDropdown from "@/components/ActionsDropdown";
 
-export function getBankTransactionsColumns(onDelete) {
+export function getBankTransactionsColumns(onAction) {
+    const bankStatementsActions = [
+        { key: "action1", label: "Action 1" },
+        { key: "action2", label: "Action 2" },
+        { key: "action3", label: "Action 3" },
+    ];
     return [
         {
             accessorKey: "date",
@@ -45,6 +51,20 @@ export function getBankTransactionsColumns(onDelete) {
                         <ReviewStatusBadge status={value} />
                     </div>
                 );
+            },
+        },
+        {
+            id: "actions",
+            header: "Actions",
+            meta: { isComponent: true },
+            cell: ({ row }) => {
+                return (
+                    <ActionsDropdown
+                        item={row.original}
+                        actions={bankStatementsActions}
+                        onAction={onAction}
+                    />
+                )
             },
         },
     ];
