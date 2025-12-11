@@ -1,6 +1,13 @@
 import { Badge } from "@/components/ui/badge";
+import ActionsDropdown from "@/components/ActionsDropdown";
 
-export function getContractsColumns() {
+export function getContractsColumns(onAction) {
+    const contractActions = [
+        { key: "action1", label: "Action 1" },
+        { key: "action2", label: "Action 2" },
+        { key: "action3", label: "Action 3" },
+    ];
+
     return [
         {
             accessorKey: "partner_name",
@@ -36,6 +43,7 @@ export function getContractsColumns() {
         {
             accessorKey: "is_active",
             header: "Status",
+            meta: { isComponent: true },
             cell: ({ row }) => {
                 const isActive = row.original.is_active ?? row.original.isActive ?? false;
                 const statusStyles = {
@@ -50,9 +58,23 @@ export function getContractsColumns() {
         {
             accessorKey: "amount",
             header: "Amount",
+            meta: { isComponent: true },
             cell: ({ row }) => {
                 const amount = row.original.amount;
                 return amount ? `${parseFloat(amount).toFixed(2)}` : "—";
+            },
+        },
+        {
+            id: "actions",
+            header: "Actions",
+            cell: ({ row }) => {
+                return (
+                    <ActionsDropdown
+                        item={row.original}
+                        actions={contractActions}
+                        onAction={onAction}
+                    />
+                )
             },
         },
     ];
