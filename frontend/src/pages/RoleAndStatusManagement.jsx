@@ -1,4 +1,3 @@
-
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { getRolesStatusesColumns } from "@/components/tables/columns/rolesStatusesColumns";
 import { useCreateRole, useRoles, useStatuses } from "@/queries/rolesAndStatuses";
@@ -10,8 +9,8 @@ export default function RoleAndStatusManagement() {
     const columns = getRolesStatusesColumns("roles", (item) => { console.log("Delete", item); }, "role");
     const statuses = getRolesStatusesColumns("statuses", (item) => { console.log("Delete", item); }, "status");
 
-    const { data: rolesData, isPending: rolesPending, } = useRoles();
-    const { data: statusData, isPending: statusPending, } = useStatuses();
+    const { data: rolesData, isPending: rolesPending } = useRoles();
+    const { data: statusData, isPending: statusPending } = useStatuses();
 
     if (statusPending || rolesPending) {
         return (
@@ -26,22 +25,39 @@ export default function RoleAndStatusManagement() {
 
     return (
         <div>
-            <PageTitle text={"Roles and Statuses"} />
-            <div className="flex gap-6 p-4">
+            <div className="px-4 md:px-6 lg:px-8">
+                <PageTitle text={"Roles and Statuses"} />
 
-                <RolesStatusesTable columns={columns} data={rolesData.data} title="Roles" placeholder="New role name" onAdd={(name) => {
-                    createRoleMutation.mutate(name, {
-                        onSuccess: () => {
-                            console.log(`Role "${name}" created successfully!`);
-                        },
-                        onError: (error) => {
-                            console.log(`Error creating role: ${error.message}`);
-                        }
-                    });
-                }}
-                />
-                <RolesStatusesTable columns={statuses} data={statusData.data} title="Statuses" placeholder="New status name" onAdd={(name) => { console.log("Add status:", name); }} />
+                {/* RESPONSIVE: stack on mobile, side-by-side on larger screens */}
+                <div className="flex flex-col 2xl:flex-row gap-6 p-4">
+
+                    <RolesStatusesTable
+                        columns={columns}
+                        data={rolesData.data}
+                        title="Roles"
+                        placeholder="New role name"
+                        onAdd={(name) => {
+                            createRoleMutation.mutate(name, {
+                                onSuccess: () => {
+                                    console.log(`Role "${name}" created successfully!`);
+                                },
+                                onError: (error) => {
+                                    console.log(`Error creating role: ${error.message}`);
+                                }
+                            });
+                        }}
+                    />
+
+                    <RolesStatusesTable
+                        columns={statuses}
+                        data={statusData.data}
+                        title="Statuses"
+                        placeholder="New status name"
+                        onAdd={(name) => { console.log("Add status:", name); }}
+                    />
+                </div>
             </div>
+
         </div>
     );
 }
