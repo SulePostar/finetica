@@ -28,12 +28,12 @@ export function getContractsColumns(onAction) {
         {
             accessorKey: "start_date",
             header: "Start Date",
-            cell: ({ row }) => formatDateTime(row.original.start_date || row.original.startDate),
+            cell: ({ row }) => formatDateTime(row.original.startDate),
         },
         {
             accessorKey: "end_date",
             header: "End Date",
-            cell: ({ row }) => formatDateTime(row.original.end_date || row.original.endDate),
+            cell: ({ row }) => formatDateTime(row.original.endDate),
         },
         {
             accessorKey: "is_active",
