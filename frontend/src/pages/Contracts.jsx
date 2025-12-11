@@ -5,6 +5,7 @@ import { useContracts } from "../queries/useContracts";
 import { Spinner } from '@/components/ui/spinner.jsx';
 import IsError from "@/components/shared-ui/IsError";
 import { getContractsColumns } from "@/components/tables/columns/ContractsColumns";
+import DefaultLayout from "@/layout/DefaultLayout";
 
 export default function Contracts() {
   const { data, isPending, isError, error } = useContracts();
@@ -39,7 +40,7 @@ export default function Contracts() {
   }
 
   return (
-    <div>
+    <DefaultLayout>
       <PageTitle text="Contracts" />
       <DynamicTable
         columns={getContractsColumns()}
@@ -49,6 +50,6 @@ export default function Contracts() {
         perPage={itemsPerPage}
         onPageChange={setCurrentPage}
       />
-    </div>
+    </DefaultLayout>
   );
 }

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import ActionsDropdown from "@/components/ActionsDropdown";
+import DefaultLayout from "@/layout/DefaultLayout";
 
 export default function Users({ onAction }) {
     const data = [
@@ -65,27 +66,29 @@ export default function Users({ onAction }) {
     ];
 
     return (
-        <div className="w-full px-4 py-6 max-w-full space-y-6">
-            <h1 className="text-3xl font-semibold">User Management Dashboard</h1>
+        <DefaultLayout>
+            <div className="w-full px-4 py-6 max-w-full space-y-6">
+                <h1 className="text-3xl font-semibold">User Management Dashboard</h1>
 
-            {/* Filters */}
-            <div className="flex flex-wrap items-center gap-3 w-full">
-                <Input
-                    placeholder="Search..."
-                    className="flex-1 min-w-[200px]"
-                />
+                {/* Filters */}
+                <div className="flex flex-wrap items-center gap-3 w-full">
+                    <Input
+                        placeholder="Search..."
+                        className="flex-1 min-w-[200px]"
+                    />
 
-                <select className="w-[180px] border rounded-md px-2 py-2 text-sm">
-                    <option value="all">All roles</option>
-                    <option value="admin">Admin</option>
-                    <option value="user">User</option>
-                </select>
+                    <select className="w-[180px] border rounded-md px-2 py-2 text-sm">
+                        <option value="all">All roles</option>
+                        <option value="admin">Admin</option>
+                        <option value="user">User</option>
+                    </select>
 
-                <Button variant="outline">Clear filters</Button>
+                    <Button variant="outline">Clear filters</Button>
+                </div>
+
+                {/* Table */}
+                <DynamicTable columns={columns} data={data} />
             </div>
-
-            {/* Table */}
-            <DynamicTable columns={columns} data={data} />
-        </div>
+        </DefaultLayout>
     );
 }
