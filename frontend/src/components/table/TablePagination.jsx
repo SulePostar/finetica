@@ -21,6 +21,8 @@ export default function TablePagination({ page, perPage, total, onPageChange }) 
         pages.push(i);
     }
 
+    const navBtnClass = "min-w-0 w-8 p-0 sm:min-w-[95px] sm:w-auto sm:px-3 hover:text-table-header hover:dark:bg-white";
+
     return (
         <Pagination className="flex items-center justify-end">
             <PaginationContent>
@@ -29,7 +31,7 @@ export default function TablePagination({ page, perPage, total, onPageChange }) 
                         <PaginationPrevious
                             disabled={page === 1}
                             onClick={() => page > 1 && onPageChange(page - 1)}
-                            className="hover:text-table-header hover:dark:bg-white"
+                            className={navBtnClass}
                         />
                     </PaginationItem>
                 )}
@@ -39,7 +41,7 @@ export default function TablePagination({ page, perPage, total, onPageChange }) 
                         <PaginationLink
                             isActive={p === page}
                             onClick={() => onPageChange(p)}
-                            className="data-[active=true]:text-table-text-color hover:text-table-header dark:text-white hover:dark:bg-white hover:dark:text-table-header"
+                            className=" data-[active=true]:text-table-text-color hover:text-table-header dark:text-white hover:dark:bg-white hover:dark:text-table-header"
                         >
                             {p}
                         </PaginationLink>
@@ -57,7 +59,7 @@ export default function TablePagination({ page, perPage, total, onPageChange }) 
                         <PaginationNext
                             disabled={page === totalPages}
                             onClick={() => page < totalPages && onPageChange(page + 1)}
-                            className="hover:text-table-header hover:dark:bg-white"
+                            className={navBtnClass}
                         />
                     </PaginationItem>
                 )}
