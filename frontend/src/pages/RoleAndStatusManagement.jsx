@@ -1,11 +1,12 @@
 
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { getRolesStatusesColumns } from "@/components/tables/columns/rolesStatusesColumns";
-import { useRoles, useStatuses } from "@/queries/rolesAndStatuses";
+import { useCreateRole, useRoles, useStatuses } from "@/queries/rolesAndStatuses";
 import RolesStatusesTable from "@/components/tables/RolesStatusesTable";
 import { Spinner } from "@/components/ui/spinner";
 
 export default function RoleAndStatusManagement() {
+    const createRoleMutation = useCreateRole();
     const columns = getRolesStatusesColumns("roles", (item) => { console.log("Delete", item); }, "role");
     const statuses = getRolesStatusesColumns("statuses", (item) => { console.log("Delete", item); }, "status");
 
@@ -27,7 +28,18 @@ export default function RoleAndStatusManagement() {
         <div>
             <PageTitle text={"Roles and Statuses"} />
             <div className="flex gap-6 p-4">
-                <RolesStatusesTable columns={columns} data={rolesData.data} title="Roles" placeholder="New role name" onAdd={(name) => { console.log("Add role:", name); }} />
+
+                <RolesStatusesTable columns={columns} data={rolesData.data} title="Roles" placeholder="New role name" onAdd={(name) => {
+                    createRoleMutation.mutate(name, {
+                        onSuccess: () => {
+                            console.log(`Role "${name}" created successfully!`);
+                        },
+                        onError: (error) => {
+                            console.log(`Error creating role: ${error.message}`);
+                        }
+                    });
+                }}
+                />
                 <RolesStatusesTable columns={statuses} data={statusData.data} title="Statuses" placeholder="New status name" onAdd={(name) => { console.log("Add status:", name); }} />
             </div>
         </div>
