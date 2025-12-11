@@ -166,3 +166,27 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes fadeInOutToast {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+}
+
+.animate-toast-fade {
+  animation: fadeInOutToast 3s ease-in-out forwards;
+}
+
