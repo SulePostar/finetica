@@ -30,7 +30,7 @@ const DynamicTable = ({
     toolbar,
 }) => {
     const [expandedRows, setExpandedRows] = useState({});
-    const [columnVisibility, setColumnVisibility] = useState({})
+    const [columnVisibility, setColumnVisibility] = useState({});
 
     const breakpoint = useTailwindBreakpoint();
 
@@ -49,16 +49,55 @@ const DynamicTable = ({
         }
     }, [breakpoint]);
 
-    const needsExpander = initialColumns.length > visibleLimit;
+    // Helper to get consistent ID
+    const getColId = (col) => col.id || col.accessorKey;
 
+    // Calculate how many columns are actually visible (not hidden by user)
+    const visibleColsCount = useMemo(() => {
+        return initialColumns.filter(col => columnVisibility[getColId(col)] !== false).length;
+    }, [initialColumns, columnVisibility]);
+
+    // Only show expander if the number of *visible* columns exceeds the limit
+    const needsExpander = visibleColsCount > visibleLimit;
+
+    // Split columns into "Main Table" and "Expanded Row" based on visibility count
+    const { tableColumns, overflowColumns } = useMemo(() => {
+        if (breakpoint === "default" || !needsExpander) {
+            return { tableColumns: initialColumns, overflowColumns: [] };
+        }
+
+        let visibleCount = 0;
+        let cutoffIndex = 0;
+
+        for (let i = 0; i < initialColumns.length; i++) {
+            const col = initialColumns[i];
+            const isHidden = columnVisibility[getColId(col)] === false;
+
+            if (!isHidden) {
+                visibleCount++;
+            }
+
+            // If we have filled our visible limit, mark the cutoff
+            if (visibleCount === visibleLimit) {
+                cutoffIndex = i + 1;
+                break;
+            }
+        }
+
+        // If we didn't hit the limit (should be handled by needsExpander, but safety first)
+        if (visibleCount < visibleLimit) cutoffIndex = initialColumns.length;
+
+        return {
+            // These go into the main <table> structure
+            tableColumns: initialColumns.slice(0, cutoffIndex),
+            // These go into the expanded detail row
+            overflowColumns: initialColumns.slice(cutoffIndex)
+        };
+    }, [initialColumns, visibleLimit, needsExpander, columnVisibility, breakpoint]);
 
     const columns = useMemo(() => {
-        const actualVisibleLimit =
-            breakpoint === "default" ? initialColumns.length : visibleLimit;
-
-        const visibleColumns = initialColumns.slice(0, actualVisibleLimit);
-
-        if (breakpoint === "default" || !needsExpander) return visibleColumns;
+        // We use tableColumns here instead of slicing initialColumns directly
+        if (breakpoint === "default" || !needsExpander) return tableColumns;
 
         const expanderColumn = {
             id: "expander",
@@ -76,12 +115,12 @@ const DynamicTable = ({
             size: 40,
         };
 
-        return [expanderColumn, ...visibleColumns];
-    }, [initialColumns, visibleLimit, needsExpander, expandedRows, breakpoint]);
+        return [expanderColumn, ...tableColumns];
+    }, [tableColumns, needsExpander, expandedRows, breakpoint]);
 
     const table = useReactTable({
         data,
-        columns,
+        columns, // Pass the smart-sliced columns
         manualPagination: true,
         pageCount: Math.ceil(total / perPage),
         state: {
@@ -94,7 +133,6 @@ const DynamicTable = ({
         onColumnVisibilityChange: setColumnVisibility,
         getCoreRowModel: getCoreRowModel(),
     });
-
 
     return (
         <div className="w-full mx-auto rounded-2xl border border-table-border-light dark:border-gray-background bg-card shadow-lg overflow-hidden">
@@ -186,7 +224,8 @@ const DynamicTable = ({
                                                         className="p-4 text-sm"
                                                     >
                                                         <div className="grid gap-2">
-                                                            {initialColumns.slice(visibleLimit).map((col, index) => {
+                                                            {/* Render the overflowColumns instead of a raw slice */}
+                                                            {overflowColumns.map((col, index) => {
                                                                 const value =
                                                                     col.cell
                                                                         ? flexRender(col.cell, {
@@ -234,6 +273,7 @@ const DynamicTable = ({
                 </TooltipProvider>
             ) : (
                 <div className="px-2 py-4 space-y-4">
+                    {/* Mobile Card View logic - using initialColumns usually safe here, or use tableColumns if you want it to match */}
                     {table.getRowModel().rows.map((row) => (
                         <div
                             key={row.id}
