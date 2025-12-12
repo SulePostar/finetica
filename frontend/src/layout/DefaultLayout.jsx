@@ -9,7 +9,7 @@ const DefaultLayout = ({ children }) => {
                 <SidebarInset>
                     <div className="flex flex-1 flex-col">
                         <main className="flex-1 overflow-y-auto xl:px-26 2xl:px-26">
-                            <div className="w-full mx-auto max-w-[900px] xl:max-w-[950px] 2xl:max-w-[2000px]">
+                            <div className="w-full mx-auto max-w-[900px] xl:max-w-full 2xl:max-w-[2000px]">
                                 {children}
                             </div>
                         </main>

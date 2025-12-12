@@ -8,6 +8,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import ColumnSelector from "./ColumnSelector";
 import TablePagination from "./TablePagination";
 import { useTailwindBreakpoint } from "./useTailwindBreakpoint";
 import { ChevronRight, ChevronDown } from "lucide-react";
@@ -28,8 +29,10 @@ const DynamicTable = ({
     header,
     toolbar,
 }) => {
-    const breakpoint = useTailwindBreakpoint();
     const [expandedRows, setExpandedRows] = useState({});
+    const [columnVisibility, setColumnVisibility] = useState({});
+
+    const breakpoint = useTailwindBreakpoint();
 
     const toggleRow = (rowId) =>
         setExpandedRows((prev) => ({ ...prev, [rowId]: !prev[rowId] }));
@@ -46,16 +49,46 @@ const DynamicTable = ({
         }
     }, [breakpoint]);
 
-    const needsExpander = initialColumns.length > visibleLimit;
+    const getColId = (col) => col.id || col.accessorKey;
 
+    const visibleColsCount = useMemo(() => {
+        return initialColumns.filter(col => columnVisibility[getColId(col)] !== false).length;
+    }, [initialColumns, columnVisibility]);
+
+    const needsExpander = visibleColsCount > visibleLimit;
+
+    const { tableColumns, overflowColumns } = useMemo(() => {
+        if (breakpoint === "default" || !needsExpander) {
+            return { tableColumns: initialColumns, overflowColumns: [] };
+        }
+
+        let visibleCount = 0;
+        let cutoffIndex = 0;
+
+        for (let i = 0; i < initialColumns.length; i++) {
+            const col = initialColumns[i];
+            const isHidden = columnVisibility[getColId(col)] === false;
+
+            if (!isHidden) {
+                visibleCount++;
+            }
+
+            if (visibleCount === visibleLimit) {
+                cutoffIndex = i + 1;
+                break;
+            }
+        }
+
+        if (visibleCount < visibleLimit) cutoffIndex = initialColumns.length;
+
+        return {
+            tableColumns: initialColumns.slice(0, cutoffIndex),
+            overflowColumns: initialColumns.slice(cutoffIndex)
+        };
+    }, [initialColumns, visibleLimit, needsExpander, columnVisibility, breakpoint]);
 
     const columns = useMemo(() => {
-        const actualVisibleLimit =
-            breakpoint === "default" ? initialColumns.length : visibleLimit;
-
-        const visibleColumns = initialColumns.slice(0, actualVisibleLimit);
-
-        if (breakpoint === "default" || !needsExpander) return visibleColumns;
+        if (breakpoint === "default" || !needsExpander) return tableColumns;
 
         const expanderColumn = {
             id: "expander",
@@ -71,10 +104,11 @@ const DynamicTable = ({
             enableSorting: false,
             enableHiding: false,
             size: 40,
+            meta: { isComponent: true },
         };
 
-        return [expanderColumn, ...visibleColumns];
-    }, [initialColumns, visibleLimit, needsExpander, expandedRows, breakpoint]);
+        return [expanderColumn, ...tableColumns];
+    }, [tableColumns, needsExpander, expandedRows, breakpoint]);
 
     const table = useReactTable({
         data,
@@ -86,7 +120,9 @@ const DynamicTable = ({
                 pageIndex: page - 1,
                 pageSize: perPage,
             },
+            columnVisibility,
         },
+        onColumnVisibilityChange: setColumnVisibility,
         getCoreRowModel: getCoreRowModel(),
     });
 
@@ -94,17 +130,21 @@ const DynamicTable = ({
         <div className="w-full mx-auto rounded-2xl border border-table-border-light dark:border-gray-background bg-card shadow-lg overflow-hidden">
             {breakpoint !== "default" ? (
                 <TooltipProvider>
-                    {(header || toolbar) && (
-                        <div className="flex items-center justify-between px-6 pt-4 pb-2">
+                    {(header || toolbar || table.getAllColumns().some(c => c.getCanHide())) && (
+                        <div className="flex items-center justify-between px-6 pt-4 pb-2 gap-4">
                             <div className="flex-1 min-w-0">{header}</div>
-                            {toolbar && <div className="flex items-center gap-2">{toolbar}</div>}
+                            <div className="flex items-center gap-2">
+                                {toolbar}
+                                <ColumnSelector table={table} />
+                            </div>
                         </div>
                     )}
 
                     <div className="border-t border-table-border-light dark:border-gray-background" />
-
                     <div className="overflow-hidden rounded-md">
+
                         <Table className="table-fixed w-full">
+
                             <TableHeader>
                                 {table.getHeaderGroups().map((headerGroup) => (
                                     <TableRow key={headerGroup.id} className="bg-card dark:bg-card">
@@ -114,10 +154,12 @@ const DynamicTable = ({
                                                 className={`px-3 py-3 font-semibold text-center uppercase text-table-header dark:text-[#6c69ff] truncate ${header.column.id === "expander" ? "w-[40px] px-0" : ""
                                                     }`}
                                             >
-                                                {flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext()
-                                                )}
+                                                {header.isPlaceholder
+                                                    ? null
+                                                    : flexRender(
+                                                        header.column.columnDef.header,
+                                                        header.getContext()
+                                                    )}
                                             </TableHead>
                                         ))}
                                     </TableRow>
@@ -148,7 +190,7 @@ const DynamicTable = ({
                                                             {!isExplicitComponent ? (
                                                                 <Tooltip delayDuration={800}>
                                                                     <TooltipTrigger asChild>
-                                                                        <div className="max-w-[18ch] sm:max-w-[22ch] md:max-w-[26ch] overflow-hidden text-ellipsis whitespace-nowrap text-center cursor-default">
+                                                                        <div className="max-w-[100%] sm:max-w-[100%] md:max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap text-center cursor-default">
                                                                             {rendered}
                                                                         </div>
                                                                     </TooltipTrigger>
@@ -174,7 +216,7 @@ const DynamicTable = ({
                                                         className="p-4 text-sm"
                                                     >
                                                         <div className="grid gap-2">
-                                                            {initialColumns.slice(visibleLimit).map((col, index) => {
+                                                            {overflowColumns.map((col, index) => {
                                                                 const value =
                                                                     col.cell
                                                                         ? flexRender(col.cell, {
@@ -215,7 +257,9 @@ const DynamicTable = ({
                                     </TableRow>
                                 )}
                             </TableBody>
+
                         </Table>
+
                     </div>
                 </TooltipProvider>
             ) : (
@@ -254,7 +298,6 @@ const DynamicTable = ({
                     ))}
                 </div>
             )}
-
             <div className="flex items-center rounded-md justify-between px-6 py-3 text-xs bg-table-header/5 dark:bg-gray-background border-t border-table-border-light dark:border-gray-background">
                 <TablePagination
                     page={page}

@@ -31,14 +31,17 @@ const Kuf = () => {
         );
     }
     return (
-        <>
-            <PageTitle text="Kuf" />
+        <div className="pt-20">
             <DynamicTable columns={getKufColumns((item) => console.log("Action on:", item))} data={data.data ? data.data : []} total={data?.total || 0}
+                header={<PageTitle text="Kuf"
+                    subtitle="Overview of all KUF Purchase Invoices"
+                    compact
+                />}
                 page={page}
                 perPage={perPage}
                 onPageChange={setPage}
             />
-        </>
+        </div>
     );
 }
 export default Kuf;
