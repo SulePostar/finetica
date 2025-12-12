@@ -2,6 +2,7 @@ import ActionsDropdown from "@/components/ActionsDropdown";
 import { ReviewStatusBadge } from "@/components/shared-ui/ReviewStatusBadge";
 import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
 import { formatDateTime } from "@/helpers/formatDate";
+import { formatValue } from "@/helpers/formatValue";
 
 export function getUsersColumns(onAction) {
     const userActions = [
@@ -13,7 +14,7 @@ export function getUsersColumns(onAction) {
             accessorKey: "fullName",
             header: "Name",
             cell: ({ row }) => (
-                row.original.fullName || "--"
+                formatValue(row.original.fullName)
             ),
         },
         {
@@ -25,14 +26,14 @@ export function getUsersColumns(onAction) {
             accessorKey: "roleName",
             header: "Role",
             cell: ({ row }) => (
-                capitalizeFirst(row.original.roleName) || "--"
+                formatValue(capitalizeFirst(row.original.roleName))
             ),
         },
         {
             accessorKey: "lastLoginAt",
             header: "Last Active",
             cell: ({ row }) => (
-                formatDateTime(row.original.lastLoginAt) || "--"
+                formatValue(formatDateTime(row.original.lastLoginAt))
             ),
         },
 
