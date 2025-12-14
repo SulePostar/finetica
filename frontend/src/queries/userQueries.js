@@ -3,14 +3,14 @@ import { getUsers } from "../api/users";
 
 export const usersKeys = {
     all: ["users"],
-    lists: () => [...usersKeys.all, "list"],
+    list: (filters) => [...usersKeys.all, "list", filters],
 };
 
 
-export const useUsers = () => {
+export const useUsers = (filters = {}) => {
     return useQuery({
-        queryKey: usersKeys.lists(),
-        queryFn: getUsers,
+        queryKey: usersKeys.list(filters),
+        queryFn: () => getUsers(filters),
     });
 };
 

@@ -13,10 +13,13 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 
-export default function Users() {
+const Users = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
-    const { data: users = [], isPending, isError, error, refetch } = useUsers();
+    const { data: response, isPending, isError, error, refetch } = useUsers({ page, perPage });
+    const usersData = response?.data || [];
+    const totalUsers = response?.total || 0;
+
     if (isPending) {
 
         return <>
@@ -38,7 +41,6 @@ export default function Users() {
             </div>
         );
     }
-    const total = users?.total ?? 0;
 
     return (
         <div className="pt-20">
@@ -83,8 +85,8 @@ export default function Users() {
 
                 }
                 columns={getUsersColumns()}
-                data={users}
-                total={total}
+                data={usersData}
+                total={totalUsers}
                 page={page}
                 perPage={perPage}
                 onPageChange={setPage}
@@ -92,3 +94,6 @@ export default function Users() {
         </div>
     );
 }
+
+
+export default Users;
