@@ -1,5 +1,8 @@
 import ActionsDropdown from "@/components/ActionsDropdown";
-
+import { ReviewStatusBadge } from "@/components/shared-ui/ReviewStatusBadge";
+import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
+import { formatDateTime } from "@/helpers/formatDate";
+import { formatValue } from "@/helpers/formatValue";
 
 export function getUsersColumns(onAction) {
     const userActions = [
@@ -11,9 +14,7 @@ export function getUsersColumns(onAction) {
             accessorKey: "fullName",
             header: "Name",
             cell: ({ row }) => (
-                <div className="font-medium">
-                    {row.original.fullName}
-                </div>
+                formatValue(row.original.fullName)
             ),
         },
         {
@@ -22,35 +23,32 @@ export function getUsersColumns(onAction) {
             cell: ({ row }) => row.original.email,
         },
         {
-            accessorKey: "roleId",
+            accessorKey: "roleName",
             header: "Role",
             cell: ({ row }) => (
-                <span className="text-sm text-gray-600">
-                    ID: {row.original.roleId}
-                </span>
-            ),
-        },
-        {
-            accessorKey: "statusId",
-            header: "Status",
-            cell: ({ row }) => (
-                <span className="text-sm text-gray-600">
-                    ID: {row.original.statusId}
-                </span>
+                formatValue(capitalizeFirst(row.original.roleName))
             ),
         },
         {
             accessorKey: "lastLoginAt",
             header: "Last Active",
             cell: ({ row }) => (
-                <span className="text-gray-500">
-                    {row.original.lastLoginAt || "--"}
-                </span>
+                formatValue(formatDateTime(row.original.lastLoginAt))
+            ),
+        },
+
+        {
+            accessorKey: "statusName",
+            header: "Status",
+            meta: { isComponent: true },
+            cell: ({ row }) => (
+                <ReviewStatusBadge status={row.original.statusName} />
             ),
         },
         {
             id: "actions",
             header: "Actions",
+            meta: { isComponent: true },
             cell: ({ row }) => {
                 return (
                     <ActionsDropdown
