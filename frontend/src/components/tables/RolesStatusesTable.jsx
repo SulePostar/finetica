@@ -25,7 +25,7 @@ const RolesStatusesTable = ({ title, onAdd, placeholder, columns, data }) => {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                 />
-                <Button type="submit">
+                <Button type="submit" disabled={!input.trim()} >
                     Add
                 </Button>
             </form>
