@@ -1,91 +1,109 @@
-import React from "react";
+import React, { useState } from "react";
 import DynamicTable from "@/components/table/DynamicTable";
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
+import { useUsers } from "@/queries/userQueries";
+import { getUsersColumns } from "@/components/tables/columns/UsersColumns";
+import { Spinner } from "@/components/ui/spinner";
+import PageTitle from "@/components/shared-ui/PageTitle";
+import IsError from "@/components/shared-ui/IsError";
+import {
+    Select, SelectTrigger, SelectValue,
+    SelectContent,
+    SelectItem,
+} from "@/components/ui/select";
+
 import ActionsDropdown from "@/components/ActionsDropdown";
+import DefaultLayout from "@/layout/DefaultLayout";
 
-export default function Users({ onAction }) {
-    const data = [
-        {
-            name: "Temp User",
-            email: "temp@example.com",
-            role: "Temp Role",
-            status: "Pending",
-            lastActive: "--",
-            actions: "...",
-        },
-    ];
 
-    const userActions = [
-        { key: "action1", label: "Action 1" },
-        { key: "action2", label: "Action 2" },
-    ];
 
-    const columns = [
-        {
-            accessorKey: "name",
-            header: "Name",
-            cell: ({ row }) => row.original.name,
-        },
-        {
-            accessorKey: "email",
-            header: "Email",
-            cell: ({ row }) => row.original.email,
-        },
-        {
-            accessorKey: "role",
-            header: "Role",
-            cell: ({ row }) => row.original.role,
-        },
-        {
-            accessorKey: "status",
-            header: "Status",
-            cell: ({ row }) => row.original.status,
-        },
-        {
-            accessorKey: "lastActive",
-            header: "Last Active",
-            cell: ({ row }) => row.original.lastActive,
-        },
-        {
-            id: "actions",
-            header: "Actions",
-            cell: ({ row }) => {
-                return (
-                    <ActionsDropdown
-                        item={row.original}
-                        actions={userActions}
-                        onAction={onAction}
-                    />
-                )
-            },
-        },
-    ];
+const Users = () => {
+    const [page, setPage] = useState(1);
+    const perPage = 10;
+    const { data: response, isPending, isError, error, refetch } = useUsers({ page, perPage });
+    const usersData = response?.data || [];
+    const totalUsers = response?.total || 0;
+
+    if (isPending) {
+
+        return <>
+            <PageTitle text="User Management Dashboard" />
+            <div className="flex items-center justify-center h-40">
+                <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
+            </div>
+        </>
+    }
+    if (isError) {
+        return (
+            <div>
+                <IsError
+                    error={error}
+                    onRetry={() => refetch()}
+                    title="Failed to load Bank Transactions"
+                    showDetails={true}
+                />
+            </div>
+        );
+    }
 
     return (
-        <div className="w-full px-4 py-6 max-w-full space-y-6">
-            <h1 className="text-3xl font-semibold">User Management Dashboard</h1>
+        <DefaultLayout>
+            <div className="pt-20">
+                <DynamicTable
+                    header={
+                        <div className="flex flex-col gap-4 w-full">
+                            <div>
+                                <PageTitle
+                                    text="Users"
+                                    subtitle="Users management dashboard"
+                                    compact
+                                />
+                            </div>
 
-            {/* Filters */}
-            <div className="flex flex-wrap items-center gap-3 w-full">
-                <Input
-                    placeholder="Search..."
-                    className="flex-1 min-w-[200px]"
+                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 w-full">
+                                <Input
+                                    placeholder="Search..."
+                                    className="w-full md:flex-1 min-w-[200px]"
+                                />
+
+                                <div className="flex w-full md:w-auto items-center gap-3 justify-between md:justify-end">
+
+                                    <Select defaultValue="all">
+                                        <SelectTrigger className="w-[140px] md:w-[180px]">
+                                            <SelectValue placeholder="Select role" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="all">All roles</SelectItem>
+                                            <SelectItem value="admin">Admin</SelectItem>
+                                            <SelectItem value="user">User</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+
+                                    <Button variant="outline" className="w-auto px-4 md:w-auto">
+                                        Clear filters
+                                    </Button>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    }
+                    columns={getUsersColumns()}
+                    data={usersData}
+                    total={totalUsers}
+                    page={page}
+                    perPage={perPage}
+                    onPageChange={setPage}
                 />
 
-                <select className="w-[180px] border rounded-md px-2 py-2 text-sm">
-                    <option value="all">All roles</option>
-                    <option value="admin">Admin</option>
-                    <option value="user">User</option>
-                </select>
-
-                <Button variant="outline">Clear filters</Button>
             </div>
 
-            {/* Table */}
-            <DynamicTable columns={columns} data={data} />
-        </div>
+        </DefaultLayout>
     );
 }
+
+
+export default Users;

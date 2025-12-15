@@ -1,5 +1,6 @@
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
+import { Toaster } from "@/components/ui/sooner";
 
 const DefaultLayout = ({ children }) => {
     return (
@@ -22,6 +23,7 @@ const DefaultLayout = ({ children }) => {
                     </div>
                 </SidebarInset>
             </SidebarProvider>
+            <Toaster />
         </div>
     );
 };

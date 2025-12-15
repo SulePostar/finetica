@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { useKufInvoices } from "@/queries/Kuf";
@@ -6,11 +5,18 @@ import { useState } from "react";
 import { getKufColumns } from "@/components/tables/columns/kufColumns";
 import { Spinner } from "@/components/ui/spinner";
 import IsError from "@/components/shared-ui/IsError";
+import DefaultLayout from "@/layout/DefaultLayout";
+import UploadButton from "@/components/shared-ui/UploadButton";
 
 const Kuf = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
     const { data, isPending, error, isError, refetch } = useKufInvoices({ page, perPage });
+
+    const handleFileUpload = (file) => {
+        console.log("File uploaded:", file);
+
+    };
 
     if (isPending) {
         return (
@@ -22,26 +28,45 @@ const Kuf = () => {
             </>
         );
     }
+
     if (isError) {
         return (
             <>
                 <PageTitle text="KUF - Purchase Invoices" />
-                <IsError error={error} onRetry={() => refetch()} title="Failed to load KUF" showDetails={true} />
+                <IsError
+                    error={error}
+                    onRetry={() => refetch()}
+                    title="Failed to load KUF"
+                    showDetails={true}
+                />
             </>
         );
     }
+
     return (
-        <div className="pt-20">
-            <DynamicTable columns={getKufColumns((item) => console.log("Action on:", item))} data={data.data ? data.data : []} total={data?.total || 0}
-                header={<PageTitle text="Kuf"
-                    subtitle="Overview of all KUF Purchase Invoices"
-                    compact
-                />}
-                page={page}
-                perPage={perPage}
-                onPageChange={setPage}
-            />
-        </div>
+        <DefaultLayout>
+            <div className="pt-20">
+                <DynamicTable columns={getKufColumns((item) => console.log("Action on:", item))} data={data.data ? data.data : []} total={data?.total || 0}
+                    header={
+                        <div className="flex items-center justify-between">
+                            <PageTitle text="Kuf"
+                                subtitle="Overview of all KUF Purchase Invoices"
+                                compact
+                            />
+                            <UploadButton
+                                onUploadSuccess={handleFileUpload}
+                                buttonText="Upload Kuf"
+                                className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+                            />
+                        </div>
+                    }
+                    page={page}
+                    perPage={perPage}
+                    onPageChange={setPage}
+                />
+            </div>
+        </DefaultLayout>
     );
-}
+};
+
 export default Kuf;
