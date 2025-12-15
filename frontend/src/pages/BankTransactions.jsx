@@ -5,11 +5,14 @@ import { Spinner } from "@/components/ui/spinner";
 import IsError from "@/components/shared-ui/IsError";
 import { getBankTransactionsColumns } from "@/components/tables/columns/BankTransactionsColumns";
 import { useState } from "react";
+import DefaultLayout from "@/layout/DefaultLayout";
 import UploadButton from "@/components/shared-ui/UploadButton";
+import { useQueryToast } from "@/hooks/use-query-toast";
 
 const BankTransactions = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
+
     const { data, isPending, isError, error, refetch } = useBankTransactions({
         page,
         perPage,
@@ -18,6 +21,16 @@ const BankTransactions = () => {
     const handleFileUpload = (file) => {
         console.log("File uploaded:", file);
     };
+
+    useQueryToast({
+        isPending,
+        isError,
+        data,
+        error,
+        successMessage: "Bank transactions loaded",
+        successDescription: "All transactions have been fetched successfully.",
+        errorMessage: "Failed to load bank transactions",
+    });
 
     if (isPending) {
         return (
@@ -48,30 +61,32 @@ const BankTransactions = () => {
     const total = data?.total ?? 0;
 
     return (
-        <div className="pt-20">
-            <DynamicTable
-                header={
-                    <div className="flex items-center justify-between">
-                        <PageTitle
-                            text="Bank Transactions"
-                            subtitle="Overview of all bank transactions"
-                            compact
-                        />
-                        <UploadButton
-                            onUploadSuccess={handleFileUpload}
-                            className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-                        />
-                    </div>
+        <DefaultLayout>
+            <div className="pt-20">
+                <DynamicTable
+                    header={
+                        <div className="flex items-center justify-between">
+                            <PageTitle
+                                text="Bank Transactions"
+                                subtitle="Overview of all bank transactions"
+                                compact
+                            />
+                            <UploadButton
+                                onUploadSuccess={handleFileUpload}
+                                className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+                            />
+                        </div>
 
-                }
-                columns={getBankTransactionsColumns()}
-                data={rows}
-                total={total}
-                page={page}
-                perPage={perPage}
-                onPageChange={setPage}
-            />
-        </div>
+                    }
+                    columns={getBankTransactionsColumns()}
+                    data={rows}
+                    total={total}
+                    page={page}
+                    perPage={perPage}
+                    onPageChange={setPage}
+                />
+            </div>
+        </DefaultLayout>
     );
 };
 

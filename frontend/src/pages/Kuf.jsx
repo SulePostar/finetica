@@ -5,6 +5,7 @@ import { useState } from "react";
 import { getKufColumns } from "@/components/tables/columns/kufColumns";
 import { Spinner } from "@/components/ui/spinner";
 import IsError from "@/components/shared-ui/IsError";
+import DefaultLayout from "@/layout/DefaultLayout";
 import UploadButton from "@/components/shared-ui/UploadButton";
 
 const Kuf = () => {
@@ -43,30 +44,32 @@ const Kuf = () => {
     }
 
     return (
-        <div className="pt-20">
-            <DynamicTable
-                header={
-                    <div className="flex items-center justify-between">
-                        <PageTitle
-                            text="Kuf"
-                            subtitle="Overview of all Kuf files"
-                            compact
-                        />
-                        <UploadButton
-                            onUploadSuccess={handleFileUpload}
-                            buttonText="Upload"
-                            className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-                        />
-                    </div>
-                }
-                columns={getKufColumns((item) => console.log("Action on:", item))}
-                data={data?.data ?? []}
-                total={data?.total || 0}
-                page={page}
-                perPage={perPage}
-                onPageChange={setPage}
-            />
-        </div>
+        <DefaultLayout>
+            <div className="pt-20">
+                <DynamicTable
+                    header={
+                        <div className="flex items-center justify-between">
+                            <PageTitle
+                                text="Kuf"
+                                subtitle="Overview of all Kuf files"
+                                compact
+                            />
+                            <UploadButton
+                                onUploadSuccess={handleFileUpload}
+                                buttonText="Upload"
+                                className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+                            />
+                        </div>
+                    }
+                    columns={getKufColumns((item) => console.log("Action on:", item))}
+                    data={data?.data ?? []}
+                    total={data?.total || 0}
+                    page={page}
+                    perPage={perPage}
+                    onPageChange={setPage}
+                />
+            </div>
+        </DefaultLayout>
     );
 };
 
