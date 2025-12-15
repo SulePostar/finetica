@@ -8,6 +8,7 @@ import { getUsersColumns } from "@/components/tables/columns/UsersColumns";
 import { Spinner } from "@/components/ui/spinner";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import IsError from "@/components/shared-ui/IsError";
+import {useNavigate} from "react-router-dom";
 import {
     Select, SelectTrigger, SelectValue,
     SelectContent,
@@ -25,6 +26,11 @@ const Users = () => {
     const { data: response, isPending, isError, error, refetch } = useUsers({ page, perPage });
     const usersData = response?.data || [];
     const totalUsers = response?.total || 0;
+    const navigate = useNavigate();
+
+    const handleUserClick = (user) => {
+        navigate(`/profile/${user.id}`);
+    }
 
     if (isPending) {
 
@@ -97,6 +103,7 @@ const Users = () => {
                     page={page}
                     perPage={perPage}
                     onPageChange={setPage}
+                    onRowClick={handleUserClick}
                 />
 
             </div>
