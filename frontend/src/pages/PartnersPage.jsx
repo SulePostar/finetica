@@ -44,7 +44,7 @@ const Partners = () => {
                         <div className="flex items-center justify-between">
                             <PageTitle
                                 text="Partners"
-                                subtitle="Partners Management Dashboard"
+                                subtitle="Manage business partners"
                                 compact
                             />
                         </div>
@@ -55,7 +55,6 @@ const Partners = () => {
                     page={page}
                     perPage={perPage}
                     onPageChange={setPage}
-
                 />
             </div>
         </DefaultLayout>
