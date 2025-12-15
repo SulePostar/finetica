@@ -6,6 +6,7 @@ import { Spinner } from '@/components/ui/spinner.jsx';
 import IsError from "@/components/shared-ui/IsError";
 import { getContractsColumns } from "@/components/tables/columns/ContractsColumns";
 import DefaultLayout from "@/layout/DefaultLayout";
+import UploadButton from "@/components/shared-ui/UploadButton";
 
 export default function Contracts() {
   const { data, isPending, isError, error } = useContracts();
@@ -17,6 +18,11 @@ export default function Contracts() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedRows = allRows.slice(startIndex, endIndex);
+
+
+  const handleFileUpload = (file) => {
+    console.log("File uploaded:", file);
+  };
 
   if (isPending) {
     return (
@@ -41,15 +47,29 @@ export default function Contracts() {
 
   return (
     <DefaultLayout>
-      <PageTitle text="Contracts" />
-      <DynamicTable
-        columns={getContractsColumns()}
-        data={paginatedRows}
-        total={allRows.length}
-        page={currentPage}
-        perPage={itemsPerPage}
-        onPageChange={setCurrentPage}
-      />
+      <div className="pt-20">
+        <DynamicTable
+          header={
+            <div className="flex items-center justify-between">
+              <PageTitle
+                text="Contracts"
+                subtitle="Overview of all Contracts files"
+                compact
+              />
+              <UploadButton
+                onUploadSuccess={handleFileUpload}
+                className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+              />
+            </div>
+          }
+          columns={getContractsColumns((item) => console.log("Action on:", item))}
+          data={paginatedRows}
+          total={allRows.length}
+          page={currentPage}
+          perPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+        />
+      </div>
     </DefaultLayout>
   );
 }
