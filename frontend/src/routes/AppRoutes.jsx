@@ -1,6 +1,8 @@
 import React from 'react';
 import { Navigate, Routes, Route } from 'react-router-dom'
 import ProfilePage from '@/pages/ProfilePage';
+import Login from '@/pages/Login';
+import Dashboard from '@/pages/DashboardPage';
 
 const BankTransactions = React.lazy(() => import('../pages/BankTransactions'));
 const Kuf = React.lazy(() => import('../pages/Kuf'));
@@ -14,11 +16,17 @@ import RoleAndStatusManagement from '@/pages/RoleAndStatusManagement';
 
 export default function AppRoutes() {
     return (
-        <Routes>x
+        <Routes>
             <Route
                 path="/"
                 element={
-                    <h1 className="text-2xl font-semibold" ></h1>
+                    <Login />
+                }
+            />
+            <Route
+                path="/dashboard"
+                element={
+                    <Dashboard />
                 }
             />
             <Route
