@@ -87,13 +87,6 @@ const ProfilePage = () => {
                       borderColor="border-transparent"
                       className="cursor-default"
                     />
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      className="absolute rounded-full -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-105 cursor-pointer"
-                    >
-                      ✕
-                    </Button>
                     <div className="absolute inset-0 rounded-full ring-1 ring-border/40 pointer-events-none" />
                   </div>
                   <div className="w-full space-y-2">
@@ -102,24 +95,27 @@ const ProfilePage = () => {
                       maxSize={10 * 1024 * 1024}
                       maxFiles={1}
                       className="w-full"
+                      name="profile_image"
                     >
                       <DropzoneContent />
                       <DropzoneEmptyState />
                     </Dropzone>
                   </div>
                 </div>
-                <DialogFooter className="flex justify-end gap-2 pt-2">
-                  <DialogClose asChild>
-                    <Button
-                      variant="outline"
-                      className="border-border text-muted-foreground hover:bg-muted/50"
-                    >
-                      Cancel
-                    </Button>
-                  </DialogClose>
-                  <Button className="bg-spurple text-white hover:bg-spurple/90 shadow-md">
-                    Confirm
+                <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-between gap-2 pt-2">
+                  <Button variant="destructive" className="w-full sm:w-auto dark:hover:bg-destructive/90">
+                    Remove Photo
                   </Button>
+                  <div className="flex flex-col-reverse sm:flex-row gap-2 w-full sm:w-auto">
+                    <DialogClose asChild>
+                      <Button variant="outline" className="w-full sm:w-auto border-border text-muted-foreground hover:bg-muted/50">
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                    <Button className="w-full sm:w-auto bg-spurple text-white hover:bg-spurple/90 shadow-md">
+                      Confirm
+                    </Button>
+                  </div>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -169,7 +165,7 @@ const ProfilePage = () => {
                   </Field>
                   <Field>
                     <Label htmlFor="lastLogin">Last Login</Label>
-                    <Input id="lastLogin" name="lastLogin" value="Dec 11, 2024, 2:30 PM" disabled className="bg-muted cursor-not-allowed"
+                    <Input id="last_login_at" name="last_login_at" value="Dec 11, 2024, 2:30 PM" disabled className="bg-muted cursor-not-allowed"
                     />
                   </Field>
                 </div>
