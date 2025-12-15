@@ -1,5 +1,5 @@
-import { createUserStatus, getAllRoles, getAllStatuses } from "@/api/rolesAndStatuses";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { getAllRoles, getAllStatuses, createRole, createUserStatus } from "@/api/rolesAndStatuses";
+import { useMutation, useQuery, useQueryClient, } from "@tanstack/react-query";
 
 export const roleKeys = {
     all: ["roles"],
@@ -20,6 +20,15 @@ export const useRoles = () => {
             getAllRoles(),
     });
 };
+export const useCreateRole = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (newRoleName) => createRole(newRoleName),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
+        }
+    })
+}
 
 export const useStatuses = () => {
     return useQuery({
