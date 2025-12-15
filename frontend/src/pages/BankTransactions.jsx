@@ -6,10 +6,12 @@ import IsError from "@/components/shared-ui/IsError";
 import { getBankTransactionsColumns } from "@/components/tables/columns/BankTransactionsColumns";
 import { useState } from "react";
 import UploadButton from "@/components/shared-ui/UploadButton";
+import { useQueryToast } from "@/hooks/use-query-toast";
 
 const BankTransactions = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
+
     const { data, isPending, isError, error, refetch } = useBankTransactions({
         page,
         perPage,
@@ -18,6 +20,16 @@ const BankTransactions = () => {
     const handleFileUpload = (file) => {
         console.log("File uploaded:", file);
     };
+
+    useQueryToast({
+        isPending,
+        isError,
+        data,
+        error,
+        successMessage: "Bank transactions loaded",
+        successDescription: "All transactions have been fetched successfully.",
+        errorMessage: "Failed to load bank transactions",
+    });
 
     if (isPending) {
         return (
