@@ -4,9 +4,16 @@ const AppError = require('../utils/errorHandler');
 const { UserResponseDTO } = require('../dto/user/responses/UserResponseDTO.js');
 
 class UserService {
-  async getAllUsers() {
+  async getAllUsers({ page = 1, perPage = 10, sortField, sortOrder = 'asc' } = {}) {
     try {
-      const users = await User.findAll({
+      const limit = parseInt(perPage, 10);
+      const offset = (page - 1) * limit;
+
+      let orderOptions = [['id', 'ASC']];
+      if (sortField) {
+        orderOptions = [[sortField, sortOrder.toUpperCase()]];
+      }
+      const { count, rows } = await User.findAndCountAll({
         attributes: [
           'id',
           'email',
@@ -22,9 +29,16 @@ class UserService {
           { model: Role, as: 'role', attributes: ['id', 'role'] },
           { model: UserStatus, as: 'status', attributes: ['id', 'status'] },
         ],
+        order: orderOptions,
+        limit,
+        offset,
+        distinct: true,
       });
+      return {
+        data: rows.map((user) => new UserResponseDTO(user)),
+        total: count
+      };
 
-      return users.map((user) => new UserResponseDTO(user));
     } catch (error) {
       throw new AppError(`Failed to fetch users: ${error.message}`, 500);
     }
