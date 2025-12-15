@@ -3,6 +3,7 @@ import { getRolesStatusesColumns } from "@/components/tables/columns/rolesStatus
 import { useCreateUserStatus, useRoles, useStatuses } from "@/queries/rolesAndStatuses";
 import RolesStatusesTable from "@/components/tables/RolesStatusesTable";
 import { Spinner } from "@/components/ui/spinner";
+import DefaultLayout from "@/layout/DefaultLayout";
 
 export default function RoleAndStatusManagement() {
     const columns = getRolesStatusesColumns("roles", (item) => { console.log("Delete", item); }, "role");
@@ -15,6 +16,7 @@ export default function RoleAndStatusManagement() {
     if (statusPending || rolesPending) {
         return (
             <>
+                <div className="px-4 md:px-6 lg:px-8"></div>
                 <PageTitle text="Roles and Statuses" />
                 <div className="flex items-center justify-center h-40">
                     <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
@@ -24,7 +26,7 @@ export default function RoleAndStatusManagement() {
     }
 
     return (
-        <div>
+        <DefaultLayout>
             <div className="px-4 md:px-6 lg:px-8">
                 <PageTitle text={"Roles and Statuses"} />
 
@@ -55,6 +57,6 @@ export default function RoleAndStatusManagement() {
                 </div>
             </div>
 
-        </div>
+        </DefaultLayout>
     );
 }
