@@ -50,7 +50,7 @@ const Users = () => {
 
     return (
         <DefaultLayout>
-            <div className="w-full px-4 py-6 max-w-full space-y-6">
+            <div className="pt-20">
                 <DynamicTable
                     header={
                         <div className="flex flex-col gap-4 w-full">
