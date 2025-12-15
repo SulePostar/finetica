@@ -16,3 +16,9 @@ export const createRole = async (roleName) => {
     });
     return data;
 };
+
+
+export const createUserStatus = async (statusName) => {
+    const { data } = await apiClient.post("/user-statuses", { status: statusName });
+    return data;
+};
