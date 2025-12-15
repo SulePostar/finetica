@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import DynamicTable from "@/components/table/DynamicTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+
 import { useUsers } from "@/queries/userQueries";
 import { getUsersColumns } from "@/components/tables/columns/UsersColumns";
 import { Spinner } from "@/components/ui/spinner";
@@ -12,6 +13,11 @@ import {
     SelectContent,
     SelectItem,
 } from "@/components/ui/select";
+
+import ActionsDropdown from "@/components/ActionsDropdown";
+import DefaultLayout from "@/layout/DefaultLayout";
+
+
 
 const Users = () => {
     const [page, setPage] = useState(1);
@@ -43,55 +49,59 @@ const Users = () => {
     }
 
     return (
-        <div className="pt-20">
-            <DynamicTable
-                header={
-                    <div className="flex flex-col gap-4 w-full">
-                        <div>
-                            <PageTitle
-                                text="Users"
-                                subtitle="Users management dashboard"
-                                compact
-                            />
-                        </div>
-
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 w-full">
-                            <Input
-                                placeholder="Search..."
-                                className="w-full md:flex-1 min-w-[200px]"
-                            />
-
-                            <div className="flex w-full md:w-auto items-center gap-3 justify-between md:justify-end">
-
-                                <Select defaultValue="all">
-                                    <SelectTrigger className="w-[140px] md:w-[180px]">
-                                        <SelectValue placeholder="Select role" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All roles</SelectItem>
-                                        <SelectItem value="admin">Admin</SelectItem>
-                                        <SelectItem value="user">User</SelectItem>
-                                    </SelectContent>
-                                </Select>
-
-                                <Button variant="outline" className="w-auto px-4 md:w-auto">
-                                    Clear filters
-                                </Button>
-
+        <DefaultLayout>
+            <div className="w-full px-4 py-6 max-w-full space-y-6">
+                <DynamicTable
+                    header={
+                        <div className="flex flex-col gap-4 w-full">
+                            <div>
+                                <PageTitle
+                                    text="Users"
+                                    subtitle="Users management dashboard"
+                                    compact
+                                />
                             </div>
 
-                        </div>
-                    </div>
+                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 w-full">
+                                <Input
+                                    placeholder="Search..."
+                                    className="w-full md:flex-1 min-w-[200px]"
+                                />
 
-                }
-                columns={getUsersColumns()}
-                data={usersData}
-                total={totalUsers}
-                page={page}
-                perPage={perPage}
-                onPageChange={setPage}
-            />
-        </div>
+                                <div className="flex w-full md:w-auto items-center gap-3 justify-between md:justify-end">
+
+                                    <Select defaultValue="all">
+                                        <SelectTrigger className="w-[140px] md:w-[180px]">
+                                            <SelectValue placeholder="Select role" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="all">All roles</SelectItem>
+                                            <SelectItem value="admin">Admin</SelectItem>
+                                            <SelectItem value="user">User</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+
+                                    <Button variant="outline" className="w-auto px-4 md:w-auto">
+                                        Clear filters
+                                    </Button>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    }
+                    columns={getUsersColumns()}
+                    data={usersData}
+                    total={totalUsers}
+                    page={page}
+                    perPage={perPage}
+                    onPageChange={setPage}
+                />
+
+            </div>
+
+        </DefaultLayout>
     );
 }
 
