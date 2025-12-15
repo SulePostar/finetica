@@ -5,7 +5,7 @@ export const SidebarLogo = () => (
     <SidebarMenu>
         <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Finetica Home">
-                <a href="/" className="flex items-center gap-3 no-underline">
+                <a href="/dashboard" className="flex items-center gap-3 no-underline">
                     <div className="flex aspect-square size-8 items-center justify-center rounded-xl bg-background/20 dark:bg-foreground/10">
                         <img
                             src={symphonyLogo}
