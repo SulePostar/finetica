@@ -32,7 +32,7 @@ const SIDEBAR_NAVIGATION = [
     {
         label: "Overview",
         items: [
-            { title: "Dashboard", url: "/", icon: LayoutDashboard },
+            { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
             { title: "Bank Transactions", url: "/bank-statements", icon: CreditCard },
             { title: "Contracts", url: "/contracts", icon: FileSignature },
             { title: "KIF", url: "/kif", icon: Tag },
