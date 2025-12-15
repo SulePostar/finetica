@@ -4,6 +4,7 @@ import { getUsers, getUserById } from "../api/users";
 export const usersKeys = {
     all: ["users"],
     list: (filters) => [...usersKeys.all, "list", filters],
+    detail: (id) => [...usersKeys.all, "detail", id],
 };
 
 
