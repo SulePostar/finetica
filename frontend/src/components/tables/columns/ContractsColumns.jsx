@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import ActionsDropdown from "@/components/ActionsDropdown";
+import { formatDateTime } from "@/helpers/formatDate";
 
 export function getContractsColumns(onAction) {
     const contractActions = [
@@ -27,18 +28,12 @@ export function getContractsColumns(onAction) {
         {
             accessorKey: "start_date",
             header: "Start Date",
-            cell: ({ row }) => {
-                const date = row.original.start_date || row.original.startDate;
-                return date ? new Date(date).toLocaleDateString() : "—";
-            }
+            cell: ({ row }) => formatDateTime(row.original.startDate),
         },
         {
             accessorKey: "end_date",
             header: "End Date",
-            cell: ({ row }) => {
-                const date = row.original.end_date || row.original.endDate;
-                return date ? new Date(date).toLocaleDateString() : "—";
-            }
+            cell: ({ row }) => formatDateTime(row.original.endDate),
         },
         {
             accessorKey: "is_active",
