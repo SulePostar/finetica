@@ -3,6 +3,7 @@ import { getRolesStatusesColumns } from "@/components/tables/columns/rolesStatus
 import { useRoles, useStatuses } from "@/queries/rolesAndStatuses";
 import RolesStatusesTable from "@/components/tables/RolesStatusesTable";
 import { Spinner } from "@/components/ui/spinner";
+import DefaultLayout from "@/layout/DefaultLayout";
 
 export default function RoleAndStatusManagement() {
     const columns = getRolesStatusesColumns("roles", (item) => { console.log("Delete", item); }, "role");
@@ -23,7 +24,7 @@ export default function RoleAndStatusManagement() {
     }
 
     return (
-        <div>
+        <DefaultLayout>
             <div className="px-4 md:px-6 lg:px-8">
                 <PageTitle text={"Roles and Statuses"} />
 
@@ -48,6 +49,6 @@ export default function RoleAndStatusManagement() {
                 </div>
             </div>
 
-        </div>
+        </DefaultLayout>
     );
 }

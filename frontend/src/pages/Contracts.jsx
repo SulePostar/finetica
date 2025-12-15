@@ -5,6 +5,7 @@ import { useContracts } from "../queries/useContracts";
 import { Spinner } from '@/components/ui/spinner.jsx';
 import IsError from "@/components/shared-ui/IsError";
 import { getContractsColumns } from "@/components/tables/columns/ContractsColumns";
+import DefaultLayout from "@/layout/DefaultLayout";
 import UploadButton from "@/components/shared-ui/UploadButton";
 
 export default function Contracts() {
@@ -45,28 +46,30 @@ export default function Contracts() {
   }
 
   return (
-    <div className="pt-20">
-      <DynamicTable
-        header={
-          <div className="flex items-center justify-between">
-            <PageTitle
-              text="Contracts"
-              subtitle="Overview of all Contracts files"
-              compact
-            />
-            <UploadButton
-              onUploadSuccess={handleFileUpload}
-              className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-            />
-          </div>
-        }
-        columns={getContractsColumns((item) => console.log("Action on:", item))}
-        data={paginatedRows}
-        total={allRows.length}
-        page={currentPage}
-        perPage={itemsPerPage}
-        onPageChange={setCurrentPage}
-      />
-    </div>
+    <DefaultLayout>
+      <div className="pt-20">
+        <DynamicTable
+          header={
+            <div className="flex items-center justify-between">
+              <PageTitle
+                text="Contracts"
+                subtitle="Overview of all Contracts files"
+                compact
+              />
+              <UploadButton
+                onUploadSuccess={handleFileUpload}
+                className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+              />
+            </div>
+          }
+          columns={getContractsColumns((item) => console.log("Action on:", item))}
+          data={paginatedRows}
+          total={allRows.length}
+          page={currentPage}
+          perPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+        />
+      </div>
+    </DefaultLayout>
   );
 }
