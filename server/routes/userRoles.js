@@ -15,6 +15,6 @@ router.get('/:id', isAuthenticated, getUserRoleById);
 router.post('/',
     //isAuthenticated, 
     createUserRole);
-router.delete('/:id', isAuthenticated, deleteUserRole);
+router.delete('/:id', deleteUserRole);
 
 module.exports = router;
