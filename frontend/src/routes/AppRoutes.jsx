@@ -13,18 +13,19 @@ const Users = React.lazy(() => import('../pages/Users'));
 const InvalidPdfs = React.lazy(() => import('../pages/InvalidPDFs'))
 import Register from '@/pages/Register';
 import RoleAndStatusManagement from '@/pages/RoleAndStatusManagement';
+import DefaultLayout from '@/layout/DefaultLayout';
 
 export default function AppRoutes() {
     return (
         <Routes>
             <Route
-                path="/"
+                path="/login"
                 element={
                     <Login />
                 }
             />
             <Route
-                path="/dashboard"
+                path="/"
                 element={
                     <Dashboard />
                 }
