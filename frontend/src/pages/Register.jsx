@@ -47,24 +47,50 @@ const Register = () => {
 
     return (
         <div className="min-h-screen flex">
-            {/* LEFT PANEL (same as login) */}
+            {/* LEFT PANEL (same style as login) */}
             <div className="hidden lg:flex lg:w-2/5 bg-[linear-gradient(90deg,rgba(88,80,166,1)_0%,rgba(108,105,255,1)_76%)] relative overflow-hidden">
                 <div className="absolute inset-0 bg-black/5" />
+
+                {/* Optional: soft/blurry edge on the right side */}
+                <div className="pointer-events-none absolute top-0 right-0 h-full w-10 bg-white/10 blur-xl" />
+
+                {/* Floating "S" letters */}
+                <div className="pointer-events-none absolute inset-0 z-0">
+                    <div
+                        className="absolute left-10 top-24 text-white/20 font-extrabold select-none
+                       text-[110px] blur-[0.3px]
+                       animate-[floatS_6s_ease-in-out_infinite]"
+                        style={{ textShadow: "0 25px 60px rgba(0,0,0,0.18)" }}
+                    >
+                        S
+                    </div>
+
+                    <div
+                        className="absolute right-14 bottom-20 text-white/16 font-extrabold select-none
+                       text-[100px] blur-[0.6px]
+                       animate-[floatS2_7.5s_ease-in-out_infinite]"
+                        style={{ textShadow: "0 25px 60px rgba(0,0,0,0.18)" }}
+                    >
+                        S
+                    </div>
+                </div>
 
                 <div className="relative z-10 flex flex-col w-full px-12 py-10">
                     <div className="flex-1 flex items-center justify-center">
                         <div className="text-center max-w-lg">
                             <h1 className="text-4xl xl:text-5xl font-bold text-white mb-4 whitespace-nowrap">
-                                Welcome to Finetica!
+                                Welcome to Finetica
                             </h1>
-                            <p className="text-white/70 text-base xl:text-lg">
-                                Create your account to get access to the dashboard.
+
+                            <p className="text-white/75 text-base xl:text-lg leading-relaxed">
+                                Create your account to access your dashboard, manage workflows
+                                and keep everything organized in one place.
                             </p>
                         </div>
                     </div>
 
-                    <div className="text-xs text-white/50 text-center">
-                        © Future Experts {new Date().getFullYear()}
+                    <div className="text-md text-white/50 text-center">
+                        © {new Date().getFullYear()} Finetica
                     </div>
                 </div>
             </div>
@@ -72,30 +98,21 @@ const Register = () => {
             {/* RIGHT PANEL */}
             <div className="flex-1 flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
                 <div className="w-full max-w-xl">
-                    {/* CARD (keeps your current register design, just slightly compact to avoid scroll) */}
-                    <div
-                        className="bg-white rounded-2xl
-              px-10 py-10 sm:px-12 sm:py-12
-              shadow-[0_20px_50px_rgba(0,0,0,0.22),0_0_0_1px_rgba(108,105,255,0.08)]"
-                    >
-                        {/* Mobile Logo */}
-                        <div className="lg:hidden text-center mb-6">
-                            <div className="text-3xl font-bold text-indigo-600 mb-2">
+                    <div className="bg-white rounded-2xl shadow-[0_30px_80px_-25px_rgba(0,0,0,0.35)] px-10 py-10 sm:px-12 sm:py-12">
+                        {/* Header */}
+                        <div className="text-center mb-6">
+                            <div className="text-3xl font-bold text-brand mb-2 lg:hidden">
                                 Finetica
                             </div>
-                        </div>
-
-                        {/* HEADER */}
-                        <div className="text-center mb-6">
                             <h2 className="text-4xl font-bold tracking-tight text-brand mb-2">
                                 Create Account
                             </h2>
                             <p className="text-gray-600">
-                                Fill in the form below to create an account
+                                Fill in the form below to create an account.
                             </p>
                         </div>
 
-                        {/* PROFILE IMAGE UPLOAD */}
+                        {/* Upload profile photo */}
                         <Dialog>
                             <DialogTrigger asChild>
                                 <div className="flex flex-col items-center justify-center mb-6 cursor-pointer group">
@@ -124,13 +141,13 @@ const Register = () => {
                                     </DialogTitle>
                                 </DialogHeader>
 
-                                <div className="py-6">
+                                <div className="py-5">
                                     <Dropzone
                                         accept={{ "image/*": [".png", ".jpg", ".jpeg", ".gif"] }}
                                         maxSize={10 * 1024 * 1024}
                                         maxFiles={1}
                                         name="profile_image"
-                                        onDrop={(files) => setProfileImage(files?.[0] ?? null)}
+                                        onDrop={(files) => setProfileImage(files?.[0] || null)}
                                     >
                                         <DropzoneContent />
                                         <DropzoneEmptyState />
@@ -143,6 +160,7 @@ const Register = () => {
                                             Cancel
                                         </button>
                                     </DialogClose>
+
                                     <DialogClose asChild>
                                         <button className="px-4 py-2 rounded-lg bg-brand text-white font-semibold">
                                             Confirm
@@ -152,7 +170,7 @@ const Register = () => {
                             </DialogContent>
                         </Dialog>
 
-                        {/* FORM */}
+                        {/* Form */}
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                             {/* First Name */}
                             <div>
@@ -238,7 +256,6 @@ const Register = () => {
                                         {...register("password", {
                                             required: "Password required",
                                             minLength: { value: 6, message: "Min 6 characters" },
-                                            deps: ["confirmPassword"],
                                         })}
                                         className="w-full bg-transparent outline-none text-gray-900 placeholder:text-gray-500"
                                     />
@@ -276,16 +293,17 @@ const Register = () => {
                                 )}
                             </div>
 
-                            {/* SUBMIT */}
+                            {/* Submit */}
                             <button
                                 type="submit"
                                 className="w-full py-4 rounded-xl bg-brand text-white font-semibold
-                  shadow-md hover:shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2"
+                           shadow-md hover:shadow-lg transition-all
+                           focus:outline-none focus:ring-2 focus:ring-offset-2"
                             >
                                 Create Account
                             </button>
 
-                            {/* LOGIN */}
+                            {/* Login link */}
                             <div className="text-center pt-2 text-gray-600">
                                 Already have an account?
                                 <a
@@ -297,7 +315,6 @@ const Register = () => {
                             </div>
                         </form>
                     </div>
-                    {/* /card */}
                 </div>
             </div>
         </div>
