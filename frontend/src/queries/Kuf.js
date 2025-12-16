@@ -1,4 +1,4 @@
-import { getAllKufs } from "@/api/Kuf";
+import { getAllKufs, getKufById } from "@/api/Kuf";
 import { useQuery, } from "@tanstack/react-query";
 
 export const kufKeys = {
@@ -15,5 +15,14 @@ export const useKufInvoices = (filters = {}) => {
         queryKey: kufKeys.list(filters),
         queryFn: () =>
             getAllKufs(filters),
+    });
+};
+
+// GET - single item by ID
+export const useKufById = (id) => {
+    return useQuery({
+        queryKey: kufKeys.detail(id),
+        queryFn: () => getKufById(id),
+        enabled: !!id,
     });
 };

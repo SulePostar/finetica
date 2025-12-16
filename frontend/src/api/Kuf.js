@@ -23,3 +23,8 @@ export const updateKuf = async ({ id, ...payload }) => {
 export const deleteKuf = async (id) => {
     await apiClient.delete(`/kuf/${id}`);
 };
+
+export const approveKuf = async ({ id, ...payload }) => {
+    const { data } = await apiClient.put(`/kuf/${id}/approve`, payload);
+    return data;
+};

@@ -13,7 +13,7 @@ const Users = React.lazy(() => import('../pages/Users'));
 const InvalidPdfs = React.lazy(() => import('../pages/InvalidPDFs'))
 import Register from '@/pages/Register';
 import RoleAndStatusManagement from '@/pages/RoleAndStatusManagement';
-import DefaultLayout from '@/layout/DefaultLayout';
+import DocumentDetails from '@/pages/DocumentDetails';
 
 export default function AppRoutes() {
     return (
@@ -93,8 +93,28 @@ export default function AppRoutes() {
                     <InvalidPdfs />
                 }
             />
-            {/* Fallback for unknown routes */}
 
+            {/* Document Details Routes */}
+            <Route path="/kif/:id" element={<DocumentDetails />} />
+            <Route path="/kif/:id/edit" element={<DocumentDetails />} />
+            <Route path="/kif/:id/approve" element={<DocumentDetails />} />
+
+            <Route path="/kuf/:id" element={<DocumentDetails />} />
+            <Route path="/kuf/:id/edit" element={<DocumentDetails />} />
+            <Route path="/kuf/:id/approve" element={<DocumentDetails />} />
+
+            <Route path="/contracts/:id" element={<DocumentDetails />} />
+            <Route path="/contracts/:id/edit" element={<DocumentDetails />} />
+            <Route path="/contracts/:id/approve" element={<DocumentDetails />} />
+
+            <Route path="/bank-transactions/:id" element={<DocumentDetails />} />
+            <Route path="/bank-transactions/:id/edit" element={<DocumentDetails />} />
+            <Route path="/bank-transactions/:id/approve" element={<DocumentDetails />} />
+
+            <Route path="/partners/:id" element={<DocumentDetails />} />
+            <Route path="/partners/:id/edit" element={<DocumentDetails />} />
+
+            {/* Fallback for unknown routes */}
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );
