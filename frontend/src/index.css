@@ -88,6 +88,7 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
   --heading-color: #ffffff;
+  --brand-color: #6c69ff;
 
   --table-header: #5c44a4; /* dark:bg-[#5654CC] */
   --table-row: #42307081; /* dark:bg-[#434199] */
@@ -156,6 +157,14 @@
   --color-spurple: var(--spurple);
   --color-green: var(--green);
   --color-green-foreground: var(--green-foreground);
+}
+
+.text-brand {
+  color: var(--brand-color, #6c69ff);
+}
+
+.bg-brand {
+  background-color: var(--brand-color, #6c69ff);
 }
 
 @layer base {

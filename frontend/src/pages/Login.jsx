@@ -19,26 +19,35 @@ const Login = () => {
   return (
     <div className="min-h-screen flex">
       {/* Left Panel */}
-      <div className="hidden lg:flex lg:w-2/5 bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-700 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-5"></div>
-        <div className="absolute top-8 left-8">
-          <div className="text-4xl font-bold text-white opacity-30 tracking-tight">
-            symphony
+      <div className="hidden lg:flex lg:w-2/5 bg-[linear-gradient(90deg,rgba(88,80,166,1)_0%,rgba(108,105,255,1)_76%)] relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/5" />
+
+        {/* Logo (top-left) */}
+        <div className="relative z-10 flex flex-col w-full px-12 py-10">
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center max-w-lg">
+              <h1 className="text-4xl xl:text-5xl font-bold text-white mb-4 whitespace-nowrap">
+                Welcome to Finetica!
+              </h1>
+
+              <p className="text-white/70 text-base xl:text-lg">
+                Sign in to manage your dashboard and workflows.
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="relative z-10 flex items-center justify-center w-full px-12">
-          <div className="text-center">
-            <h1 className="text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight">
-              Welcome to<br />Finetica!
-            </h1>
+
+          {/* Footer (bottom) */}
+          <div className="text-xs text-white/50 text-center">
+            © {new Date().getFullYear()} Finetica
           </div>
         </div>
       </div>
 
+
       {/* Right Panel */}
       <div className="flex-1 flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
-        <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl shadow-xl p-8 sm:p-10">
+        <div className="w-full max-w-xl">
+          <div className="bg-white rounded-2xl shadow-2xl px-12 py-16 sm:px-16 sm:py-20">
 
             {/* Mobile Logo */}
             <div className="lg:hidden text-center mb-8">
@@ -48,9 +57,12 @@ const Login = () => {
             </div>
 
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              <h2
+                className="text-4xl font-bold mb-2 tracking-tight text-brand"
+              >
                 Welcome Back
               </h2>
+
               <p className="text-gray-600">Sign in to your account.</p>
             </div>
 
@@ -60,7 +72,7 @@ const Login = () => {
               {/* Email Field */}
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-indigo-600" />
+                  <Mail className="h-5 w-5 text-brand" />
                 </div>
 
                 <input
@@ -87,7 +99,7 @@ const Login = () => {
               {/* Password Field */}
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-indigo-600" />
+                  <Lock className="h-5 w-5 text-brand" />
                 </div>
 
                 <input
@@ -128,7 +140,7 @@ const Login = () => {
                 <button
                   type="button"
                   onClick={() => console.log("Forgot password clicked")}
-                  className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+                  className="text-sm font-medium text-brand hover:text-indigo-700 transition-colors"
                 >
                   Forgot Password?
                 </button>
@@ -137,9 +149,7 @@ const Login = () => {
               {/* Submit */}
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold py-3.5 px-4 rounded-xl
-                  hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2
-                  focus:ring-indigo-600 transition-all shadow-lg hover:shadow-xl"
+                className="w-full py-4 px-4 rounded-xl text-white font-semibold transition-all shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 bg-brand"
               >
                 Login
               </button>
@@ -150,7 +160,7 @@ const Login = () => {
                   Don't have an account?
                   <a
                     href="/register"
-                    className="pl-2 font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+                    className="pl-2 font-semibold text-brand hover:text-indigo-700 transition-colors"
                   > Sign Up
                   </a>
                 </p>
