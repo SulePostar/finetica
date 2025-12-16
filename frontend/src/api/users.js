@@ -4,3 +4,8 @@ export const getUsers = async (filters) => {
     const { data } = await apiClient.get("/users", { params: filters });
     return data;
 };
+
+export const getUserByRole = async (role) => {
+    const { data } = await apiClient.get("/users", { params: { role } });
+    return data;
+}
