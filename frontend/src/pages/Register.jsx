@@ -64,7 +64,7 @@ const Register = () => {
                     </div>
 
                     <div className="text-xs text-white/50 text-center">
-                        © {new Date().getFullYear()} Finetica
+                        © Future Experts {new Date().getFullYear()}
                     </div>
                 </div>
             </div>
