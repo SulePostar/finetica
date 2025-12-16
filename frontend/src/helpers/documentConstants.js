@@ -114,20 +114,17 @@ export const formatValue = (value, key, currency = 'BAM') => {
     }
 
     // Format currency values
+    const keyLower = key.toLowerCase();
     if (
-        key.includes('amount') ||
-        key.includes('total') ||
-        key.includes('Total') ||
-        key.includes('sum') ||
-        key.includes('Sum') ||
-        key.includes('vat') ||
-        key.includes('Vat') ||
-        key.includes('VAT')
+        keyLower.includes('amount') ||
+        keyLower.includes('total') ||
+        keyLower.includes('sum') ||
+        keyLower.includes('vat')
     ) {
         if (typeof value === 'number') {
             return new Intl.NumberFormat('bs-BA', {
                 style: 'currency',
-                currency: currency === '$' ? 'BAM' : currency,
+                currency: currency || 'BAM',
                 minimumFractionDigits: 2,
             }).format(value);
         }
@@ -135,7 +132,10 @@ export const formatValue = (value, key, currency = 'BAM') => {
 
     // Format boolean values
     if (typeof value === 'boolean') {
-        return value ? 'Active' : 'Inactive';
+        if (keyLower.includes('active')) {
+            return value ? 'Active' : 'Inactive';
+        }
+        return value ? 'Yes' : 'No';
     }
 
     return value;
