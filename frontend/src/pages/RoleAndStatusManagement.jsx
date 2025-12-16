@@ -1,13 +1,15 @@
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { getRolesStatusesColumns } from "@/components/tables/columns/rolesStatusesColumns";
-import { useRoles, useStatuses } from "@/queries/rolesAndStatuses";
+import { useCreateRole, useRoles, useStatuses, useCreateUserStatus } from "@/queries/rolesAndStatuses";
 import RolesStatusesTable from "@/components/tables/RolesStatusesTable";
 import { Spinner } from "@/components/ui/spinner";
 import DefaultLayout from "@/layout/DefaultLayout";
 
 export default function RoleAndStatusManagement() {
+    const createRoleMutation = useCreateRole();
     const columns = getRolesStatusesColumns("roles", (item) => { console.log("Delete", item); }, "role");
     const statuses = getRolesStatusesColumns("statuses", (item) => { console.log("Delete", item); }, "status");
+    const createUserStatus = useCreateUserStatus();
 
     const { data: rolesData, isPending: rolesPending } = useRoles();
     const { data: statusData, isPending: statusPending } = useStatuses();
@@ -37,7 +39,16 @@ export default function RoleAndStatusManagement() {
                         data={rolesData.data}
                         title="Roles"
                         placeholder="New role name"
-                        onAdd={(name) => { console.log("Add role:", name); }}
+                        onAdd={(name) => {
+                            createRoleMutation.mutate(name, {
+                                onSuccess: () => {
+                                    console.log(`Role "${name}" created successfully!`);
+                                },
+                                onError: (error) => {
+                                    console.log(`Error creating role: ${error.message}`);
+                                }
+                            });
+                        }}
                     />
 
                     <RolesStatusesTable
@@ -45,7 +56,13 @@ export default function RoleAndStatusManagement() {
                         data={statusData.data}
                         title="Statuses"
                         placeholder="New status name"
-                        onAdd={(name) => { console.log("Add status:", name); }}
+
+                        onAdd={(name) => {
+                            createUserStatus.mutate(name, {
+                                // onSuccess: () => toast.success("Status created"),
+                                // onError: (err) => toast.error(err.message),
+                            });
+                        }}
                     />
                 </div>
             </div>
