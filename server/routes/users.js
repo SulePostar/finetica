@@ -18,7 +18,7 @@ router.get('/',
   // isAuthenticated,
   // hasRole(['admin']),
   getAllUsers);
-router.get('/:id', isAuthenticated, hasRole(['admin']), getUserById);
-router.put('/:id', isAuthenticated, hasRole(['admin']), updateUser);
-router.delete('/:id', isAuthenticated, hasRole(['admin']), deleteUser);
+router.get('/:id', /*isAuthenticated, hasRole(['admin']),*/ getUserById);
+router.put('/:id', /*isAuthenticated, hasRole(['admin']),*/ updateUser);
+router.delete('/:id', /*isAuthenticated, hasRole(['admin']),*/ deleteUser);
 module.exports = router;
