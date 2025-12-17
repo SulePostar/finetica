@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { loginUser, logoutUser } from "../api/auth";
+import { loginUser } from "../api/auth";
 import { getMe } from "../api/users";
 
 const AuthContext = createContext(null);
@@ -60,21 +60,8 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const logout = async () => {
-        try {
-            await logoutUser();
-        } catch (error) {
-            console.warn("Logout API failed, clearing local state anyway", error);
-        } finally {
-            localStorage.removeItem("authToken");
-            setUser(null);
-            setIsAuthenticated(false);
-            window.location.href = '/login';
-        }
-    };
-
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, loading, login, logout }}>
+        <AuthContext.Provider value={{ user, isAuthenticated, loading, login }}>
             {children}
         </AuthContext.Provider>
     );
