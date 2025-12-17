@@ -20,18 +20,18 @@ const Kuf = () => {
 
     if (isPending) {
         return (
-            <>
+            <DefaultLayout>
                 <PageTitle text="Kuf" />
                 <div className="flex items-center justify-center h-40">
                     <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
                 </div>
-            </>
+            </DefaultLayout>
         );
     }
 
     if (isError) {
         return (
-            <>
+            <DefaultLayout>
                 <PageTitle text="KUF - Purchase Invoices" />
                 <IsError
                     error={error}
@@ -39,7 +39,7 @@ const Kuf = () => {
                     title="Failed to load KUF"
                     showDetails={true}
                 />
-            </>
+            </DefaultLayout>
         );
     }
 

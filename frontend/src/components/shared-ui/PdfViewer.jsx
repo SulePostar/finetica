@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Loader2, FileWarning } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+import { Spinner } from '../ui/spinner';
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 export const PdfViewer = ({ pdfUrl }) => {
@@ -11,15 +12,6 @@ export const PdfViewer = ({ pdfUrl }) => {
     const [pageNumber, setPageNumber] = useState(1);
     const [containerWidth, setContainerWidth] = useState(null);
     const containerRef = useRef(null);
-
-    if (!pdfUrl || typeof pdfUrl !== 'string' || pdfUrl.trim() === '' || pdfUrl === 'null') {
-        return (
-            <div className="flex h-40 w-full flex-col items-center justify-center gap-2 rounded-md border border-dashed bg-muted/50 text-muted-foreground">
-                <FileWarning className="h-8 w-8" />
-                <p>Nema dostupnog PDF-a za ovu transakciju.</p>
-            </div>
-        );
-    }
 
     useEffect(() => {
         const resizeObserver = new ResizeObserver((entries) => {
@@ -32,6 +24,15 @@ export const PdfViewer = ({ pdfUrl }) => {
         }
         return () => resizeObserver.disconnect();
     }, []);
+    if (!pdfUrl || typeof pdfUrl !== 'string' || pdfUrl.trim() === '' || pdfUrl === 'null') {
+        return (
+            <div className="flex h-40 w-full flex-col items-center justify-center gap-2 rounded-md border border-dashed bg-muted/50 text-muted-foreground">
+                <FileWarning className="h-8 w-8" />
+                <p>Nema dostupnog PDF-a za ovu transakciju.</p>
+            </div>
+        );
+    }
+
     const onDocumentLoadSuccess = ({ numPages }) => {
         setNumPages(numPages);
         setPageNumber(1);
@@ -46,10 +47,11 @@ export const PdfViewer = ({ pdfUrl }) => {
                     file={pdfUrl}
                     onLoadSuccess={onDocumentLoadSuccess}
                     loading={
-                        <div className="flex h-[400px] items-center justify-center gap-2 text-muted-foreground">
-                            <Loader2 className="h-6 w-6 animate-spin" />
-                            <span>Učitavanje PDF-a...</span>
-                        </div>
+                        <>
+                            <div className="flex items-center justify-center h-[100vh]">
+                                <Spinner className="w-7 h-7 sm:w-7 sm:h-17 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
+                            </div>
+                        </>
                     }
                     error={
                         <div className="flex h-[400px] items-center justify-center text-red-500">

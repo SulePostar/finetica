@@ -2,6 +2,10 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDocumentFetcher } from '@/hooks/use-document';
 import { PdfViewer } from '@/components/shared-ui/PdfViewer';
+import PageTitle from '@/components/shared-ui/PageTitle';
+import { Spinner } from '@/components/ui/spinner';
+import IsError from '@/components/shared-ui/IsError';
+import DefaultLayout from '@/layout/DefaultLayout';
 const DocumentDetails = () => {
 
     const { type, id } = useParams();
@@ -9,31 +13,43 @@ const DocumentDetails = () => {
 
     const {
         data: document,
-        isLoading,
+        isPending,
         isError,
-        error
+        error,
+        refetch
     } = useDocumentFetcher(type, id);
 
-    if (isLoading) {
-        return <div className="p-10 text-center">Učitavanje dokumenta...</div>;
-    }
     if (isError) {
         return (
-            <div className="p-10 text-red-500">
-                Došlo je do greške: {error.message}
-            </div>
+            <DefaultLayout>
+                <IsError
+                    error={error}
+                    onRetry={() => refetch()}
+                    title="Failed to load Document Details"
+                    showDetails={true}
+                />
+            </DefaultLayout>
         );
     }
-    if (!document) {
-        return <div>Dokument nije pronađen.</div>;
+    if (isPending) {
+        return <DefaultLayout>
+            <PageTitle text="Document Details" />
+            <div className="flex items-center justify-center h-40">
+                <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
+            </div>
+        </DefaultLayout>;
     }
 
     return (
-        <div className="container mx-auto p-6">
-            <div className="flex justify-between items-center mb-6">
-                <PdfViewer pdfUrl={document.pdfUrl} />
+        <DefaultLayout>
+            <PageTitle text="Document Details" />
+
+            <div className="container mx-auto p-6">
+                <div className="flex justify-between items-center mb-6">
+                    <PdfViewer pdfUrl={document.pdfUrl} />
+                </div>
             </div>
-        </div>
+        </DefaultLayout>
     );
 };
 export default DocumentDetails;
