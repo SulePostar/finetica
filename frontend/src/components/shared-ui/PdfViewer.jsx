@@ -28,7 +28,7 @@ export const PdfViewer = ({ pdfUrl }) => {
         return (
             <div className="flex h-40 w-full flex-col items-center justify-center gap-2 rounded-md border border-dashed bg-muted/50 text-muted-foreground">
                 <FileWarning className="h-8 w-8" />
-                <p>Nema dostupnog PDF-a za ovu transakciju.</p>
+                <p>There is no available PDF for this transaction.</p>
             </div>
         );
     }

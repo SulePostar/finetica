@@ -6,7 +6,7 @@ import { useContractById } from "@/queries/useContracts";
 const hookRegistry = {
     kuf: useKufById,
     kif: useKifById,
-    'bank-transaction': useBankTransactionById,
+    'bank-statements': useBankTransactionById,
     contracts: useContractById,
 };
 

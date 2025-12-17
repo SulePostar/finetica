@@ -6,6 +6,7 @@ import PageTitle from '@/components/shared-ui/PageTitle';
 import { Spinner } from '@/components/ui/spinner';
 import IsError from '@/components/shared-ui/IsError';
 import DefaultLayout from '@/layout/DefaultLayout';
+import { DocumentFields } from '@/components/document-details/DocumentFields';
 const DocumentDetails = () => {
 
     const { type, id } = useParams();
@@ -43,10 +44,18 @@ const DocumentDetails = () => {
     return (
         <DefaultLayout>
             <PageTitle text="Document Details" />
-
             <div className="container mx-auto p-6">
-                <div className="flex justify-between items-center mb-6">
-                    <PdfViewer pdfUrl={document.pdfUrl} />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Document Fields Section */}
+                    <div className="order-1 lg:order-1">
+                        <DocumentFields document={document} />
+                    </div>
+
+                    {/* PDF Viewer Section */}
+                    <div className="order-2 lg:order-2">
+                        <h2 className="text-xl font-semibold mb-4">PDF Preview</h2>
+                        <PdfViewer pdfUrl={document.pdfUrl} />
+                    </div>
                 </div>
             </div>
         </DefaultLayout>
