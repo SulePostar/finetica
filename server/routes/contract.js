@@ -13,6 +13,8 @@ router.get('/logs/invalid', isAuthenticated, getInvalidContracts);
 router.get('/logs/:id', isAuthenticated, getContractLog);
 
 router.put('/:id/approve', isAuthenticated, validate(approveContractSchema), approveContract);
-router.get('/:id', isAuthenticated, getContract);
+router.get('/:id',
+    //isAuthenticated
+    getContract);
 
 module.exports = router;

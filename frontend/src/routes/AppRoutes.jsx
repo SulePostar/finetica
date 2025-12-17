@@ -14,6 +14,7 @@ const InvalidPdfs = React.lazy(() => import('../pages/InvalidPDFs'))
 import Register from '@/pages/Register';
 import RoleAndStatusManagement from '@/pages/RoleAndStatusManagement';
 import DefaultLayout from '@/layout/DefaultLayout';
+import DocumentDetails from '@/pages/DocumentDetails';
 
 export default function AppRoutes() {
     return (
@@ -91,6 +92,13 @@ export default function AppRoutes() {
                 path="/invalid-pdfs"
                 element={
                     <InvalidPdfs />
+                }
+            />
+
+            <Route
+                path="/:type/:id"
+                element={
+                    <DocumentDetails />
                 }
             />
             {/* Fallback for unknown routes */}
