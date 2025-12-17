@@ -7,7 +7,7 @@ export const getKifs = async (filters) => {
     return data;
 };
 
-export const getKifsById = async (id) => {
+export const getKifById = async (id) => {
     const { data } = await apiClient.get(`/kif/${id}`);
     return data;
 };

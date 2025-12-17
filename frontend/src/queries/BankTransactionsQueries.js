@@ -20,3 +20,12 @@ export const useBankTransactions = (filters = {}) => {
     // enabled: !!someCondition,
   });
 };
+
+// GET - single bank transaction by ID
+export const useBankTransactionById = (id) => {
+  return useQuery({
+    queryKey: bankTransactionKeys.detail(id),
+    queryFn: () => getBankTransactionById(id),
+    enabled: !!id,
+  });
+}
