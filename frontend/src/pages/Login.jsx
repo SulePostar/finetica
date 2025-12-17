@@ -3,17 +3,25 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
+import { useAuth } from '../context/AuthContext';
+
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const [errorString, setErrorString] = useState("");
 
   const { register, handleSubmit, formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log("Form submitted:", data);
-    // After successful login logic, redirect to home
-    navigate('/dashboard');
+  const onSubmit = async (data) => {
+    setErrorString("");
+    const result = await login(data);
+    if (result.success) {
+      navigate('/dashboard');
+    } else {
+      setErrorString(result.error);
+    }
   };
 
   return (
@@ -52,6 +60,11 @@ const Login = () => {
                 Welcome Back
               </h2>
               <p className="text-gray-600">Sign in to your account.</p>
+              {errorString && (
+                <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+                  {errorString}
+                </div>
+              )}
             </div>
 
             {/* FORM */}
