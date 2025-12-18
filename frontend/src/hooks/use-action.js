@@ -1,7 +1,6 @@
-// hooks/use-action.js
 import { useNavigate } from "react-router-dom";
 
-export function useAction(docType) { // Add docType parameter
+export function useAction(docType) {
     const navigate = useNavigate();
 
     return (key, item) => {
