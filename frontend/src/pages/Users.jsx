@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { useUsers } from "@/queries/userQueries";
-import { useRoles } from "@/queries/RoleQueries";
+import { useRoles } from "@/queries/rolesAndStatuses";
 import { getUsersColumns } from "@/components/tables/columns/UsersColumns";
 import { Spinner } from "@/components/ui/spinner";
 import PageTitle from "@/components/shared-ui/PageTitle";
