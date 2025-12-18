@@ -18,19 +18,6 @@ const DocumentDetails = () => {
         error,
         refetch
     } = useDocumentFetcher(type, id);
-
-    if (isError) {
-        return (
-            <DefaultLayout>
-                <IsError
-                    error={error}
-                    onRetry={() => refetch()}
-                    title="Failed to load Document Details"
-                    showDetails={true}
-                />
-            </DefaultLayout>
-        );
-    }
     if (isPending) {
         return <DefaultLayout>
             <PageTitle text="Document Details" />
@@ -38,6 +25,18 @@ const DocumentDetails = () => {
                 <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
             </div>
         </DefaultLayout>;
+    }
+    if (isError) {
+        return (
+            <DefaultLayout>
+                <IsError
+                    error={error}
+                    onRetry={() => refetch()}
+                    title="Failed to load document details"
+                    showDetails={true}
+                />
+            </DefaultLayout>
+        );
     }
 
     return (
