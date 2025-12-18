@@ -84,7 +84,7 @@ const DynamicTable = ({
 
   const table = useReactTable({
     data,
-    columns,
+    columns: allTableColumns,
     manualPagination: true,
     pageCount: Math.ceil(total / perPage),
     state: {
@@ -205,7 +205,7 @@ const DynamicTable = ({
                             ) : null}
                           </TableCell>
                         )}
-                        {mainCells.getVisibleCells().map((cell) => {
+                        {mainCells.map((cell) => {
                           const rendered = flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()
