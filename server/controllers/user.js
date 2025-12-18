@@ -12,7 +12,7 @@ const getAllUsers = async (req, res, next) => {
 
 const getMyProfile = async (req, res, next) => {
   try {
-    const profile = await userService.getUserById(req.user.id);
+    const profile = await userService.getUserById(req.user.userId);
     res.json(profile);
   } catch (error) {
     next(error);

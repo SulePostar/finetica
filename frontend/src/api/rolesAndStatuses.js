@@ -17,8 +17,12 @@ export const createRole = async (roleName) => {
     return data;
 };
 
-
 export const createUserStatus = async (statusName) => {
     const { data } = await apiClient.post("/user-statuses", { status: statusName });
     return data;
 };
+
+export const deleteRole = async (roleId) => {
+    const { data } = await apiClient.delete(`/user-roles/${roleId}`);
+    return data;
+}

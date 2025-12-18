@@ -88,6 +88,7 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
   --heading-color: #ffffff;
+  --brand-color: #6c69ff;
 
   --table-header: #5c44a4; /* dark:bg-[#5654CC] */
   --table-row: #42307081; /* dark:bg-[#434199] */
@@ -158,6 +159,14 @@
   --color-green-foreground: var(--green-foreground);
 }
 
+.text-brand {
+  color: var(--brand-color, #6c69ff);
+}
+
+.bg-brand {
+  background-color: var(--brand-color, #6c69ff);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -190,3 +199,12 @@
   animation: fadeInOutToast 3s ease-in-out forwards;
 }
 
+@keyframes floatS {
+  0%, 100% { transform: translateY(0) rotate(-6deg); }
+  50%      { transform: translateY(-16px) rotate(-2deg); }
+}
+
+@keyframes floatS2 {
+  0%, 100% { transform: translateY(0) rotate(8deg); }
+  50%      { transform: translateY(-22px) rotate(3deg); }
+}
