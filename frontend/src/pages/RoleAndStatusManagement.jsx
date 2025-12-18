@@ -1,13 +1,36 @@
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { getRolesStatusesColumns } from "@/components/tables/columns/rolesStatusesColumns";
-import { useCreateRole, useRoles, useStatuses, useCreateUserStatus } from "@/queries/rolesAndStatuses";
+import { useCreateRole, useRoles, useStatuses, useCreateUserStatus, useDeleteRole } from "@/queries/rolesAndStatuses";
 import RolesStatusesTable from "@/components/tables/RolesStatusesTable";
 import { Spinner } from "@/components/ui/spinner";
 import DefaultLayout from "@/layout/DefaultLayout";
+import { notify } from "@/lib/notifications";
+
 
 export default function RoleAndStatusManagement() {
+    const deleteUserRoleMutation = useDeleteRole();
     const createRoleMutation = useCreateRole();
-    const columns = getRolesStatusesColumns("roles", (item) => { console.log("Delete", item); }, "role");
+    const columns = getRolesStatusesColumns(
+        "roles",
+        (item) =>
+            deleteUserRoleMutation.mutate(item.id, {
+                onSuccess: () => {
+                    notify.success("Role deleted", {
+                        description: "The role has been permanently removed.",
+                    });
+                },
+                onError: (err) => {
+                    const message =
+                        err?.response?.data?.message ??
+                        "Failed to delete role";
+
+                    notify.error("Delete failed", {
+                        description: message,
+                    });
+                },
+            }),
+        "role"
+    );
     const statuses = getRolesStatusesColumns("statuses", (item) => { console.log("Delete", item); }, "status");
     const createUserStatus = useCreateUserStatus();
 
