@@ -14,6 +14,7 @@ import {
     SelectContent,
     SelectItem,
 } from "@/components/ui/select";
+import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
 
 import DefaultLayout from "@/layout/DefaultLayout";
 
@@ -84,7 +85,7 @@ const Users = () => {
                                             <SelectItem value="all">All roles</SelectItem>
                                             {rolesData.map((role) => (
                                                 <SelectItem key={role.id} value={role.id.toString()}>
-                                                    {role.role}
+                                                    {capitalizeFirst(role.role)}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
