@@ -54,6 +54,11 @@ class UserRoleService {
             throw new AppError(`User role with id ${id} not found`, 404);
         }
 
+        const protectedRoleIds = [1, 2];
+        if (protectedRoleIds.includes(Number(role.role_id))) {
+            throw new AppError('You are not allowed to delete this role', 400);
+        }
+
         await role.destroy();
         return {
             statusCode: 200,
