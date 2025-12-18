@@ -4,11 +4,7 @@ import ConfirmDeleteModal from "@/components/shared-ui/modals/ConfirmDeleteModal
 
 export function getRolesStatusesColumns(type = "roles", onDelete, nameKey) {
     return [
-        {
-            id: "index",
-            header: () => <div className="text-center w-full">Row</div>,
-            cell: ({ row }) => <div className="text-center w-full">{row.index + 1}</div>,
-        },
+
         {
             accessorKey: nameKey,
             header: () => (
