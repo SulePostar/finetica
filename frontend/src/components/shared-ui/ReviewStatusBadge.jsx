@@ -7,6 +7,7 @@ const STATUS_STYLES = {
     pending: "bg-chart-4 dark:bg-chart-3 text-black dark:text-white",
     rejected: "bg-destructive text-black dark:text-white",
     default: "bg-muted text-muted-foreground dark:text-white",
+    active: "bg-chart-2 dark:bg-chart-2 text-black dark:text-white",
 };
 
 export function ReviewStatusBadge({ status }) {
