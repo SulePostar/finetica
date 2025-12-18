@@ -193,33 +193,34 @@ const DynamicTable = ({
                                                     )}
 
                                                     {mainCells.map((cell) => {
-                                                        const rendered = flexRender(cell.column.columnDef.cell, cell.getContext());
+                                                        const rendered = flexRender(
+                                                            cell.column.columnDef.cell,
+                                                            cell.getContext()
+                                                        );
                                                         const meta = cell.column.columnDef.meta || {};
                                                         const isExplicitComponent = meta.isComponent;
-
-                                                        const isSimple = ['string', 'number'].includes(typeof rendered) || (React.isValidElement(rendered) && rendered.type === 'span');
-
                                                         return (
                                                             <TableCell
                                                                 key={cell.id}
-                                                                className="px-3 py-3 text-center whitespace-nowrap text-[15px] text-muted-foreground dark:text-muted-foreground font-medium"
+                                                                className={`px-3 py-3 text-center whitespace-nowrap text-[15px] text-muted-foreground dark:text-muted-foreground font-medium  ${cell.column.id === "expander" ? "px-1" : ""}`}
                                                             >
-                                                                {!isExplicitComponent && isSimple ? (
+                                                                {!isExplicitComponent ? (
                                                                     <Tooltip delayDuration={800}>
                                                                         <TooltipTrigger asChild>
-                                                                            <div className="max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap text-center cursor-default">
+                                                                            <div className="max-w-[18ch] sm:max-w-[22ch] md:max-w-[26ch] overflow-hidden text-ellipsis whitespace-nowrap text-center cursor-default">
                                                                                 {rendered}
                                                                             </div>
                                                                         </TooltipTrigger>
+
                                                                         <TooltipContent className="max-w-[300px] break-words bg-black text-white dark:bg-white dark:text-black">
                                                                             <div>{rendered}</div>
                                                                         </TooltipContent>
                                                                     </Tooltip>
                                                                 ) : (
-                                                                    <div className="flex items-center justify-center w-full h-full px-0 py-0 text-xs sm:text-sm max-w-full">
+                                                                    <div className={`flex items-center justify-center w-full h-full px-0 py-0 text-xs sm:text-sm max-w-full`}>
                                                                         {rendered}
-                                                                    </div>
-                                                                )}
+                                                                    </div>)
+                                                                }
                                                             </TableCell>
                                                         );
                                                     })}
