@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useDocumentFetcher } from '@/hooks/use-document';
 import { PdfViewer } from '@/components/shared-ui/PdfViewer';
 import PageTitle from '@/components/shared-ui/PageTitle';
@@ -10,7 +10,6 @@ import { DocumentFields } from '@/components/document-details/DocumentFields';
 const DocumentDetails = () => {
 
     const { type, id } = useParams();
-    const navigate = useNavigate();
 
     const {
         data: document,
@@ -43,17 +42,13 @@ const DocumentDetails = () => {
 
     return (
         <DefaultLayout>
-            <PageTitle text="Document Details" />
             <div className="container mx-auto p-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Document Fields Section */}
-                    <div className="order-1 lg:order-1">
-                        <DocumentFields document={document} />
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
+                    <div className="order-1 lg:order-1  min-w-0">
+                        <DocumentFields document={document} type={type} />
                     </div>
 
-                    {/* PDF Viewer Section */}
-                    <div className="order-2 lg:order-2">
-                        <h2 className="text-xl font-semibold mb-4">PDF Preview</h2>
+                    <div className="order-2 lg:order-2  min-w-0">
                         <PdfViewer pdfUrl={document.pdfUrl} />
                     </div>
                 </div>
@@ -62,12 +57,3 @@ const DocumentDetails = () => {
     );
 };
 export default DocumentDetails;
-
-
-
-
-
-
-
-
-

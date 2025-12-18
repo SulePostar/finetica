@@ -2,37 +2,50 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { formatDateTime } from '@/helpers/formatDate';
 
-export const DocumentFields = ({ document, excludeFields = ['pdfUrl', 'items', 'id'] }) => {
+export const DocumentFields = ({ document, excludeFields = ['pdfUrl', 'items', 'id'], type }) => {
     const formatValue = (key, value) => {
-        // Handle null/undefined
         if (value === null || value === undefined || value === '') {
             return '—';
         }
         if (key.toLowerCase().includes('date') || key.toLowerCase().includes('at')) {
-            // Validate if it's actually a valid date
             const date = new Date(value);
             if (!isNaN(date.getTime())) {
                 return formatDateTime(value);
             }
-            // If not a valid date, return the original value
             return String(value);
         }
-        // Handle arrays
         if (Array.isArray(value)) {
             return `${value.length} item(s)`;
         }
-        // Handle objects
         if (typeof value === 'object') {
+            if (typeof value.name === 'string') {
+                return value.name;
+            }
+
+            if (typeof value.label === 'string') {
+                return value.label;
+            }
+
             return JSON.stringify(value);
         }
-        // Convert to string
         return String(value);
     };
+    const formatTitle = (str) => {
+        if (!str) return 'Document';
+        const formattedText = str
+            .split('-')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+
+        return `${formattedText} Information`;
+    };
+
+    const pageTitle = formatTitle(type);
 
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="text-lg font-semibold text-spurple">Document Information</CardTitle>
+                <CardTitle className="text-lg font-semibold text-spurple">{pageTitle}</CardTitle>
                 <CardDescription>All fields from the document</CardDescription>
             </CardHeader>
             <CardContent className="p-0">
@@ -44,7 +57,7 @@ export const DocumentFields = ({ document, excludeFields = ['pdfUrl', 'items', '
                             <div key={key} className="px-6 py-4 hover:bg-muted overflow-hidden">
                                 <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
                                     <span className="text-sm font-medium text-muted-foreground capitalize">
-                                        {key.replace(/([A-Z])/g, ' $1').trim()}
+                                        {key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim()}
                                     </span>
                                     <span className="text-sm text-primary sm:text-right break-all">
                                         {formatValue(key, value)}
