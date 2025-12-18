@@ -29,7 +29,7 @@ export default function AppRoutes() {
                 <Route path="/contracts" element={<Contracts />} />
                 <Route path="/partners" element={<Partner />} />
                 <Route path="/users" element={<Users />} />
-                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/profile/:userId" element={<ProfilePage />} />
                 <Route path="/roles-statuses" element={<RoleAndStatusManagement />} />
                 <Route path="/invalid-pdfs" element={<InvalidPdfs />} />
             </Route>
