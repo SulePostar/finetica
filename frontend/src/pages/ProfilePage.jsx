@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Card, CardTitle, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FieldGroup, Field } from '@/components/ui/field';
@@ -10,9 +11,55 @@ import PageTitle from '@/components/shared-ui/PageTitle';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/components/ui/shadcn-io/dropzone';
 import DefaultLayout from '@/layout/DefaultLayout';
+import { useUser } from '@/queries/userQueries';
+import { Spinner } from '@/components/ui/spinner';
+import IsError from '@/components/shared-ui/IsError';
+import { formatDateTime } from '@/helpers/formatDate';
 
 const ProfilePage = () => {
+  const { userId } = useParams();
   const [isEditing, setIsEditing] = useState(false);
+
+  const isOwnProfile = !userId;
+
+  const { data: userData, isLoading, isError, error, refetch } = useUser(userId);
+
+  const canEdit = isOwnProfile;
+
+  if (isLoading) {
+    return (
+      <DefaultLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
+        </div>
+      </DefaultLayout>
+    );
+  }
+
+  if (isError) {
+    return (
+      <DefaultLayout>
+        <div className="flex items-center justify-center min-h-screen p-4">
+          <IsError
+            error={error}
+            onRetry={() => refetch()}
+            title="Failed to load user profile"
+            showDetails={true}
+          />
+        </div>
+      </DefaultLayout>
+    );
+  }
+
+  const profileData = userData || {
+    firstName: 'Zdravko',
+    lastName: 'Čolić',
+    email: 'zdravko@example.com',
+    roleName: 'Administrator',
+    statusName: 'Approved',
+    lastLoginAt: 'Dec 11, 2024, 2:30 PM',
+    profileImage: null
+  };
 
   return (
     <DefaultLayout>
@@ -23,27 +70,32 @@ const ProfilePage = () => {
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 md:gap-4">
                 <div className="w-full md:w-auto">
                   <CardTitle className="text-2xl md:text-3xl font-bold text-heading-color">
-                    <PageTitle text="User Profile" className="-mt-5" />
+                    <PageTitle
+                      text={isOwnProfile ? "User Profile" : `${profileData.fullName || `${profileData.firstName} ${profileData.lastName}`}'s Profile`}
+                      className="-mt-5"
+                    />
                   </CardTitle>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {isEditing ? 'Edit your profile information' : 'View and manage your profile'}
+                    {isEditing ? 'Edit your profile information' : isOwnProfile ? 'View and manage your profile' : 'View user profile information'}
                   </p>
                 </div>
-                <Button
-                  className="w-full md:w-auto bg-spurple text-white hover:bg-spurple/90"
-                  onClick={() => setIsEditing(!isEditing)}
-                >
-                  {isEditing ? 'Cancel Edit' : 'Edit Profile'}
-                </Button>
+                {canEdit && (
+                  <Button
+                    className="w-full md:w-auto bg-spurple text-white hover:bg-spurple/90"
+                    onClick={() => setIsEditing(!isEditing)}
+                  >
+                    {isEditing ? 'Cancel Edit' : 'Edit Profile'}
+                  </Button>
+                )}
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
               <Dialog>
-                {isEditing ? (
+                {isEditing && canEdit ? (
                   <DialogTrigger asChild>
                     <div className="flex flex-col sm:flex-row items-center sm:items-end py-5 px-4 bg-muted rounded-lg gap-4 sm:gap-6 cursor-pointer w-full text-center sm:text-left">
                       <CircleImage
-                        src={null}
+                        src={profileData.profileImage}
                         alt="User Profile Photo"
                         size="small"
                         borderColor="border-transparent"
@@ -60,7 +112,7 @@ const ProfilePage = () => {
                 ) : (
                   <div className="flex flex-col sm:flex-row items-center sm:items-end py-5 px-4 bg-muted rounded-lg gap-4 sm:gap-6 cursor-pointer w-full text-center sm:text-left opacity-70">
                     <CircleImage
-                      src={null}
+                      src={profileData.profileImage}
                       alt="User Profile Photo"
                       size="small"
                       borderColor="border-transparent"
@@ -69,7 +121,7 @@ const ProfilePage = () => {
                     <div className="space-y-1 sm:space-y-0 sm:pb-1">
                       <h3 className="font-semibold text-foreground text-lg">Profile Picture</h3>
                       <p className="text-muted-foreground text-sm">
-                        Upload a professional photo that represents you
+                        {canEdit ? 'Upload a professional photo that represents you' : 'User profile picture'}
                       </p>
                     </div>
                   </div>
@@ -83,7 +135,7 @@ const ProfilePage = () => {
                   <div className="flex flex-col items-center gap-8 py-6">
                     <div className="relative group">
                       <CircleImage
-                        src={null}
+                        src={profileData.profileImage}
                         alt="User Profile Photo"
                         size="medium"
                         borderColor="border-transparent"
@@ -126,12 +178,24 @@ const ProfilePage = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Field>
                       <Label htmlFor="first_name">First Name</Label>
-                      <Input id="first_name" name="first_name" defaultValue="Zdravko" disabled={!isEditing} readOnly={!isEditing} className={!isEditing ? 'bg-muted cursor-not-allowed' : ''}
+                      <Input
+                        id="first_name"
+                        name="first_name"
+                        defaultValue={profileData.firstName}
+                        disabled={!isEditing}
+                        readOnly={!isEditing}
+                        className={!isEditing ? 'bg-muted cursor-not-allowed' : ''}
                       />
                     </Field>
                     <Field>
                       <Label htmlFor="last_name">Last Name</Label>
-                      <Input id="last_name" name="last_name" defaultValue="Čolić" disabled={!isEditing} readOnly={!isEditing} className={!isEditing ? 'bg-muted cursor-not-allowed' : ''}
+                      <Input
+                        id="last_name"
+                        name="last_name"
+                        defaultValue={profileData.lastName}
+                        disabled={!isEditing}
+                        readOnly={!isEditing}
+                        className={!isEditing ? 'bg-muted cursor-not-allowed' : ''}
                       />
                     </Field>
                   </div>
@@ -140,17 +204,30 @@ const ProfilePage = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Field>
                       <Label htmlFor="email">Email Address</Label>
-                      <Input id="email" name="email" type="email" value="zdravko@example.com" disabled readOnly={true} className="bg-muted cursor-not-allowed"
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={profileData.email}
+                        disabled
+                        readOnly={true}
+                        className="bg-muted cursor-not-allowed"
                       />
                     </Field>
                     <Field>
                       <Label htmlFor="role">Role</Label>
-                      <Input id="role" name="role" value="Administrator" disabled readOnly={true} className="bg-muted cursor-not-allowed"
+                      <Input
+                        id="role"
+                        name="role"
+                        value={profileData.roleName || profileData.role?.role || 'N/A'}
+                        disabled
+                        readOnly={true}
+                        className="bg-muted cursor-not-allowed"
                       />
                     </Field>
                   </div>
                 </FieldGroup>
-                {isEditing && (
+                {isEditing && canEdit && (
                   <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border">
                     <Button className="sm:w-auto w-full bg-spurple text-white hover:bg-spurple/90">
                       Save Changes
@@ -162,12 +239,19 @@ const ProfilePage = () => {
                     <Field>
                       <Label>Account Status</Label>
                       <div className="flex items-center h-10">
-                        <Badge className="bg-green text-green-foreground hover:bg-green/90">Approved</Badge>
+                        <Badge className="bg-green text-green-foreground hover:bg-green/90">
+                          {profileData.statusName || profileData.status?.status || 'N/A'}
+                        </Badge>
                       </div>
                     </Field>
                     <Field>
                       <Label htmlFor="last_login_at">Last Login</Label>
-                      <Input id="last_login_at" name="last_login_at" value="Dec 11, 2024, 2:30 PM" disabled className="bg-muted cursor-not-allowed"
+                      <Input
+                        id="last_login_at"
+                        name="last_login_at"
+                        value={profileData.lastLoginAt ? formatDateTime(profileData.lastLoginAt) : 'N/A'}
+                        disabled
+                        className="bg-muted cursor-not-allowed"
                       />
                     </Field>
                   </div>
