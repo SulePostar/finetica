@@ -7,11 +7,13 @@ import { Spinner } from "@/components/ui/spinner";
 import IsError from "@/components/shared-ui/IsError";
 import DefaultLayout from "@/layout/DefaultLayout";
 import UploadButton from "@/components/shared-ui/UploadButton";
+import { useAction } from "@/hooks/use-action";
 
 const Kuf = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
     const { data, isPending, error, isError, refetch } = useKufInvoices({ page, perPage });
+    const handleAction = useAction('kuf');
 
     const handleFileUpload = (file) => {
         console.log("File uploaded:", file);
@@ -61,7 +63,7 @@ const Kuf = () => {
                             />
                         </div>
                     }
-                    columns={getKufColumns((item) => console.log("Action on:", item))}
+                    columns={getKufColumns(handleAction)}
                     data={data?.data ?? []}
                     total={data?.total || 0}
                     page={page}
