@@ -1,11 +1,13 @@
 import AppRoutes from "./routes/AppRoutes"
-import DefaultLayout from "./layout/DefaultLayout"
 import { ThemeProvider } from "./components/theme/ThemeProvider"
+import { AuthProvider } from "./context/AuthContext"
 
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <AppRoutes />
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
     </ThemeProvider>
   )
 }

@@ -13,87 +13,26 @@ const Users = React.lazy(() => import('../pages/Users'));
 const InvalidPdfs = React.lazy(() => import('../pages/InvalidPDFs'))
 import Register from '@/pages/Register';
 import RoleAndStatusManagement from '@/pages/RoleAndStatusManagement';
-import DefaultLayout from '@/layout/DefaultLayout';
+import ProtectedRoute from './ProtectedRoute';
 
 export default function AppRoutes() {
     return (
         <Routes>
-            <Route
-                path="/login"
-                element={
-                    <Login />
-                }
-            />
-            <Route
-                path="/"
-                element={
-                    <Dashboard />
-                }
-            />
-            <Route
-                path="/register"
-                element={
-                    <Register />
-                }
-            />
-            <Route
-                path="/kif"
-                element={
-                    <Kif />
-                }
-            />
-            <Route
-                path="/bank-statements"
-                element={
-                    <BankTransactions />
-                }
-            />
-            <Route
-                path="/kuf"
-                element={
-                    <Kuf />
-                }
-            />
-            <Route
-                path="/contracts"
-                element={
-                    <Contracts />
-                }
-            />
-            <Route
-                path="/partners"
-                element={
-                    <Partner />
-                }
-            />
-            <Route
-                path="/users"
-                element={
-                    <Users />
-                }
-            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-            <Route
-                path="/profile"
-                element={
-                    <ProfilePage />
-                }
-            />
-
-            <Route
-                path="/roles-statuses"
-                element={
-                    <RoleAndStatusManagement />
-                }
-            />
-
-            <Route
-                path="/invalid-pdfs"
-                element={
-                    <InvalidPdfs />
-                }
-            />
-            {/* Fallback for unknown routes */}
+            <Route element={<ProtectedRoute />}>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/kif" element={<Kif />} />
+                <Route path="/bank-statements" element={<BankTransactions />} />
+                <Route path="/kuf" element={<Kuf />} />
+                <Route path="/contracts" element={<Contracts />} />
+                <Route path="/partners" element={<Partner />} />
+                <Route path="/users" element={<Users />} />
+                <Route path="/profile/:userId" element={<ProfilePage />} />
+                <Route path="/roles-statuses" element={<RoleAndStatusManagement />} />
+                <Route path="/invalid-pdfs" element={<InvalidPdfs />} />
+            </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
