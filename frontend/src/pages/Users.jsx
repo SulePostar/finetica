@@ -29,6 +29,11 @@ const Users = () => {
     const usersData = response?.data || [];
     const totalUsers = response?.total || 0;
     const rolesData = rolesResponse?.data || [];
+    const navigate = useNavigate();
+
+    const handleUserClick = (user) => {
+        navigate(`/profile/${user.id}`);
+    }
 
     if (isPending) {
         return <>
@@ -107,6 +112,7 @@ const Users = () => {
                     page={page}
                     perPage={perPage}
                     onPageChange={setPage}
+                    onRowClick={handleUserClick}
                 />
 
             </div>
