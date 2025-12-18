@@ -80,7 +80,7 @@ describe('User Controller', () => {
         test('should get the profile for the authenticated user', async () => {
             const mockProfile = { id: 123, firstName: 'Authenticated', lastName: 'User', role: { get: () => 'user' }, status: { get: () => 'approved' } };
             userService.getUserById.mockResolvedValue(mockProfile);
-            const req = mockRequest({}, {}, { id: 123 });
+            const req = mockRequest({}, {}, { userId: 123 });
             const res = mockResponse();
             const next = jest.fn();
             await getMyProfile(req, res, next);
