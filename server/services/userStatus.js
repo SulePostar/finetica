@@ -51,10 +51,13 @@ class UserStatusService {
 
     async deleteUserStatus(id) {
         const status = await UserStatus.findByPk(id);
+        const protectedStatusIds = [1, 2, 3];
         if (!status) {
             throw new AppError(`User status with id ${id} not found`, 404);
         }
-
+        if (protectedStatusIds.includes(Number(status.id))) {
+            throw new AppError('You are not allowed to delete this status', 400);
+        }
         await status.destroy();
         return {
             statusCode: 200,
