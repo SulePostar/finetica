@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
@@ -8,14 +8,24 @@ import { useAuth } from '../context/AuthContext';
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated, loading } = useAuth();
   const [errorString, setErrorString] = useState("");
+
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [loading, isAuthenticated, navigate]);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  if (loading || isAuthenticated) {
+    return null;
+  }
 
   const onSubmit = async (data) => {
     setErrorString("");
