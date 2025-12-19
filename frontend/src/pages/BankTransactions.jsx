@@ -24,7 +24,12 @@ const BankTransactions = () => {
     const {
         mutateAsync: uploadFile,
         isPending: isUploading,
-    } = useUploadBankTransactionsFile();
+    } = useUploadBankTransactionsFile({
+        bucketName: "transactions",
+        successMessage: "Bank transactions uploaded",
+        successDescription:
+            "Bank transaction file has been processed successfully.",
+    });
 
     const handleFileUpload = async (file) => {
         await uploadFile({ file, description: "Bank transactions PDF" });

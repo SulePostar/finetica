@@ -1,22 +1,26 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { uploadBankTransactionsFile } from "../api/uploadedFiles";
-import { bankTransactionKeys } from "./BankTransactionsQueries";
-import { notify } from "../lib/notifications";
+import { uploadFileToBucket } from "../api/uploadedFiles";
+import { notify } from "@/utils/notify";
 
-export const useUploadBankTransactionsFile = () => {
+export const useBucketFileUpload = ({
+    bucketName,
+    invalidateKeys = [],
+    successMessage = "File uploaded successfully",
+    successDescription = "The file has been uploaded and processed.",
+}) => {
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: ({ file, description }) =>
-            uploadBankTransactionsFile(file, description),
+            uploadFileToBucket({ file, bucketName, description }),
 
         onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: bankTransactionKeys.lists(),
+            invalidateKeys.forEach((key) => {
+                queryClient.invalidateQueries({ queryKey: key });
             });
 
-            notify.success("Upload successful", {
-                description: "Transactions imported successfully",
+            notify.success(successMessage, {
+                description: successDescription,
             });
         },
 
@@ -25,9 +29,8 @@ export const useUploadBankTransactionsFile = () => {
                 description:
                     err?.response?.data?.message ||
                     err?.message ||
-                    "Something went wrong.",
+                    "Something went wrong during upload.",
             });
         },
     });
 };
-
