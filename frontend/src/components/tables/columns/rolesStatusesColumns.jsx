@@ -1,6 +1,7 @@
 import { ReviewStatusBadge } from "@/components/shared-ui/ReviewStatusBadge";
 import { Button } from "@/components/ui/button";
 import ConfirmDeleteModal from "@/components/shared-ui/modals/ConfirmDeleteModal";
+import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
 
 export function getRolesStatusesColumns(type = "roles", onDelete, nameKey) {
     return [
@@ -24,7 +25,7 @@ export function getRolesStatusesColumns(type = "roles", onDelete, nameKey) {
                     );
                 }
 
-                return <div className="flex justify-center w-full font-medium">{value}</div>;
+                return <div className="flex justify-center w-full font-medium">{capitalizeFirst(value)}</div>;
             },
         },
         {
