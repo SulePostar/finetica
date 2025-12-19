@@ -1,6 +1,6 @@
 import apiClient from "./axios";
 
-const UPLOADED_FILES_BASE_PATH = "/uploaded-files";
+const UPLOADED_FILES_BASE_PATH = "/files";
 
 export const uploadFileToBucket = async ({ file, bucketName, description = "" }) => {
     const formData = new FormData();

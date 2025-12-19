@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { uploadFileToBucket } from "../api/uploadedFiles";
-import { notify } from "@/utils/notify";
+import { notify } from "@/lib/notifications";
 
 export const useBucketFileUpload = ({
     bucketName,

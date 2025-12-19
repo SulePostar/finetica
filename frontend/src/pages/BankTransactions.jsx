@@ -1,16 +1,19 @@
 import { useState } from "react";
-import DefaultLayout from "@/layout/DefaultLayout";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import DefaultLayout from "@/layout/DefaultLayout";
 import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import UploadButton from "@/components/shared-ui/UploadButton";
 import IsError from "@/components/shared-ui/IsError";
 import { Spinner } from "@/components/ui/spinner";
 
-import { useBankTransactions } from "@/queries/BankTransactionsQueries";
-import { useUploadBankTransactionsFile } from "@/queries/uploadedFiles";
+import { useBankTransactions, bankTransactionKeys } from "@/queries/BankTransactionsQueries";
 import { useQueryToast } from "@/hooks/use-query-toast";
 import { getBankTransactionsColumns } from "@/components/tables/columns/BankTransactionsColumns";
+
+import { uploadFileToBucket } from "@/api/uploadedFiles";
+import { notify } from "@/lib/notifications";
 
 const BankTransactions = () => {
     const [page, setPage] = useState(1);
@@ -21,14 +24,35 @@ const BankTransactions = () => {
         perPage,
     });
 
+    const queryClient = useQueryClient();
+
     const {
         mutateAsync: uploadFile,
         isPending: isUploading,
-    } = useUploadBankTransactionsFile({
-        bucketName: "transactions",
-        successMessage: "Bank transactions uploaded",
-        successDescription:
-            "Bank transaction file has been processed successfully.",
+    } = useMutation({
+        mutationFn: ({ file, description }) =>
+            uploadFileToBucket({
+                file,
+                bucketName: "transactions",
+                description,
+            }),
+
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: bankTransactionKeys.all });
+
+            notify.success("Bank transactions uploaded", {
+                description: "Bank transaction file has been processed successfully.",
+            });
+        },
+
+        onError: (err) => {
+            notify.error("Upload failed", {
+                description:
+                    err?.response?.data?.message ||
+                    err?.message ||
+                    "Something went wrong during upload.",
+            });
+        },
     });
 
     const handleFileUpload = async (file) => {
