@@ -5,6 +5,10 @@ export const getUsers = async (filters) => {
     return data;
 };
 
+export const getUserByRole = async (role) => {
+    const { data } = await apiClient.get("/users", { params: { role } });
+    return data;
+}
 export const getUserById = async (id) => {
     const { data } = await apiClient.get(`/users/${id}`);
     return data;
