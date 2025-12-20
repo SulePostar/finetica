@@ -10,11 +10,11 @@ const isAuthenticated = require('../middleware/isAuthenticated');
 
 const router = express.Router();
 router.get('/',
-    // isAuthenticated
+    isAuthenticated,
     getAllUserStatuses);
 router.get('/:id', isAuthenticated, getUserStatusById);
 router.post('/',
-    // isAuthenticated,
+    isAuthenticated,
     createUserStatus);
 router.delete('/:id', isAuthenticated, deleteUserStatus);
 
