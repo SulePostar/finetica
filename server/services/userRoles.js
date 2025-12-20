@@ -55,7 +55,7 @@ class UserRoleService {
         }
 
         const protectedRoleIds = [1, 2];
-        if (protectedRoleIds.includes(Number(role.role_id))) {
+        if (protectedRoleIds.includes(Number(role.id))) {
             throw new AppError('You are not allowed to delete this role', 400);
         }
 
