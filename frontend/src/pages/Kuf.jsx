@@ -48,7 +48,7 @@ const Kuf = () => {
     return (
         <DefaultLayout>
             <div className="pt-20">
-                <DynamicTable columns={getKufColumns((item) => console.log("Action on:", item))} data={data.data ? data.data : []} total={data?.total || 0}
+                <DynamicTable
                     header={
                         <div className="flex items-center justify-between">
                             <PageTitle text="Kuf"
