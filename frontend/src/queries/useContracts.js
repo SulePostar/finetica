@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getContracts } from "../api/contracts";
+import { getContracts, getContractById } from "../api/contracts";
 
 export const contractKeys = {
     all: ["contracts"],
@@ -13,5 +13,13 @@ export const useContracts = (filters = {}) => {
     return useQuery({
         queryKey: contractKeys.list(filters),
         queryFn: () => getContracts(),
+    });
+};
+
+export const useContractById = (id) => {
+    return useQuery({
+        queryKey: contractKeys.detail(id),
+        queryFn: () => getContractById(id),
+        enabled: !!id,
     });
 };

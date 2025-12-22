@@ -15,6 +15,7 @@ import Register from '@/pages/Register';
 import RoleAndStatusManagement from '@/pages/RoleAndStatusManagement';
 import ProtectedRoute from './ProtectedRoute';
 import { NotFound } from '@/pages/NotFound';
+import DocumentDetails from '@/pages/DocumentDetails';
 
 export default function AppRoutes() {
     return (
@@ -33,6 +34,7 @@ export default function AppRoutes() {
                 <Route path="/profile/:userId" element={<ProfilePage />} />
                 <Route path="/roles-statuses" element={<RoleAndStatusManagement />} />
                 <Route path="/invalid-pdfs" element={<InvalidPdfs />} />
+                <Route path="/:type/:id" element={<DocumentDetails />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
