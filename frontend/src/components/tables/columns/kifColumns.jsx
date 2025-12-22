@@ -5,7 +5,7 @@ import ActionsDropdown from "@/components/ActionsDropdown";
 
 export function getKifColumns(onAction) { // Changed from onDelete to onAction
     const kifActions = [
-        { key: "action1", label: "Action 1" },
+        { key: "view", label: "View" },
         { key: "action2", label: "Action 2" },
         { key: "action3", label: "Action 3" },
     ];

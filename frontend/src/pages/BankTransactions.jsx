@@ -14,11 +14,13 @@ import { getBankTransactionsColumns } from "@/components/tables/columns/BankTran
 
 import { uploadFileToBucket } from "@/api/uploadedFiles";
 import { notify } from "@/lib/notifications";
-
+import { TimeFilter } from "@/components/shared-ui/TimeFilter";
+import { useAction } from "@/hooks/use-action";
 const BankTransactions = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
-
+    const [timeRange, setTimeRange] = useState("all");
+    const handleAction = useAction('bank-statements');
     const { data, isPending, isError, error, refetch } = useBankTransactions({
         page,
         perPage,
@@ -68,7 +70,10 @@ const BankTransactions = () => {
         successDescription: "All transactions have been fetched successfully.",
         errorMessage: "Failed to load bank transactions",
     });
-
+    const handleTimeChange = (newValue) => {
+        setTimeRange(newValue);
+        setPage(1);
+    };
     if (isPending) {
         return (
             <>
@@ -107,22 +112,29 @@ const BankTransactions = () => {
                                 subtitle="Overview of all bank transactions"
                                 compact
                             />
+                            <div className="flex items-center gap-4">
 
-                            <div className="flex items-center gap-3">
-                                {isUploading && (
-                                    <span className="text-sm text-muted-foreground">
-                                        Uploading & processing...
-                                    </span>
-                                )}
+                                <div className="flex items-center gap-3">
+                                    {isUploading && (
+                                        <span className="text-sm text-muted-foreground">
+                                            Uploading & processing...
+                                        </span>
+                                    )}
 
-                                <UploadButton
-                                    onUploadSuccess={handleFileUpload}
-                                    className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-                                />
+                                    <UploadButton
+                                        onUploadSuccess={handleFileUpload}
+                                        buttonText="Upload Kuf"
+                                        className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+                                    />
+                                    <TimeFilter
+                                        value={timeRange}
+                                        onChange={handleTimeChange}
+                                    />
+                                </div>
                             </div>
                         </div>
                     }
-                    columns={getBankTransactionsColumns()}
+                    columns={getBankTransactionsColumns(handleAction)}
                     data={rows}
                     total={total}
                     page={page}
