@@ -8,10 +8,12 @@ import { useState } from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import UploadButton from "@/components/shared-ui/UploadButton";
 import { useQueryToast } from "@/hooks/use-query-toast";
+import { useAction } from "@/hooks/use-action";
 
 const BankTransactions = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
+    const handleAction = useAction('bank-statements');
 
     const { data, isPending, isError, error, refetch } = useBankTransactions({
         page,
@@ -78,7 +80,7 @@ const BankTransactions = () => {
                         </div>
 
                     }
-                    columns={getBankTransactionsColumns()}
+                    columns={getBankTransactionsColumns(handleAction)}
                     data={rows}
                     total={total}
                     page={page}
