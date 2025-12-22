@@ -7,11 +7,13 @@ import IsError from "@/components/shared-ui/IsError";
 import { Spinner } from "@/components/ui/spinner";
 import UploadButton from "@/components/shared-ui/UploadButton";
 import DefaultLayout from "@/layout/DefaultLayout";
+import { useAction } from "@/hooks/use-action";
 
 const Kif = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
-    const { data: response, isPending, isError, error, } = useKifList({ page, perPage });
+    const { data, isPending, isError, error, } = useKifList({ page, perPage });
+    const handleAction = useAction('kif');
 
     const handleFileUpload = (file) => {
         console.log("File uploaded:", file);
@@ -55,7 +57,9 @@ const Kif = () => {
                             />
                         </div>
                     }
-                    columns={getKifColumns((item) => console.log("Action on:", item))} data={response.data ? response.data : []} total={response?.total || 0}
+                    columns={getKifColumns(handleAction)}
+                    data={data?.data ?? []}
+                    total={data?.total || 0}
                     page={page}
                     perPage={perPage}
                     onPageChange={setPage}

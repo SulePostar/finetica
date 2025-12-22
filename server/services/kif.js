@@ -314,6 +314,7 @@ const getKifById = async (id) => {
                 : []
         };
     } catch (error) {
+        if (error instanceof AppError) throw error;
         throw new AppError('Failed to fetch KIF by ID', 500);
     }
 };
