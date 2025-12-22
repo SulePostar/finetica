@@ -5,6 +5,8 @@ import RolesStatusesTable from "@/components/tables/RolesStatusesTable";
 import { Spinner } from "@/components/ui/spinner";
 import DefaultLayout from "@/layout/DefaultLayout";
 import { notify } from "@/lib/notifications";
+import IsError from '@/components/shared-ui/IsError.jsx';
+import React from 'react';
 
 
 export default function RoleAndStatusManagement() {
@@ -34,8 +36,8 @@ export default function RoleAndStatusManagement() {
     const statuses = getRolesStatusesColumns("statuses", (item) => { console.log("Delete", item); }, "status");
     const createUserStatus = useCreateUserStatus();
 
-    const { data: rolesData, isPending: rolesPending } = useRoles();
-    const { data: statusData, isPending: statusPending } = useStatuses();
+    const { data: rolesData, isPending: rolesPending, isError: isRolesError, error: rolesError, refetch: rolesRefetch  } = useRoles();
+    const { data: statusData, isPending: statusPending, isError: isStatusError, error: statusError, refetch: statusRefetch } = useStatuses();
 
     if (statusPending || rolesPending) {
         return (
@@ -48,6 +50,32 @@ export default function RoleAndStatusManagement() {
             </>
         );
     }
+
+    if(isRolesError) {
+      return (
+        <div>
+          <IsError
+            error={rolesError}
+            onRetry={() => rolesRefetch()}
+            title="Failed to load Roles"
+            showDetails={true}
+          />
+        </div>
+      );
+    }
+
+  if(isStatusError) {
+    return (
+      <div>
+        <IsError
+          error={statusError}
+          onRetry={() => statusRefetch()}
+          title="Failed to load Statuses"
+          showDetails={true}
+        />
+      </div>
+    );
+  }
 
     return (
         <DefaultLayout>

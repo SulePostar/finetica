@@ -15,13 +15,10 @@ router.get('/me', isAuthenticated, getMyProfile);
 router.put('/me', editMyProfile);
 // Admin-only routes
 router.get('/',
-  // isAuthenticated,
-  // hasRole(['admin']),
+  isAuthenticated,
+  hasRole(['admin']),
   getAllUsers);
-router.get('/:id',
-//isAuthenticated,
-// hasRole(['admin']), COMMENTED OUT FOR TESTING PURPOSES
-getUserById);
+router.get('/:id', isAuthenticated, hasRole(['admin']), getUserById);
 router.put('/:id', isAuthenticated, hasRole(['admin']), updateUser);
 router.delete('/:id', isAuthenticated, hasRole(['admin']), deleteUser);
 module.exports = router;
