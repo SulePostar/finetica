@@ -64,7 +64,6 @@ export default function RoleAndStatusManagement() {
                         placeholder="New role name"
                         onAdd={(name) => {
                             const normalizedName = name.trim().toLowerCase();
-                            console.log("FIRST ROLE OBJECT:", rolesData.data[0]);
                             const exists = rolesData.data.some(
                                 (r) => r.role.trim().toLowerCase() === normalizedName
                             );
