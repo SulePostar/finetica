@@ -16,7 +16,6 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
-
 import DefaultLayout from "@/layout/DefaultLayout";
 
 const Users = () => {
@@ -24,12 +23,36 @@ const Users = () => {
 
     const [page, setPage] = useState(1);
     const perPage = 10;
+    const [search, setSearch] = useState('');
 
     const { data: response, isPending, isError, error, refetch } = useUsers({ page, perPage, roleId: selectedRole === "all" ? null : selectedRole });
     const { data: rolesResponse } = useRoles();
 
-    const usersData = response?.data || [];
-    const totalUsers = response?.total || 0;
+    // fetch all users only when user searches (client-side filtering like the old client)
+    const { data: allResponse, isFetching: isFetchingAll } = useUsers(
+        { page: 1, perPage: 10000, roleId: selectedRole === "all" ? null : selectedRole },
+        { enabled: Boolean(search && search.trim().length > 0) }
+    );
+
+    // choose data source depending on whether we're performing client-side search
+    let usersData = response?.data || [];
+    let totalUsers = response?.total || 0;
+    if (search && search.trim().length > 0) {
+        const q = search.toLowerCase();
+        const allUsers = allResponse?.data || [];
+        const filtered = allUsers.filter((u) => {
+            return (
+                u.email?.toLowerCase().includes(q) ||
+                u.firstName?.toLowerCase().includes(q) ||
+                u.lastName?.toLowerCase().includes(q) ||
+                (u.fullName || '').toLowerCase().includes(q)
+            );
+        });
+        totalUsers = filtered.length;
+        const start = (page - 1) * perPage;
+        usersData = filtered.slice(start, start + perPage);
+    }
+
     const rolesData = rolesResponse?.data || [];
     const navigate = useNavigate();
 
@@ -37,7 +60,7 @@ const Users = () => {
         navigate(`/profile/${user.id}`);
     }
 
-    if (isPending) {
+    if (isPending || (search && isFetchingAll)) {
         return <>
             <PageTitle text="User Management Dashboard" />
             <div className="flex items-center justify-center h-40">
@@ -74,8 +97,13 @@ const Users = () => {
 
                             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 w-full">
                                 <Input
-                                    placeholder="Search..."
+                                    placeholder="Search by name or email"
                                     className="w-full md:flex-1 min-w-[200px]"
+                                    value={search}
+                                    onChange={(e) => {
+                                        setSearch(e.target.value);
+                                        setPage(1);
+                                    }}
                                 />
 
                                 <div className="flex w-full md:w-auto items-center gap-3 justify-between md:justify-end">
@@ -99,6 +127,7 @@ const Users = () => {
 
                                     <Button onClick={() => {
                                         setSelectedRole("all");
+                                        setSearch('');
                                         setPage(1);
                                     }} variant="outline" className="w-auto px-4 md:w-auto">
                                         Clear filters
