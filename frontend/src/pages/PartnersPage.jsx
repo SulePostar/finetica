@@ -6,12 +6,16 @@ import { Spinner } from "@/components/ui/spinner";
 import DefaultLayout from "@/layout/DefaultLayout";
 import { usePartners } from "@/queries/partners";
 import { useState } from "react";
-
+import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 const Partners = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
+    const [timeRange, setTimeRange] = useState("all");
     const { data, isPending, error, isError, refetch } = usePartners({ page, perPage });
-
+    const handleTimeChange = (newValue) => {
+        setTimeRange(newValue);
+        setPage(1);
+    };
     if (isPending) {
         return (
             <>
@@ -47,6 +51,12 @@ const Partners = () => {
                                 subtitle="Manage business partners"
                                 compact
                             />
+                            <div className="flex items-center gap-4">
+                                <TimeFilter
+                                    value={timeRange}
+                                    onChange={handleTimeChange}
+                                />
+                            </div>
                         </div>
                     }
                     columns={getPartnersColumns((item) => console.log("Action on:", item))}

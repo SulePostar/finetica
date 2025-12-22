@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import DynamicTable from "@/components/table/DynamicTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
 import { useUsers, useUpdateUser } from "@/queries/userQueries";
-import { useRoles } from "@/queries/rolesAndStatuses";
+import { useRoles, useStatuses } from "@/queries/rolesAndStatuses";
 import { getUsersColumns } from "@/components/tables/columns/UsersColumns";
 import { Spinner } from "@/components/ui/spinner";
 import PageTitle from "@/components/shared-ui/PageTitle";
@@ -25,16 +24,20 @@ import { toast } from "sonner";
 
 const Users = () => {
     const [selectedRole, setSelectedRole] = useState("all");
-
+    const [selectedStatus, setSelectedStatus] = useState("all");
     const [page, setPage] = useState(1);
     const perPage = 10;
 
-    const { data: response, isPending, isError, error, refetch } = useUsers({ page, perPage, roleId: selectedRole === "all" ? null : selectedRole });
+    const { data: response, isPending, isError, error, refetch } = useUsers({
+        page, perPage, roleId: selectedRole === "all" ? null : selectedRole,
+        statusId: selectedStatus === "all" ? null : selectedStatus
+    });
     const { data: rolesResponse } = useRoles();
-
+    const { data: statusesResponse } = useStatuses();
     const usersData = response?.data || [];
     const totalUsers = response?.total || 0;
     const rolesData = rolesResponse?.data || [];
+    const statusesData = statusesResponse?.data || [];
     const navigate = useNavigate();
 
     const handleUserClick = (user) => {
@@ -88,7 +91,7 @@ const Users = () => {
                 <IsError
                     error={error}
                     onRetry={() => refetch()}
-                    title="Failed to load Bank Transactions"
+                    title="Failed to load user"
                     showDetails={true}
                 />
             </div>
@@ -116,7 +119,22 @@ const Users = () => {
                                 />
 
                                 <div className="flex w-full md:w-auto items-center gap-3 justify-between md:justify-end">
-
+                                    <Select value={selectedStatus} onValueChange={(value) => {
+                                        setSelectedStatus(value);
+                                        setPage(1);
+                                    }}>
+                                        <SelectTrigger className="w-[140px] md:w-[180px]">
+                                            <SelectValue placeholder="Select status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="all">All statuses</SelectItem>
+                                            {statusesData.map((status) => (
+                                                <SelectItem key={status.id} value={status.id.toString()}>
+                                                    {capitalizeFirst(status.status)}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                     <Select value={selectedRole} onValueChange={(value) => {
                                         setSelectedRole(value);
                                         setPage(1);
@@ -136,6 +154,7 @@ const Users = () => {
 
                                     <Button onClick={() => {
                                         setSelectedRole("all");
+                                        setSelectedStatus("all");
                                         setPage(1);
                                     }} variant="outline" className="w-auto px-4 md:w-auto">
                                         Clear filters
