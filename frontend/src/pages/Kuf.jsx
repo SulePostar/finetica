@@ -7,12 +7,14 @@ import { Spinner } from "@/components/ui/spinner";
 import IsError from "@/components/shared-ui/IsError";
 import DefaultLayout from "@/layout/DefaultLayout";
 import UploadButton from "@/components/shared-ui/UploadButton";
+import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 import { useAction } from "@/hooks/use-action";
 
 const Kuf = () => {
     const [page, setPage] = useState(1);
+    const [timeRange, setTimeRange] = useState("all");
     const perPage = 10;
-    const { data, isPending, error, isError, refetch } = useKufInvoices({ page, perPage });
+    const { data, isPending, error, isError, refetch } = useKufInvoices({ page, perPage, timeRange });
     const handleAction = useAction('kuf');
 
     const handleFileUpload = (file) => {
@@ -20,6 +22,10 @@ const Kuf = () => {
 
     };
 
+    const handleTimeChange = (newValue) => {
+        setTimeRange(newValue);
+        setPage(1);
+    };
     if (isPending) {
         return (
             <DefaultLayout>
@@ -55,11 +61,17 @@ const Kuf = () => {
                                 subtitle="Overview of all KUF Purchase Invoices"
                                 compact
                             />
-                            <UploadButton
-                                onUploadSuccess={handleFileUpload}
-                                buttonText="Upload Kuf"
-                                className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-                            />
+                            <div className="flex items-center gap-4">
+                                <UploadButton
+                                    onUploadSuccess={handleFileUpload}
+                                    buttonText="Upload Kuf"
+                                    className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+                                />
+                                <TimeFilter
+                                    value={timeRange}
+                                    onChange={handleTimeChange}
+                                />
+                            </div>
                         </div>
                     }
                     columns={getKufColumns(handleAction)}
