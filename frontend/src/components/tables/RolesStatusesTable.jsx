@@ -28,7 +28,7 @@ const RolesStatusesTable = ({ title, onAdd, placeholder, columns, data }) => {
                 </Button>
             </form>
 
-            <DynamicTable columns={columns} data={data} total={data.length || 0} onPageChange={() => { }} perPage={10} page={1} />
+            <DynamicTable columns={columns} data={data} total={data.length || 0} onPageChange={() => { }} perPage={10} page={1} showColumnSelector={false} />
 
         </div>
     );
