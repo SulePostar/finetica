@@ -8,10 +8,11 @@ import { useState } from "react";
 import DefaultLayout from "@/layout/DefaultLayout";
 import UploadButton from "@/components/shared-ui/UploadButton";
 import { useQueryToast } from "@/hooks/use-query-toast";
-
+import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 const BankTransactions = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
+    const [timeRange, setTimeRange] = useState("all");
 
     const { data, isPending, isError, error, refetch } = useBankTransactions({
         page,
@@ -31,7 +32,10 @@ const BankTransactions = () => {
         successDescription: "All transactions have been fetched successfully.",
         errorMessage: "Failed to load bank transactions",
     });
-
+    const handleTimeChange = (newValue) => {
+        setTimeRange(newValue);
+        setPage(1);
+    };
     if (isPending) {
         return (
             <>
@@ -71,10 +75,17 @@ const BankTransactions = () => {
                                 subtitle="Overview of all bank transactions"
                                 compact
                             />
-                            <UploadButton
-                                onUploadSuccess={handleFileUpload}
-                                className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-                            />
+                            <div className="flex items-center gap-4">
+                                <UploadButton
+                                    onUploadSuccess={handleFileUpload}
+                                    buttonText="Upload Kuf"
+                                    className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+                                />
+                                <TimeFilter
+                                    value={timeRange}
+                                    onChange={handleTimeChange}
+                                />
+                            </div>
                         </div>
 
                     }

@@ -7,16 +7,20 @@ import IsError from "@/components/shared-ui/IsError";
 import { Spinner } from "@/components/ui/spinner";
 import UploadButton from "@/components/shared-ui/UploadButton";
 import DefaultLayout from "@/layout/DefaultLayout";
-
+import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 const Kif = () => {
     const [page, setPage] = useState(1);
+    const [timeRange, setTimeRange] = useState("all");
     const perPage = 10;
     const { data: response, isPending, isError, error, } = useKifList({ page, perPage });
 
     const handleFileUpload = (file) => {
         console.log("File uploaded:", file);
     };
-
+    const handleTimeChange = (newValue) => {
+        setTimeRange(newValue);
+        setPage(1);
+    };
     if (isPending) {
         return (
             <>
@@ -48,11 +52,17 @@ const Kif = () => {
                                 subtitle="Overview of all Kif files"
                                 compact
                             />
-                            <UploadButton
-                                onUploadSuccess={handleFileUpload}
-                                buttonText="Upload Kif"
-                                className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-                            />
+                            <div className="flex items-center gap-4">
+                                <UploadButton
+                                    onUploadSuccess={handleFileUpload}
+                                    buttonText="Upload Kif"
+                                    className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+                                />
+                                <TimeFilter
+                                    value={timeRange}
+                                    onChange={handleTimeChange}
+                                />
+                            </div>
                         </div>
                     }
                     columns={getKifColumns((item) => console.log("Action on:", item))} data={response.data ? response.data : []} total={response?.total || 0}

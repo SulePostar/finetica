@@ -7,10 +7,11 @@ import IsError from "@/components/shared-ui/IsError";
 import { getContractsColumns } from "@/components/tables/columns/ContractsColumns";
 import DefaultLayout from "@/layout/DefaultLayout";
 import UploadButton from "@/components/shared-ui/UploadButton";
-
+import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 export default function Contracts() {
   const { data, isPending, isError, error } = useContracts();
   const [currentPage, setCurrentPage] = useState(1);
+  const [timeRange, setTimeRange] = useState("all");
   const itemsPerPage = 5;
 
   const allRows = data?.data ?? [];
@@ -23,7 +24,10 @@ export default function Contracts() {
   const handleFileUpload = (file) => {
     console.log("File uploaded:", file);
   };
-
+  const handleTimeChange = (newValue) => {
+    setTimeRange(newValue);
+    setPage(1);
+  };
   if (isPending) {
     return (
       <>
@@ -56,10 +60,17 @@ export default function Contracts() {
                 subtitle="Overview of all Contracts files"
                 compact
               />
-              <UploadButton
-                onUploadSuccess={handleFileUpload}
-                className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-              />
+              <div className="flex items-center gap-4">
+                <UploadButton
+                  onUploadSuccess={handleFileUpload}
+                  buttonText="Upload Kuf"
+                  className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+                />
+                <TimeFilter
+                  value={timeRange}
+                  onChange={handleTimeChange}
+                />
+              </div>
             </div>
           }
           columns={getContractsColumns((item) => console.log("Action on:", item))}
