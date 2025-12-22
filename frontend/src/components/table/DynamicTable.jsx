@@ -35,6 +35,7 @@ const DynamicTable = ({
   header,
   toolbar,
   onRowClick,
+  showColumnSelector = true,
 }) => {
   const [expandedRows, setExpandedRows] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -137,12 +138,12 @@ const DynamicTable = ({
     <div className="w-full mx-auto rounded-2xl border border-table-border-light dark:border-gray-background bg-card shadow-lg overflow-hidden">
       {breakpoint !== "default" ? (
         <TooltipProvider>
-          {(header || toolbar || table.getAllColumns().some(c => c.getCanHide())) && (
+          {(header || toolbar || (showColumnSelector && table.getAllColumns().some(c => c.getCanHide()))) && (
             <div className="flex items-center justify-between px-6 pt-4 pb-2 gap-4">
               <div className="flex-1 min-w-0">{header}</div>
               <div className="flex items-center gap-2">
                 {toolbar}
-                <ColumnSelector table={table} />
+                {showColumnSelector && <ColumnSelector table={table} />}
               </div>
             </div>
           )}
