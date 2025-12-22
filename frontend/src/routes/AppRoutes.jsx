@@ -14,6 +14,7 @@ const InvalidPdfs = React.lazy(() => import('../pages/InvalidPDFs'))
 import Register from '@/pages/Register';
 import RoleAndStatusManagement from '@/pages/RoleAndStatusManagement';
 import ProtectedRoute from './ProtectedRoute';
+import { NotFound } from '@/pages/NotFound';
 
 export default function AppRoutes() {
     return (
@@ -34,7 +35,7 @@ export default function AppRoutes() {
                 <Route path="/invalid-pdfs" element={<InvalidPdfs />} />
             </Route>
 
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFound />} />
         </Routes>
     );
 }
