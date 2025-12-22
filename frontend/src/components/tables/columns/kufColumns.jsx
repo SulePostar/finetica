@@ -5,7 +5,7 @@ import ActionsDropdown from "@/components/ActionsDropdown";
 
 export function getKufColumns(onAction) {
     const kufActions = [
-        { key: "action1", label: "Action 1" },
+        { key: "view", label: "View" },
         { key: "action2", label: "Action 2" },
         { key: "action3", label: "Action 3" },
         { key: "action4", label: "Action 4" },

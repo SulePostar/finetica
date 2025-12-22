@@ -60,23 +60,7 @@ const getBankTransactionById = async (id) => {
 
         if (!document) {
             console.warn(`No BankTransaction found with id: ${id}`);
-            return {
-                id,
-                date: null,
-                amount: null,
-                direction: null,
-                accountNumber: null,
-                description: null,
-                invoiceId: null,
-                partnerId: null,
-                categoryId: null,
-                approvedAt: null,
-                approvedBy: null,
-                fileName: null,
-                pdfUrl: null,
-                items: [],
-                isBankTransaction: false,
-            };
+            throw new AppError('Bank Transaction not found', 404);
         }
 
         const transactionData = document.toJSON();
@@ -97,6 +81,7 @@ const getBankTransactionById = async (id) => {
             items: items.map(item => item.toJSON())
         };
     } catch (error) {
+        if (error instanceof AppError) throw error;
         console.error("Fetch Document Error:", error);
         throw new AppError('Failed to fetch bank transaction document', 500);
     }
@@ -413,3 +398,4 @@ module.exports = {
     editBankTransactionItem,
     getBankTransactionItems
 };
+

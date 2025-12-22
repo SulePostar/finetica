@@ -82,7 +82,6 @@ export default function RoleAndStatusManagement() {
             <div className="px-4 md:px-6 lg:px-8">
                 <PageTitle text={"Roles and Statuses"} />
 
-                {/* RESPONSIVE: stack on mobile, side-by-side on larger screens */}
                 <div className="flex flex-col 2xl:flex-row gap-6 p-4">
 
                     <RolesStatusesTable
@@ -109,10 +108,7 @@ export default function RoleAndStatusManagement() {
                         placeholder="New status name"
 
                         onAdd={(name) => {
-                            createUserStatus.mutate(name, {
-                                // onSuccess: () => toast.success("Status created"),
-                                // onError: (err) => toast.error(err.message),
-                            });
+                            createUserStatus.mutate(name, {});
                         }}
                     />
                 </div>
