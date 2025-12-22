@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import DynamicTable from "../table/DynamicTable";
-import PageTitle from "../shared-ui/PageTitle";
 
 const RolesStatusesTable = ({ title, onAdd, placeholder, columns, data }) => {
     const [input, setInput] = useState("");
@@ -10,7 +9,6 @@ const RolesStatusesTable = ({ title, onAdd, placeholder, columns, data }) => {
     return (
         <div className="flex-1">
             <h2 className="text-xl font-semibold mb-3">{title}</h2>
-
 
             <form
                 onSubmit={(e) => {
@@ -30,7 +28,7 @@ const RolesStatusesTable = ({ title, onAdd, placeholder, columns, data }) => {
                 </Button>
             </form>
 
-            <DynamicTable columns={columns} data={data} total={data.length || 0} onPageChange={() => { }} perPage={10} page={1} />
+            <DynamicTable columns={columns} data={data} total={data.length || 0} onPageChange={() => { }} perPage={10} page={1} showColumnSelector={false} />
 
         </div>
     );
