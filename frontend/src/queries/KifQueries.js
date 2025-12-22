@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getKifsById, getKifs } from "@/api/Kif";
+import { getKifById, getKifs } from "@/api/Kif";
 
 export const kifKeys = {
     all: ["kif"],
@@ -16,10 +16,10 @@ export const useKifList = (filters = {}) => {
     });
 };
 
-export const useKifDetail = (id) => {
+export const useKifById = (id) => {
     return useQuery({
         queryKey: kifKeys.detail(id),
-        queryFn: () => getKifsById(id),
+        queryFn: () => getKifById(id),
         enabled: !!id,
     });
 };

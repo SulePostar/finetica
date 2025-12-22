@@ -8,11 +8,14 @@ import { getContractsColumns } from "@/components/tables/columns/ContractsColumn
 import DefaultLayout from "@/layout/DefaultLayout";
 import UploadButton from "@/components/shared-ui/UploadButton";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
+import { useAction } from "@/hooks/use-action";
+
 export default function Contracts() {
   const { data, isPending, isError, error } = useContracts();
   const [currentPage, setCurrentPage] = useState(1);
   const [timeRange, setTimeRange] = useState("all");
   const itemsPerPage = 5;
+  const handleAction = useAction('contracts');
 
   const allRows = data?.data ?? [];
 
@@ -73,7 +76,7 @@ export default function Contracts() {
               </div>
             </div>
           }
-          columns={getContractsColumns((item) => console.log("Action on:", item))}
+          columns={getContractsColumns(handleAction)}
           data={paginatedRows}
           total={allRows.length}
           page={currentPage}
