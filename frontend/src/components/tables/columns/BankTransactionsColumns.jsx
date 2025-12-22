@@ -4,7 +4,7 @@ import { formatDateTime } from "@/helpers/formatDate";
 
 export function getBankTransactionsColumns(onAction) {
     const bankStatementsActions = [
-        { key: "action1", label: "Action 1" },
+        { key: "view", label: "View" },
         { key: "action2", label: "Action 2" },
         { key: "action3", label: "Action 3" },
     ];
