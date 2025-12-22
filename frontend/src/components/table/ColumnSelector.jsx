@@ -1,4 +1,5 @@
 import React from "react";
+import { Settings2 } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -19,8 +20,16 @@ const ColumnSelector = ({ table }) => {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="ml-auto">
-                    Columns
+                <Button
+                    variant="outline"
+                    size="default"
+                    className="ml-auto group relative overflow-hidden transition-all duration-200 bg-[var(--spurple)] text-white hover:bg-[var(--spurple)]/90 hover:text-white dark:bg-[var(--spurple)] dark:text-white dark:hover:bg-[var(--spurple)]/90 dark:hover:text-white border-none"                >
+                    <div className="flex items-center justify-center">
+                        <Settings2 className="w-5 h-5 transition-transform duration-200 group-hover:-translate-x-2" />
+                        <span className="max-w-0 overflow-hidden opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-0.5 group-hover:mr-0.5 group-hover:gap-0.2 transition-all duration-200 whitespace-nowrap">
+                            Columns
+                        </span>
+                    </div>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px] max-h-[300px] overflow-y-auto">

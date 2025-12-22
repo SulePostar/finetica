@@ -35,12 +35,12 @@ class UserRoleService {
             throw new AppError('Role name is required and must be a string', 400);
         }
 
-        const existingRole = await Role.findOne({ where: { role: roleName } });
+        const existingRole = await Role.findOne({ where: { role: roleName.toLowerCase() } });
         if (existingRole) {
             throw new AppError('Role already exists', 400);
         }
 
-        const newRole = await Role.create({ role: roleName });
+        const newRole = await Role.create({ role: roleName.toLowerCase() });
         return {
             statusCode: 201,
             message: 'User role created successfully',
