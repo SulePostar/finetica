@@ -74,7 +74,7 @@ const USER = {
 export function AppSidebar(props) {
   const { user } = useAuth();
 
-  const isAdmin = user?.roleName === 'Admin' || user?.roleName === 'admin';
+  const isAdmin = user?.roleName === 'admin';
 
   const filteredNavigation = React.useMemo(() => {
     return SIDEBAR_NAVIGATION.filter(group => {
