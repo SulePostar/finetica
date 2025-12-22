@@ -48,17 +48,16 @@ const Kuf = () => {
     return (
         <DefaultLayout>
             <div className="pt-20">
-                <DynamicTable
+                <DynamicTable columns={getKufColumns((item) => console.log("Action on:", item))} data={data.data ? data.data : []} total={data?.total || 0}
                     header={
                         <div className="flex items-center justify-between">
-                            <PageTitle
-                                text="Kuf"
-                                subtitle="Overview of all Kuf files"
+                            <PageTitle text="Kuf"
+                                subtitle="Overview of all KUF Purchase Invoices"
                                 compact
                             />
                             <UploadButton
                                 onUploadSuccess={handleFileUpload}
-                                buttonText="Upload"
+                                buttonText="Upload Kuf"
                                 className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
                             />
                         </div>
