@@ -27,6 +27,7 @@ import { SidebarUserInfo } from "./SidebarUserInfo";
 import { CollapsedUserAvatar } from "./CollapsedUserAvatar";
 
 import { Link } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 const SIDEBAR_NAVIGATION = [
     {
@@ -64,13 +65,24 @@ const SIDEBAR_NAVIGATION = [
     }
 ];
 
-const USER = {
-    name: "John Doe",
-    email: "john@example.com",
-    initials: "JD",
-};
 
 export function AppSidebar(props) {
+
+    const { user, loading } = useAuth();
+
+    if (loading) {
+        return <Sidebar {...props} className="bg-spurple" />;
+    }
+
+    const profilePath = `/profile/${user.id}`;
+
+    const currentUser = {
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email,
+        initials: user.initials || `${user.firstName?.[0]}${user.lastName?.[0]}`.toUpperCase(),
+        profileImage: user.profileImage
+    };
+
     return (
         <Sidebar
             collapsible="icon"
@@ -100,14 +112,14 @@ export function AppSidebar(props) {
                 </SidebarContent>
                 <SidebarFooter>
                     <div className="flex items-center justify-between px-3 py-4 group-data-[collapsible=icon]:hidden pointer-events-auto">
-                        <Link to="/profile" className="block w-full cursor-pointer">
-                            <SidebarUserInfo user={USER} />
+                        <Link to={profilePath} className="block w-full cursor-pointer">
+                            <SidebarUserInfo user={currentUser} />
                         </Link>
                     </div>
 
                     <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center py-4 pointer-events-auto">
-                        <Link to="/profile" className="cursor-pointer">
-                            <CollapsedUserAvatar initials={USER.initials} />
+                        <Link to={profilePath} className="cursor-pointer">
+                            <CollapsedUserAvatar initials={currentUser.initials} />
                         </Link>
                     </div>
                 </SidebarFooter>

@@ -15,12 +15,14 @@ import { useUser } from '@/queries/userQueries';
 import { Spinner } from '@/components/ui/spinner';
 import IsError from '@/components/shared-ui/IsError';
 import { formatDateTime } from '@/helpers/formatDate';
+import { useAuth } from '@/context/AuthContext';
 
 const ProfilePage = () => {
   const { userId } = useParams();
+  const { user: loggedInUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
 
-  const isOwnProfile = !userId;
+  const isOwnProfile = !userId || userId === String(loggedInUser?.id);
 
   const { data: userData, isLoading, isError, error, refetch } = useUser(userId);
 
@@ -51,15 +53,7 @@ const ProfilePage = () => {
     );
   }
 
-  const profileData = userData || {
-    firstName: 'Zdravko',
-    lastName: 'Čolić',
-    email: 'zdravko@example.com',
-    roleName: 'Administrator',
-    statusName: 'Approved',
-    lastLoginAt: 'Dec 11, 2024, 2:30 PM',
-    profileImage: null
-  };
+  const profileData = userData;
 
   return (
     <DefaultLayout>
@@ -181,7 +175,7 @@ const ProfilePage = () => {
                       <Input
                         id="first_name"
                         name="first_name"
-                        defaultValue={profileData.firstName}
+                        value={profileData.firstName}
                         disabled={!isEditing}
                         readOnly={!isEditing}
                         className={!isEditing ? 'bg-muted cursor-not-allowed' : ''}
@@ -192,7 +186,7 @@ const ProfilePage = () => {
                       <Input
                         id="last_name"
                         name="last_name"
-                        defaultValue={profileData.lastName}
+                        value={profileData.lastName}
                         disabled={!isEditing}
                         readOnly={!isEditing}
                         className={!isEditing ? 'bg-muted cursor-not-allowed' : ''}

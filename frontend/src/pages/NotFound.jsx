@@ -13,7 +13,7 @@ import {
 import DefaultLayout from "@/layout/DefaultLayout"
 import { useNavigate } from "react-router-dom"
 
-export function NotFound() {
+export default function NotFound() {
     const navigate = useNavigate();
 
     return (
