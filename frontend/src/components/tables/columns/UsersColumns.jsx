@@ -4,10 +4,10 @@ import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
 import { formatDateTime } from "@/helpers/formatDate";
 import { formatValue } from "@/helpers/formatValue";
 
-export function getUsersColumns(onAction) {
+export function getUsersColumns(onAction, isAdmin) {
     const userActions = [
-        { key: "action1", label: "Action 1" },
-        { key: "action2", label: "Action 2" },
+        { key: "Approve", label: "Approve" },
+        { key: "Reject", label: "Reject" },
     ];
     return [
         {
@@ -50,13 +50,16 @@ export function getUsersColumns(onAction) {
             header: "Actions",
             meta: { isComponent: true },
             cell: ({ row }) => {
-                return (
+                const user = row.original;
+                const showActions = isAdmin
+
+                return showActions ? (
                     <ActionsDropdown
-                        item={row.original}
+                        item={user}
                         actions={userActions}
                         onAction={onAction}
                     />
-                )
+                ) : null;
             },
         },
     ];

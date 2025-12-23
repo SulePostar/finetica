@@ -6,17 +6,21 @@ const {
     deleteUserRole,
 } = require('../controllers/userRoles');
 const isAuthenticated = require('../middleware/isAuthenticated');
+const hasRole = require('../middleware/hasRole');
 
 const router = express.Router();
 router.get('/',
-    // isAuthenticated
+    isAuthenticated,
+    hasRole(['admin']),
     getAllUserRoles);
-router.get('/:id', isAuthenticated, getUserRoleById);
+router.get('/:id', isAuthenticated, hasRole(['admin']), getUserRoleById);
 router.post('/',
-    //isAuthenticated, 
+    isAuthenticated,
+    hasRole(['admin']),
     createUserRole);
 router.delete('/:id',
-    //isAuthenticated, 
+    isAuthenticated,
+    hasRole(['admin']),
     deleteUserRole);
 
 module.exports = router;

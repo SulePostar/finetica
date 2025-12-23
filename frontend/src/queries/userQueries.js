@@ -1,18 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
-import { getUsers, getUserById } from "../api/users";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getUsers, getUserById, updateUser } from "../api/users";
 
 export const usersKeys = {
-    all: ["users"],
-    list: (filters) => [...usersKeys.all, "list", filters],
-    detail: (id) => [...usersKeys.all, "detail", id],
+  all: ["users"],
+  list: (filters) => [...usersKeys.all, "list", filters],
+  detail: (id) => [...usersKeys.all, "detail", id],
 };
 
 
 export const useUsers = (filters = {}) => {
-    return useQuery({
-        queryKey: usersKeys.list(filters),
-        queryFn: () => getUsers(filters),
-    });
+  return useQuery({
+    queryKey: usersKeys.list(filters),
+    queryFn: () => getUsers(filters),
+  });
 };
 
 export const useUser = (userId) => {
@@ -23,3 +23,15 @@ export const useUser = (userId) => {
   });
 };
 
+export const useUpdateUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ userId, payload }) =>
+      updateUser(userId, payload),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+};

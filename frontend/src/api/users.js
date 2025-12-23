@@ -18,3 +18,7 @@ export const getMe = async () => {
     const response = await apiClient.get('/users/me');
     return response.data;
 };
+
+export const updateUser = (id, data) => {
+    return apiClient.put(`/users/${id}`, data);
+};
