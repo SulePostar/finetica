@@ -57,7 +57,7 @@ export default function Contracts() {
       <div className="pt-20">
         <DynamicTable
           header={
-            <div className="flex items-center justify-between">
+            < div className="flex items-center justify-between w-full">
               <PageTitle
                 text="Contracts"
                 subtitle="Overview of all Contracts files"

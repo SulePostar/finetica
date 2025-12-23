@@ -91,7 +91,7 @@ const BankTransactions = () => {
             <div className="pt-20">
                 <DynamicTable
                     header={
-                        <div className="flex items-center justify-between gap-4">
+                        < div className="flex items-center justify-between w-full">
                             <PageTitle
                                 text="Bank Transactions"
                                 subtitle="Overview of all bank transactions"
