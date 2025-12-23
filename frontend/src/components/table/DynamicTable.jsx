@@ -243,8 +243,7 @@ const DynamicTable = ({
                               {!isExplicitComponent ? (
                                 <Tooltip delayDuration={800}>
                                   <TooltipTrigger asChild>
-                                    <div className="max-w-[18ch] sm:max-w-[22ch] md:max-w-[26ch] overflow-hidden text-ellipsis whitespace-nowrap text-center cursor-default">
-                                      {rendered}
+                                    <div className="max-w-[100%] sm:max-w-[100%] md:max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap text-center cursor-default">     {rendered}
                                     </div>
                                   </TooltipTrigger>
 
