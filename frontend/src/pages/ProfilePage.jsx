@@ -53,15 +53,7 @@ const ProfilePage = () => {
     );
   }
 
-  const profileData = userData || {
-    firstName: 'Zdravko',
-    lastName: 'Čolić',
-    email: 'zdravko@example.com',
-    roleName: 'Administrator',
-    statusName: 'Approved',
-    lastLoginAt: 'Dec 11, 2024, 2:30 PM',
-    profileImage: null
-  };
+  const profileData = userData;
 
   return (
     <DefaultLayout>
@@ -183,7 +175,7 @@ const ProfilePage = () => {
                       <Input
                         id="first_name"
                         name="first_name"
-                        defaultValue={profileData.firstName}
+                        value={profileData.firstName}
                         disabled={!isEditing}
                         readOnly={!isEditing}
                         className={!isEditing ? 'bg-muted cursor-not-allowed' : ''}
@@ -194,7 +186,7 @@ const ProfilePage = () => {
                       <Input
                         id="last_name"
                         name="last_name"
-                        defaultValue={profileData.lastName}
+                        value={profileData.lastName}
                         disabled={!isEditing}
                         readOnly={!isEditing}
                         className={!isEditing ? 'bg-muted cursor-not-allowed' : ''}
