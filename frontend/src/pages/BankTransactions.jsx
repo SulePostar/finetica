@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import DefaultLayout from "@/layout/DefaultLayout";
 import DynamicTable from "@/components/table/DynamicTable";
@@ -8,53 +7,39 @@ import UploadButton from "@/components/shared-ui/UploadButton";
 import IsError from "@/components/shared-ui/IsError";
 import { Spinner } from "@/components/ui/spinner";
 
-import { useBankTransactions, bankTransactionKeys } from "@/queries/BankTransactionsQueries";
+import {
+    useBankTransactions,
+    bankTransactionKeys,
+} from "@/queries/BankTransactionsQueries";
 import { useQueryToast } from "@/hooks/use-query-toast";
 import { getBankTransactionsColumns } from "@/components/tables/columns/BankTransactionsColumns";
 
-import { uploadFileToBucket } from "@/api/uploadedFiles";
-import { notify } from "@/lib/notifications";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 import { useAction } from "@/hooks/use-action";
+import { useBucketFileUpload } from "@/queries/uploadedFiles";
+
 const BankTransactions = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
     const [timeRange, setTimeRange] = useState("all");
-    const handleAction = useAction('bank-statements');
+    const handleAction = useAction("bank-statements");
+
     const { data, isPending, isError, error, refetch } = useBankTransactions({
         page,
         perPage,
+        // ako backend podržava filter, možeš dodati i timeRange ovdje
+        // timeRange,
     });
-
-    const queryClient = useQueryClient();
 
     const {
         mutateAsync: uploadFile,
         isPending: isUploading,
-    } = useMutation({
-        mutationFn: ({ file, description }) =>
-            uploadFileToBucket({
-                file,
-                bucketName: "transactions",
-                description,
-            }),
-
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: bankTransactionKeys.all });
-
-            notify.success("Bank transactions uploaded", {
-                description: "Bank transaction file has been processed successfully.",
-            });
-        },
-
-        onError: (err) => {
-            notify.error("Upload failed", {
-                description:
-                    err?.response?.data?.message ||
-                    err?.message ||
-                    "Something went wrong during upload.",
-            });
-        },
+    } = useBucketFileUpload({
+        bucketName: "transactions",
+        invalidateKeys: [bankTransactionKeys.all],
+        successMessage: "Bank transactions uploaded",
+        successDescription:
+            "Bank transaction file has been processed successfully.",
     });
 
     const handleFileUpload = async (file) => {
@@ -70,10 +55,12 @@ const BankTransactions = () => {
         successDescription: "All transactions have been fetched successfully.",
         errorMessage: "Failed to load bank transactions",
     });
+
     const handleTimeChange = (newValue) => {
         setTimeRange(newValue);
         setPage(1);
     };
+
     if (isPending) {
         return (
             <>
@@ -113,7 +100,6 @@ const BankTransactions = () => {
                                 compact
                             />
                             <div className="flex items-center gap-4">
-
                                 <div className="flex items-center gap-3">
                                     {isUploading && (
                                         <span className="text-sm text-muted-foreground">
@@ -126,10 +112,7 @@ const BankTransactions = () => {
                                         buttonText="Upload Bank Transactions"
                                         className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
                                     />
-                                    <TimeFilter
-                                        value={timeRange}
-                                        onChange={handleTimeChange}
-                                    />
+                                    <TimeFilter value={timeRange} onChange={handleTimeChange} />
                                 </div>
                             </div>
                         </div>
