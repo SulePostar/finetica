@@ -49,7 +49,7 @@ const Kif = () => {
             <div className="pt-20">
                 <DynamicTable
                     header={
-                        <div className="flex items-center justify-between">
+                        < div className="flex items-center justify-between w-full">
                             <PageTitle
                                 text="Kif"
                                 subtitle="Overview of all Kif files"
