@@ -15,12 +15,14 @@ import { useUser } from '@/queries/userQueries';
 import { Spinner } from '@/components/ui/spinner';
 import IsError from '@/components/shared-ui/IsError';
 import { formatDateTime } from '@/helpers/formatDate';
+import { useAuth } from '@/context/AuthContext';
 
 const ProfilePage = () => {
   const { userId } = useParams();
+  const { user: loggedInUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
 
-  const isOwnProfile = !userId;
+  const isOwnProfile = !userId || userId === String(loggedInUser?.id);
 
   const { data: userData, isLoading, isError, error, refetch } = useUser(userId);
 
