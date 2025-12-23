@@ -27,8 +27,6 @@ const BankTransactions = () => {
     const { data, isPending, isError, error, refetch } = useBankTransactions({
         page,
         perPage,
-        // ako backend podržava filter, možeš dodati i timeRange ovdje
-        // timeRange,
     });
 
     const {
