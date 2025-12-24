@@ -25,6 +25,7 @@ const Partners = () => {
     const handleRowClick = (row) => {
         navigate(`/partners/${row.id}`);
     };
+
     if (isPending) {
         return (
             <>
