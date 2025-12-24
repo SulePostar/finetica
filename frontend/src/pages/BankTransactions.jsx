@@ -87,20 +87,18 @@ const BankTransactions = () => {
                                 compact
                             />
                             <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-3">
-                                    {isUploading && (
-                                        <span className="text-sm text-muted-foreground">
-                                            Uploading & processing...
-                                        </span>
-                                    )}
+                                {isUploading && (
+                                    <span className="text-sm text-muted-foreground">
+                                        Uploading & processing...
+                                    </span>
+                                )}
 
-                                    <UploadButton
-                                        onUploadSuccess={handleFileUpload}
-                                        buttonText="Upload Bank Transactions"
-                                        className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-                                    />
-                                    <TimeFilter value={timeRange} onChange={handleTimeChange} />
-                                </div>
+                                <UploadButton
+                                    onUploadSuccess={handleFileUpload}
+                                    buttonText="Upload Bank Transactions"
+                                    className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+                                />
+                                <TimeFilter value={timeRange} onChange={handleTimeChange} />
                             </div>
                         </div>
                     }
