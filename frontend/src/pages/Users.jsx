@@ -9,6 +9,7 @@ import { getUsersColumns } from "@/components/tables/columns/UsersColumns";
 import { Spinner } from "@/components/ui/spinner";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import IsError from "@/components/shared-ui/IsError";
+import { useNavigate } from "react-router-dom";
 import {
     Select, SelectTrigger, SelectValue,
     SelectContent,
@@ -45,17 +46,16 @@ const Users = () => {
     const { mutate: updateUser } = useUpdateUser();
 
     const handleUserClick = (action, user) => {
-        if (action === "Approve") {
-            updateUser({
-                userId: user.id,
-                payload: { statusId: 2 },
-            });
-        }
+        const userActions = {
+            Approve: 2,
+            Reject: 3,
+        };
 
-        if (action === "Reject") {
+        const statusId = userActions[action];
+        if (statusId) {
             updateUser({
                 userId: user.id,
-                payload: { statusId: 3 },
+                payload: { statusId },
             });
         }
     };
