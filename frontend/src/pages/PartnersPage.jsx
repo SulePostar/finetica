@@ -45,7 +45,7 @@ const Partners = () => {
             <div className="pt-20">
                 <DynamicTable
                     header={
-                        <div className="flex items-center justify-between">
+                        < div className="flex items-center justify-between w-full">
                             <PageTitle
                                 text="Partners"
                                 subtitle="Manage business partners"

@@ -14,8 +14,8 @@ const InvalidPdfs = React.lazy(() => import('../pages/InvalidPDFs'))
 import Register from '@/pages/Register';
 import RoleAndStatusManagement from '@/pages/RoleAndStatusManagement';
 import ProtectedRoute from './ProtectedRoute';
-import { NotFound } from '@/pages/NotFound';
 import DocumentDetails from '@/pages/DocumentDetails';
+import NotFound from '@/pages/NotFound';
 
 export default function AppRoutes() {
     return (
@@ -25,6 +25,7 @@ export default function AppRoutes() {
 
             <Route element={<ProtectedRoute />}>
                 <Route path="/" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/kif" element={<Kif />} />
                 <Route path="/bank-statements" element={<BankTransactions />} />
                 <Route path="/kuf" element={<Kuf />} />
