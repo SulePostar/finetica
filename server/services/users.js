@@ -5,7 +5,7 @@ const AppError = require('../utils/errorHandler');
 const { UserResponseDTO } = require('../dto/user/responses/UserResponseDTO.js');
 
 class UserService {
-  async getAllUsers({ page = 1, perPage = 10, sortField, sortOrder = 'asc', roleId, search, } = {}) {
+  async getAllUsers({ page = 1, perPage = 10, sortField, sortOrder = 'asc', roleId, statusId, search, } = {}) {
     try {
       const limit = parseInt(perPage, 10);
       const offset = (page - 1) * limit;
@@ -20,7 +20,9 @@ class UserService {
       if (roleId) {
         whereClause.roleId = parseInt(roleId, 10);
       }
-
+      if (statusId) {
+        whereClause.statusId = parseInt(statusId, 10);
+      }
       if (search && search.trim()) {
         const q = `%${search.trim()}%`;
 
