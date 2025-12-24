@@ -6,7 +6,6 @@ import { useState } from "react";
 import IsError from "@/components/shared-ui/IsError";
 import { Spinner } from "@/components/ui/spinner";
 import UploadButton from "@/components/shared-ui/UploadButton";
-import DefaultLayout from "@/layout/DefaultLayout";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 import { useAction } from "@/hooks/use-action";
 
@@ -45,39 +44,37 @@ const Kif = () => {
     }
 
     return (
-        <DefaultLayout>
-            <div className="pt-20">
-                <DynamicTable
-                    header={
-                        < div className="flex items-center justify-between w-full">
-                            <PageTitle
-                                text="Kif"
-                                subtitle="Overview of all Kif files"
-                                compact
+        <div className="pt-20">
+            <DynamicTable
+                header={
+                    < div className="flex items-center justify-between w-full">
+                        <PageTitle
+                            text="Kif"
+                            subtitle="Overview of all Kif files"
+                            compact
+                        />
+                        <div className="flex items-center gap-4">
+                            <UploadButton
+                                onUploadSuccess={handleFileUpload}
+                                buttonText="Upload Kif"
+                                className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
                             />
-                            <div className="flex items-center gap-4">
-                                <UploadButton
-                                    onUploadSuccess={handleFileUpload}
-                                    buttonText="Upload Kif"
-                                    className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-                                />
-                                <TimeFilter
-                                    value={timeRange}
-                                    onChange={handleTimeChange}
-                                />
-                            </div>
+                            <TimeFilter
+                                value={timeRange}
+                                onChange={handleTimeChange}
+                            />
                         </div>
-                    }
-                    columns={getKifColumns(handleAction)}
-                    data={data?.data ?? []}
-                    total={data?.total || 0}
-                    page={page}
-                    perPage={perPage}
-                    onPageChange={setPage}
-                />
+                    </div>
+                }
+                columns={getKifColumns(handleAction)}
+                data={data?.data ?? []}
+                total={data?.total || 0}
+                page={page}
+                perPage={perPage}
+                onPageChange={setPage}
+            />
 
-            </div>
-        </DefaultLayout>
+        </div>
     );
 };
 

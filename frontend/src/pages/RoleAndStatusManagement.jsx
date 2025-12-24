@@ -3,7 +3,6 @@ import { getRolesStatusesColumns } from "@/components/tables/columns/rolesStatus
 import { useCreateRole, useRoles, useStatuses, useCreateUserStatus, useDeleteRole } from "@/queries/rolesAndStatuses";
 import RolesStatusesTable from "@/components/tables/RolesStatusesTable";
 import { Spinner } from "@/components/ui/spinner";
-import DefaultLayout from "@/layout/DefaultLayout";
 import { notify } from "@/lib/notifications";
 
 
@@ -50,42 +49,39 @@ export default function RoleAndStatusManagement() {
     }
 
     return (
-        <DefaultLayout>
-            <div className="px-4 md:px-6 lg:px-8">
-                <PageTitle text={"Roles and Statuses"} />
+        <div className="px-4 md:px-6 lg:px-8">
+            <PageTitle text={"Roles and Statuses"} />
 
-                <div className="flex flex-col 2xl:flex-row gap-6 p-4">
+            <div className="flex flex-col 2xl:flex-row gap-6 p-4">
 
-                    <RolesStatusesTable
-                        columns={columns}
-                        data={rolesData.data}
-                        title="Roles"
-                        placeholder="New role name"
-                        onAdd={(name) => {
-                            createRoleMutation.mutate(name, {
-                                onSuccess: () => {
-                                    console.log(`Role "${name}" created successfully!`);
-                                },
-                                onError: (error) => {
-                                    console.log(`Error creating role: ${error.message}`);
-                                }
-                            });
-                        }}
-                    />
+                <RolesStatusesTable
+                    columns={columns}
+                    data={rolesData.data}
+                    title="Roles"
+                    placeholder="New role name"
+                    onAdd={(name) => {
+                        createRoleMutation.mutate(name, {
+                            onSuccess: () => {
+                                console.log(`Role "${name}" created successfully!`);
+                            },
+                            onError: (error) => {
+                                console.log(`Error creating role: ${error.message}`);
+                            }
+                        });
+                    }}
+                />
 
-                    <RolesStatusesTable
-                        columns={statuses}
-                        data={statusData.data}
-                        title="Statuses"
-                        placeholder="New status name"
+                <RolesStatusesTable
+                    columns={statuses}
+                    data={statusData.data}
+                    title="Statuses"
+                    placeholder="New status name"
 
-                        onAdd={(name) => {
-                            createUserStatus.mutate(name, {});
-                        }}
-                    />
-                </div>
+                    onAdd={(name) => {
+                        createUserStatus.mutate(name, {});
+                    }}
+                />
             </div>
-
-        </DefaultLayout>
+        </div>
     );
 }

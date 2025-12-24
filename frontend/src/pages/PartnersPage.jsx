@@ -3,7 +3,6 @@ import PageTitle from "@/components/shared-ui/PageTitle";
 import DynamicTable from "@/components/table/DynamicTable";
 import { getPartnersColumns } from "@/components/tables/columns/PartnersColumns";
 import { Spinner } from "@/components/ui/spinner";
-import DefaultLayout from "@/layout/DefaultLayout";
 import { usePartners } from "@/queries/partners";
 import { useState } from "react";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
@@ -41,33 +40,31 @@ const Partners = () => {
         );
     }
     return (
-        <DefaultLayout>
-            <div className="pt-20">
-                <DynamicTable
-                    header={
-                        < div className="flex items-center justify-between w-full">
-                            <PageTitle
-                                text="Partners"
-                                subtitle="Manage business partners"
-                                compact
+        <div className="pt-20">
+            <DynamicTable
+                header={
+                    < div className="flex items-center justify-between w-full">
+                        <PageTitle
+                            text="Partners"
+                            subtitle="Manage business partners"
+                            compact
+                        />
+                        <div className="flex items-center gap-4">
+                            <TimeFilter
+                                value={timeRange}
+                                onChange={handleTimeChange}
                             />
-                            <div className="flex items-center gap-4">
-                                <TimeFilter
-                                    value={timeRange}
-                                    onChange={handleTimeChange}
-                                />
-                            </div>
                         </div>
-                    }
-                    columns={getPartnersColumns((item) => console.log("Action on:", item))}
-                    data={data.data ?? []}
-                    total={data?.total || 0}
-                    page={page}
-                    perPage={perPage}
-                    onPageChange={setPage}
-                />
-            </div>
-        </DefaultLayout>
+                    </div>
+                }
+                columns={getPartnersColumns((item) => console.log("Action on:", item))}
+                data={data.data ?? []}
+                total={data?.total || 0}
+                page={page}
+                perPage={perPage}
+                onPageChange={setPage}
+            />
+        </div>
     );
 };
 
