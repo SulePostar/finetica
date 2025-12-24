@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getBankTransactions, getBankTransactionById } from "../api/BankTransactions";
 
 export const bankTransactionKeys = {
@@ -6,7 +6,6 @@ export const bankTransactionKeys = {
 
   lists: () => [...bankTransactionKeys.all, "list"],
   list: (filters) => [...bankTransactionKeys.lists(), { filters }],
-
   details: () => [...bankTransactionKeys.all, "detail"],
   detail: (id) => [...bankTransactionKeys.details(), id],
 };
@@ -18,5 +17,14 @@ export const useBankTransactions = (filters = {}) => {
     queryFn: () => getBankTransactions(filters),
     // Optional: enabled if you need to wait for some condition
     // enabled: !!someCondition,
+  });
+};
+
+// GET - single bank transaction by ID
+export const useBankTransactionById = (id) => {
+  return useQuery({
+    queryKey: bankTransactionKeys.detail(id),
+    queryFn: () => getBankTransactionById(id),
+    enabled: !!id,
   });
 };
