@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import DynamicTable from "@/components/table/DynamicTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,26 @@ import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
 import useDebounce from "@/hooks/use-debounce";
 import DefaultLayout from "@/layout/DefaultLayout";
 
+const FilterSearchInput = ({ value, onChange }) => {
+    const [localValue, setLocalValue] = useState(value);
+
+    useEffect(() => {
+        setLocalValue(value);
+    }, [value]);
+
+    return (
+        <Input
+            placeholder="Search by name or email"
+            className="w-full md:flex-1 min-w-[200px]"
+            value={localValue}
+            onChange={(e) => {
+                setLocalValue(e.target.value);
+                onChange(e.target.value);
+            }}
+        />
+    );
+};
+
 const Users = () => {
     const [selectedRole, setSelectedRole] = useState("all");
     const [selectedStatus, setSelectedStatus] = useState("all");
@@ -33,19 +53,37 @@ const Users = () => {
 
     const columns = useMemo(() => getUsersColumns(), []);
 
-    const { data: response, isPending, isError, error, refetch, } = useUsers({
+    const { data: response, isPending, isError, error, refetch } = useUsers({
         page,
         perPage,
         roleId: selectedRole === "all" ? null : selectedRole,
         statusId: selectedStatus === "all" ? null : selectedStatus,
         search: debouncedSearch,
     });
+
     const { data: rolesResponse } = useRoles();
     const { data: statusesResponse } = useStatuses();
+
     const usersData = response?.data ?? [];
     const totalUsers = response?.total ?? 0;
-    const rolesData = rolesResponse?.data ?? [];
-    const statusesData = statusesResponse?.data || [];
+
+    const statusOptions = useMemo(() => {
+        const data = statusesResponse?.data || [];
+        return data.map(s => (
+            <SelectItem key={s.id} value={s.id.toString()}>
+                {capitalizeFirst(s.status)}
+            </SelectItem>
+        ));
+    }, [statusesResponse]);
+
+    const roleOptions = useMemo(() => {
+        const data = rolesResponse?.data ?? [];
+        return data.map(r => (
+            <SelectItem key={r.id} value={r.id.toString()}>
+                {capitalizeFirst(r.role)}
+            </SelectItem>
+        ));
+    }, [rolesResponse]);
 
     const handleUserClick = (user) => {
         navigate(`/profile/${user.id}`);
@@ -53,14 +91,12 @@ const Users = () => {
 
     if (isError) {
         return (
-            <div>
-                <IsError
-                    error={error}
-                    onRetry={() => refetch()}
-                    title="Failed to load Users"
-                    showDetails={true}
-                />
-            </div>
+            <IsError
+                error={error}
+                onRetry={() => refetch()}
+                title="Failed to load Users"
+                showDetails={true}
+            />
         );
     }
 
@@ -73,48 +109,49 @@ const Users = () => {
                             text="Users"
                             subtitle="Users management dashboard"
                             compact
-                        />}
+                        />
+                    }
                     toolbar={{
-                        search:
-                            <Input
-                                placeholder="Search by name or email"
-                                className="w-full md:flex-1 min-w-[200px]"
+                        search: (
+                            <FilterSearchInput
                                 value={search}
-                                onChange={(e) => {
-                                    setSearch(e.target.value);
+                                onChange={(val) => {
+                                    setSearch(val);
                                     setPage(1);
                                 }}
-                            />,
+                            />
+                        ),
                         filters: (
                             <>
-                                <Select value={selectedStatus}
+                                <Select
+                                    value={selectedStatus}
                                     onValueChange={(value) => {
                                         setSelectedStatus(value);
                                         setPage(1);
-                                    }}>
-                                    <SelectTrigger className="w-[180px]"><SelectValue placeholder="All statuses" /></SelectTrigger>
+                                    }}
+                                >
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="All statuses" />
+                                    </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">All statuses</SelectItem>
-                                        {statusesData.map(s => <SelectItem key={s.id} value={s.id.toString()}>
-                                            {capitalizeFirst(s.status)}
-                                        </SelectItem>)
-                                        }
+                                        {statusOptions}
                                     </SelectContent>
                                 </Select>
 
-                                <Select value={selectedRole} onValueChange={(value) => {
-                                    setSelectedRole(value);
-                                    setPage(1);
-                                }}>
+                                <Select
+                                    value={selectedRole}
+                                    onValueChange={(value) => {
+                                        setSelectedRole(value);
+                                        setPage(1);
+                                    }}
+                                >
                                     <SelectTrigger className="w-[180px]">
                                         <SelectValue placeholder="All roles" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">All roles</SelectItem>
-                                        {rolesData.map(r => <SelectItem key={r.id} value={r.id.toString()}>
-                                            {capitalizeFirst(r.role)}
-                                        </SelectItem>)
-                                        }
+                                        {roleOptions}
                                     </SelectContent>
                                 </Select>
                             </>
