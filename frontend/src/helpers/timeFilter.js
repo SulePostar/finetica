@@ -6,7 +6,24 @@
  */
 
 export const getTimeFilterWhereClause = (timeFilter, dateField = 'createdAt') => {
-  if (timeFilter === 'all') {
+  // Support 'all' and empty filter
+  if (timeFilter === 'all' || !timeFilter) {
+    return {};
+  }
+
+  // Support custom object: { from: Date, to: Date }
+  if (typeof timeFilter === 'object' && timeFilter !== null) {
+    const { from, to } = timeFilter;
+
+    if (from && to) {
+      return {
+        [dateField]: {
+          $gte: new Date(from),
+          $lte: new Date(to)
+        }
+      };
+    }
+
     return {};
   }
 
@@ -27,14 +44,17 @@ export const getTimeFilterWhereClause = (timeFilter, dateField = 'createdAt') =>
       return {};
   }
 
-  const dateThreshold = new Date(now);
-  dateThreshold.setDate(dateThreshold.getDate() - daysAgo);
+  const fromDate = new Date(now);
+  fromDate.setDate(fromDate.getDate() - daysAgo);
+
+  const toDate = now;
 
   return {
     [dateField]: {
-      $gte: dateThreshold
+      $gte: fromDate,
+      $lte: toDate
     }
-  }
+  };
 }
 
 export const TIME_FILTER_OPTIONS = [
