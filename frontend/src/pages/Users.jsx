@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import DynamicTable from "@/components/table/DynamicTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,70 +11,50 @@ import PageTitle from "@/components/shared-ui/PageTitle";
 import IsError from "@/components/shared-ui/IsError";
 import { useNavigate } from "react-router-dom";
 import {
-    Select, SelectTrigger, SelectValue,
+    Select,
+    SelectTrigger,
+    SelectValue,
     SelectContent,
     SelectItem,
 } from "@/components/ui/select";
 import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
+import useDebounce from "@/hooks/use-debounce";
 import DefaultLayout from "@/layout/DefaultLayout";
 
 const Users = () => {
     const [selectedRole, setSelectedRole] = useState("all");
-
     const [page, setPage] = useState(1);
     const perPage = 10;
-    const [search, setSearch] = useState('');
+    const [search, setSearch] = useState("");
 
-    const { data: response, isPending, isError, error, refetch } = useUsers({ page, perPage, roleId: selectedRole === "all" ? null : selectedRole });
+    const debouncedSearch = useDebounce(search, 400);
+    const navigate = useNavigate();
+
+    const columns = useMemo(() => getUsersColumns(), []);
+
+    const { data: response, isPending, isError, error, refetch, } = useUsers({
+        page,
+        perPage,
+        roleId: selectedRole === "all" ? null : selectedRole,
+        search: debouncedSearch,
+    });
     const { data: rolesResponse } = useRoles();
 
-    // fetch all users only when user searches (client-side filtering like the old client)
-    const { data: allResponse, isFetching: isFetchingAll } = useUsers(
-        { page: 1, perPage: 10000, roleId: selectedRole === "all" ? null : selectedRole },
-        { enabled: Boolean(search && search.trim().length > 0) }
-    );
-
-    // choose data source depending on whether we're performing client-side search
-    let usersData = response?.data || [];
-    let totalUsers = response?.total || 0;
-    if (search && search.trim().length > 0) {
-        const q = search.toLowerCase();
-        const allUsers = allResponse?.data || [];
-        const filtered = allUsers.filter((u) => {
-            return (
-                u.email?.toLowerCase().includes(q) ||
-                u.firstName?.toLowerCase().includes(q) ||
-                u.lastName?.toLowerCase().includes(q) ||
-                (u.fullName || '').toLowerCase().includes(q)
-            );
-        });
-        totalUsers = filtered.length;
-        const start = (page - 1) * perPage;
-        usersData = filtered.slice(start, start + perPage);
-    }
-
-    const rolesData = rolesResponse?.data || [];
-    const navigate = useNavigate();
+    const usersData = response?.data ?? [];
+    const totalUsers = response?.total ?? 0;
+    const rolesData = rolesResponse?.data ?? [];
 
     const handleUserClick = (user) => {
         navigate(`/profile/${user.id}`);
-    }
+    };
 
-    if (isPending || (search && isFetchingAll)) {
-        return <>
-            <PageTitle text="User Management Dashboard" />
-            <div className="flex items-center justify-center h-40">
-                <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
-            </div>
-        </>
-    }
     if (isError) {
         return (
             <div>
                 <IsError
                     error={error}
                     onRetry={() => refetch()}
-                    title="Failed to load Bank Transactions"
+                    title="Failed to load Users"
                     showDetails={true}
                 />
             </div>
@@ -87,13 +67,11 @@ const Users = () => {
                 <DynamicTable
                     header={
                         <div className="flex flex-col gap-4 w-full">
-                            <div>
-                                <PageTitle
-                                    text="Users"
-                                    subtitle="Users management dashboard"
-                                    compact
-                                />
-                            </div>
+                            <PageTitle
+                                text="Users"
+                                subtitle="Users management dashboard"
+                                compact
+                            />
 
                             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 w-full">
                                 <Input
@@ -107,50 +85,61 @@ const Users = () => {
                                 />
 
                                 <div className="flex w-full md:w-auto items-center gap-3 justify-between md:justify-end">
-
-                                    <Select value={selectedRole} onValueChange={(value) => {
-                                        setSelectedRole(value);
-                                        setPage(1);
-                                    }}>
+                                    <Select
+                                        value={selectedRole}
+                                        onValueChange={(value) => {
+                                            setSelectedRole(value);
+                                            setPage(1);
+                                        }}
+                                    >
                                         <SelectTrigger className="w-[140px] md:w-[180px]">
                                             <SelectValue placeholder="Select role" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="all">All roles</SelectItem>
                                             {rolesData.map((role) => (
-                                                <SelectItem key={role.id} value={role.id.toString()}>
+                                                <SelectItem
+                                                    key={role.id}
+                                                    value={role.id.toString()}
+                                                >
                                                     {capitalizeFirst(role.role)}
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
 
-                                    <Button onClick={() => {
-                                        setSelectedRole("all");
-                                        setSearch('');
-                                        setPage(1);
-                                    }} variant="outline" className="w-auto px-4 md:w-auto">
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => {
+                                            setSelectedRole("all");
+                                            setSearch("");
+                                            setPage(1);
+                                        }}
+                                    >
                                         Clear filters
                                     </Button>
                                 </div>
                             </div>
                         </div>
-
                     }
-                    columns={getUsersColumns()}
+                    columns={columns}
                     data={usersData}
                     total={totalUsers}
                     page={page}
                     perPage={perPage}
                     onPageChange={setPage}
                     onRowClick={handleUserClick}
+                    loading={isPending}
                 />
 
+                {isPending && (
+                    <div className="pointer-events-none fixed inset-0 flex items-center justify-center bg-white/40">
+                        <Spinner className="w-12 h-12 text-[var(--spurple)]" />
+                    </div>
+                )}
             </div>
-
         </DefaultLayout>
     );
-}
-
+};
 
 export default Users;

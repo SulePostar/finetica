@@ -1,10 +1,11 @@
 // services/users.js
+const { Op, fn, col, where } = require('sequelize');
 const { User, Role, UserStatus } = require('../models');
 const AppError = require('../utils/errorHandler');
 const { UserResponseDTO } = require('../dto/user/responses/UserResponseDTO.js');
 
 class UserService {
-  async getAllUsers({ page = 1, perPage = 10, sortField, sortOrder = 'asc', roleId } = {}) {
+  async getAllUsers({ page = 1, perPage = 10, sortField, sortOrder = 'asc', roleId, search, } = {}) {
     try {
       const limit = parseInt(perPage, 10);
       const offset = (page - 1) * limit;
@@ -14,9 +15,24 @@ class UserService {
         orderOptions = [[sortField, sortOrder.toUpperCase()]];
       }
 
-      const filterValue = {};
+      const whereClause = {};
+
       if (roleId) {
-        filterValue.roleId = parseInt(roleId);
+        whereClause.roleId = parseInt(roleId, 10);
+      }
+
+      if (search && search.trim()) {
+        const q = `%${search.trim()}%`;
+
+        whereClause[Op.or] = [
+          { email: { [Op.iLike]: q } },
+          { firstName: { [Op.iLike]: q } },
+          { lastName: { [Op.iLike]: q } },
+          where(
+            fn('concat', col('first_name'), ' ', col('last_name')),
+            { [Op.iLike]: q }
+          ),
+        ];
       }
 
       const { count, rows } = await User.findAndCountAll({
@@ -29,9 +45,9 @@ class UserService {
           'statusId',
           ['created_at', 'createdAt'],
           ['updated_at', 'updatedAt'],
-          ['last_login_at', 'lastLoginAt']
+          ['last_login_at', 'lastLoginAt'],
         ],
-        where: filterValue,
+        where: whereClause,
         include: [
           { model: Role, as: 'role', attributes: ['id', 'role'] },
           { model: UserStatus, as: 'status', attributes: ['id', 'status'] },
@@ -41,11 +57,11 @@ class UserService {
         offset,
         distinct: true,
       });
+
       return {
         data: rows.map((user) => new UserResponseDTO(user)),
         total: count
       };
-
     } catch (error) {
       throw new AppError(`Failed to fetch users: ${error.message}`, 500);
     }
