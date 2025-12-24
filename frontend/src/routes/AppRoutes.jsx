@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, Routes, Route } from 'react-router-dom'
 import ProfilePage from '@/pages/ProfilePage';
 import Login from '@/pages/Login';
+import Logout from '@/pages/Logout';
 import Dashboard from '@/pages/DashboardPage';
 
 const BankTransactions = React.lazy(() => import('../pages/BankTransactions'));
@@ -25,6 +26,7 @@ export default function AppRoutes() {
 
             <Route element={<ProtectedRoute />}>
                 <Route path="/" element={<Dashboard />} />
+                <Route path="/logout" element={<Logout />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/kif" element={<Kif />} />
                 <Route path="/bank-statements" element={<BankTransactions />} />
