@@ -85,9 +85,12 @@ const Kif = () => {
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-3">
                                     {isUploading && (
-                                        <span className="text-sm text-muted-foreground">
-                                            Uploading & processing...
-                                        </span>
+                                        <div className="flex items-center gap-2">
+                                            <Spinner className="w-4 h-4 text-[var(--spurple)]" />
+                                            <span className="text-sm text-muted-foreground">
+                                                Uploading & processing...
+                                            </span>
+                                        </div>
                                     )}
 
                                     <UploadButton
