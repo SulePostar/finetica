@@ -56,7 +56,7 @@ const Kuf = () => {
             <div className="pt-20">
                 <DynamicTable
                     header={
-                        <div className="flex items-center justify-between">
+                        < div className="flex items-center justify-between w-full">
                             <PageTitle text="Kuf"
                                 subtitle="Overview of all KUF Purchase Invoices"
                                 compact
