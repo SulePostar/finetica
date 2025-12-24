@@ -35,7 +35,10 @@ export default function AppRoutes() {
                 <Route path="/profile/:userId" element={<ProfilePage />} />
                 <Route path="/roles-statuses" element={<RoleAndStatusManagement />} />
                 <Route path="/invalid-pdfs" element={<InvalidPdfs />} />
-                <Route path="/:type/:id" element={<DocumentDetails />} />
+                <Route path="/kuf/:id" element={<DocumentDetails />} />
+                <Route path="/kif/:id" element={<DocumentDetails />} />
+                <Route path="/bank-statements/:id" element={<DocumentDetails />} />
+                <Route path="/contracts/:id" element={<DocumentDetails />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
