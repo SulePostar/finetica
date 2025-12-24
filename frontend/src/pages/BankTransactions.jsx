@@ -11,7 +11,6 @@ import {
     useBankTransactions,
     bankTransactionKeys,
 } from "@/queries/BankTransactionsQueries";
-import { useQueryToast } from "@/hooks/use-query-toast";
 import { getBankTransactionsColumns } from "@/components/tables/columns/BankTransactionsColumns";
 
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
@@ -43,16 +42,6 @@ const BankTransactions = () => {
     const handleFileUpload = async (file) => {
         await uploadFile({ file, description: "Bank transactions PDF" });
     };
-
-    useQueryToast({
-        isPending,
-        isError,
-        data,
-        error,
-        successMessage: "Bank transactions loaded",
-        successDescription: "All transactions have been fetched successfully.",
-        errorMessage: "Failed to load bank transactions",
-    });
 
     const handleTimeChange = (newValue) => {
         setTimeRange(newValue);
