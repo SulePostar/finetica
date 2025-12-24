@@ -36,7 +36,6 @@ const DynamicTable = ({
   toolbar,
   onRowClick,
   showColumnSelector = true,
-  showColumnSelector = true,
 }) => {
   const [expandedRows, setExpandedRows] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({});
