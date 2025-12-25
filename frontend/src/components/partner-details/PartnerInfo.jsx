@@ -23,8 +23,8 @@ const StatusBadge = ({ isActive, isVat = false }) => (
             </>
         ) : (
             <>
-                <div className="p-1.5 rounded-full bg-red-500/10 shrink-0">
-                    <XCircle className="w-5 h-5 text-red-600" />
+                <div className="p-1.5 rounded-full bg-destructive/10 shrink-0">
+                    <XCircle className="w-5 h-5 text-destructive" />
                 </div>
                 <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider truncate">
