@@ -35,7 +35,7 @@ const PartnerDetails = () => {
 
     return (
         <DefaultLayout>
-            <div className="container mx-auto p-6 max-w-6xl pt-20">
+            <div className="container mx-auto p-6 max-w-7xl pt-20">
                 <div className="mb-6">
                     <div className="flex items-start justify-between">
                         <div>
