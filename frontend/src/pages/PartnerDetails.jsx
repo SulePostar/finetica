@@ -1,15 +1,12 @@
 import IsError from "@/components/shared-ui/IsError";
-import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import DefaultLayout from "@/layout/DefaultLayout";
 import { usePartnerById } from "@/queries/partners";
-import { ArrowLeft } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { PartnerInfo } from "@/components/partner-details/PartnerInfo";
 
 const PartnerDetails = () => {
     const { id } = useParams();
-    const navigate = useNavigate();
 
     const { data: partner, isPending, isError, error, refetch } = usePartnerById(id);
 
@@ -38,7 +35,7 @@ const PartnerDetails = () => {
 
     return (
         <DefaultLayout>
-            <div className="container mx-auto p-6 max-w-5xl">
+            <div className="container mx-auto p-6 max-w-6xl pt-20">
                 <div className="mb-6">
                     <div className="flex items-start justify-between">
                         <div>
