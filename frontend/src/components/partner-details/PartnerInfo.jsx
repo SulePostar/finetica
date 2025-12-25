@@ -63,7 +63,7 @@ export const PartnerInfo = ({ partner }) => {
     };
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 min-w-[300px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 min-w-[200px]">
             <SectionCard title="Basic Information">
                 <SectionItem
                     icon={Building2}
@@ -92,15 +92,15 @@ export const PartnerInfo = ({ partner }) => {
                     <SectionItem icon={Mail} label="Email" value={partnerData?.email} />
                 </div>
                 <SectionItem icon={Phone} label="Phone" value={partnerData?.phone} />
-                <SectionItem icon={Globe} label="Country Code" value={partnerData?.countryCode} />
-                <SectionItem icon={Globe} label="Language" value={partnerData?.languageCode} />
+                <SectionItem icon={Globe} label="Country Code" value={partnerData?.countryCode?.toUpperCase()} />
+                <SectionItem icon={Globe} label="Language" value={partnerData?.languageCode?.toUpperCase()} />
             </SectionCard>
 
             <SectionCard title="Address & Location">
                 <SectionItem icon={MapPin} label="Address" value={partnerData?.address} />
                 <SectionItem icon={MapPin} label="City" value={partnerData?.city} />
                 <SectionItem icon={MapPin} label="Postal Code" value={partnerData?.postalCode} />
-                <SectionItem icon={Globe} label="Country" value={partnerData?.countryCode} />
+                <SectionItem icon={Globe} label="Country" value={partnerData?.countryCode?.toUpperCase()} />
             </SectionCard>
 
             <SectionCard title="Tax & Registration">
@@ -115,8 +115,8 @@ export const PartnerInfo = ({ partner }) => {
                     <SectionItem icon={CreditCard} label="IBAN" value={partnerData?.iban} />
                 </div>
                 <SectionItem icon={Building2} label="Bank Name" value={partnerData?.bankName} />
-                <SectionItem icon={CreditCard} label="SWIFT Code" value={partnerData?.swiftCode} />
-                <SectionItem icon={Globe} label="Default Currency" value={partnerData?.defaultCurrency} />
+                <SectionItem icon={CreditCard} label="SWIFT Code" value={partnerData?.swiftCode?.toUpperCase()} />
+                <SectionItem icon={Globe} label="Default Currency" value={partnerData?.defaultCurrency?.toUpperCase()} />
             </SectionCard>
 
             {partnerData?.paymentTerms && (
