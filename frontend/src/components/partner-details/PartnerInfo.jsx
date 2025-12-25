@@ -1,156 +1,96 @@
-import { Building2, Calendar, Mail, MapPin, Phone, User, CreditCard, Globe, FileText, CheckCircle, XCircle, Briefcase } from "lucide-react";
+import { Building2, Calendar, Mail, MapPin, Phone, User, CreditCard, Globe, FileText, Briefcase } from "lucide-react";
 import { formatDateTime } from "@/helpers/formatDate";
-import { Badge } from "@/components/ui/badge";
-import { ReviewStatusBadge } from "../shared-ui/ReviewStatusBadge";
-import { SectionItem } from "../shared-ui/SectionItem";
 import { SectionCard } from "../shared-ui/SectionCard";
-
-const StatusBadge = ({ isActive, isVat = false }) => (
-    <div className="flex items-center gap-2 p-3 rounded-lg hover:bg-muted/50 transition-all duration-200">
-        {isActive ? (
-            <>
-                <div className="p-1.5 rounded-full bg-green/10 shrink-0">
-                    <CheckCircle className="w-5 h-5 text-green" />
-                </div>
-                <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider truncate">
-                        {isVat ? 'VAT Status' : 'Account Status'}
-                    </p>
-                    <div className="mt-1">
-                        <ReviewStatusBadge status={isVat ? "vat registered" : "active"} />
-                    </div>
-                </div>
-            </>
-        ) : (
-            <>
-                <div className="p-1.5 rounded-full bg-destructive/10 shrink-0">
-                    <XCircle className="w-5 h-5 text-destructive" />
-                </div>
-                <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider truncate">
-                        {isVat ? 'VAT Status' : 'Account Status'}
-                    </p>
-                    <div className="mt-1">
-                        <ReviewStatusBadge status={isVat ? 'Not Registered' : 'Inactive'} />
-                    </div>
-                </div>
-            </>
-        )}
-    </div>
-);
+import { StatusBadge } from "../shared-ui/PartnerStatusBadge";
+import { getPartnerTypeBadge } from "../shared-ui/PartnerBadge";
 
 export const PartnerInfo = ({ partner }) => {
-    const partnerData = partner?.data || partner;
+    const data = partner?.data;
 
-    const getPartnerTypeBadge = (type) => {
-        const config = {
-            customer: {
-                color: "bg-blue-500 text-white border-blue-500 hover:bg-blue-600"
-            },
-            supplier: {
-                color: "bg-spurple text-white border-spurple hover:bg-spurple/90"
-            },
-            both: {
-                color: "bg-amber-500 text-white border-amber-500 hover:bg-amber-600"
-            }
-        };
-        const { color } = config[type] || config.customer;
-        return (
-            <Badge className={`capitalize font-semibold ${color} shadow-sm text-[10px] sm:text-xs`}>
-                {type?.toUpperCase()}
-            </Badge>
-        );
-    };
+    const basicItems = [
+        { icon: Building2, label: "Company Name", value: data?.name },
+        { icon: Briefcase, label: "Short Name", value: data?.shortName }
+    ];
+
+    const contactItems = [
+        { icon: Mail, label: "Email", value: data?.email, className: "[&>div_p:last-child]:break-all" },
+        { icon: Phone, label: "Phone", value: data?.phone },
+        { icon: Globe, label: "Country Code", value: data?.countryCode?.toUpperCase() },
+        { icon: Globe, label: "Language", value: data?.languageCode?.toUpperCase() }
+    ];
+
+    const addressItems = [
+        { icon: MapPin, label: "Address", value: data?.address },
+        { icon: MapPin, label: "City", value: data?.city },
+        { icon: MapPin, label: "Postal Code", value: data?.postalCode },
+        { icon: Globe, label: "Country", value: data?.countryCode?.toUpperCase() }
+    ];
+
+    const taxItems = [
+        { icon: FileText, label: "VAT Number", value: data?.vatNumber },
+        { icon: FileText, label: "Tax ID", value: data?.taxId },
+        { icon: FileText, label: "Registration Number", value: data?.registrationNumber }
+    ];
+
+    const bankingItems = [
+        { icon: CreditCard, label: "IBAN", value: data?.iban, className: "[&>div_p:last-child]:break-all" },
+        { icon: Building2, label: "Bank Name", value: data?.bankName },
+        { icon: CreditCard, label: "SWIFT Code", value: data?.swiftCode?.toUpperCase() },
+        { icon: Globe, label: "Default Currency", value: data?.defaultCurrency?.toUpperCase() }
+    ];
+
+    const timestampItems = [
+        { icon: Calendar, label: "Created At", value: data?.created_at ? formatDateTime(data.created_at) : '—' },
+        { icon: Calendar, label: "Updated At", value: data?.updated_at ? formatDateTime(data.updated_at) : '—' }
+    ];
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 min-w-[200px]">
-            <SectionCard title="Basic Information">
-                <SectionItem
-                    icon={Building2}
-                    label="Company Name"
-                    value={partnerData?.name}
-                />
-                <SectionItem
-                    icon={Briefcase}
-                    label="Short Name"
-                    value={partnerData?.shortName}
-                />
+
+            <SectionCard title="Basic Information" items={basicItems}>
                 <div className="flex items-center gap-2 p-3 rounded-lg hover:bg-muted/50 mt-2 group">
                     <div className="p-1.5 rounded-md bg-spurple/10 group-hover:bg-spurple/15 transition-colors shrink-0">
                         <User className="w-5 h-5 text-spurple" />
                     </div>
                     <div className="flex-1 min-w-0">
                         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1 truncate">Partner Type</p>
-                        {partnerData?.type ? getPartnerTypeBadge(partnerData.type) : '—'}
+                        {data?.type ? getPartnerTypeBadge(data.type) : '—'}
                     </div>
                 </div>
-                <StatusBadge isActive={partnerData?.isActive} />
+                <StatusBadge isActive={data?.isActive} />
             </SectionCard>
 
-            <SectionCard title="Contact Information">
-                <div className="[&>div_p:last-child]:break-all">
-                    <SectionItem icon={Mail} label="Email" value={partnerData?.email} />
-                </div>
-                <SectionItem icon={Phone} label="Phone" value={partnerData?.phone} />
-                <SectionItem icon={Globe} label="Country Code" value={partnerData?.countryCode?.toUpperCase()} />
-                <SectionItem icon={Globe} label="Language" value={partnerData?.languageCode?.toUpperCase()} />
+            <SectionCard title="Contact Information" items={contactItems} />
+
+            <SectionCard title="Address & Location" items={addressItems} />
+
+            <SectionCard title="Tax & Registration" items={taxItems}>
+                <StatusBadge isActive={data?.isVatRegistered} isVat={true} />
             </SectionCard>
 
-            <SectionCard title="Address & Location">
-                <SectionItem icon={MapPin} label="Address" value={partnerData?.address} />
-                <SectionItem icon={MapPin} label="City" value={partnerData?.city} />
-                <SectionItem icon={MapPin} label="Postal Code" value={partnerData?.postalCode} />
-                <SectionItem icon={Globe} label="Country" value={partnerData?.countryCode?.toUpperCase()} />
-            </SectionCard>
+            <SectionCard title="Banking Details" items={bankingItems} />
 
-            <SectionCard title="Tax & Registration">
-                <SectionItem icon={FileText} label="VAT Number" value={partnerData?.vatNumber} />
-                <SectionItem icon={FileText} label="Tax ID" value={partnerData?.taxId} />
-                <SectionItem icon={FileText} label="Registration Number" value={partnerData?.registrationNumber} />
-                <StatusBadge isActive={partnerData?.isVatRegistered} isVat={true} />
-            </SectionCard>
-
-            <SectionCard title="Banking Details">
-                <div className="[&>div_p:last-child]:break-all">
-                    <SectionItem icon={CreditCard} label="IBAN" value={partnerData?.iban} />
-                </div>
-                <SectionItem icon={Building2} label="Bank Name" value={partnerData?.bankName} />
-                <SectionItem icon={CreditCard} label="SWIFT Code" value={partnerData?.swiftCode?.toUpperCase()} />
-                <SectionItem icon={Globe} label="Default Currency" value={partnerData?.defaultCurrency?.toUpperCase()} />
-            </SectionCard>
-
-            {partnerData?.paymentTerms && (
+            {data?.paymentTerms && (
                 <SectionCard title="Payment Terms">
                     <div className="p-4 rounded-lg bg-muted/20 border">
                         <p className="text-sm font-semibold text-foreground">
-                            {partnerData.paymentTerms} days
+                            {data.paymentTerms} days
                         </p>
                     </div>
                 </SectionCard>
             )}
 
-            {partnerData?.note && (
+            {data?.note && (
                 <SectionCard title="Notes" className="md:col-span-2">
                     <div className="p-4 rounded-lg bg-muted/30 border">
                         <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed break-words">
-                            {partnerData.note}
+                            {data.note}
                         </p>
                     </div>
                 </SectionCard>
             )}
 
-            <SectionCard title="Timestamps" className="md:col-span-2">
-                <SectionItem
-                    icon={Calendar}
-                    label="Created At"
-                    value={partnerData?.created_at ? formatDateTime(partnerData.created_at) : '—'}
-                />
-                <SectionItem
-                    icon={Calendar}
-                    label="Updated At"
-                    value={partnerData?.updated_at ? formatDateTime(partnerData.updated_at) : '—'}
-                />
-            </SectionCard>
+            <SectionCard title="Timestamps" className="md:col-span-2" items={timestampItems} />
         </div>
     );
 };
