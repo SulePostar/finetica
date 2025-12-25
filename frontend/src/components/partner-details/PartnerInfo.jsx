@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, Calendar, Mail, MapPin, Phone, User, CreditCard, Globe, FileText, CheckCircle, XCircle, Briefcase } from "lucide-react";
 import { formatDateTime } from "@/helpers/formatDate";
 import { Badge } from "@/components/ui/badge";
+import { ReviewStatusBadge } from "../shared-ui/ReviewStatusBadge";
 
 const InfoItem = ({ icon: Icon, label, value }) => (
     <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 transition-all duration-200 group">
@@ -22,13 +23,11 @@ const StatusBadge = ({ isActive, isVat = false }) => (
                 <div className="p-1.5 rounded-full bg-green-500/10">
                     <CheckCircle className="w-5 h-5 text-green-600" />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 w-[400px]">
                     <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                         {isVat ? 'VAT Status' : 'Account Status'}
                     </p>
-                    <p className="text-sm font-semibold text-green-600">
-                        {isVat ? 'VAT Registered' : 'Active'}
-                    </p>
+                    <ReviewStatusBadge status={isVat ? "vat registered" : "active"} />
                 </div>
             </>
         ) : (
@@ -40,9 +39,7 @@ const StatusBadge = ({ isActive, isVat = false }) => (
                     <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                         {isVat ? 'VAT Status' : 'Account Status'}
                     </p>
-                    <p className="text-sm font-semibold text-red-600">
-                        {isVat ? 'Not Registered' : 'Inactive'}
-                    </p>
+                    <ReviewStatusBadge status={isVat ? 'Not Registered' : 'Inactive'} />
                 </div>
             </>
         )}
@@ -67,7 +64,7 @@ export const PartnerInfo = ({ partner }) => {
         const { color } = config[type] || config.customer;
         return (
             <Badge className={`capitalize font-semibold ${color} shadow-sm`}>
-                {type}
+                {type.toUpperCase()}
             </Badge>
         );
     };
@@ -188,6 +185,9 @@ export const PartnerInfo = ({ partner }) => {
                 <Card className="shadow-sm hover:shadow-md transition-shadow md:col-span-2">
                     <CardHeader className="border-b bg-muted/20">
                         <CardTitle className="text-base flex items-center gap-2 font-semibold">
+                            <div className="p-1.5 rounded-md bg-muted/30">
+                                <FileText className="w-4 h-4 text-muted-foreground" />
+                            </div>
                             Notes
                         </CardTitle>
                     </CardHeader>
@@ -202,9 +202,12 @@ export const PartnerInfo = ({ partner }) => {
             )}
 
             {/* Timestamps */}
-            <Card className="shadow-sm hover:shadow-md transition-shadow md:col-span-2">
+            <Card className="shadow-sm hover:shadow-md transition-shadow">
                 <CardHeader className="border-b bg-muted/20">
                     <CardTitle className="text-base flex items-center gap-2 font-semibold">
+                        <div className="p-1.5 rounded-md bg-muted/30">
+                            <Calendar className="w-4 h-4 text-muted-foreground" />
+                        </div>
                         Record Information
                     </CardTitle>
                 </CardHeader>
