@@ -188,9 +188,6 @@ export const PartnerInfo = ({ partner }) => {
                 <Card className="shadow-sm hover:shadow-md transition-shadow md:col-span-2">
                     <CardHeader className="border-b bg-muted/20">
                         <CardTitle className="text-base flex items-center gap-2 font-semibold">
-                            <div className="p-1.5 rounded-md bg-muted/30">
-                                <FileText className="w-4 h-4 text-muted-foreground" />
-                            </div>
                             Notes
                         </CardTitle>
                     </CardHeader>
@@ -205,12 +202,9 @@ export const PartnerInfo = ({ partner }) => {
             )}
 
             {/* Timestamps */}
-            <Card className="shadow-sm hover:shadow-md transition-shadow">
+            <Card className="shadow-sm hover:shadow-md transition-shadow md:col-span-2">
                 <CardHeader className="border-b bg-muted/20">
                     <CardTitle className="text-base flex items-center gap-2 font-semibold">
-                        <div className="p-1.5 rounded-md bg-muted/30">
-                            <Calendar className="w-4 h-4 text-muted-foreground" />
-                        </div>
                         Record Information
                     </CardTitle>
                 </CardHeader>
