@@ -36,7 +36,7 @@ export const useUpdateUser = () => {
             });
 
             queryClient.setQueriesData(
-                { queryKey: usersKeys.lists() },
+                { queryKey: usersKeys.lists(), exact: false },
                 (old) => {
                     if (!old) return old;
 
