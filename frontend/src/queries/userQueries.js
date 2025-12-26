@@ -31,7 +31,10 @@ export const useUpdateUser = () => {
       updateUser(userId, payload),
 
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({
+        queryKey: ["users"],
+        exact: false
+      });
     },
   });
 };

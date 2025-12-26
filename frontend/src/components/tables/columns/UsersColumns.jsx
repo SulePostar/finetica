@@ -51,7 +51,7 @@ export function getUsersColumns(onAction, isAdmin) {
             meta: { isComponent: true },
             cell: ({ row }) => {
                 const user = row.original;
-                const showActions = isAdmin
+                const showActions = isAdmin && user.statusName.toLowerCase() === "pending";
 
                 return showActions ? (
                     <ActionsDropdown
