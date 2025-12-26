@@ -1,6 +1,6 @@
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { getRolesStatusesColumns } from "@/components/tables/columns/rolesStatusesColumns";
-import { useCreateRole, useRoles, useStatuses, useCreateUserStatus, useDeleteRole } from "@/queries/rolesAndStatuses";
+import { useCreateRole, useRoles, useStatuses, useCreateUserStatus, useDeleteRole, useDeleteStatus } from "@/queries/rolesAndStatuses";
 import RolesStatusesTable from "@/components/tables/RolesStatusesTable";
 import { Spinner } from "@/components/ui/spinner";
 import DefaultLayout from "@/layout/DefaultLayout";
@@ -10,6 +10,9 @@ import { notify } from "@/lib/notifications";
 export default function RoleAndStatusManagement() {
     const deleteUserRoleMutation = useDeleteRole();
     const createRoleMutation = useCreateRole();
+    const createUserStatus = useCreateUserStatus();
+    const deleteUserStatusMutation = useDeleteStatus();
+
     const columns = getRolesStatusesColumns(
         "roles",
         (item) =>
@@ -31,8 +34,26 @@ export default function RoleAndStatusManagement() {
             }),
         "role"
     );
-    const statuses = getRolesStatusesColumns("statuses", (item) => { console.log("Delete", item); }, "status");
-    const createUserStatus = useCreateUserStatus();
+    const statuses = getRolesStatusesColumns("statuses",
+        (item) =>
+            deleteUserStatusMutation.mutate(item.id, {
+                onSuccess: () => {
+                    notify.success("Status deleted", {
+                        description: "The status has been permanently removed.",
+                    });
+                },
+                onError: (err) => {
+                    const message =
+                        err?.response?.data?.message ??
+                        "Failed to delete status";
+                    notify.error("Delete failed", {
+                        description: message,
+                    });
+                },
+            }),
+        "status"
+    );
+
 
     const { data: rolesData, isPending: rolesPending } = useRoles();
     const { data: statusData, isPending: statusPending } = useStatuses();
@@ -54,7 +75,6 @@ export default function RoleAndStatusManagement() {
             <div className="px-4 md:px-6 lg:px-8">
                 <PageTitle text={"Roles and Statuses"} />
 
-                {/* RESPONSIVE: stack on mobile, side-by-side on larger screens */}
                 <div className="flex flex-col 2xl:flex-row gap-6 p-4">
 
                     <RolesStatusesTable
@@ -89,10 +109,7 @@ export default function RoleAndStatusManagement() {
                         placeholder="New status name"
 
                         onAdd={(name) => {
-                            createUserStatus.mutate(name, {
-                                // onSuccess: () => toast.success("Status created"),
-                                // onError: (err) => toast.error(err.message),
-                            });
+                            createUserStatus.mutate(name, {});
                         }}
                     />
                 </div>
