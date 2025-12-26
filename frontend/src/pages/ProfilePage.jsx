@@ -15,6 +15,7 @@ import { Spinner } from '@/components/ui/spinner';
 import IsError from '@/components/shared-ui/IsError';
 import { formatDateTime } from '@/helpers/formatDate';
 import { useAuth } from '@/context/AuthContext';
+import { Pencil, X } from 'lucide-react';
 
 const ProfilePage = () => {
   const { userId } = useParams();
@@ -55,6 +56,7 @@ const ProfilePage = () => {
   const profileData = userData;
 
   return (
+
     <div className="flex items-center justify-center min-h-screen bg-background p-4 md:p-6 xl:p-8">
       <div className="max-w-4xl w-full">
         <Card className="shadow-xl border-border bg-card text-card-foreground">
@@ -73,10 +75,19 @@ const ProfilePage = () => {
               </div>
               {canEdit && (
                 <Button
-                  className="w-full md:w-auto bg-spurple text-white hover:bg-spurple/90"
+                  className="group relative overflow-hidden transition-all duration-200 bg-spurple text-white hover:bg-spurple/90 h-9 px-2"
                   onClick={() => setIsEditing(!isEditing)}
                 >
-                  {isEditing ? 'Cancel Edit' : 'Edit Profile'}
+                  <div className="flex items-center justify-center">
+                    {isEditing ? (
+                      <X className="w-7 h-7 transition-transform group-hover:-translate-x-1" />
+                    ) : (
+                      <Pencil className="w-7 h-7 transition-transform group-hover:-translate-x-1" />
+                    )}
+                    <span className="max-w-0 overflow-hidden opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-2 transition-all duration-200 whitespace-nowrap">
+                      {isEditing ? 'Cancel Edit' : 'Edit Profile'}
+                    </span>
+                  </div>
                 </Button>
               )}
             </div>
