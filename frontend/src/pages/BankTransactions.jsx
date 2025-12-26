@@ -11,7 +11,6 @@ import {
     useBankTransactions,
     bankTransactionKeys,
 } from "@/queries/BankTransactionsQueries";
-import { useQueryToast } from "@/hooks/use-query-toast";
 import { getBankTransactionsColumns } from "@/components/tables/columns/BankTransactionsColumns";
 
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
@@ -43,16 +42,6 @@ const BankTransactions = () => {
     const handleFileUpload = async (file) => {
         await uploadFile({ file, description: "Bank transactions PDF" });
     };
-
-    useQueryToast({
-        isPending,
-        isError,
-        data,
-        error,
-        successMessage: "Bank transactions loaded",
-        successDescription: "All transactions have been fetched successfully.",
-        errorMessage: "Failed to load bank transactions",
-    });
 
     const handleTimeChange = (newValue) => {
         setTimeRange(newValue);
@@ -98,20 +87,18 @@ const BankTransactions = () => {
                                 compact
                             />
                             <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-3">
-                                    {isUploading && (
-                                        <span className="text-sm text-muted-foreground">
-                                            Uploading & processing...
-                                        </span>
-                                    )}
+                                {isUploading && (
+                                    <span className="text-sm text-muted-foreground">
+                                        Uploading & processing...
+                                    </span>
+                                )}
 
-                                    <UploadButton
-                                        onUploadSuccess={handleFileUpload}
-                                        buttonText="Upload Bank Transactions"
-                                        className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-                                    />
-                                    <TimeFilter value={timeRange} onChange={handleTimeChange} />
-                                </div>
+                                <UploadButton
+                                    onUploadSuccess={handleFileUpload}
+                                    buttonText="Upload Bank Transactions"
+                                    className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+                                />
+                                <TimeFilter value={timeRange} onChange={handleTimeChange} />
                             </div>
                         </div>
                     }
