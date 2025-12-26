@@ -1,6 +1,6 @@
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { getRolesStatusesColumns } from "@/components/tables/columns/rolesStatusesColumns";
-import { useCreateRole, useRoles, useStatuses, useCreateUserStatus, useDeleteRole } from "@/queries/rolesAndStatuses";
+import { useCreateRole, useRoles, useStatuses, useCreateUserStatus, useDeleteRole, useDeleteStatus } from "@/queries/rolesAndStatuses";
 import RolesStatusesTable from "@/components/tables/RolesStatusesTable";
 import { Spinner } from "@/components/ui/spinner";
 import DefaultLayout from "@/layout/DefaultLayout";
@@ -10,6 +10,9 @@ import { notify } from "@/lib/notifications";
 export default function RoleAndStatusManagement() {
     const deleteUserRoleMutation = useDeleteRole();
     const createRoleMutation = useCreateRole();
+    const createUserStatus = useCreateUserStatus();
+    const deleteUserStatusMutation = useDeleteStatus();
+
     const columns = getRolesStatusesColumns(
         "roles",
         (item) =>
@@ -31,8 +34,26 @@ export default function RoleAndStatusManagement() {
             }),
         "role"
     );
-    const statuses = getRolesStatusesColumns("statuses", (item) => { console.log("Delete", item); }, "status");
-    const createUserStatus = useCreateUserStatus();
+    const statuses = getRolesStatusesColumns("statuses",
+        (item) =>
+            deleteUserStatusMutation.mutate(item.id, {
+                onSuccess: () => {
+                    notify.success("Status deleted", {
+                        description: "The status has been permanently removed.",
+                    });
+                },
+                onError: (err) => {
+                    const message =
+                        err?.response?.data?.message ??
+                        "Failed to delete status";
+                    notify.error("Delete failed", {
+                        description: message,
+                    });
+                },
+            }),
+        "status"
+    );
+
 
     const { data: rolesData, isPending: rolesPending } = useRoles();
     const { data: statusData, isPending: statusPending } = useStatuses();
@@ -62,7 +83,15 @@ export default function RoleAndStatusManagement() {
                         title="Roles"
                         placeholder="New role name"
                         onAdd={(name) => {
-                            createRoleMutation.mutate(name, {
+                            const normalizedName = name.trim().toLowerCase();
+                            const exists = rolesData.data.some(
+                                (r) => r.role.trim().toLowerCase() === normalizedName
+                            );
+                            if (exists) {
+                                notify.error("Role exists");
+                                return;
+                            }
+                            createRoleMutation.mutate(normalizedName, {
                                 onSuccess: () => {
                                     console.log(`Role "${name}" created successfully!`);
                                 },
