@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import DynamicTable from "@/components/table/DynamicTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
 import { useUsers } from "@/queries/userQueries";
 import { useRoles, useStatuses } from "@/queries/rolesAndStatuses";
 import { getUsersColumns } from "@/components/tables/columns/UsersColumns";
@@ -16,8 +15,6 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
-
-import DefaultLayout from "@/layout/DefaultLayout";
 
 const Users = () => {
     const [selectedRole, setSelectedRole] = useState("all");
@@ -63,79 +60,76 @@ const Users = () => {
     }
 
     return (
-        <DefaultLayout>
-            <div className="pt-20">
-                <DynamicTable
-                    header={
-                        <PageTitle
-                            text="Users"
-                            subtitle="Users management dashboard"
-                            compact
-                        />}
-                    toolbar={{
-                        search:
-                            <Input
-                                placeholder="Search..."
-                                className="w-full" />,
-                        filters: (
-                            <>
-                                <Select value={selectedStatus}
-                                    onValueChange={(value) => {
-                                        setSelectedStatus(value);
-                                        setPage(1);
-                                    }}>
-                                    <SelectTrigger className="w-[180px]"><SelectValue placeholder="All statuses" /></SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All statuses</SelectItem>
-                                        {statusesData.map(s => <SelectItem key={s.id} value={s.id.toString()}>
-                                            {capitalizeFirst(s.status)}
-                                        </SelectItem>)
-                                        }
-                                    </SelectContent>
-                                </Select>
-
-                                <Select value={selectedRole} onValueChange={(value) => {
-                                    setSelectedRole(value);
+        <div className="pt-20">
+            <DynamicTable
+                header={
+                    <PageTitle
+                        text="Users"
+                        subtitle="Users management dashboard"
+                        compact
+                    />}
+                toolbar={{
+                    search:
+                        <Input
+                            placeholder="Search..."
+                            className="w-full" />,
+                    filters: (
+                        <>
+                            <Select value={selectedStatus}
+                                onValueChange={(value) => {
+                                    setSelectedStatus(value);
                                     setPage(1);
                                 }}>
-                                    <SelectTrigger className="w-[180px]">
-                                        <SelectValue placeholder="All roles" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All roles</SelectItem>
-                                        {rolesData.map(r => <SelectItem key={r.id} value={r.id.toString()}>
-                                            {capitalizeFirst(r.role)}
-                                        </SelectItem>)
-                                        }
-                                    </SelectContent>
-                                </Select>
-                            </>
-                        ),
-                        button: (
-                            <Button
-                                variant="outline"
-                                onClick={() => {
-                                    setSelectedRole("all");
-                                    setSelectedStatus("all");
-                                    setPage(1);
-                                }}
-                            >
-                                Clear filters
-                            </Button>
-                        )
-                    }}
-                    columns={getUsersColumns()}
-                    data={usersData}
-                    total={totalUsers}
-                    page={page}
-                    perPage={perPage}
-                    onPageChange={setPage}
-                    onRowClick={handleUserClick}
-                />
+                                <SelectTrigger className="w-[180px]"><SelectValue placeholder="All statuses" /></SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All statuses</SelectItem>
+                                    {statusesData.map(s => <SelectItem key={s.id} value={s.id.toString()}>
+                                        {capitalizeFirst(s.status)}
+                                    </SelectItem>)
+                                    }
+                                </SelectContent>
+                            </Select>
 
-            </div>
+                            <Select value={selectedRole} onValueChange={(value) => {
+                                setSelectedRole(value);
+                                setPage(1);
+                            }}>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="All roles" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All roles</SelectItem>
+                                    {rolesData.map(r => <SelectItem key={r.id} value={r.id.toString()}>
+                                        {capitalizeFirst(r.role)}
+                                    </SelectItem>)
+                                    }
+                                </SelectContent>
+                            </Select>
+                        </>
+                    ),
+                    button: (
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setSelectedRole("all");
+                                setSelectedStatus("all");
+                                setPage(1);
+                            }}
+                        >
+                            Clear filters
+                        </Button>
+                    )
+                }}
+                columns={getUsersColumns()}
+                data={usersData}
+                total={totalUsers}
+                page={page}
+                perPage={perPage}
+                onPageChange={setPage}
+                onRowClick={handleUserClick}
+            />
 
-        </DefaultLayout>
+        </div>
     );
 }
 

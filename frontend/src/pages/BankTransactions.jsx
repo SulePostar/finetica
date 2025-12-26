@@ -1,6 +1,4 @@
 import { useState } from "react";
-
-import DefaultLayout from "@/layout/DefaultLayout";
 import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import UploadButton from "@/components/shared-ui/UploadButton";
@@ -76,41 +74,39 @@ const BankTransactions = () => {
     const total = data?.total ?? 0;
 
     return (
-        <DefaultLayout>
-            <div className="pt-20">
-                <DynamicTable
-                    header={
-                        < div className="flex items-center justify-between w-full">
-                            <PageTitle
-                                text="Bank Transactions"
-                                subtitle="Overview of all bank transactions"
-                                compact
-                            />
-                            <div className="flex items-center gap-4">
-                                {isUploading && (
-                                    <span className="text-sm text-muted-foreground">
-                                        Uploading & processing...
-                                    </span>
-                                )}
+        <div className="pt-20">
+            <DynamicTable
+                header={
+                    < div className="flex items-center justify-between w-full">
+                        <PageTitle
+                            text="Bank Transactions"
+                            subtitle="Overview of all bank transactions"
+                            compact
+                        />
+                        <div className="flex items-center gap-4">
+                            {isUploading && (
+                                <span className="text-sm text-muted-foreground">
+                                    Uploading & processing...
+                                </span>
+                            )}
 
-                                <UploadButton
-                                    onUploadSuccess={handleFileUpload}
-                                    buttonText="Upload Bank Transactions"
-                                    className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-                                />
-                                <TimeFilter value={timeRange} onChange={handleTimeChange} />
-                            </div>
+                            <UploadButton
+                                onUploadSuccess={handleFileUpload}
+                                buttonText="Upload Bank Transactions"
+                                className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+                            />
+                            <TimeFilter value={timeRange} onChange={handleTimeChange} />
                         </div>
-                    }
-                    columns={getBankTransactionsColumns(handleAction)}
-                    data={rows}
-                    total={total}
-                    page={page}
-                    perPage={perPage}
-                    onPageChange={setPage}
-                />
-            </div>
-        </DefaultLayout>
+                    </div>
+                }
+                columns={getBankTransactionsColumns(handleAction)}
+                data={rows}
+                total={total}
+                page={page}
+                perPage={perPage}
+                onPageChange={setPage}
+            />
+        </div>
     );
 };
 

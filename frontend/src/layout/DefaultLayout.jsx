@@ -1,8 +1,9 @@
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import { Toaster } from "@/components/ui/sooner";
+import { Outlet } from "react-router-dom";
 
-const DefaultLayout = ({ children }) => {
+const DefaultLayout = () => {
     return (
         <div className="flex w-full overflow-hidden bg-background text-foreground">
             <SidebarProvider>
@@ -11,7 +12,7 @@ const DefaultLayout = ({ children }) => {
                     <div className="flex flex-1 flex-col">
                         <main className="flex-1 overflow-y-auto xl:px-26 2xl:px-26">
                             <div className="w-full mx-auto max-w-[900px] xl:max-w-full 2xl:max-w-[2000px]">
-                                {children}
+                                <Outlet />
                             </div>
                         </main>
 
