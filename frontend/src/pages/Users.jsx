@@ -3,7 +3,7 @@ import DynamicTable from "@/components/table/DynamicTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { useUsers } from "@/queries/userQueries";
+import { useUsers, useUpdateUser } from "@/queries/userQueries";
 import { useRoles, useStatuses } from "@/queries/rolesAndStatuses";
 import { getUsersColumns } from "@/components/tables/columns/UsersColumns";
 import { Spinner } from "@/components/ui/spinner";
@@ -16,6 +16,7 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
+import { useAuth } from '@/context/AuthContext.jsx';
 
 import DefaultLayout from "@/layout/DefaultLayout";
 
@@ -30,6 +31,10 @@ const Users = () => {
         statusId: selectedStatus === "all" ? null : selectedStatus
     });
     const { data: rolesResponse } = useRoles();
+
+    const { user } = useAuth();
+    const currentUserRole = user?.roleName?.toLowerCase();
+    const isAdmin = currentUserRole === 'admin';
     const { data: statusesResponse } = useStatuses();
     const usersData = response?.data || [];
     const totalUsers = response?.total || 0;
@@ -37,9 +42,23 @@ const Users = () => {
     const statusesData = statusesResponse?.data || [];
     const navigate = useNavigate();
 
-    const handleUserClick = (user) => {
-        navigate(`/profile/${user.id}`);
-    }
+
+    const { mutate: updateUser } = useUpdateUser();
+
+    const handleUserClick = (action, user) => {
+        const userActions = {
+            Approve: 2,
+            Reject: 3,
+        };
+
+        const statusId = userActions[action];
+        if (statusId) {
+            updateUser({
+                userId: user.id,
+                payload: { statusId },
+            });
+        }
+    };
 
     if (isPending) {
         return <>
@@ -105,8 +124,7 @@ const Users = () => {
                                         <SelectItem value="all">All roles</SelectItem>
                                         {rolesData.map(r => <SelectItem key={r.id} value={r.id.toString()}>
                                             {capitalizeFirst(r.role)}
-                                        </SelectItem>)
-                                        }
+                                        </SelectItem>)}
                                     </SelectContent>
                                 </Select>
                             </>
@@ -124,7 +142,8 @@ const Users = () => {
                             </Button>
                         )
                     }}
-                    columns={getUsersColumns()}
+                    columns={getUsersColumns(handleUserClick, isAdmin)}
+
                     data={usersData}
                     total={totalUsers}
                     page={page}
