@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import DynamicTable from "@/components/table/DynamicTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,27 +19,8 @@ import {
 } from "@/components/ui/select";
 import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
 import useDebounce from "@/hooks/use-debounce";
+import useSearch from "@/hooks/use-search";
 import DefaultLayout from "@/layout/DefaultLayout";
-
-const FilterSearchInput = ({ value, onChange }) => {
-    const [localValue, setLocalValue] = useState(value);
-
-    useEffect(() => {
-        setLocalValue(value);
-    }, [value]);
-
-    return (
-        <Input
-            placeholder="Search by name or email"
-            className="w-full md:flex-1 min-w-[200px]"
-            value={localValue}
-            onChange={(e) => {
-                setLocalValue(e.target.value);
-                onChange(e.target.value);
-            }}
-        />
-    );
-};
 
 const Users = () => {
     const [selectedRole, setSelectedRole] = useState("all");
@@ -47,6 +28,11 @@ const Users = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
     const [search, setSearch] = useState("");
+
+    const searchInput = useSearch(search, (val) => {
+        setSearch(val);
+        setPage(1);
+    });
 
     const debouncedSearch = useDebounce(search, 400);
     const navigate = useNavigate();
@@ -113,12 +99,11 @@ const Users = () => {
                     }
                     toolbar={{
                         search: (
-                            <FilterSearchInput
-                                value={search}
-                                onChange={(val) => {
-                                    setSearch(val);
-                                    setPage(1);
-                                }}
+                            <Input
+                                placeholder="Search by name or email"
+                                className="w-full md:flex-1 min-w-[200px]"
+                                value={searchInput.value}
+                                onChange={(e) => searchInput.onChange(e.target.value)}
                             />
                         ),
                         filters: (
