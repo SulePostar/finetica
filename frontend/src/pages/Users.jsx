@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import DynamicTable from "@/components/table/DynamicTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,12 +11,15 @@ import PageTitle from "@/components/shared-ui/PageTitle";
 import IsError from "@/components/shared-ui/IsError";
 import { useNavigate } from "react-router-dom";
 import {
-    Select, SelectTrigger, SelectValue,
+    Select,
+    SelectTrigger,
+    SelectValue,
     SelectContent,
     SelectItem,
 } from "@/components/ui/select";
 import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
-
+import useDebounce from "@/hooks/use-debounce";
+import useSearch from "@/hooks/use-search";
 import DefaultLayout from "@/layout/DefaultLayout";
 
 const Users = () => {
@@ -24,41 +27,62 @@ const Users = () => {
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [page, setPage] = useState(1);
     const perPage = 10;
+    const [search, setSearch] = useState("");
+
+    const searchInput = useSearch(search, (val) => {
+        setSearch(val);
+        setPage(1);
+    });
+
+    const debouncedSearch = useDebounce(search, 400);
+    const navigate = useNavigate();
+
+    const columns = useMemo(() => getUsersColumns(), []);
 
     const { data: response, isPending, isError, error, refetch } = useUsers({
-        page, perPage, roleId: selectedRole === "all" ? null : selectedRole,
-        statusId: selectedStatus === "all" ? null : selectedStatus
+        page,
+        perPage,
+        roleId: selectedRole === "all" ? null : selectedRole,
+        statusId: selectedStatus === "all" ? null : selectedStatus,
+        search: debouncedSearch,
     });
+
     const { data: rolesResponse } = useRoles();
     const { data: statusesResponse } = useStatuses();
-    const usersData = response?.data || [];
-    const totalUsers = response?.total || 0;
-    const rolesData = rolesResponse?.data || [];
-    const statusesData = statusesResponse?.data || [];
-    const navigate = useNavigate();
+
+    const usersData = response?.data ?? [];
+    const totalUsers = response?.total ?? 0;
+
+    const statusOptions = useMemo(() => {
+        const data = statusesResponse?.data || [];
+        return data.map(s => (
+            <SelectItem key={s.id} value={s.id.toString()}>
+                {capitalizeFirst(s.status)}
+            </SelectItem>
+        ));
+    }, [statusesResponse]);
+
+    const roleOptions = useMemo(() => {
+        const data = rolesResponse?.data ?? [];
+        return data.map(r => (
+            <SelectItem key={r.id} value={r.id.toString()}>
+                {capitalizeFirst(r.role)}
+            </SelectItem>
+        ));
+    }, [rolesResponse]);
 
     const handleUserClick = (user) => {
         navigate(`/profile/${user.id}`);
-    }
+    };
 
-    if (isPending) {
-        return <>
-            <PageTitle text="User Management Dashboard" />
-            <div className="flex items-center justify-center h-40">
-                <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
-            </div>
-        </>
-    }
     if (isError) {
         return (
-            <div>
-                <IsError
-                    error={error}
-                    onRetry={() => refetch()}
-                    title="Failed to load user"
-                    showDetails={true}
-                />
-            </div>
+            <IsError
+                error={error}
+                onRetry={() => refetch()}
+                title="Failed to load Users"
+                showDetails={true}
+            />
         );
     }
 
@@ -71,42 +95,48 @@ const Users = () => {
                             text="Users"
                             subtitle="Users management dashboard"
                             compact
-                        />}
+                        />
+                    }
                     toolbar={{
-                        search:
+                        search: (
                             <Input
-                                placeholder="Search..."
-                                className="w-full" />,
+                                placeholder="Search by name or email"
+                                className="w-full md:flex-1 min-w-[200px]"
+                                value={searchInput.value}
+                                onChange={(e) => searchInput.onChange(e.target.value)}
+                            />
+                        ),
                         filters: (
                             <>
-                                <Select value={selectedStatus}
+                                <Select
+                                    value={selectedStatus}
                                     onValueChange={(value) => {
                                         setSelectedStatus(value);
                                         setPage(1);
-                                    }}>
-                                    <SelectTrigger className="w-[180px]"><SelectValue placeholder="All statuses" /></SelectTrigger>
+                                    }}
+                                >
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="All statuses" />
+                                    </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">All statuses</SelectItem>
-                                        {statusesData.map(s => <SelectItem key={s.id} value={s.id.toString()}>
-                                            {capitalizeFirst(s.status)}
-                                        </SelectItem>)
-                                        }
+                                        {statusOptions}
                                     </SelectContent>
                                 </Select>
 
-                                <Select value={selectedRole} onValueChange={(value) => {
-                                    setSelectedRole(value);
-                                    setPage(1);
-                                }}>
+                                <Select
+                                    value={selectedRole}
+                                    onValueChange={(value) => {
+                                        setSelectedRole(value);
+                                        setPage(1);
+                                    }}
+                                >
                                     <SelectTrigger className="w-[180px]">
                                         <SelectValue placeholder="All roles" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="all">All roles</SelectItem>
-                                        {rolesData.map(r => <SelectItem key={r.id} value={r.id.toString()}>
-                                            {capitalizeFirst(r.role)}
-                                        </SelectItem>)
-                                        }
+                                        {roleOptions}
                                     </SelectContent>
                                 </Select>
                             </>
@@ -117,6 +147,7 @@ const Users = () => {
                                 onClick={() => {
                                     setSelectedRole("all");
                                     setSelectedStatus("all");
+                                    setSearch("");
                                     setPage(1);
                                 }}
                             >
@@ -124,20 +155,24 @@ const Users = () => {
                             </Button>
                         )
                     }}
-                    columns={getUsersColumns()}
+                    columns={columns}
                     data={usersData}
                     total={totalUsers}
                     page={page}
                     perPage={perPage}
                     onPageChange={setPage}
                     onRowClick={handleUserClick}
+                    loading={isPending}
                 />
 
+                {isPending && (
+                    <div className="pointer-events-none fixed inset-0 flex items-center justify-center bg-white/40">
+                        <Spinner className="w-12 h-12 text-[var(--spurple)]" />
+                    </div>
+                )}
             </div>
-
         </DefaultLayout>
     );
-}
-
+};
 
 export default Users;
