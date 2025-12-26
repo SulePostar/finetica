@@ -6,7 +6,10 @@ import { Spinner } from "@/components/ui/spinner";
 import { usePartners } from "@/queries/partners";
 import { useState } from "react";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
+import { useNavigate } from "react-router-dom";
+import { useAction } from "@/hooks/use-action";
 const Partners = () => {
+    const navigate = useNavigate();
     const [page, setPage] = useState(1);
     const perPage = 10;
     const [timeRange, setTimeRange] = useState("all");
@@ -15,6 +18,13 @@ const Partners = () => {
         setTimeRange(newValue);
         setPage(1);
     };
+
+    const handleAction = useAction('partners');
+
+    const handleRowClick = (row) => {
+        navigate(`/partners/${row.id}`);
+    };
+
     if (isPending) {
         return (
             <>
@@ -57,12 +67,13 @@ const Partners = () => {
                         </div>
                     </div>
                 }
-                columns={getPartnersColumns((item) => console.log("Action on:", item))}
+                columns={getPartnersColumns(handleAction)}
                 data={data.data ?? []}
                 total={data?.total || 0}
                 page={page}
                 perPage={perPage}
                 onPageChange={setPage}
+                onRowClick={handleRowClick}
             />
         </div>
     );
