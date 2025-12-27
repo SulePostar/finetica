@@ -15,10 +15,8 @@ export function useInvalidPdfs(activeTab, page = 1, perPage = 10) {
   };
 
   const queryFn = async () => {
-    console.log("fetching invalid pdfs for tab:", activeTab, "page:", page);
     const fn = fetchers[activeTab] ?? (() => Promise.resolve({ data: [], total: 0 }));
     const res = await fn(page, perPage);
-    console.log("fetch result:", res);
     return res;
   };
 
