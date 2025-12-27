@@ -17,6 +17,7 @@ import RoleAndStatusManagement from '@/pages/RoleAndStatusManagement';
 import ProtectedRoute from './ProtectedRoute';
 import DocumentDetails from '@/pages/DocumentDetails';
 import NotFound from '@/pages/NotFound';
+import PartnerDetails from '@/pages/PartnerDetails';
 
 export default function AppRoutes() {
     return (
@@ -33,11 +34,16 @@ export default function AppRoutes() {
                 <Route path="/kuf" element={<Kuf />} />
                 <Route path="/contracts" element={<Contracts />} />
                 <Route path="/partners" element={<Partner />} />
+                <Route path="/partners/:id" element={<PartnerDetails />} />
+
                 <Route path="/users" element={<Users />} />
                 <Route path="/profile/:userId" element={<ProfilePage />} />
                 <Route path="/roles-statuses" element={<RoleAndStatusManagement />} />
                 <Route path="/invalid-pdfs" element={<InvalidPdfs />} />
-                <Route path="/:type/:id" element={<DocumentDetails />} />
+                <Route path="/kuf/:id" element={<DocumentDetails />} />
+                <Route path="/kif/:id" element={<DocumentDetails />} />
+                <Route path="/bank-statements/:id" element={<DocumentDetails />} />
+                <Route path="/contracts/:id" element={<DocumentDetails />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
