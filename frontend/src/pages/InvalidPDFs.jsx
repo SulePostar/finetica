@@ -105,9 +105,7 @@ const InvalidPdfs = () => {
                             </TabsList>
                             {tabs.map((tab) => (
                                 <TabsContent key={tab.id} value={tab.id} className="mt-0">
-
                                     <div className="w-full h-full flex-1 flex">
-                                        {/* make DynamicTable fill available space */}
                                         <div className="w-full h-full">
                                             <DynamicTable
                                                 columns={getInvalidPdfsColumns(handleAction)}
@@ -116,7 +114,6 @@ const InvalidPdfs = () => {
                                                 page={page}
                                                 perPage={perPage}
                                                 onPageChange={setPage}
-                                                // if DynamicTable accepts className, pass it:
                                                 className="w-full h-full"
                                             />
                                         </div>
