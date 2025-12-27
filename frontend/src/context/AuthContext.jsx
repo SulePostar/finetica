@@ -60,8 +60,14 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const logout = () => {
+        localStorage.removeItem("authToken");
+        setUser(null);
+        setIsAuthenticated(false);
+    }
+
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, loading, login }}>
+        <AuthContext.Provider value={{ user, isAuthenticated, loading, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

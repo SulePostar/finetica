@@ -291,9 +291,16 @@ const DynamicTable = ({
                   })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={allTableColumns.length} className="h-24 text-center text-muted-foreground">
-                      No results.
-                    </TableCell>
+                    {(() => {
+                      const visibleDataCols = table.getVisibleLeafColumns().filter(c => c.id !== 'expander');
+                      const visibleCount = Math.min(visibleDataCols.length, visibleLimit);
+                      const colSpan = visibleCount + (isExpanderVisibleGlobal ? 1 : 0);
+                      return (
+                        <TableCell colSpan={colSpan} className="h-24 text-center text-muted-foreground">
+                          No results.
+                        </TableCell>
+                      );
+                    })()}
                   </TableRow>
                 )}
               </TableBody>

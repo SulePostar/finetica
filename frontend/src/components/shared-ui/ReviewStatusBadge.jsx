@@ -12,6 +12,8 @@ const STATUS_STYLES = {
     rejected: rejectedColor,
     default: "bg-muted text-muted-foreground dark:text-white",
     active: activeColor,
+    true: activeColor,
+    false: rejectedColor,
     "vat registered": activeColor,
     "not registered": rejectedColor,
 };
