@@ -2,6 +2,12 @@ import { FileText, CreditCard, FileCheck, FileSignature } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import DefaultLayout from "@/layout/DefaultLayout";
+import DynamicTable from "@/components/table/DynamicTable";
+import { getInvalidPdfsColumns } from "@/components/tables/columns/InvalidPdfsColumns";
+import { useAction } from "@/hooks/use-action";
+import { useBankTransactionInvalidPdfs } from "@/queries/BankTransactionsQueries";
+import { useState } from "react";
+import { useInvalidPdfs } from "@/hooks/use-invalid-pdfs";
 
 const InvalidPdfs = () => {
     const tabs = [
@@ -10,6 +16,15 @@ const InvalidPdfs = () => {
         { id: "kuf", label: "KUF", icon: FileCheck },
         { id: "contracts", label: "Contracts", icon: FileSignature },
     ];
+
+    const handleAction = useAction('invalid-pdfs');
+    const [activeTab, setActiveTab] = useState("bank");
+    const [page, setPage] = useState(1);
+    const perPage = 10;
+    const { data, isLoading, isError, error, refetch } = useInvalidPdfs(activeTab, page, perPage);
+
+    const rows = data?.data ?? [];
+    const total = data?.total ?? 0;
 
     return (
         <DefaultLayout>
@@ -74,9 +89,18 @@ const InvalidPdfs = () => {
                                     flex items-center justify-center 
                                     transition-colors
                                 ">
-                                        <p className="text-muted-foreground dark:text-foreground text-center text-sm sm:text-base xl:text-lg">
+                                        <DynamicTable
+                                            columns={getInvalidPdfsColumns(handleAction)}
+                                            data={rows}
+                                            total={total}
+                                            page={page}
+                                            perPage={perPage}
+                                            onPageChange={setPage}
+                                        />
+
+                                        {/* <p className="text-muted-foreground dark:text-foreground text-center text-sm sm:text-base xl:text-lg">
                                             There are no {tab.label.toLowerCase()} records to display
-                                        </p>
+                                        </p> */}
                                     </div>
                                 </TabsContent>
                             ))}

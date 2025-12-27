@@ -28,3 +28,21 @@ export const useBankTransactionById = (id) => {
     enabled: !!id,
   });
 };
+
+/* -------------------- */
+/*     Invalid PDFs     */
+/* -------------------- */
+export const useBankTransactionInvalidPdfs = (page = 1, limit = 10) => {
+  return useQuery({
+    queryKey: [...bankTransactionKeys.all, "invalid-pdfs", { page, limit }],
+    queryFn: () => getBankStatementsInvalidPdfs(page, limit),
+  });
+}
+
+export const useBankTransactionInvalidPdfById = (id) => {
+  return useQuery({
+    queryKey: [...bankTransactionKeys.all, "invalid-pdfs", "detail", id],
+    queryFn: () => getBankStatementInvalidPdfById(id),
+    enabled: !!id,
+  });
+}
