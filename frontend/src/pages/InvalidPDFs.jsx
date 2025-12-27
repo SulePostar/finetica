@@ -105,27 +105,21 @@ const InvalidPdfs = () => {
                             </TabsList>
                             {tabs.map((tab) => (
                                 <TabsContent key={tab.id} value={tab.id} className="mt-0">
-                                    <div className="
-                                    bg-card dark:bg-light-gray 
-                                    border border-border 
-                                    rounded-xl 
-                                    p-4 sm:p-6 md:p-6 xl:p-8 
-                                    min-h-[500px] sm:min-h-[600px] xl:min-h-[700px] 
-                                    flex items-center justify-center 
-                                    transition-colors
-                                ">
-                                        <DynamicTable
-                                            columns={getInvalidPdfsColumns(handleAction)}
-                                            data={rows}
-                                            total={total}
-                                            page={page}
-                                            perPage={perPage}
-                                            onPageChange={setPage}
-                                        />
 
-                                        {/* <p className="text-muted-foreground dark:text-foreground text-center text-sm sm:text-base xl:text-lg">
-                                            There are no {tab.label.toLowerCase()} records to display
-                                        </p> */}
+                                    <div className="w-full h-full flex-1 flex">
+                                        {/* make DynamicTable fill available space */}
+                                        <div className="w-full h-full">
+                                            <DynamicTable
+                                                columns={getInvalidPdfsColumns(handleAction)}
+                                                data={rows}
+                                                total={total}
+                                                page={page}
+                                                perPage={perPage}
+                                                onPageChange={setPage}
+                                                // if DynamicTable accepts className, pass it:
+                                                className="w-full h-full"
+                                            />
+                                        </div>
                                     </div>
                                 </TabsContent>
                             ))}
@@ -133,7 +127,7 @@ const InvalidPdfs = () => {
                     </div>
                 </div>
             </div>
-        </DefaultLayout>
+        </DefaultLayout >
     );
 };
 

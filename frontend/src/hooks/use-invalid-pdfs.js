@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getBankStatementsInvalidPdfs } from "@/api/BankTransactions";
 import { getContractsInvalidPdfs } from "@/api/contracts";
 import { getKifInvalidPdfs } from "@/api/Kif";
+import { getKufInvalidPdfs } from "@/api/Kuf";
 
 export function useInvalidPdfs(activeTab, page = 1, perPage = 10) {
   const queryKey = ["invalid-pdfs", activeTab, page, perPage];
@@ -9,7 +10,7 @@ export function useInvalidPdfs(activeTab, page = 1, perPage = 10) {
   const fetchers = {
     bank: (p, l) => getBankStatementsInvalidPdfs(p, l),
     kif: (p, l) => getKifInvalidPdfs(p, l),
-    kuf: (p, l) => getBankStatementsInvalidPdfs(p, l),
+    kuf: (p, l) => getKufInvalidPdfs(p, l),
     contracts: (p, l) => getContractsInvalidPdfs(p, l),
   };
 

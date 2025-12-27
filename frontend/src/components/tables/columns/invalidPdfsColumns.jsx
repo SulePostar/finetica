@@ -17,8 +17,9 @@ export function getInvalidPdfsColumns() {
       header: "Status",
       meta: { isComponent: true },
       cell: ({ row }) => {
-        const approved = row.original.approvedAt || row.original.approvedBy;
-        const value = approved ? "approved" : "pending";
+        const status = row.original.approvedAt || row.original.approvedBy;
+        const value = status ? "approved" : "rejected";
+
         return (
           <div className="flex items-center justify-center">
             <ReviewStatusBadge status={value} />

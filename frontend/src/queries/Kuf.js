@@ -1,4 +1,4 @@
-import { getAllKufs, getKufById } from "@/api/Kuf";
+import { getAllKufs, getKufById, getKufInvalidPdfs, getKufInvalidPdfById } from "@/api/Kuf";
 import { useQuery, } from "@tanstack/react-query";
 
 export const kufKeys = {
@@ -21,6 +21,24 @@ export const useKufById = (id) => {
     return useQuery({
         queryKey: kufKeys.detail(id),
         queryFn: () => getKufById(id),
+        enabled: !!id,
+    });
+}
+
+/* -------------------- */
+/*     Invalid PDFs     */
+/* -------------------- */
+export const useKufInvalidPdfs = (page = 1, limit = 10) => {
+    return useQuery({
+        queryKey: [...kufKeys.all, "invalid-pdfs", { page, limit }],
+        queryFn: () => getKufInvalidPdfs(page, limit),
+    });
+}
+
+export const useKufInvalidPdfById = (id) => {
+    return useQuery({
+        queryKey: [...kufKeys.all, "invalid-pdfs", "detail", id],
+        queryFn: () => getKufInvalidPdfById(id),
         enabled: !!id,
     });
 }
