@@ -1,19 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { getBankStatementsInvalidPdfs } from "@/api/BankTransactions";
+import { getContractsInvalidPdfs } from "@/api/contracts";
+import { getKifInvalidPdfs } from "@/api/Kif";
 
 export function useInvalidPdfs(activeTab, page = 1, perPage = 10) {
   const queryKey = ["invalid-pdfs", activeTab, page, perPage];
 
   const fetchers = {
     bank: (p, l) => getBankStatementsInvalidPdfs(p, l),
-    kif: (p, l) => getBankStatementsInvalidPdfs(p, l),
+    kif: (p, l) => getKifInvalidPdfs(p, l),
     kuf: (p, l) => getBankStatementsInvalidPdfs(p, l),
-    contracts: (p, l) => getBankStatementsInvalidPdfs(p, l),
+    contracts: (p, l) => getContractsInvalidPdfs(p, l),
   };
 
   const queryFn = async () => {
+    console.log("fetching invalid pdfs for tab:", activeTab, "page:", page);
     const fn = fetchers[activeTab] ?? (() => Promise.resolve({ data: [], total: 0 }));
-    return await fn(page, perPage);
+    const res = await fn(page, perPage);
+    console.log("fetch result:", res);
+    return res;
   };
 
   const { data, isLoading, isError, error, refetch } = useQuery({
@@ -23,5 +28,5 @@ export function useInvalidPdfs(activeTab, page = 1, perPage = 10) {
     staleTime: 60_000,
   });
 
-  return { data: data ?? { data: [], total: 0 }, isLoading, isError, error, refetch };
+  return { data, isLoading, isError, error, refetch };
 }

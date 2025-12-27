@@ -5,9 +5,10 @@ import DefaultLayout from "@/layout/DefaultLayout";
 import DynamicTable from "@/components/table/DynamicTable";
 import { getInvalidPdfsColumns } from "@/components/tables/columns/InvalidPdfsColumns";
 import { useAction } from "@/hooks/use-action";
-import { useBankTransactionInvalidPdfs } from "@/queries/BankTransactionsQueries";
 import { useState } from "react";
 import { useInvalidPdfs } from "@/hooks/use-invalid-pdfs";
+import IsError from "@/components/shared-ui/IsError";
+import { Spinner } from "@/components/ui/spinner";
 
 const InvalidPdfs = () => {
     const tabs = [
@@ -21,7 +22,31 @@ const InvalidPdfs = () => {
     const [activeTab, setActiveTab] = useState("bank");
     const [page, setPage] = useState(1);
     const perPage = 10;
-    const { data, isLoading, isError, error, refetch } = useInvalidPdfs(activeTab, page, perPage);
+    const { data, isPending, isError, error, refetch } = useInvalidPdfs(activeTab, page, perPage);
+
+    if (isPending) {
+        return (
+            <>
+                <PageTitle text="Invalid PDFs" />
+                <div className="flex items-center justify-center h-40">
+                    <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
+                </div>
+            </>
+        );
+    }
+
+    if (isError) {
+        return (
+            <div>
+                <IsError
+                    error={error}
+                    onRetry={() => refetch()}
+                    title="Failed to load Invalid PDFs"
+                    showDetails={true}
+                />
+            </div>
+        );
+    }
 
     const rows = data?.data ?? [];
     const total = data?.total ?? 0;
@@ -33,7 +58,7 @@ const InvalidPdfs = () => {
                     <div className="min-h-[85vh] mt-4 mb-4 bg-secondary dark:bg-secondary text-foreground p-4 sm:p-6 md:p-6 xl:p-8 transition-colors rounded-lg">
                         <PageTitle text="Invalid PDFs" compact className="text-spurple" />
 
-                        <Tabs defaultValue="bank" className="w-full">
+                        <Tabs value={activeTab ?? "bank"} onValueChange={(v) => { setActiveTab(v); setPage(1); }} className="w-full">
                             <TabsList
                                 className="
                                 flex flex-col gap-2
