@@ -17,7 +17,6 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
-import DefaultLayout from "@/layout/DefaultLayout";
 import {
     Dialog,
     DialogContent,
@@ -108,118 +107,116 @@ const Users = () => {
     }
 
     return (
-        <DefaultLayout>
-            <div className="pt-20">
-                <DynamicTable
-                    header={
-                        <PageTitle
-                            text="Users"
-                            subtitle="Users management dashboard"
-                            compact
-                        />
-                    }
-                    toolbar={{
-                        search: (
-                            <Input placeholder="Search..." className="w-full" />
-                        ),
-                        filters: (
-                            <>
-                                <Select
-                                    value={selectedStatus}
-                                    onValueChange={(value) => {
-                                        setSelectedStatus(value);
-                                        setPage(1);
-                                    }}
-                                >
-                                    <SelectTrigger className="w-[180px]">
-                                        <SelectValue placeholder="All statuses" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All statuses</SelectItem>
-                                        {statusesData.map((s) => (
-                                            <SelectItem key={s.id} value={s.id.toString()}>
-                                                {capitalizeFirst(s.status)}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-
-                                <Select
-                                    value={selectedRole}
-                                    onValueChange={(value) => {
-                                        setSelectedRole(value);
-                                        setPage(1);
-                                    }}
-                                >
-                                    <SelectTrigger className="w-[180px]">
-                                        <SelectValue placeholder="All roles" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All roles</SelectItem>
-                                        {rolesData.map((r) => (
-                                            <SelectItem key={r.id} value={r.id.toString()}>
-                                                {capitalizeFirst(r.role)}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </>
-                        ),
-                        button: (
-                            <Button
-                                variant="outline"
-                                onClick={() => {
-                                    setSelectedRole("all");
-                                    setSelectedStatus("all");
+        <div className="pt-20">
+            <DynamicTable
+                header={
+                    <PageTitle
+                        text="Users"
+                        subtitle="Users management dashboard"
+                        compact
+                    />
+                }
+                toolbar={{
+                    search: (
+                        <Input placeholder="Search..." className="w-full" />
+                    ),
+                    filters: (
+                        <>
+                            <Select
+                                value={selectedStatus}
+                                onValueChange={(value) => {
+                                    setSelectedStatus(value);
                                     setPage(1);
                                 }}
                             >
-                                Clear filters
-                            </Button>
-                        ),
-                    }}
-                    columns={getUsersColumns(handleUserAction)}
-                    data={usersData}
-                    total={totalUsers}
-                    page={page}
-                    perPage={perPage}
-                    onPageChange={setPage}
-                    onRowClick={handleUserClick}
-                />
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="All statuses" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All statuses</SelectItem>
+                                    {statusesData.map((s) => (
+                                        <SelectItem key={s.id} value={s.id.toString()}>
+                                            {capitalizeFirst(s.status)}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
 
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Delete user</DialogTitle>
-                            <DialogDescription>
-                                Are you sure you want to delete{" "}
-                                <span className="font-medium">
-                                    {selectedUser?.fullName}
-                                </span>
-                                ?<br />
-                                This user will no longer be able to log in.
-                            </DialogDescription>
-                        </DialogHeader>
+                            <Select
+                                value={selectedRole}
+                                onValueChange={(value) => {
+                                    setSelectedRole(value);
+                                    setPage(1);
+                                }}
+                            >
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="All roles" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All roles</SelectItem>
+                                    {rolesData.map((r) => (
+                                        <SelectItem key={r.id} value={r.id.toString()}>
+                                            {capitalizeFirst(r.role)}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </>
+                    ),
+                    button: (
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setSelectedRole("all");
+                                setSelectedStatus("all");
+                                setPage(1);
+                            }}
+                        >
+                            Clear filters
+                        </Button>
+                    ),
+                }}
+                columns={getUsersColumns(handleUserAction)}
+                data={usersData}
+                total={totalUsers}
+                page={page}
+                perPage={perPage}
+                onPageChange={setPage}
+                onRowClick={handleUserClick}
+            />
 
-                        <DialogFooter className="gap-2">
-                            <Button
-                                variant="outline"
-                                onClick={() => setIsDialogOpen(false)}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                variant="destructive"
-                                onClick={handleConfirmDelete}
-                                disabled={isUpdating}
-                            >
-                                Delete
-                            </Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-            </div>
-        </DefaultLayout>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Delete user</DialogTitle>
+                        <DialogDescription>
+                            Are you sure you want to delete{" "}
+                            <span className="font-medium">
+                                {selectedUser?.fullName}
+                            </span>
+                            ?<br />
+                            This user will no longer be able to log in.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <DialogFooter className="gap-2">
+                        <Button
+                            variant="outline"
+                            onClick={() => setIsDialogOpen(false)}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="destructive"
+                            onClick={handleConfirmDelete}
+                            disabled={isUpdating}
+                        >
+                            Delete
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </div>
     );
 };
 
