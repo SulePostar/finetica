@@ -17,6 +17,7 @@ import RoleAndStatusManagement from '@/pages/RoleAndStatusManagement';
 import ProtectedRoute from './ProtectedRoute';
 import DocumentDetails from '@/pages/DocumentDetails';
 import NotFound from '@/pages/NotFound';
+import DefaultLayout from '@/layout/DefaultLayout';
 import PartnerDetails from '@/pages/PartnerDetails';
 
 export default function AppRoutes() {
@@ -25,28 +26,28 @@ export default function AppRoutes() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            <Route element={<ProtectedRoute />}>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/logout" element={<Logout />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/kif" element={<Kif />} />
-                <Route path="/bank-statements" element={<BankTransactions />} />
-                <Route path="/kuf" element={<Kuf />} />
-                <Route path="/contracts" element={<Contracts />} />
-                <Route path="/partners" element={<Partner />} />
-                <Route path="/partners/:id" element={<PartnerDetails />} />
+            <Route element={<DefaultLayout />}>
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/kif" element={<Kif />} />
+                    <Route path="/bank-statements" element={<BankTransactions />} />
+                    <Route path="/kuf" element={<Kuf />} />
+                    <Route path="/contracts" element={<Contracts />} />
+                    <Route path="/partners" element={<Partner />} />
+                    <Route path="/partners/:id" element={<PartnerDetails />} />
 
-                <Route path="/users" element={<Users />} />
-                <Route path="/profile/:userId" element={<ProfilePage />} />
-                <Route path="/roles-statuses" element={<RoleAndStatusManagement />} />
-                <Route path="/invalid-pdfs" element={<InvalidPdfs />} />
-                <Route path="/kuf/:id" element={<DocumentDetails />} />
-                <Route path="/kif/:id" element={<DocumentDetails />} />
-                <Route path="/bank-statements/:id" element={<DocumentDetails />} />
-                <Route path="/contracts/:id" element={<DocumentDetails />} />
+                    <Route path="/users" element={<Users />} />
+                    <Route path="/profile/:userId" element={<ProfilePage />} />
+                    <Route path="/roles-statuses" element={<RoleAndStatusManagement />} />
+                    <Route path="/invalid-pdfs" element={<InvalidPdfs />} />
+                    <Route path="/kuf/:id" element={<DocumentDetails />} />
+                    <Route path="/kif/:id" element={<DocumentDetails />} />
+                    <Route path="/bank-statements/:id" element={<DocumentDetails />} />
+                    <Route path="/contracts/:id" element={<DocumentDetails />} />
+                </Route>
+                <Route path="*" element={<NotFound />} />
             </Route>
-
-            <Route path="*" element={<NotFound />} />
         </Routes>
     );
 }

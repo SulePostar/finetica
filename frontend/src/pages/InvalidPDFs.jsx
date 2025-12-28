@@ -52,30 +52,29 @@ const InvalidPdfs = () => {
     const total = data?.total ?? 0;
 
     return (
-        <DefaultLayout>
-            <div className="min-h-screen flex items-center justify-center bg-background p-4">
-                <div className="w-full">
-                    <div className="min-h-[85vh] mt-4 mb-4 bg-secondary dark:bg-secondary text-foreground p-4 sm:p-6 md:p-6 xl:p-8 transition-colors rounded-lg">
-                        <PageTitle text="Invalid PDFs" compact className="text-spurple" />
+        <div className="min-h-screen flex items-center justify-center bg-background p-4">
+            <div className="w-full">
+                <div className="min-h-[85vh] mt-4 mb-4 bg-secondary dark:bg-secondary text-foreground p-4 sm:p-6 md:p-6 xl:p-8 transition-colors rounded-lg">
+                    <PageTitle text="Invalid PDFs" compact className="text-spurple" />
 
-                        <Tabs value={activeTab ?? "bank"} onValueChange={(v) => { setActiveTab(v); setPage(1); }} className="w-full">
-                            <TabsList
-                                className="
+                    <Tabs value={activeTab ?? "bank"} onValueChange={(v) => { setActiveTab(v); setPage(1); }} className="w-full">
+                        <TabsList
+                            className="
                                 flex flex-col gap-2
                                 lg:grid lg:grid-cols-4
                                 bg-transparent
                                 h-auto p-0 mb-3 sm:mb-4 md:mb-4 xl:mb-6
                                 w-full
                             "
-                            >
-                                {tabs.map((tab) => {
-                                    const Icon = tab.icon;
+                        >
+                            {tabs.map((tab) => {
+                                const Icon = tab.icon;
 
-                                    return (
-                                        <TabsTrigger
-                                            key={tab.id}
-                                            value={tab.id}
-                                            className="
+                                return (
+                                    <TabsTrigger
+                                        key={tab.id}
+                                        value={tab.id}
+                                        className="
                                             flex items-center gap-2 
                                             w-full
                                             px-4 py-3 
@@ -96,34 +95,34 @@ const InvalidPdfs = () => {
                                             dark:data-[state=inactive]:text-foreground 
                                             dark:data-[state=inactive]:hover:bg-gray-background
                                         "
-                                        >
-                                            <Icon className="w-4 h-4 xl:w-5 xl:h-5 flex-shrink-0" />
-                                            <span className="text-sm xl:text-base">{tab.label}</span>
-                                        </TabsTrigger>
-                                    );
-                                })}
-                            </TabsList>
-                            {tabs.map((tab) => (
-                                <TabsContent key={tab.id} value={tab.id} className="mt-0">
-                                    <div className="w-full h-full flex-1 flex">
-                                        <div className="w-full h-full">
-                                            <DynamicTable
-                                                columns={getInvalidPdfsColumns(handleAction)}
-                                                data={rows}
-                                                total={total}
-                                                page={page}
-                                                perPage={perPage}
-                                                onPageChange={setPage}
-                                                className="w-full h-full"
-                                            />
-                                        </div>
+                                    >
+                                        <Icon className="w-4 h-4 xl:w-5 xl:h-5 flex-shrink-0" />
+                                        <span className="text-sm xl:text-base">{tab.label}</span>
+                                    </TabsTrigger>
+                                );
+                            })}
+                        </TabsList>
+                        {tabs.map((tab) => (
+                            <TabsContent key={tab.id} value={tab.id} className="mt-0">
+                                <div className="w-full h-full flex-1 flex">
+                                    <div className="w-full h-full">
+                                        <DynamicTable
+                                            columns={getInvalidPdfsColumns(handleAction)}
+                                            data={rows}
+                                            total={total}
+                                            page={page}
+                                            perPage={perPage}
+                                            onPageChange={setPage}
+                                            className="w-full h-full"
+                                        />
                                     </div>
-                                </TabsContent>
-                            ))}
-                        </Tabs>
-                    </div>
+                                </div>
+                            </TabsContent>
+                        ))}
+                    </Tabs>
                 </div>
             </div>
+        </div>
         </DefaultLayout >
     );
 };
