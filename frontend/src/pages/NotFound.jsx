@@ -46,9 +46,7 @@ export default function NotFound() {
                         className="text-muted-foreground"
                         size="sm"
                     >
-                        <a href="#">
-                            {// Treba da vodi na help kada ga implementiramo
-                            }
+                        <a href="/help">
                             Learn More <ArrowUpRightIcon />
                         </a>
                     </Button>
