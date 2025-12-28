@@ -5,7 +5,6 @@ import { useContracts } from "../queries/useContracts";
 import { Spinner } from '@/components/ui/spinner.jsx';
 import IsError from "@/components/shared-ui/IsError";
 import { getContractsColumns } from "@/components/tables/columns/ContractsColumns";
-import DefaultLayout from "@/layout/DefaultLayout";
 import UploadButton from "@/components/shared-ui/UploadButton";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 import { useAction } from "@/hooks/use-action";
@@ -29,7 +28,7 @@ export default function Contracts() {
   };
   const handleTimeChange = (newValue) => {
     setTimeRange(newValue);
-    setPage(1);
+    setCurrentPage(1);
   };
   if (isPending) {
     return (
@@ -53,37 +52,35 @@ export default function Contracts() {
   }
 
   return (
-    <DefaultLayout>
-      <div className="pt-20">
-        <DynamicTable
-          header={
-            < div className="flex items-center justify-between w-full">
-              <PageTitle
-                text="Contracts"
-                subtitle="Overview of all Contracts files"
-                compact
+    <div className="pt-20">
+      <DynamicTable
+        header={
+          < div className="flex items-center justify-between w-full">
+            <PageTitle
+              text="Contracts"
+              subtitle="Overview of all Contracts files"
+              compact
+            />
+            <div className="flex items-center gap-4">
+              <UploadButton
+                onUploadSuccess={handleFileUpload}
+                buttonText="Upload Kuf"
+                className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
               />
-              <div className="flex items-center gap-4">
-                <UploadButton
-                  onUploadSuccess={handleFileUpload}
-                  buttonText="Upload Kuf"
-                  className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-                />
-                <TimeFilter
-                  value={timeRange}
-                  onChange={handleTimeChange}
-                />
-              </div>
+              <TimeFilter
+                value={timeRange}
+                onChange={handleTimeChange}
+              />
             </div>
-          }
-          columns={getContractsColumns(handleAction)}
-          data={paginatedRows}
-          total={allRows.length}
-          page={currentPage}
-          perPage={itemsPerPage}
-          onPageChange={setCurrentPage}
-        />
-      </div>
-    </DefaultLayout>
+          </div>
+        }
+        columns={getContractsColumns(handleAction)}
+        data={paginatedRows}
+        total={allRows.length}
+        page={currentPage}
+        perPage={itemsPerPage}
+        onPageChange={setCurrentPage}
+      />
+    </div>
   );
 }
