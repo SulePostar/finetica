@@ -83,7 +83,15 @@ export default function RoleAndStatusManagement() {
                         title="Roles"
                         placeholder="New role name"
                         onAdd={(name) => {
-                            createRoleMutation.mutate(name, {
+                            const normalizedName = name.trim().toLowerCase();
+                            const exists = rolesData.data.some(
+                                (r) => r.role.trim().toLowerCase() === normalizedName
+                            );
+                            if (exists) {
+                                notify.error("Role exists");
+                                return;
+                            }
+                            createRoleMutation.mutate(normalizedName, {
                                 onSuccess: () => {
                                     console.log(`Role "${name}" created successfully!`);
                                 },
