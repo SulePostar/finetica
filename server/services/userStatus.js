@@ -1,4 +1,5 @@
 const { UserStatus, sequelize, User } = require('../models');
+const { USER_STATUS } = require('../utils/constants');
 const AppError = require('../utils/errorHandler');
 
 class UserStatusService {
@@ -53,8 +54,7 @@ class UserStatusService {
         const transaction = await sequelize.transaction();
         try {
             const status = await UserStatus.findByPk(id, { transaction });
-            const PENDING_STATUS_ID = 1;
-            const protectedStatusIds = [1, 2, 3];
+            const protectedStatusIds = [USER_STATUS.PENDING, USER_STATUS.APPROVED, USER_STATUS.REJECTED];
             if (!status) {
                 throw new AppError(`User status with id ${id} not found`, 404);
             }
@@ -62,7 +62,7 @@ class UserStatusService {
                 throw new AppError('You are not allowed to delete this status', 400);
             }
             await User.update(
-                { statusId: PENDING_STATUS_ID },
+                { statusId: USER_STATUS.PENDING },
                 {
                     where: { statusId: id },
                     transaction
