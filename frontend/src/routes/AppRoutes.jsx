@@ -19,6 +19,7 @@ import NotFound from '@/pages/NotFound';
 import DefaultLayout from '@/layout/DefaultLayout';
 import PartnerDetails from '@/pages/PartnerDetails';
 import HelpPage from '@/pages/HelpPage';
+import DocumentItemsPage from '@/pages/DocumentItemsPage';
 
 export default function AppRoutes() {
     return (
@@ -46,6 +47,8 @@ export default function AppRoutes() {
                     <Route path="/kif/:id" element={<DocumentDetails />} />
                     <Route path="/bank-statements/:id" element={<DocumentDetails />} />
                     <Route path="/contracts/:id" element={<DocumentDetails />} />
+
+                    <Route path="/:documentType/:id/items" element={<DocumentItemsPage />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
             </Route>
