@@ -61,7 +61,6 @@ export default function RoleAndStatusManagement() {
     const { data: rolesData, isPending: rolesPending, isError: isRolesError, error: rolesError, refetch: rolesRefetch  } = useRoles();
     const { data: statusData, isPending: statusPending, isError: isStatusError, error: statusError, refetch: statusRefetch } = useStatuses();
 
-  // Check for 403 Forbidden errors and redirect
   useEffect(() => {
     if (isRolesError && rolesError?.response?.status === 403) {
       notify.error("Access Restricted", {

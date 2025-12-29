@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
 import DynamicTable from "@/components/table/DynamicTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,7 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import {notify} from "@/lib/notifications";
 
 const Users = () => {
     const [selectedRole, setSelectedRole] = useState("all");
@@ -54,6 +55,15 @@ const Users = () => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const { mutate: updateUser, isPending: isUpdating } = useUpdateUser();
+
+    useEffect(() => {
+      if (isError && error?.response?.status === 403) {
+        notify.error("Access Restricted", {
+          description: "You do not have permission to access this page.",
+        });
+        navigate('/dashboard');
+      }
+    }, [isError, error, navigate]);
 
     const handleUserClick = (user) => {
         navigate(`/profile/${user.id}`);
