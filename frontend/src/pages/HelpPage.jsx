@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import DefaultLayout from '@/layout/DefaultLayout';
 import PageTitle from '@/components/shared-ui/PageTitle';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -154,181 +153,179 @@ const HelpPage = () => {
         : faqCategories;
 
     return (
-        <DefaultLayout>
-            <div className="container mx-auto py-8 px-4 max-w-7xl">
-                <PageTitle text="Help Center" className="mb-6" />
+        <div className="container mx-auto py-8 px-4 max-w-7xl">
+            <PageTitle text="Help Center" className="mb-6" />
 
-                {/* Search Bar */}
-                <Card className="mb-8 shadow-lg">
-                    <CardContent className="pt-6">
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
-                            <Input
-                                type="text"
-                                placeholder="Search for help topics, FAQs, or guides..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-10 pr-4 py-6 text-base"
-                            />
-                        </div>
-                    </CardContent>
-                </Card>
+            {/* Search Bar */}
+            <Card className="mb-8 shadow-lg">
+                <CardContent className="pt-6">
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                        <Input
+                            type="text"
+                            placeholder="Search for help topics, FAQs, or guides..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pl-10 pr-4 py-6 text-base"
+                        />
+                    </div>
+                </CardContent>
+            </Card>
 
-                <Tabs defaultValue="faq" className="space-y-6">
-                    <TabsList className="grid w-full grid-cols-2 lg:w-auto">
-                        <TabsTrigger value="faq" className="flex items-center gap-2">
-                            <HelpCircle className="w-4 h-4" />
-                            <span className="hidden sm:inline">FAQ</span>
-                        </TabsTrigger>
-                        <TabsTrigger value="contact" className="flex items-center gap-2">
-                            <MessageSquare className="w-4 h-4" />
-                            <span className="hidden sm:inline">Contact</span>
-                        </TabsTrigger>
-                    </TabsList>
+            <Tabs defaultValue="faq" className="space-y-6">
+                <TabsList className="grid w-full grid-cols-2 lg:w-auto">
+                    <TabsTrigger value="faq" className="flex items-center gap-2">
+                        <HelpCircle className="w-4 h-4" />
+                        <span className="hidden sm:inline">FAQ</span>
+                    </TabsTrigger>
+                    <TabsTrigger value="contact" className="flex items-center gap-2">
+                        <MessageSquare className="w-4 h-4" />
+                        <span className="hidden sm:inline">Contact</span>
+                    </TabsTrigger>
+                </TabsList>
 
-                    {/* FAQ Tab */}
-                    <TabsContent value="faq" className="space-y-6">
-                        {filteredFaqCategories.length === 0 ? (
-                            <Card>
-                                <CardContent className="pt-6">
-                                    <div className="text-center py-8">
-                                        <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                                        <p className="text-muted-foreground">
-                                            No results found for "{searchQuery}". Try a different search term.
-                                        </p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ) : (
-                            filteredFaqCategories.map((category) => (
-                                <Card key={category.category} className="shadow-md">
-                                    <CardHeader>
-                                        <div className="flex items-center gap-3">
-                                            <div className="p-2 bg-spurple/10 rounded-lg text-spurple">
-                                                {category.icon}
-                                            </div>
-                                            <CardTitle className="text-xl">{category.category}</CardTitle>
-                                            <Badge variant="secondary" className="ml-auto">
-                                                {category.questions.length} questions
-                                            </Badge>
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent className="space-y-2">
-                                        {category.questions.map((faq) => (
-                                            <Collapsible
-                                                key={faq.id}
-                                                open={expandedFaq === faq.id}
-                                                onOpenChange={(isOpen) =>
-                                                    setExpandedFaq(isOpen ? faq.id : null)
-                                                }
-                                            >
-                                                <CollapsibleTrigger asChild>
-                                                    <Button
-                                                        variant="ghost"
-                                                        className="w-full justify-between p-4 h-auto text-left hover:bg-muted/50"
-                                                    >
-                                                        <span className="font-medium">{faq.question}</span>
-                                                        <HelpCircle
-                                                            className={`w-5 h-5 text-muted-foreground transition-transform ${expandedFaq === faq.id ? 'rotate-180' : ''
-                                                                }`}
-                                                        />
-                                                    </Button>
-                                                </CollapsibleTrigger>
-                                                <CollapsibleContent className="px-4 pb-4">
-                                                    <p className="text-muted-foreground leading-relaxed">
-                                                        {faq.answer}
-                                                    </p>
-                                                </CollapsibleContent>
-                                            </Collapsible>
-                                        ))}
-                                    </CardContent>
-                                </Card>
-                            ))
-                        )}
-                    </TabsContent>
-
-                    {/* Contact Tab */}
-                    <TabsContent value="contact" className="space-y-6">
-                        <Card className="shadow-md">
-                            <CardHeader>
-                                <CardTitle className="text-2xl">Contact Support</CardTitle>
-                                <CardDescription>
-                                    Need more help? Our support team is here to assist you
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-6">
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    <div className="flex items-start gap-4 p-4 rounded-lg border bg-card">
-                                        <div className="p-3 bg-spurple/10 rounded-lg text-spurple">
-                                            <Mail className="w-6 h-6" />
-                                        </div>
-                                        <div>
-                                            <h3 className="font-semibold mb-1">Email Support</h3>
-                                            <p className="text-sm text-muted-foreground mb-2">
-                                                Send us an email and we'll respond within 24 hours
-                                            </p>
-                                            <a
-                                                href={`mailto:${contactInfo.email}`}
-                                                className="text-spurple hover:underline text-sm font-medium"
-                                            >
-                                                {contactInfo.email}
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-start gap-4 p-4 rounded-lg border bg-card">
-                                        <div className="p-3 bg-spurple/10 rounded-lg text-spurple">
-                                            <Phone className="w-6 h-6" />
-                                        </div>
-                                        <div>
-                                            <h3 className="font-semibold mb-1">Phone Support</h3>
-                                            <p className="text-sm text-muted-foreground mb-2">
-                                                Call us during business hours
-                                            </p>
-                                            <a
-                                                href={`tel:${contactInfo.phone}`}
-                                                className="text-spurple hover:underline text-sm font-medium"
-                                            >
-                                                {contactInfo.phone}
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="p-4 bg-muted rounded-lg">
-                                    <h3 className="font-semibold mb-2">Business Hours</h3>
-                                    <p className="text-sm text-muted-foreground">{contactInfo.hours}</p>
-                                </div>
-
-                                <div className="border-t pt-6">
-                                    <h3 className="font-semibold mb-4">Send us a message</h3>
-                                    <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                                        <div>
-                                            <Input placeholder="Your Name" />
-                                        </div>
-                                        <div>
-                                            <Input type="email" placeholder="Your Email" />
-                                        </div>
-                                        <div>
-                                            <Input placeholder="Subject" />
-                                        </div>
-                                        <div>
-                                            <textarea
-                                                className="w-full min-h-[120px] px-3 py-2 text-sm border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
-                                                placeholder="Your message..."
-                                            />
-                                        </div>
-                                        <Button className="bg-spurple text-white hover:bg-spurple/90 w-full">
-                                            Send Message
-                                        </Button>
-                                    </form>
+                {/* FAQ Tab */}
+                <TabsContent value="faq" className="space-y-6">
+                    {filteredFaqCategories.length === 0 ? (
+                        <Card>
+                            <CardContent className="pt-6">
+                                <div className="text-center py-8">
+                                    <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                                    <p className="text-muted-foreground">
+                                        No results found for "{searchQuery}". Try a different search term.
+                                    </p>
                                 </div>
                             </CardContent>
                         </Card>
-                    </TabsContent>
-                </Tabs>
-            </div>
-        </DefaultLayout>
+                    ) : (
+                        filteredFaqCategories.map((category) => (
+                            <Card key={category.category} className="shadow-md">
+                                <CardHeader>
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-spurple/10 rounded-lg text-spurple">
+                                            {category.icon}
+                                        </div>
+                                        <CardTitle className="text-xl">{category.category}</CardTitle>
+                                        <Badge variant="secondary" className="ml-auto">
+                                            {category.questions.length} questions
+                                        </Badge>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="space-y-2">
+                                    {category.questions.map((faq) => (
+                                        <Collapsible
+                                            key={faq.id}
+                                            open={expandedFaq === faq.id}
+                                            onOpenChange={(isOpen) =>
+                                                setExpandedFaq(isOpen ? faq.id : null)
+                                            }
+                                        >
+                                            <CollapsibleTrigger asChild>
+                                                <Button
+                                                    variant="ghost"
+                                                    className="w-full justify-between p-4 h-auto text-left hover:bg-muted/50"
+                                                >
+                                                    <span className="font-medium">{faq.question}</span>
+                                                    <HelpCircle
+                                                        className={`w-5 h-5 text-muted-foreground transition-transform ${expandedFaq === faq.id ? 'rotate-180' : ''
+                                                            }`}
+                                                    />
+                                                </Button>
+                                            </CollapsibleTrigger>
+                                            <CollapsibleContent className="px-4 pb-4">
+                                                <p className="text-muted-foreground leading-relaxed">
+                                                    {faq.answer}
+                                                </p>
+                                            </CollapsibleContent>
+                                        </Collapsible>
+                                    ))}
+                                </CardContent>
+                            </Card>
+                        ))
+                    )}
+                </TabsContent>
+
+                {/* Contact Tab */}
+                <TabsContent value="contact" className="space-y-6">
+                    <Card className="shadow-md">
+                        <CardHeader>
+                            <CardTitle className="text-2xl">Contact Support</CardTitle>
+                            <CardDescription>
+                                Need more help? Our support team is here to assist you
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <div className="flex items-start gap-4 p-4 rounded-lg border bg-card">
+                                    <div className="p-3 bg-spurple/10 rounded-lg text-spurple">
+                                        <Mail className="w-6 h-6" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold mb-1">Email Support</h3>
+                                        <p className="text-sm text-muted-foreground mb-2">
+                                            Send us an email and we'll respond within 24 hours
+                                        </p>
+                                        <a
+                                            href={`mailto:${contactInfo.email}`}
+                                            className="text-spurple hover:underline text-sm font-medium"
+                                        >
+                                            {contactInfo.email}
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-start gap-4 p-4 rounded-lg border bg-card">
+                                    <div className="p-3 bg-spurple/10 rounded-lg text-spurple">
+                                        <Phone className="w-6 h-6" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold mb-1">Phone Support</h3>
+                                        <p className="text-sm text-muted-foreground mb-2">
+                                            Call us during business hours
+                                        </p>
+                                        <a
+                                            href={`tel:${contactInfo.phone}`}
+                                            className="text-spurple hover:underline text-sm font-medium"
+                                        >
+                                            {contactInfo.phone}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-4 bg-muted rounded-lg">
+                                <h3 className="font-semibold mb-2">Business Hours</h3>
+                                <p className="text-sm text-muted-foreground">{contactInfo.hours}</p>
+                            </div>
+
+                            <div className="border-t pt-6">
+                                <h3 className="font-semibold mb-4">Send us a message</h3>
+                                <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                                    <div>
+                                        <Input placeholder="Your Name" />
+                                    </div>
+                                    <div>
+                                        <Input type="email" placeholder="Your Email" />
+                                    </div>
+                                    <div>
+                                        <Input placeholder="Subject" />
+                                    </div>
+                                    <div>
+                                        <textarea
+                                            className="w-full min-h-[120px] px-3 py-2 text-sm border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+                                            placeholder="Your message..."
+                                        />
+                                    </div>
+                                    <Button className="bg-spurple text-white hover:bg-spurple/90 w-full">
+                                        Send Message
+                                    </Button>
+                                </form>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+            </Tabs>
+        </div>
     );
 };
 

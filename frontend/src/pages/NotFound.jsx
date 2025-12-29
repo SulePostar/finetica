@@ -10,7 +10,6 @@ import {
     EmptyMedia,
     EmptyTitle,
 } from "@/components/ui/empty"
-import DefaultLayout from "@/layout/DefaultLayout"
 import { useNavigate } from "react-router-dom"
 
 export default function NotFound() {
