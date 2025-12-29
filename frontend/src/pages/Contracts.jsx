@@ -79,20 +79,20 @@ export default function Contracts() {
 
   if (isPending) {
     return (
-      <DefaultLayout>
+      <>
         <div className="pt-20">
           <PageTitle text="Contracts" />
           <div className="flex items-center justify-center h-40">
             <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
           </div>
         </div>
-      </DefaultLayout>
+      </>
     );
   }
 
   if (isError) {
     return (
-      <DefaultLayout>
+      <>
         <div className="pt-20">
           <IsError
             error={error}
@@ -101,7 +101,7 @@ export default function Contracts() {
             showDetails={true}
           />
         </div>
-      </DefaultLayout>
+      </>
     );
   }
 
@@ -109,45 +109,43 @@ export default function Contracts() {
   const total = data?.total ?? 0;
 
   return (
-    <DefaultLayout>
-      <div className="pt-20">
-        <DynamicTable
-          header={
-            <div className="flex items-center justify-between gap-4">
-              <PageTitle
-                text="Contracts"
-                subtitle="Overview of all Contracts files"
-                compact
-              />
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3">
-                  {/* Keep the loading state indicator from HEAD */}
-                  {isUploading && (
-                    <span className="text-sm text-muted-foreground animate-pulse">
-                      Uploading & processing...
-                    </span>
-                  )}
-                  <UploadButton
-                    onUploadSuccess={handleFileUpload}
-                    buttonText="Upload Contract"
-                    className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-                  />
-                  <TimeFilter
-                    value={timeRange}
-                    onChange={handleTimeChange}
-                  />
-                </div>
+    <div className="pt-20">
+      <DynamicTable
+        header={
+          <div className="flex items-center justify-between gap-4">
+            <PageTitle
+              text="Contracts"
+              subtitle="Overview of all Contracts files"
+              compact
+            />
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
+                {/* Keep the loading state indicator from HEAD */}
+                {isUploading && (
+                  <span className="text-sm text-muted-foreground animate-pulse">
+                    Uploading & processing...
+                  </span>
+                )}
+                <UploadButton
+                  onUploadSuccess={handleFileUpload}
+                  buttonText="Upload Contract"
+                  className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+                />
+                <TimeFilter
+                  value={timeRange}
+                  onChange={handleTimeChange}
+                />
               </div>
             </div>
-          }
-          columns={getContractsColumns(handleAction)}
-          data={rows}
-          total={total}
-          page={page}
-          perPage={perPage}
-          onPageChange={setPage}
-        />
-      </div>
-    </DefaultLayout>
+          </div>
+        }
+        columns={getContractsColumns(handleAction)}
+        data={rows}
+        total={total}
+        page={page}
+        perPage={perPage}
+        onPageChange={setPage}
+      />
+    </div>
   );
 }

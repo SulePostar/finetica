@@ -3,7 +3,8 @@ const {
   PurchaseInvoiceItem,
   BusinessPartner,
   KufProcessingLog,
-  sequelize
+  sequelize,
+  User
 } = require('../models');
 const { processDocument } = require('./aiService');
 const KUF_PROMPT = require('../prompts/Kuf');
@@ -69,6 +70,10 @@ const findById = async (id) => {
         },
         {
           model: PurchaseInvoiceItem,
+          required: false
+        },
+        {
+          model: User,
           required: false
         }
       ],
