@@ -30,7 +30,7 @@ import { useAuth } from "@/context/AuthContext";
 
 
 const Users = () => {
-    const { user: currentUser } = useAuth();
+    const { user: currentUser, logout } = useAuth();
     const currentUserId = currentUser?.id;
     const [selectedRole, setSelectedRole] = useState("all");
     const [selectedStatus, setSelectedStatus] = useState("all");
@@ -74,19 +74,28 @@ const Users = () => {
         if (!selectedUser) return;
 
         const isDeleting = selectedUser.isEnabled;
+        const isDeletingSelf = selectedUser.id === currentUserId;
 
         updateUser(
             { id: selectedUser.id, isEnabled: !selectedUser.isEnabled },
             {
                 onSuccess: () => {
-                    toast.success(
-                        isDeleting
-                            ? "User deactivated successfully"
-                            : "User restored successfully"
-                    );
-                    setIsDialogOpen(false);
-                    setSelectedUser(null);
-                    refetch();
+                    if (isDeletingSelf && isDeleting) {
+                        toast.success("Your account has been deactivated. Logging out...");
+                        setTimeout(() => {
+                            logout();
+                            navigate("/login");
+                        }, 1500);
+                    } else {
+                        toast.success(
+                            isDeleting
+                                ? "User deactivated successfully"
+                                : "User restored successfully"
+                        );
+                        setIsDialogOpen(false);
+                        setSelectedUser(null);
+                        refetch();
+                    }
                 },
                 onError: () => {
                     toast.error(
@@ -204,18 +213,23 @@ const Users = () => {
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>
-                            {selectedUser?.isEnabled ? "Delete" : "Restore"} user
+                            {selectedUser?.isEnabled ? "Deactivate" : "Activate"} user
                         </DialogTitle>
                         <DialogDescription>
-                            Are you sure you want to {selectedUser?.isEnabled ? "deactivate" : "restore"}{" "}
+                            Are you sure you want to {selectedUser?.isEnabled ? "deactivate" : "activate"}{" "}
                             <span className="font-medium">
                                 {selectedUser?.fullName}
                             </span>
                             ?<br />
-                            {selectedUser?.isEnabled
-                                ? "This user will no longer be able to log in."
-                                : "This user will be able to log in again."
-                            }
+                            {selectedUser?.id === currentUserId && selectedUser?.isEnabled ? (
+                                <span className="text-destructive font-medium">
+                                    You will be logged out immediately after deactivating your account.
+                                </span>
+                            ) : selectedUser?.isEnabled ? (
+                                "This user will no longer be able to log in."
+                            ) : (
+                                "This user will be able to log in again."
+                            )}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -231,7 +245,7 @@ const Users = () => {
                             onClick={handleConfirmDelete}
                             disabled={isUpdating}
                         >
-                            {selectedUser?.isEnabled ? "Deactivate" : "Restore"}
+                            {selectedUser?.isEnabled ? "Deactivate" : "Activate"}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

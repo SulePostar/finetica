@@ -63,7 +63,6 @@ export function getUsersColumns(onAction, currentUserId) {
                         key: "toggleStatus",
                         label: row.original.isEnabled ? "Deactivate" : "Restore",
                         className: row.original.isEnabled ? "text-destructive" : "",
-                        disabled: row.original.id === currentUserId
                     },
                 ];
 
