@@ -51,6 +51,16 @@ const DocumentItemsPage = () => {
         return null;
     }, [location.pathname, rawSegment]);
 
+    const pageTitle = useMemo(() => {
+        if (!documentType) return "Document Items";
+
+        if (documentType === "kif") return "KIF Items";
+        if (documentType === "kuf") return "KUF Items";
+        if (documentType === "bank-transactions") return "Bank Transaction Items";
+
+        return "Document Items";
+    }, [documentType]);
+
     const state = location.state || {};
     const backUrl = state.backUrl || `/${rawSegment}/${id}`;
 
@@ -285,7 +295,7 @@ const DocumentItemsPage = () => {
                 header={
                     <div className="flex items-center justify-between w-full">
                         <PageTitle
-                            text="Document Items"
+                            text={pageTitle}
                             subtitle="Details of document items"
                             compact
                         />

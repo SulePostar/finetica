@@ -46,7 +46,7 @@ const DocumentDetails = () => {
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
                 <div className="order-1 lg:order-1 min-w-0 flex flex-col">
                     <DocumentFields document={data} type={documentType} />
-                    <Button onClick={() => navigate(`/${documentType}/${id}/items`, { state: { backUrl: location.pathname } })} className="mt-4 w-full bg-[var(--spurple)] text-md">View Item Details</Button>
+                    {documentType !== "contracts" && (<Button onClick={() => navigate(`/${documentType}/${id}/items`, { state: { backUrl: location.pathname } })} className="mt-4 w-full bg-[var(--spurple)] text-md">View Item Details</Button>)}
                 </div>
 
                 <div className="order-2 lg:order-2  min-w-0">
