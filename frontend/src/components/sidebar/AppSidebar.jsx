@@ -72,7 +72,12 @@ const USER = {
 };
 
 export function AppSidebar(props) {
-  const { user } = useAuth();
+
+    const { user, loading } = useAuth();
+
+    if (loading) {
+        return <Sidebar {...props} className="bg-spurple" />;
+    }
 
   const isAdmin = user?.roleName === 'admin';
 
@@ -89,47 +94,56 @@ export function AppSidebar(props) {
     return null;
   }
 
-  return (
-    <Sidebar
-      collapsible="icon"
-      variant="sidebar"
-      className="
+    const profilePath = `/profile/${user.id}`;
+
+    const currentUser = {
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email,
+        initials: user.initials || `${user.firstName?.[0]}${user.lastName?.[0]}`.toUpperCase(),
+        profileImage: user.profileImage
+    };
+
+    return (
+        <Sidebar
+            collapsible="icon"
+            variant="sidebar"
+            className="
                 fixed top-0 left-0 z-50 w-[var(--sidebar-width)]
-                transition-all duration-300 ease-in-out
+                transition-all duration-300 ease-in-out 
                 bg-spurple
-                border-r border-white/10
+                border-r border-white/10 
                 backdrop-blur-xl
                 flex flex-col"
-      {...props}
-    >
-      <SidebarRail />
-
-      <div className="relative flex flex-1 flex-col min-h-0">
-        <SidebarCollapsePill />
-
-        <SidebarHeader>
-          <SidebarLogo />
-        </SidebarHeader>
-
-        <SidebarContent
-          className="pt-4 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
+            {...props}
         >
-          <SidebarNav groups={filteredNavigation} />
-        </SidebarContent>
-        <SidebarFooter>
-          <div className="flex items-center justify-between px-3 py-4 group-data-[collapsible=icon]:hidden pointer-events-auto">
-            <Link to="/profile" className="block w-full cursor-pointer">
-              <SidebarUserInfo user={USER} />
-            </Link>
-          </div>
+            <SidebarRail />
 
-          <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center py-4 pointer-events-auto">
-            <Link to="/profile" className="cursor-pointer">
-              <CollapsedUserAvatar initials={USER.initials} />
-            </Link>
-          </div>
-        </SidebarFooter>
-      </div>
-    </Sidebar>
-  );
+            <div className="relative flex flex-1 flex-col min-h-0">
+                <SidebarCollapsePill />
+
+                <SidebarHeader>
+                    <SidebarLogo />
+                </SidebarHeader>
+
+                <SidebarContent
+                    className="pt-4 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
+                >
+                    <SidebarNav groups={filteredNavigation} />
+                </SidebarContent>
+                <SidebarFooter>
+                    <div className="flex items-center justify-between px-3 py-4 group-data-[collapsible=icon]:hidden pointer-events-auto">
+                        <Link to={profilePath} className="block w-full cursor-pointer">
+                            <SidebarUserInfo user={currentUser} />
+                        </Link>
+                    </div>
+
+                    <div className="hidden group-data-[collapsible=icon]:flex items-center justify-center py-4 pointer-events-auto">
+                        <Link to={profilePath} className="cursor-pointer">
+                            <CollapsedUserAvatar initials={currentUser.initials} />
+                        </Link>
+                    </div>
+                </SidebarFooter>
+            </div>
+        </Sidebar>
+    );
 }
