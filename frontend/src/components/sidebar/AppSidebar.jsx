@@ -65,11 +65,6 @@ const SIDEBAR_NAVIGATION = [
     }
 ];
 
-const USER = {
-    name: "John Doe",
-    email: "john@example.com",
-    initials: "JD",
-};
 
 export function AppSidebar(props) {
 
