@@ -26,8 +26,12 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
+
 
 const Users = () => {
+    const { user: currentUser, logout } = useAuth();
+    const currentUserId = currentUser?.id;
     const [selectedRole, setSelectedRole] = useState("all");
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [page, setPage] = useState(1);
@@ -60,7 +64,7 @@ const Users = () => {
     };
 
     const handleUserAction = (actionKey, user) => {
-        if (actionKey === "delete") {
+        if (actionKey == "toggleStatus") {
             setSelectedUser(user);
             setIsDialogOpen(true);
         }
@@ -69,16 +73,36 @@ const Users = () => {
     const handleConfirmDelete = () => {
         if (!selectedUser) return;
 
+        const isDeleting = selectedUser.isEnabled;
+        const isDeletingSelf = selectedUser.id === currentUserId;
+
         updateUser(
-            { id: selectedUser.id, isEnabled: false },
+            { id: selectedUser.id, isEnabled: !selectedUser.isEnabled },
             {
                 onSuccess: () => {
-                    toast.success("User deleted successfully");
-                    setIsDialogOpen(false);
-                    setSelectedUser(null);
+                    if (isDeletingSelf && isDeleting) {
+                        toast.success("Your account has been deactivated. Logging out...");
+                        setTimeout(() => {
+                            logout();
+                            navigate("/login");
+                        }, 1500);
+                    } else {
+                        toast.success(
+                            isDeleting
+                                ? "User deactivated successfully"
+                                : "User restored successfully"
+                        );
+                        setIsDialogOpen(false);
+                        setSelectedUser(null);
+                        refetch();
+                    }
                 },
                 onError: () => {
-                    toast.error("Failed to delete user");
+                    toast.error(
+                        isDeleting
+                            ? "Failed to deactivate user"
+                            : "Failed to restore user"
+                    );
                 },
             }
         );
@@ -176,7 +200,7 @@ const Users = () => {
                         </Button>
                     ),
                 }}
-                columns={getUsersColumns(handleUserAction)}
+                columns={getUsersColumns(handleUserAction, currentUserId)}
                 data={usersData}
                 total={totalUsers}
                 page={page}
@@ -188,14 +212,24 @@ const Users = () => {
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Delete user</DialogTitle>
+                        <DialogTitle>
+                            {selectedUser?.isEnabled ? "Deactivate" : "Activate"} user
+                        </DialogTitle>
                         <DialogDescription>
-                            Are you sure you want to delete{" "}
+                            Are you sure you want to {selectedUser?.isEnabled ? "deactivate" : "activate"}{" "}
                             <span className="font-medium">
                                 {selectedUser?.fullName}
                             </span>
                             ?<br />
-                            This user will no longer be able to log in.
+                            {selectedUser?.id === currentUserId && selectedUser?.isEnabled ? (
+                                <span className="text-destructive font-medium">
+                                    You will be logged out immediately after deactivating your account.
+                                </span>
+                            ) : selectedUser?.isEnabled ? (
+                                "This user will no longer be able to log in."
+                            ) : (
+                                "This user will be able to log in again."
+                            )}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -207,11 +241,11 @@ const Users = () => {
                             Cancel
                         </Button>
                         <Button
-                            variant="destructive"
+                            variant={selectedUser?.isEnabled ? "destructive" : "default"}
                             onClick={handleConfirmDelete}
                             disabled={isUpdating}
                         >
-                            Delete
+                            {selectedUser?.isEnabled ? "Deactivate" : "Activate"}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
