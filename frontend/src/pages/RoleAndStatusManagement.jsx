@@ -5,10 +5,12 @@ import RolesStatusesTable from "@/components/tables/RolesStatusesTable";
 import { Spinner } from "@/components/ui/spinner";
 import { notify } from "@/lib/notifications";
 import IsError from '@/components/shared-ui/IsError.jsx';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function RoleAndStatusManagement() {
+    const navigate = useNavigate();
     const deleteUserRoleMutation = useDeleteRole();
     const createRoleMutation = useCreateRole();
     const createUserStatus = useCreateUserStatus();
@@ -59,7 +61,24 @@ export default function RoleAndStatusManagement() {
     const { data: rolesData, isPending: rolesPending, isError: isRolesError, error: rolesError, refetch: rolesRefetch  } = useRoles();
     const { data: statusData, isPending: statusPending, isError: isStatusError, error: statusError, refetch: statusRefetch } = useStatuses();
 
-    if (statusPending || rolesPending) {
+  // Check for 403 Forbidden errors and redirect
+  useEffect(() => {
+    if (isRolesError && rolesError?.response?.status === 403) {
+      notify.error("Access Restricted", {
+        description: "You do not have permission to access this page.",
+      });
+      navigate('/dashboard');
+    }
+    if (isStatusError && statusError?.response?.status === 403) {
+      notify.error("Access Restricted", {
+        description: "You do not have permission to access this page.",
+      });
+      navigate('/dashboard');
+    }
+  }, [isRolesError, isStatusError, rolesError, statusError, navigate]);
+
+
+  if (statusPending || rolesPending) {
         return (
             <>
                 <div className="px-4 md:px-6 lg:px-8"></div>
