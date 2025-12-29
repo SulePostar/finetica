@@ -18,8 +18,7 @@ import {
     SelectItem,
 } from "@/components/ui/select";
 import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
-import useDebounce from "@/hooks/use-debounce";
-import useSearch from "@/hooks/use-search";
+import useTableSearch from "@/hooks/use-table-search";
 import DefaultLayout from "@/layout/DefaultLayout";
 
 const Users = () => {
@@ -27,16 +26,12 @@ const Users = () => {
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [page, setPage] = useState(1);
     const perPage = 10;
-    const [search, setSearch] = useState("");
-
-    const searchInput = useSearch(search, (val) => {
-        setSearch(val);
-        setPage(1);
+    const { search, debouncedSearch, setSearch, clearSearch } = useTableSearch({
+        delay: 400,
+        setPage,
     });
 
-    const debouncedSearch = useDebounce(search, 400);
     const navigate = useNavigate();
-
     const columns = useMemo(() => getUsersColumns(), []);
 
     const { data: response, isPending, isError, error, refetch } = useUsers({
@@ -102,8 +97,8 @@ const Users = () => {
                             <Input
                                 placeholder="Search by name or email"
                                 className="w-full md:flex-1 min-w-[200px]"
-                                value={searchInput.value}
-                                onChange={(e) => searchInput.onChange(e.target.value)}
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
                             />
                         ),
                         filters: (
@@ -147,8 +142,7 @@ const Users = () => {
                                 onClick={() => {
                                     setSelectedRole("all");
                                     setSelectedStatus("all");
-                                    setSearch("");
-                                    setPage(1);
+                                    clearSearch();
                                 }}
                             >
                                 Clear filters
