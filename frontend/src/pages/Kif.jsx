@@ -9,7 +9,6 @@ import UploadButton from "@/components/shared-ui/UploadButton";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 import { useAction } from "@/hooks/use-action";
 import { useBucketFileUpload } from "@/queries/uploadedFiles";
-import { useQueryToast } from "@/hooks/use-query-toast";
 
 const Kif = () => {
     const [page, setPage] = useState(1);
@@ -31,16 +30,6 @@ const Kif = () => {
     const handleFileUpload = async (file) => {
         await uploadFile({ file, description: "Kif file" });
     };
-
-    useQueryToast({
-        isPending,
-        isError,
-        data,
-        error,
-        successMessage: "Kif files loaded",
-        successDescription: "All Kif files have been fetched successfully.",
-        errorMessage: "Failed to load Kif files",
-    });
 
     const handleTimeChange = (newValue) => {
         setTimeRange(newValue);
