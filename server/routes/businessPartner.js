@@ -6,6 +6,7 @@ const {
     getAllPartners,
     updatePartnerStatus,
     updateBusinessPartner,
+    deletePartner,
 } = require('../controllers/businessPartner');
 const validate = require('../middleware/validation');
 const {
@@ -24,5 +25,5 @@ router.get('/:id', getPartner);
 router.post('/', validate(createBusinessPartnerSchema), createNewBusinessPartner);
 router.patch('/:id', isAuthenticated, updatePartnerStatus);
 router.put('/:id', validate(updateBusinessPartnerSchema), updateBusinessPartner);
-
+router.delete('/:id', isAuthenticated, deletePartner);
 module.exports = router;

@@ -3,7 +3,7 @@ import PageTitle from "@/components/shared-ui/PageTitle";
 import DynamicTable from "@/components/table/DynamicTable";
 import { getPartnersColumns } from "@/components/tables/columns/PartnersColumns";
 import { Spinner } from "@/components/ui/spinner";
-import { usePartners } from "@/queries/partners";
+import { usePartners, useDeletePartner } from "@/queries/partners";
 import { useState } from "react";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 import { useNavigate } from "react-router-dom";
@@ -14,12 +14,27 @@ const Partners = () => {
     const perPage = 10;
     const [timeRange, setTimeRange] = useState("all");
     const { data, isPending, error, isError, refetch } = usePartners({ page, perPage });
+    const { mutate: deletePartner } = useDeletePartner();
     const handleTimeChange = (newValue) => {
         setTimeRange(newValue);
         setPage(1);
     };
 
     const handleAction = useAction('partners');
+    const handleTableAction = (action, data) => {
+        if (action === 'delete') {
+            const partnerId = data?.id;
+            if (!partnerId) {
+                console.error("Partner ID not found in data:", data);
+                return;
+            }
+            if (window.confirm("Are you sure you want to delete this partner?")) {
+                deletePartner(partnerId);
+            }
+        } else {
+            handleAction(action, data);
+        }
+    };
 
     const handleRowClick = (row) => {
         navigate(`/partners/${row.id}`);
@@ -67,7 +82,7 @@ const Partners = () => {
                         </div>
                     </div>
                 }
-                columns={getPartnersColumns(handleAction)}
+                columns={getPartnersColumns(handleTableAction)}
                 data={data.data ?? []}
                 total={data?.total || 0}
                 page={page}

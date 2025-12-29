@@ -109,11 +109,25 @@ const updateBusinessPartnerById = async (id, updates) => {
     data: updatedPartners[0],
   };
 };
+const deleteBusinessPartnerById = async (id) => {
+  const deletedCount = await BusinessPartner.destroy({
+    where: { id },
+  });
 
+  if (deletedCount === 0) {
+    throw new AppError(`Business partner with ID ${id} not found`, 404);
+  }
+
+  return {
+    success: true,
+    message: 'Business partner deleted successfully',
+  };
+};
 module.exports = {
   getAllBusinessPartners,
   getBusinessPartnerById,
   createBusinessPartner,
   updateBusinessPartnerStatus,
   updateBusinessPartnerById,
+  deleteBusinessPartnerById,
 };
