@@ -31,8 +31,6 @@ import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 const perPage = 10;
 
-
-
 const Users = () => {
     const navigate = useNavigate();
     const [page, setPage] = useState(1);
@@ -77,6 +75,7 @@ const Users = () => {
             </SelectItem>
         ));
     }, [rolesResponse]);
+
     const statusOptions = useMemo(() => {
         return (statusesResponse?.data ?? []).map((status) => (
             <SelectItem key={status.id} value={status.id.toString()}>
@@ -91,6 +90,7 @@ const Users = () => {
             setIsDialogOpen(true);
         }
     }, []);
+
     const handleRowClick = useCallback(
         (user) => navigate(`/profile/${user.id}`),
         [navigate]
