@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query"; // Importi direktno ovdje
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import DefaultLayout from "@/layout/DefaultLayout";
 import DynamicTable from "@/components/table/DynamicTable";
@@ -12,7 +12,7 @@ import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 import { useContracts, contractKeys } from "../queries/useContracts";
 import { getContractsColumns } from "@/components/tables/columns/ContractsColumns";
 import { useAction } from "@/hooks/use-action";
-import { uploadFileToBucket } from "@/api/uploadedFiles"; // Direktni API import
+import { uploadFileToBucket } from "@/api/uploadedFiles";
 import { notify } from "@/lib/notifications";
 import { useQueryToast } from "@/hooks/use-query-toast";
 
@@ -30,7 +30,6 @@ export default function Contracts() {
     timeRange
   });
 
-  // ISTA LOGIKA KAO U BANK TRANSACTIONS (Direktno u komponenti)
   const {
     mutateAsync: uploadFile,
     isPending: isUploading,
@@ -44,7 +43,6 @@ export default function Contracts() {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: contractKeys.all });
-
       notify.success("Contract uploaded", {
         description: "The contract file has been processed successfully.",
       });
@@ -76,7 +74,7 @@ export default function Contracts() {
 
   const handleTimeChange = (newValue) => {
     setTimeRange(newValue);
-    setPage(1);
+    setPage(1); // Merged: ensures we reset to first page on filter change
   };
 
   if (isPending) {
@@ -123,6 +121,7 @@ export default function Contracts() {
               />
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-3">
+                  {/* Keep the loading state indicator from HEAD */}
                   {isUploading && (
                     <span className="text-sm text-muted-foreground animate-pulse">
                       Uploading & processing...
