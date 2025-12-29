@@ -35,6 +35,7 @@ const DynamicTable = ({
   header,
   toolbar,
   onRowClick,
+  showColumnSelector = true,
 }) => {
   const [expandedRows, setExpandedRows] = useState({});
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -137,15 +138,37 @@ const DynamicTable = ({
     <div className="w-full mx-auto rounded-2xl border border-table-border-light dark:border-gray-background bg-card shadow-lg overflow-hidden">
       {breakpoint !== "default" ? (
         <TooltipProvider>
-          {(header || toolbar || table.getAllColumns().some(c => c.getCanHide())) && (
-            <div className="flex items-center justify-between px-6 pt-4 pb-2 gap-4">
-              <div className="flex-1 min-w-0">{header}</div>
-              <div className="flex items-center gap-2">
-                {toolbar}
-                <ColumnSelector table={table} />
-              </div>
+          {(header || toolbar || (showColumnSelector && table.getAllColumns().some(c => c.getCanHide()))) && (
+            <div className="flex flex-col gap-4 px-6 pt-4 pb-2">
+
+              {header && (
+                <div className="flex items-center w-full">
+                  <div className="min-w-0 flex-1">{header}</div>
+                  {showColumnSelector && (
+                    <div className="ml-4">
+                      <ColumnSelector table={table} />
+                    </div>
+                  )}
+                </div>
+              )}
+              {toolbar && (
+                <div className="flex items-center w-full gap-3">
+                  <div className="flex-1 min-w-0">{toolbar.search}</div>
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    {toolbar.filters}
+                    {toolbar.button}
+                  </div>
+                </div>
+              )}
+              {!header && (
+                <div className="flex items-center justify-between gap-2">
+                  {toolbar}
+                  {showColumnSelector && <ColumnSelector table={table} />}
+                </div>
+              )}
             </div>
           )}
+
 
           <div className="border-t border-table-border-light dark:border-gray-background" />
 
@@ -220,8 +243,7 @@ const DynamicTable = ({
                               {!isExplicitComponent ? (
                                 <Tooltip delayDuration={800}>
                                   <TooltipTrigger asChild>
-                                    <div className="max-w-[18ch] sm:max-w-[22ch] md:max-w-[26ch] overflow-hidden text-ellipsis whitespace-nowrap text-center cursor-default">
-                                      {rendered}
+                                    <div className="max-w-[100%] sm:max-w-[100%] md:max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap text-center cursor-default">     {rendered}
                                     </div>
                                   </TooltipTrigger>
 

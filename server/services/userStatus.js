@@ -1,6 +1,7 @@
-const { UserStatus, Sequelize } = require('../models');
-
+const { UserStatus } = require('../models');
+const { Sequelize } = require('sequelize');
 const AppError = require('../utils/errorHandler');
+
 
 class UserStatusService {
     async getAllUserStatuses() {
@@ -60,17 +61,35 @@ class UserStatusService {
     }
 
     async deleteUserStatus(id) {
-        const status = await UserStatus.findByPk(id);
-        if (!status) {
-            throw new AppError(`User status with id ${id} not found`, 404);
+        const transaction = await sequelize.transaction();
+        try {
+            const status = await UserStatus.findByPk(id, { transaction });
+            const PENDING_STATUS_ID = 1;
+            const protectedStatusIds = [1, 2, 3];
+            if (!status) {
+                throw new AppError(`User status with id ${id} not found`, 404);
+            }
+            if (protectedStatusIds.includes(Number(status.id))) {
+                throw new AppError('You are not allowed to delete this status', 400);
+            }
+            await User.update(
+                { statusId: PENDING_STATUS_ID },
+                {
+                    where: { statusId: id },
+                    transaction
+                }
+            );
+            await status.destroy({ transaction });
+            await transaction.commit();
+            return {
+                statusCode: 200,
+                message: 'User status deleted successfully',
+                data: { success: true },
+            };
+        } catch (error) {
+            await transaction.rollback();
+            throw error;
         }
-
-        await status.destroy();
-        return {
-            statusCode: 200,
-            message: 'User status deleted successfully',
-            data: { success: true },
-        };
     }
 }
 

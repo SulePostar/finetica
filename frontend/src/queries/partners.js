@@ -1,4 +1,4 @@
-import { getAllPartners } from "@/api/partners";
+import { getAllPartners, getPartnerById } from "@/api/partners";
 import { useQuery } from "@tanstack/react-query";
 
 export const partnersKeys = {
@@ -14,3 +14,11 @@ export const usePartners = (filters = {}) => {
             getAllPartners(filters)
     });
 }
+
+export const usePartnerById = (id) => {
+    return useQuery({
+        queryKey: [...partnersKeys.all, "detail", id],
+        queryFn: () => getPartnerById(id),
+        enabled: !!id,
+    });
+}   
