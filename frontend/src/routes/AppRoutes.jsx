@@ -26,8 +26,8 @@ export default function AppRoutes() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            <Route element={<DefaultLayout />}>
-                <Route element={<ProtectedRoute />}>
+            <Route element={<ProtectedRoute />}>
+                <Route element={<DefaultLayout />}>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/kif" element={<Kif />} />
