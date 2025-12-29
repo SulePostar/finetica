@@ -29,7 +29,10 @@ export default function ActionsDropdown({ item, actions, onAction }) {
           <div key={action.key || index}>
             {action.separator && <DropdownMenuSeparator />}
             <DropdownMenuItem
-              onClick={() => handleAction(action.key)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAction(action.key);
+              }}
               className={action.className}
               disabled={action.disabled}
             >
