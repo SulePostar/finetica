@@ -1,5 +1,7 @@
-const { UserStatus, sequelize, User } = require('../models');
+const { UserStatus } = require('../models');
+const { Sequelize } = require('sequelize');
 const AppError = require('../utils/errorHandler');
+
 
 class UserStatusService {
     async getAllUserStatuses() {
@@ -36,12 +38,21 @@ class UserStatusService {
             throw new AppError('Status name is required and must be a string', 400);
         }
 
-        const existingStatus = await UserStatus.findOne({ where: { status: statusName } });
+        const normalizedStatus = statusName.trim().toLowerCase();
+
+        const existingStatus = await UserStatus.findOne({
+            where: Sequelize.where(
+                Sequelize.fn('LOWER', Sequelize.col('status')),
+                normalizedStatus
+            ),
+        });
+
         if (existingStatus) {
             throw new AppError('Status already exists', 400);
         }
 
-        const newStatus = await UserStatus.create({ status: statusName });
+        const newStatus = await UserStatus.create({ status: normalizedStatus });
+
         return {
             statusCode: 201,
             message: 'User status created successfully',
