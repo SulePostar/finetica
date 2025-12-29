@@ -18,6 +18,7 @@ import DocumentDetails from '@/pages/DocumentDetails';
 import NotFound from '@/pages/NotFound';
 import DefaultLayout from '@/layout/DefaultLayout';
 import PartnerDetails from '@/pages/PartnerDetails';
+import HelpPage from '@/pages/HelpPage';
 
 export default function AppRoutes() {
     return (
@@ -25,8 +26,8 @@ export default function AppRoutes() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            <Route element={<DefaultLayout />}>
-                <Route element={<ProtectedRoute />}>
+            <Route element={<ProtectedRoute />}>
+                <Route element={<DefaultLayout />}>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/kif" element={<Kif />} />
@@ -40,6 +41,7 @@ export default function AppRoutes() {
                     <Route path="/profile/:userId" element={<ProfilePage />} />
                     <Route path="/roles-statuses" element={<RoleAndStatusManagement />} />
                     <Route path="/invalid-pdfs" element={<InvalidPdfs />} />
+                    <Route path="/help" element={<HelpPage />} />
                     <Route path="/kuf/:id" element={<DocumentDetails />} />
                     <Route path="/kif/:id" element={<DocumentDetails />} />
                     <Route path="/bank-statements/:id" element={<DocumentDetails />} />
@@ -49,4 +51,4 @@ export default function AppRoutes() {
             </Route>
         </Routes>
     );
-}
+}   

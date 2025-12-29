@@ -7,7 +7,7 @@ const ProtectedRoute = ({ allowedRoles = [] }) => {
 
     if (loading) {
         return (
-            <div className="flex flex-col justify-center items-center min-h-screen bg-gray-50">
+            <div className="flex flex-col justify-center items-center min-h-screen bg-background">
                 <img
                     src="/symphonylogo.png"
                     alt="Finetica Logo"
