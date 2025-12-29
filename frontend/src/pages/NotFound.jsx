@@ -16,41 +16,41 @@ export default function NotFound() {
     const navigate = useNavigate();
 
     return (
-        <div className="mx-auto mt-20 p-8">
-            <Empty className="mt-20">
-                <EmptyHeader>
-                    <EmptyMedia variant="icon" className="scale-150">
-                        <IconProtocol color="var(--spurple)" />
-                    </EmptyMedia>
-                    <EmptyTitle className="text-xl mt-2">404 Error </EmptyTitle>
-                    <EmptyTitle className="text-md">Page Not Found</EmptyTitle>
-                    <EmptyDescription>
-                        Oops... The page you are looking for does not exist.
-                    </EmptyDescription>
-                </EmptyHeader>
-                <EmptyContent>
-                    <div className="flex gap-2">
-                        <Button
-                            className="bg-spurple text-white hover:bg-spurple/85"
-                            onClick={() => navigate('/')}
-                        >
-                            Go to Dashboard
-                        </Button>
-                    </div>
-                </EmptyContent>
-                <Button
-                    variant="link"
-                    asChild
-                    className="text-muted-foreground"
-                    size="sm"
-                >
-                    <a href="#">
-                        {// Treba da vodi na help kada ga implementiramo
-                        }
-                        Learn More <ArrowUpRightIcon />
-                    </a>
-                </Button>
-            </Empty>
-        </div>
+        <DefaultLayout>
+            <div className="mx-auto mt-20 p-8">
+                <Empty className="mt-20">
+                    <EmptyHeader>
+                        <EmptyMedia variant="icon" className="scale-150">
+                            <IconProtocol color="var(--spurple)" />
+                        </EmptyMedia>
+                        <EmptyTitle className="text-xl mt-2">404 Error </EmptyTitle>
+                        <EmptyTitle className="text-md">Page Not Found</EmptyTitle>
+                        <EmptyDescription>
+                            Oops... The page you are looking for does not exist.
+                        </EmptyDescription>
+                    </EmptyHeader>
+                    <EmptyContent>
+                        <div className="flex gap-2">
+                            <Button
+                                className="bg-spurple text-white hover:bg-spurple/85"
+                                onClick={() => navigate('/')}
+                            >
+                                Go to Dashboard
+                            </Button>
+                        </div>
+                    </EmptyContent>
+                    <Button
+                        variant="link"
+                        asChild
+                        className="text-muted-foreground"
+                        size="sm"
+                    >
+                        <a href="/help">
+                            Learn More <ArrowUpRightIcon />
+                        </a>
+                    </Button>
+                </Empty>
+            </div>
+        </DefaultLayout>
     )
 }
