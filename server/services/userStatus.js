@@ -1,4 +1,4 @@
-const { UserStatus, sequelize, User } = require('../models');
+const { UserStatus, Sequelize, sequelize, User } = require('../models');
 const { USER_STATUS } = require('../utils/constants');
 const AppError = require('../utils/errorHandler');
 
@@ -9,11 +9,26 @@ class UserStatusService {
             attributes: ['id', 'status', 'created_at', 'updated_at'],
             order: [['id', 'ASC']],
         });
+        const protectedStatusIds = [
+            USER_STATUS.PENDING,
+            USER_STATUS.APPROVED,
+            USER_STATUS.REJECTED
+        ];
+
+
+        const statusesWithFlag = statuses.map(status => {
+            const statusData = status.toJSON();
+            return {
+                ...statusData,
+                isProtected: protectedStatusIds.includes(statusData.id)
+            };
+        });
 
         return {
             statusCode: 200,
             message: 'User statuses fetched successfully',
-            data: statuses,
+            data: statusesWithFlag,
+
         };
     }
 

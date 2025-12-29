@@ -8,10 +8,18 @@ class UserRoleService {
             attributes: ['id', 'role', 'created_at', 'updated_at'],
             order: [['id', 'ASC']],
         });
+        const protectedRoleIds = [USER_ROLE.ADMIN, USER_ROLE.USER];
+        const rolesWithFlag = roles.map(role => {
+            const roleData = role.toJSON();
+            return {
+                ...roleData,
+                isProtected: protectedRoleIds.includes(roleData.id)
+            };
+        });
         return {
             statusCode: 200,
             message: 'User roles fetched successfully',
-            data: roles,
+            data: rolesWithFlag,
         };
     }
 
@@ -23,7 +31,9 @@ class UserRoleService {
         if (!role) {
             throw new AppError(`User role with id ${id} not found`, 404);
         }
-
+        const roleData = role.toJSON();
+        const protectedRoleIds = [USER_ROLE.ADMIN, USER_ROLE.USER];
+        roleData.isProtected = protectedRoleIds.includes(roleData.id);
         return {
             statusCode: 200,
             message: 'User role fetched successfully',
