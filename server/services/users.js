@@ -45,6 +45,7 @@ class UserService {
           'lastName',
           'roleId',
           'statusId',
+          'isEnabled',
           ['created_at', 'createdAt'],
           ['updated_at', 'updatedAt'],
           ['last_login_at', 'lastLoginAt'],

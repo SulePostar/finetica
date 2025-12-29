@@ -2,12 +2,18 @@ import { Badge } from "@/components/ui/badge";
 import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
 import { formatValue } from "@/helpers/formatValue";
 
+const activeColor = "bg-chart-2 dark:bg-chart-2 text-black dark:text-white";
+const rejectedColor = "bg-destructive text-black dark:text-white";
+
+
 const STATUS_STYLES = {
-    approved: "bg-chart-2 dark:bg-chart-2 text-black dark:text-white",
+    approved: activeColor,
     pending: "bg-chart-4 dark:bg-chart-3 text-black dark:text-white",
-    rejected: "bg-destructive text-black dark:text-white",
+    rejected: rejectedColor,
     default: "bg-muted text-muted-foreground dark:text-white",
-    active: "bg-chart-2 dark:bg-chart-2 text-black dark:text-white",
+    active: activeColor,
+    "vat registered": activeColor,
+    "not registered": rejectedColor,
 };
 
 export function ReviewStatusBadge({ status }) {
@@ -16,7 +22,10 @@ export function ReviewStatusBadge({ status }) {
     const color = STATUS_STYLES[safeValue] || STATUS_STYLES.default;
 
     return (
-        <Badge className={color}>
+        <Badge className={[
+            color,
+            "w-fit max-w-none whitespace-nowrap px-3 min-w-[85px]"
+        ].join(" ")}>
             {capitalizeFirst(safeValue)}
         </Badge>
     );
