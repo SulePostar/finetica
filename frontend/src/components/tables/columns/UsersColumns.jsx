@@ -6,6 +6,7 @@ import { formatDateTime } from "@/helpers/formatDate";
 import { formatValue } from "@/helpers/formatValue";
 
 export function getUsersColumns(onAction, currentUserId, isAdmin) {
+
     return [
         {
             accessorKey: "fullName",

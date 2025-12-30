@@ -12,6 +12,8 @@ export const useUsers = (filters = {}) => {
   return useQuery({
     queryKey: usersKeys.list(filters),
     queryFn: () => getUsers(filters),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 60 * 1000
   });
 };
 
