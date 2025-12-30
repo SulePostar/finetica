@@ -1,14 +1,11 @@
 import ActionsDropdown from "@/components/ActionsDropdown";
 import { ReviewStatusBadge } from "@/components/shared-ui/ReviewStatusBadge";
+import { Badge } from "@/components/ui/badge";
 import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
 import { formatDateTime } from "@/helpers/formatDate";
 import { formatValue } from "@/helpers/formatValue";
 
-export function getUsersColumns(onAction, isAdmin) {
-    const userActions = [
-        { key: "Approve", label: "Approve" },
-        { key: "Reject", label: "Reject" },
-    ];
+export function getUsersColumns(onAction, currentUserId, isAdmin) {
     return [
         {
             accessorKey: "fullName",
@@ -25,9 +22,10 @@ export function getUsersColumns(onAction, isAdmin) {
         {
             accessorKey: "roleName",
             header: "Role",
-            cell: ({ row }) => (
-                formatValue(capitalizeFirst(row.original.roleName))
-            ),
+            cell: ({ row }) => {
+                const role = row.original.roleName;
+                return role ? formatValue(capitalizeFirst(role)) : "-";
+            },
         },
         {
             accessorKey: "lastLoginAt",
@@ -36,14 +34,24 @@ export function getUsersColumns(onAction, isAdmin) {
                 formatValue(formatDateTime(row.original.lastLoginAt))
             ),
         },
-
         {
             accessorKey: "statusName",
             header: "Status",
             meta: { isComponent: true },
+            cell: ({ row }) => {
+                const status = row.original.statusName;
+                return status ? <ReviewStatusBadge status={status} /> : <Badge variant="outline">Unknown</Badge>;
+            },
+        },
+        {
+            accessorKey: "isEnabled",
+            header: "Enabled",
+            meta: { isComponent: true },
             cell: ({ row }) => (
-                <ReviewStatusBadge status={row.original.statusName} />
-            ),
+                <Badge className={row.original.isEnabled ? "bg-chart-2 dark:bg-chart-2 text-black dark:text-white" : "bg-destructive text-black dark:text-white"}>
+                    {row.original.isEnabled ? "Active" : "Inactive"}
+                </Badge>
+            )
         },
         {
             id: "actions",
@@ -51,15 +59,34 @@ export function getUsersColumns(onAction, isAdmin) {
             meta: { isComponent: true },
             cell: ({ row }) => {
                 const user = row.original;
-                const showActions = isAdmin && user.statusName.toLowerCase() === "pending";
+                const statusName = user.statusName || "";
+                const isPending = statusName.toLowerCase() === "pending";
 
-                return showActions ? (
+                const userActions = [];
+
+                if (isAdmin && isPending) {
+                    userActions.push(
+                        { key: "Approve", label: "Approve" },
+                        { key: "Reject", label: "Reject" }
+                    );
+                }
+
+                userActions.push(
+                    { key: "view", label: "View" },
+                    {
+                        key: "toggleStatus",
+                        label: user.isEnabled ? "Deactivate" : "Restore",
+                        className: user.isEnabled ? "text-destructive" : "",
+                    }
+                );
+
+                return (
                     <ActionsDropdown
                         item={user}
                         actions={userActions}
-                        onAction={onAction}
+                        onAction={(key) => onAction(key, user)}
                     />
-                ) : null;
+                );
             },
         },
     ];

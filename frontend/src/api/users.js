@@ -12,13 +12,15 @@ export const getUserByRole = async (role) => {
 export const getUserById = async (id) => {
     const { data } = await apiClient.get(`/users/${id}`);
     return data;
-}
+};
+
+export const updateUser = async ({ id, ...payload }) => {
+    const dataToUpdate = payload.payload || payload;
+    const { data } = await apiClient.put(`/users/${id}`, dataToUpdate);
+    return data;
+};
 
 export const getMe = async () => {
     const response = await apiClient.get('/users/me');
     return response.data;
-};
-
-export const updateUser = (id, data) => {
-    return apiClient.put(`/users/${id}`, data);
 };
