@@ -1,6 +1,6 @@
 import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
-import { useKufInvoices } from "@/queries/Kuf";
+import { useKufInvoices, kufKeys } from "@/queries/Kuf";
 import { useState } from "react";
 import { getKufColumns } from "@/components/tables/columns/kufColumns";
 import { Spinner } from "@/components/ui/spinner";
@@ -8,6 +8,7 @@ import IsError from "@/components/shared-ui/IsError";
 import UploadButton from "@/components/shared-ui/UploadButton";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 import { useAction } from "@/hooks/use-action";
+import { useBucketFileUpload } from "@/queries/uploadedFiles";
 
 const Kuf = () => {
     const [page, setPage] = useState(1);
@@ -16,9 +17,18 @@ const Kuf = () => {
     const { data, isPending, error, isError, refetch } = useKufInvoices({ page, perPage, timeRange });
     const handleAction = useAction('kuf');
 
-    const handleFileUpload = (file) => {
-        console.log("File uploaded:", file);
+    const {
+        mutateAsync: uploadFile,
+        isPending: isUploading,
+    } = useBucketFileUpload({
+        bucketName: "kuf",
+        invalidateKeys: [kufKeys.all],
+        successMessage: "KUF uploaded",
+        successDescription: "KUF file has been processed successfully.",
+    });
 
+    const handleFileUpload = async (file) => {
+        await uploadFile({ file, description: "KUF file" });
     };
 
     const handleTimeChange = (newValue) => {
@@ -59,11 +69,20 @@ const Kuf = () => {
                             compact
                         />
                         <div className="flex items-center gap-4">
-                            <UploadButton
-                                onUploadSuccess={handleFileUpload}
-                                buttonText="Upload Kuf"
-                                className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-                            />
+                            <div className="flex items-center gap-3">
+                                {isUploading && (
+                                    <div className="flex items-center gap-2">
+                                        <Spinner className="w-4 h-4 text-[var(--spurple)]" />
+                                        <span className="text-sm text-muted-foreground">Uploading & processing...</span>
+                                    </div>
+                                )}
+
+                                <UploadButton
+                                    onUploadSuccess={handleFileUpload}
+                                    buttonText="Upload Kuf"
+                                    className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+                                />
+                            </div>
                             <TimeFilter
                                 value={timeRange}
                                 onChange={handleTimeChange}
