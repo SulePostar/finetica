@@ -79,7 +79,7 @@ export const DocumentFields = ({ document, excludeFields = ['pdfUrl', 'items', '
                                     <span className="text-sm font-medium text-muted-foreground capitalize">
                                         {key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim()}
                                     </span>
-                                    <span className="text-sm text-primary sm:text-right break-all">
+                                    <span className="text-sm text-primary sm:text-right break-words whitespace-pre-wrap max-w-full sm:max-w-[70%]">
                                         {formatValue(key, value)}
                                     </span>
                                 </div>
