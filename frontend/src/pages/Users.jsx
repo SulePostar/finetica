@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useCallback, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DynamicTable from "@/components/table/DynamicTable";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useUsers, useUpdateUser } from "@/queries/userQueries";
-import { useRoles, useStatuses } from "@/queries/rolesAndStatuses";
-import { getUsersColumns } from "@/components/tables/columns/UsersColumns";
-import { Spinner } from "@/components/ui/spinner";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import IsError from "@/components/shared-ui/IsError";
-import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import {
     Select,
     SelectTrigger,
@@ -16,7 +13,6 @@ import {
     SelectContent,
     SelectItem,
 } from "@/components/ui/select";
-import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
 import {
     Dialog,
     DialogContent,
@@ -25,40 +21,61 @@ import {
     DialogDescription,
     DialogFooter,
 } from "@/components/ui/dialog";
+
+import { useUsers, useUpdateUser } from "@/queries/userQueries";
+import { useRoles, useStatuses } from "@/queries/rolesAndStatuses";
+import { getUsersColumns } from "@/components/tables/columns/UsersColumns";
+import useTableSearch from "@/hooks/use-table-search";
+import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
 import { toast } from "sonner";
 import {notify} from "@/lib/notifications";
 import { useAuth } from "@/context/AuthContext";
-
+const perPage = 10;
 
 const Users = () => {
+    const navigate = useNavigate();
+    const [page, setPage] = useState(1);
     const { user: currentUser, logout } = useAuth();
     const currentUserId = currentUser?.id;
     const [selectedRole, setSelectedRole] = useState("all");
     const [selectedStatus, setSelectedStatus] = useState("all");
-    const [page, setPage] = useState(1);
-    const perPage = 10;
 
-    const navigate = useNavigate();
-
-    const { data: response, isPending, isError, error, refetch } = useUsers({
-        page,
-        perPage,
-        roleId: selectedRole === "all" ? null : selectedRole,
-        statusId: selectedStatus === "all" ? null : selectedStatus,
+    const { search, debouncedSearch, setSearch, clearSearch } = useTableSearch({
+        delay: 400,
+        setPage,
     });
-
-    const { data: rolesResponse } = useRoles();
-    const { data: statusesResponse } = useStatuses();
-
-    const usersData = response?.data || [];
-    const totalUsers = response?.total || 0;
-    const rolesData = rolesResponse?.data || [];
-    const statusesData = statusesResponse?.data || [];
 
     const [selectedUser, setSelectedUser] = useState(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+    const {
+        data: response,
+        isPending,
+        isError,
+        error,
+        refetch,
+    } = useUsers({
+        page,
+        perPage: perPage,
+        roleId: selectedRole === "all" ? null : selectedRole,
+        statusId: selectedStatus === "all" ? null : selectedStatus,
+        search: debouncedSearch,
+    });
+
+    const { data: rolesResponse } = useRoles();
+    const { data: statusesResponse } = useStatuses();
     const { mutate: updateUser, isPending: isUpdating } = useUpdateUser();
+
+    const usersData = response?.data ?? [];
+    const totalUsers = response?.total ?? 0;
+
+    const roleOptions = useMemo(() => {
+        return (rolesResponse?.data ?? []).map((role) => (
+            <SelectItem key={role.id} value={role.id.toString()}>
+                {capitalizeFirst(role.role)}
+            </SelectItem>
+        ));
+    }, [rolesResponse]);
 
     useEffect(() => {
       if (isError && error?.response?.status === 403) {
@@ -72,14 +89,25 @@ const Users = () => {
     const handleUserClick = (user) => {
         navigate(`/profile/${user.id}`);
     };
+    const statusOptions = useMemo(() => {
+        return (statusesResponse?.data ?? []).map((status) => (
+            <SelectItem key={status.id} value={status.id.toString()}>
+                {capitalizeFirst(status.status)}
+            </SelectItem>
+        ));
+    }, [statusesResponse]);
 
-    const handleUserAction = (actionKey, user) => {
+    const handleUserAction = useCallback((actionKey, user) => {
         if (actionKey == "toggleStatus") {
             setSelectedUser(user);
             setIsDialogOpen(true);
         }
-    };
+    }, []);
 
+    const handleRowClick = useCallback(
+        (user) => navigate(`/profile/${user.id}`),
+        [navigate]
+    );
     const handleConfirmDelete = () => {
         if (!selectedUser) return;
 
@@ -91,7 +119,7 @@ const Users = () => {
             {
                 onSuccess: () => {
                     if (isDeletingSelf && isDeleting) {
-                        toast.success("Your account has been deactivated. Logging out...");
+                        toast.success("Your account has been deactivated. Logging out.");
                         setTimeout(() => {
                             logout();
                             navigate("/login");
@@ -118,28 +146,21 @@ const Users = () => {
         );
     };
 
-    if (isPending) {
-        return (
-            <>
-                <PageTitle text="User Management Dashboard" />
-                <div className="flex items-center justify-center h-40">
-                    <Spinner className="w-16 h-16 text-[var(--spurple)]" />
-                </div>
-            </>
-        );
-    }
+    const columns = useMemo(
+        () => getUsersColumns(handleUserAction, currentUserId),
+        [handleUserAction, currentUserId]
+    );
 
     if (isError) {
         return (
             <IsError
                 error={error}
                 onRetry={refetch}
-                title="Failed to load users"
+                title="Failed to load Users"
                 showDetails
             />
         );
     }
-
     return (
         <div className="pt-20">
             <DynamicTable
@@ -152,7 +173,12 @@ const Users = () => {
                 }
                 toolbar={{
                     search: (
-                        <Input placeholder="Search..." className="w-full" />
+                        <Input
+                            placeholder="Search by name or email"
+                            className="w-full md:flex-1 min-w-[200px]"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
                     ),
                     filters: (
                         <>
@@ -168,11 +194,7 @@ const Users = () => {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">All statuses</SelectItem>
-                                    {statusesData.map((s) => (
-                                        <SelectItem key={s.id} value={s.id.toString()}>
-                                            {capitalizeFirst(s.status)}
-                                        </SelectItem>
-                                    ))}
+                                    {statusOptions}
                                 </SelectContent>
                             </Select>
 
@@ -188,11 +210,7 @@ const Users = () => {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">All roles</SelectItem>
-                                    {rolesData.map((r) => (
-                                        <SelectItem key={r.id} value={r.id.toString()}>
-                                            {capitalizeFirst(r.role)}
-                                        </SelectItem>
-                                    ))}
+                                    {roleOptions}
                                 </SelectContent>
                             </Select>
                         </>
@@ -203,21 +221,27 @@ const Users = () => {
                             onClick={() => {
                                 setSelectedRole("all");
                                 setSelectedStatus("all");
-                                setPage(1);
+                                clearSearch();
                             }}
                         >
                             Clear filters
                         </Button>
                     ),
                 }}
-                columns={getUsersColumns(handleUserAction, currentUserId)}
+                columns={columns}
                 data={usersData}
                 total={totalUsers}
                 page={page}
                 perPage={perPage}
                 onPageChange={setPage}
-                onRowClick={handleUserClick}
+                onRowClick={handleRowClick}
             />
+
+            {isPending && (
+                <div className="pointer-events-none fixed inset-0 flex items-center justify-center bg-white/40">
+                    <Spinner className="w-12 h-12 text-[var(--spurple)]" />
+                </div>
+            )}
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent>

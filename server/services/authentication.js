@@ -107,6 +107,7 @@ class AuthService {
           statusId: user.statusId,
           statusName: user.status?.status || '',
           isEmailVerified: user.isEmailVerified,
+          isEnabled: user.isEnabled,
           lastLoginAt: user.lastLoginAt,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,
