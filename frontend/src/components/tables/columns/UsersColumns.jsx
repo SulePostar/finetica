@@ -5,7 +5,7 @@ import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
 import { formatDateTime } from "@/helpers/formatDate";
 import { formatValue } from "@/helpers/formatValue";
 
-export function getUsersColumns(onAction, currentUserId) {
+export function getUsersColumns(onAction) {
     return [
         {
             accessorKey: "fullName",

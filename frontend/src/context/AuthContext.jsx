@@ -15,6 +15,15 @@ export const AuthProvider = ({ children }) => {
             if (token) {
                 try {
                     const userData = await getMe();
+
+                    if (!userData.isEnabled) {
+                        localStorage.removeItem("authToken");
+                        setUser(null);
+                        setIsAuthenticated(false);
+                        setLoading(false);
+                        return;
+                    }
+
                     setUser(userData);
                     setIsAuthenticated(true);
                 } catch (error) {
@@ -33,6 +42,13 @@ export const AuthProvider = ({ children }) => {
             const data = await loginUser(credentials);
             const token = data.data.token;
             const user = data.data.user;
+
+            if (!user.isEnabled) {
+                return {
+                    success: false,
+                    error: "Your account has been deactivated. Please contact an administrator if you want to reactivate it."
+                };
+            }
 
             localStorage.setItem("authToken", token);
             setUser(user);
