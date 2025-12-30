@@ -50,7 +50,7 @@ const DocumentItemsPage = () => {
         isError,
         error,
         refetch,
-    } = useDocumentItems(documentType || undefined, id);
+    } = useDocumentItems(documentType, id);
 
     // client-side pagination
     const total = items.length;
