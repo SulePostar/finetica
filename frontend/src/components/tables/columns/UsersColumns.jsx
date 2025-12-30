@@ -6,10 +6,6 @@ import { formatDateTime } from "@/helpers/formatDate";
 import { formatValue } from "@/helpers/formatValue";
 
 export function getUsersColumns(onAction) {
-    const userActions = [
-        { key: "action1", label: "Action 1" },
-        { key: "delete", label: "Delete" },
-    ];
     return [
         {
             accessorKey: "fullName",
@@ -52,7 +48,7 @@ export function getUsersColumns(onAction) {
             meta: { isComponent: true },
             cell: ({ row }) => (
                 < Badge className={row.original.isEnabled ? "bg-chart-2 dark:bg-chart-2 text-black dark:text-white" : "bg-destructive text-black dark:text-white"} >
-                    {row.original.isEnabled ? "Enabled" : "Disabled"}
+                    {row.original.isEnabled ? "Active" : "Inactive"}
                 </Badge>
             )
         },
@@ -61,6 +57,16 @@ export function getUsersColumns(onAction) {
             header: "Actions",
             meta: { isComponent: true },
             cell: ({ row }) => {
+                const userActions = [
+                    { key: "view", label: "View" },
+                    {
+                        key: "toggleStatus",
+                        label: row.original.isEnabled ? "Deactivate" : "Restore",
+                        className: row.original.isEnabled ? "text-destructive" : "",
+                    },
+                ];
+
+
                 return (
                     <ActionsDropdown
                         item={row.original}
