@@ -106,7 +106,7 @@ const Users = () => {
             {
                 onSuccess: () => {
                     if (isDeletingSelf && isDeleting) {
-                        toast.success("Your account has been deactivated. Logging out...");
+                        toast.success("Your account has been deactivated. Logging out.");
                         setTimeout(() => {
                             logout();
                             navigate("/login");
