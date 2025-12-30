@@ -94,9 +94,13 @@ const Users = () => {
         ));
     }, [statusesResponse]);
 
+    const handleNavigate = (user) => {
+        navigate(`/profile/${user.id}`);
+    };
+
     const handleUserClick = (action, user) => {
-        if (action === "view" || !action) {
-            navigate(`/profile/${user.id}`);
+        if (action === "view") {
+            handleNavigate(user);
             return;
         }
 
@@ -124,11 +128,6 @@ const Users = () => {
             setIsDialogOpen(true);
         }
     };
-
-    const handleRowClick = useCallback(
-        (user) => navigate(`/profile/${user.id}`),
-        [navigate]
-    );
 
     const handleConfirmDelete = () => {
         if (!selectedUser) return;
@@ -248,7 +247,7 @@ const Users = () => {
                 page={page}
                 perPage={perPage}
                 onPageChange={setPage}
-                onRowClick={(user) => handleUserClick("view", user)}
+                onRowClick={handleNavigate}
             />
 
             {isPending && (
