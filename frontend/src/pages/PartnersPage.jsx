@@ -6,6 +6,7 @@ import DynamicTable from "@/components/table/DynamicTable";
 import { getPartnersColumns } from "@/components/tables/columns/PartnersColumns";
 import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { usePartners } from "@/queries/partners";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 import { useAction } from "@/hooks/use-action";
@@ -18,7 +19,7 @@ const Partners = () => {
     const [page, setPage] = useState(1);
     const [timeRange, setTimeRange] = useState("all");
 
-    const { search, debouncedSearch, setSearch } = useTableSearch({
+    const { search, debouncedSearch, setSearch, clearSearch } = useTableSearch({
         delay: 400,
         setPage,
     });
@@ -94,6 +95,17 @@ const Partners = () => {
                 }
                 toolbar={{
                     search: searchBar,
+                    button: (
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setTimeRange("all");
+                                clearSearch();
+                            }}
+                        >
+                            Clear filters
+                        </Button>
+                    ),
                 }}
                 columns={getPartnersColumns(handleAction)}
                 data={data?.data ?? []}
