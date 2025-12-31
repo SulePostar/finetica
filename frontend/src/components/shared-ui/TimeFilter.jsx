@@ -9,8 +9,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-
-import { TIME_FILTER_OPTIONS as BASE_TIME_FILTER_OPTIONS, serializeCustomRange } from "@/helpers/timeFilter";
+import {
+    TIME_FILTER_OPTIONS as BASE_TIME_FILTER_OPTIONS,
+    serializeCustomRange
+} from "@/helpers/timeFilter";
 
 const TIME_FILTER_OPTIONS = [
     ...BASE_TIME_FILTER_OPTIONS,            // 'All', 'Last 7 Days', ...

@@ -19,7 +19,6 @@ const BankTransactions = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
 
-    // timeRange može biti string ili { from, to }
     const [timeRange, setTimeRange] = useState("all");
 
     const handleAction = useAction("bank-statements");
@@ -27,7 +26,7 @@ const BankTransactions = () => {
     const { data, isPending, isError, error, refetch } = useBankTransactions({
         page,
         perPage,
-        timeFilter: timeRange,      // <<< BITNO: prosljeđuješ hook-u
+        timeFilter: timeRange,
     });
 
     const {
@@ -47,7 +46,7 @@ const BankTransactions = () => {
 
     const handleTimeChange = (newValue) => {
         setTimeRange(newValue);
-        setPage(1); // reset paginacije
+        setPage(1);
     };
 
     if (isPending) {
