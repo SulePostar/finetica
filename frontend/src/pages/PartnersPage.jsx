@@ -1,19 +1,34 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import IsError from "@/components/shared-ui/IsError";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import DynamicTable from "@/components/table/DynamicTable";
 import { getPartnersColumns } from "@/components/tables/columns/PartnersColumns";
 import { Spinner } from "@/components/ui/spinner";
+import { Input } from "@/components/ui/input";
 import { usePartners } from "@/queries/partners";
-import { useState } from "react";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
-import { useNavigate } from "react-router-dom";
 import { useAction } from "@/hooks/use-action";
+import useTableSearch from "@/hooks/use-table-search";
+
+const perPage = 10;
+
 const Partners = () => {
     const navigate = useNavigate();
     const [page, setPage] = useState(1);
-    const perPage = 10;
     const [timeRange, setTimeRange] = useState("all");
-    const { data, isPending, error, isError, refetch } = usePartners({ page, perPage });
+
+    const { search, debouncedSearch, setSearch } = useTableSearch({
+        delay: 400,
+        setPage,
+    });
+
+    const { data, isPending, error, isError, refetch } = usePartners({
+        page,
+        perPage,
+        search: debouncedSearch
+    });
+
     const handleTimeChange = (newValue) => {
         setTimeRange(newValue);
         setPage(1);
@@ -25,20 +40,29 @@ const Partners = () => {
         navigate(`/partners/${row.id}`);
     };
 
-    if (isPending) {
+    const searchBar = (
+        <Input
+            placeholder="Search by email or short name"
+            className="w-full md:flex-1 min-w-[200px]"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+        />
+    );
+
+    if (isPending && page === 1 && !debouncedSearch) {
         return (
-            <>
+            <div className="pt-20">
                 <PageTitle text="Partners" />
                 <div className="flex items-center justify-center h-40">
-                    <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
+                    <Spinner className="w-10 h-10 text-[var(--spurple)]" />
                 </div>
-            </>
+            </div>
         );
     }
 
     if (isError) {
         return (
-            <>
+            <div className="pt-20">
                 <PageTitle text="Partners" />
                 <IsError
                     error={error}
@@ -46,14 +70,15 @@ const Partners = () => {
                     title="Failed to load Partners"
                     showDetails={true}
                 />
-            </>
+            </div>
         );
     }
+
     return (
         <div className="pt-20">
             <DynamicTable
                 header={
-                    < div className="flex items-center justify-between w-full">
+                    <div className="flex items-center justify-between w-full">
                         <PageTitle
                             text="Partners"
                             subtitle="Manage business partners"
@@ -67,14 +92,23 @@ const Partners = () => {
                         </div>
                     </div>
                 }
+                toolbar={{
+                    search: searchBar,
+                }}
                 columns={getPartnersColumns(handleAction)}
-                data={data.data ?? []}
+                data={data?.data ?? []}
                 total={data?.total || 0}
                 page={page}
                 perPage={perPage}
                 onPageChange={setPage}
                 onRowClick={handleRowClick}
             />
+
+            {isPending && (
+                <div className="pointer-events-none fixed inset-0 flex items-center justify-center bg-white/40">
+                    <Spinner className="w-12 h-12 text-[var(--spurple)]" />
+                </div>
+            )}
         </div>
     );
 };
