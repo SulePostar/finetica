@@ -62,6 +62,7 @@ const Kuf = () => {
                             <UploadButton
                                 onUploadSuccess={handleFileUpload}
                                 buttonText="Upload Kuf"
+                                // disabled={isUploading} - Add this when the upload logic is implemented.                                
                                 className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
                             />
                             <TimeFilter
