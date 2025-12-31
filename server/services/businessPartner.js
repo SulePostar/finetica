@@ -29,13 +29,14 @@ const getAllBusinessPartners = async ({ page = 1, perPage = 10, search = '' } = 
     const limit = Math.max(1, Number(perPage) || 10);
     const offset = Math.max(0, (Number(page) || 1) - 1) * limit;
 
-    const where = {};
-    if (search) {
-      const searchOperator = Op.iLike;
+    const searchTerm = search?.trim();
 
+    const where = {};
+
+    if (searchTerm) {
       where[Op.or] = [
-        { email: { [searchOperator]: `%${search}%` } },
-        { shortName: { [searchOperator]: `%${search}%` } }
+        { email: { [Op.iLike]: `%${searchTerm}%` } },
+        { shortName: { [Op.iLike]: `%${searchTerm}%` } },
       ];
     }
 
@@ -47,6 +48,7 @@ const getAllBusinessPartners = async ({ page = 1, perPage = 10, search = '' } = 
     });
 
     const data = rows.map((row) => row.get({ plain: true }));
+
     return { data, total: count };
   } catch (error) {
     throw new AppError(`Failed to get business partners: ${error.message}`, 500);
