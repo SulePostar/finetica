@@ -1,4 +1,5 @@
-const { UserStatus, Sequelize, sequelize, User } = require('../models');
+const { UserStatus, User, sequelize } = require('../models');
+const { Sequelize } = require('sequelize');
 const { USER_STATUS } = require('../utils/constants');
 const AppError = require('../utils/errorHandler');
 
