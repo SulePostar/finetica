@@ -1,4 +1,5 @@
 import * as React from "react";
+import {useAuth} from '@/context/AuthContext.jsx';
 import {
     LayoutDashboard,
     CreditCard,
@@ -27,7 +28,6 @@ import { SidebarUserInfo } from "./SidebarUserInfo";
 import { CollapsedUserAvatar } from "./CollapsedUserAvatar";
 
 import { Link } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
 
 const SIDEBAR_NAVIGATION = [
     {
@@ -74,6 +74,21 @@ export function AppSidebar(props) {
         return <Sidebar {...props} className="bg-spurple" />;
     }
 
+  const isAdmin = user?.roleName === 'admin';
+
+  const filteredNavigation = React.useMemo(() => {
+    return SIDEBAR_NAVIGATION.filter(group => {
+      if (group.label === "Administration" && !isAdmin) {
+        return false;
+      }
+      return true;
+    });
+  }, [isAdmin]);
+
+  if (!user) {
+    return null;
+  }
+
     const profilePath = `/profile/${user.id}`;
 
     const currentUser = {
@@ -108,7 +123,7 @@ export function AppSidebar(props) {
                 <SidebarContent
                     className="pt-4 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
                 >
-                    <SidebarNav groups={SIDEBAR_NAVIGATION} />
+                    <SidebarNav groups={filteredNavigation} />
                 </SidebarContent>
                 <SidebarFooter>
                     <div className="flex items-center justify-between px-3 py-4 group-data-[collapsible=icon]:hidden pointer-events-auto">
