@@ -123,7 +123,6 @@ const InvalidPdfs = () => {
                 </div>
             </div>
         </div>
-        </DefaultLayout >
     );
 };
 

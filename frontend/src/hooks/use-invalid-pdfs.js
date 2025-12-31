@@ -4,8 +4,8 @@ import { getContractsInvalidPdfs } from "@/api/contracts";
 import { getKifInvalidPdfs } from "@/api/Kif";
 import { getKufInvalidPdfs } from "@/api/Kuf";
 
-export function useInvalidPdfs(activeTab, page = 1, perPage = 10) {
-  const queryKey = ["invalid-pdfs", activeTab, page, perPage];
+export function useInvalidPdfs(activeTab, page = 1, limit = 10) {
+  const queryKey = ["invalid-pdfs", activeTab, page, limit];
 
   const fetchers = {
     bank: (p, l) => getBankStatementsInvalidPdfs(p, l),
@@ -16,16 +16,16 @@ export function useInvalidPdfs(activeTab, page = 1, perPage = 10) {
 
   const queryFn = async () => {
     const fn = fetchers[activeTab] ?? (() => Promise.resolve({ data: [], total: 0 }));
-    const res = await fn(page, perPage);
+    const res = await fn(page, limit);
     return res;
   };
 
-  const { data, isLoading, isError, error, refetch } = useQuery({
+  const { data, isPending, isError, error, refetch } = useQuery({
     queryKey,
     queryFn,
-    keepPreviousData: true,
+    placeholderData: (previousData) => previousData,
     staleTime: 60_000,
   });
 
-  return { data, isLoading, isError, error, refetch };
+  return { data, isPending, isError, error, refetch };
 }
