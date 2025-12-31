@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import UploadButton from "@/components/shared-ui/UploadButton";
@@ -18,12 +18,16 @@ import { useBucketFileUpload } from "@/queries/uploadedFiles";
 const BankTransactions = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
+
+    // timeRange može biti string ili { from, to }
     const [timeRange, setTimeRange] = useState("all");
+
     const handleAction = useAction("bank-statements");
 
     const { data, isPending, isError, error, refetch } = useBankTransactions({
         page,
         perPage,
+        timeFilter: timeRange,      // <<< BITNO: prosljeđuješ hook-u
     });
 
     const {
@@ -43,7 +47,7 @@ const BankTransactions = () => {
 
     const handleTimeChange = (newValue) => {
         setTimeRange(newValue);
-        setPage(1);
+        setPage(1); // reset paginacije
     };
 
     if (isPending) {
@@ -77,7 +81,7 @@ const BankTransactions = () => {
         <div className="pt-20">
             <DynamicTable
                 header={
-                    < div className="flex items-center justify-between w-full">
+                    <div className="flex items-center justify-between w-full">
                         <PageTitle
                             text="Bank Transactions"
                             subtitle="Overview of all bank transactions"
@@ -96,6 +100,7 @@ const BankTransactions = () => {
                                 disabled={isUploading}
                                 className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
                             />
+
                             <TimeFilter value={timeRange} onChange={handleTimeChange} />
                         </div>
                     </div>
