@@ -93,6 +93,7 @@ const BankTransactions = () => {
                             <UploadButton
                                 onUploadSuccess={handleFileUpload}
                                 buttonText="Upload Bank Transactions"
+                                disabled={isUploading}
                                 className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
                             />
                             <TimeFilter value={timeRange} onChange={handleTimeChange} />
