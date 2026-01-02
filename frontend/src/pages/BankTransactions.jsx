@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import UploadButton from "@/components/shared-ui/UploadButton";
@@ -18,12 +18,15 @@ import { useBucketFileUpload } from "@/queries/uploadedFiles";
 const BankTransactions = () => {
     const [page, setPage] = useState(1);
     const perPage = 10;
+
     const [timeRange, setTimeRange] = useState("all");
+
     const handleAction = useAction("bank-statements");
 
     const { data, isPending, isError, error, refetch } = useBankTransactions({
         page,
         perPage,
+        timeFilter: timeRange,
     });
 
     const {
@@ -77,7 +80,7 @@ const BankTransactions = () => {
         <div className="pt-20">
             <DynamicTable
                 header={
-                    < div className="flex items-center justify-between w-full">
+                    <div className="flex items-center justify-between w-full">
                         <PageTitle
                             text="Bank Transactions"
                             subtitle="Overview of all bank transactions"
@@ -93,8 +96,10 @@ const BankTransactions = () => {
                             <UploadButton
                                 onUploadSuccess={handleFileUpload}
                                 buttonText="Upload Bank Transactions"
+                                disabled={isUploading}
                                 className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
                             />
+
                             <TimeFilter value={timeRange} onChange={handleTimeChange} />
                         </div>
                     </div>
