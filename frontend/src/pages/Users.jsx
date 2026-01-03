@@ -32,7 +32,6 @@ import {
     DialogDescription,
     DialogFooter,
 } from "@/components/ui/dialog";
-const perPage = 10;
 
 const Users = () => {
     const navigate = useNavigate();
@@ -159,8 +158,8 @@ const Users = () => {
     };
 
     const columns = useMemo(
-        () => getUsersColumns(handleUserClick, currentUserId),
-        [handleUserClick, currentUserId]
+        () => getUsersColumns(handleUserClick, currentUserId, isAdmin),
+        [currentUserId, isAdmin]
     );
 
     if (isError) {
@@ -240,7 +239,7 @@ const Users = () => {
                         </Button>
                     ),
                 }}
-                columns={getUsersColumns(handleUserClick, currentUserId, isAdmin)}
+                columns={columns}
                 data={usersData}
                 total={totalUsers}
                 page={page}
