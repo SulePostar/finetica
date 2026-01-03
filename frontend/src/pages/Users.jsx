@@ -105,16 +105,15 @@ const Users = () => {
         }
 
         const statusMap = {
-            Approve: { id: 2, name: "approved" },
-            Reject: { id: 3, name: "rejected" },
+            Approve: { id: 2 },
+            Reject: { id: 3 },
         };
 
         if (statusMap[action]) {
             updateUser({
                 userId: user.id,
                 payload: {
-                    statusId: statusMap[action].id,
-                    statusName: statusMap[action].name
+                    statusId: statusMap[action].id
                 },
             }, {
                 onSuccess: () => toast.success(`User ${action}ed successfully`),
