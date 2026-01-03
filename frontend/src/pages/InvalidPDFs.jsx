@@ -102,23 +102,21 @@ const InvalidPdfs = () => {
                                 );
                             })}
                         </TabsList>
-                        {tabs.map((tab) => (
-                            <TabsContent key={tab.id} value={tab.id} className="mt-0">
-                                <div className="w-full h-full flex-1 flex">
-                                    <div className="w-full h-full">
-                                        <DynamicTable
-                                            columns={getInvalidPdfsColumns(handleAction)}
-                                            data={rows}
-                                            total={total}
-                                            page={page}
-                                            perPage={perPage}
-                                            onPageChange={setPage}
-                                            className="w-full h-full"
-                                        />
-                                    </div>
+                        <TabsContent value={activeTab} className="mt-0">
+                            <div className="w-full h-full flex-1 flex">
+                                <div className="w-full h-full">
+                                    <DynamicTable
+                                        columns={getInvalidPdfsColumns(handleAction)}
+                                        data={rows}
+                                        total={total}
+                                        page={page}
+                                        perPage={perPage}
+                                        onPageChange={setPage}
+                                        className="w-full h-full"
+                                    />
                                 </div>
-                            </TabsContent>
-                        ))}
+                            </div>
+                        </TabsContent>
                     </Tabs>
                 </div>
             </div>
