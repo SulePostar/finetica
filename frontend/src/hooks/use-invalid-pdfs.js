@@ -1,31 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
-import { getBankStatementsInvalidPdfs } from "@/api/BankTransactions";
-import { getContractsInvalidPdfs } from "@/api/contracts";
-import { getKifInvalidPdfs } from "@/api/Kif";
-import { getKufInvalidPdfs } from "@/api/Kuf";
+import { invalidPdfsKeys } from "@/queries/InvalidPdfs/keys";
+import { invalidPdfsFetchers } from "@/queries/InvalidPdfs/fetchers";
 
-export function useInvalidPdfs(activeTab, page = 1, limit = 10) {
-  const queryKey = ["invalid-pdfs", activeTab, page, limit];
+export function useInvalidPdfs(activeTab, page = 1, limit = 10, shouldPoll = false) {
+  return useQuery({
+    queryKey: invalidPdfsKeys.list(activeTab, page, limit),
 
-  const fetchers = {
-    bank: (p, l) => getBankStatementsInvalidPdfs(p, l),
-    kif: (p, l) => getKifInvalidPdfs(p, l),
-    kuf: (p, l) => getKufInvalidPdfs(p, l),
-    contracts: (p, l) => getContractsInvalidPdfs(p, l),
-  };
+    queryFn: async () => {
+      const fn = invalidPdfsFetchers[activeTab];
+      if (!fn) return { data: [], total: 0 }; // prevents "undefined is not a function"
+      return fn(page, limit);
+    },
 
-  const queryFn = async () => {
-    const fn = fetchers[activeTab] ?? (() => Promise.resolve({ data: [], total: 0 }));
-    const res = await fn(page, limit);
-    return res;
-  };
+    placeholderData: (prev) => prev,
 
-  const { data, isPending, isError, error, refetch } = useQuery({
-    queryKey,
-    queryFn,
-    placeholderData: (previousData) => previousData,
-    staleTime: 60_000,
+    refetchInterval: () => (shouldPoll ? 2000 : false),
+    refetchIntervalInBackground: false,
   });
-
-  return { data, isPending, isError, error, refetch };
 }
