@@ -27,7 +27,7 @@ const Partners = () => {
     const { data, isPending, error, isError, refetch } = usePartners({
         page,
         perPage,
-        search: debouncedSearch
+        ...(debouncedSearch.trim() ? { search: debouncedSearch.trim() } : {})
     });
 
     const handleTimeChange = (newValue) => {
