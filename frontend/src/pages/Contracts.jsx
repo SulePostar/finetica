@@ -121,7 +121,6 @@ export default function Contracts() {
               />
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-3">
-                  {/* Keep the loading state indicator from HEAD */}
                   {isUploading && (
                     <span className="text-sm text-muted-foreground animate-pulse">
                       Uploading & processing...
@@ -130,6 +129,7 @@ export default function Contracts() {
                   <UploadButton
                     onUploadSuccess={handleFileUpload}
                     buttonText="Upload Contract"
+                    disabled={isUploading}
                     className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
                   />
                   <TimeFilter
