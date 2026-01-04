@@ -11,13 +11,14 @@ const {
 
 const getKifData = async (req, res, next) => {
     try {
-        const { page, perPage, sortField, sortOrder } = req.query;
+        const { page, perPage, sortField, sortOrder, invoiceType } = req.query;
 
         const result = await getKifs({
             page: parseInt(page),
             perPage: parseInt(perPage),
             sortField,
             sortOrder,
+            invoiceType,
         });
 
         res.json(result);

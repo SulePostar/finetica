@@ -248,7 +248,7 @@ const approveKif = async (documentId, updatedData = {}, userId) => {
         throw new AppError('Failed to approve KIF sales invoice', 500);
     }
 };
-const getKifs = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
+const getKifs = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc', invoiceType }) => {
     try {
         const offset = (page - 1) * perPage;
         const limit = parseInt(perPage);
@@ -259,9 +259,24 @@ const getKifs = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' })
             orderOptions = [['id', 'ASC']];
         }
         // Get total count
-        const total = await SalesInvoice.count();
+        const where = {};
+        if (invoiceType) {
+            where.invoiceType = invoiceType;
+        }
+        const total = await SalesInvoice.count({ where });
+
+        const allTypes = await SalesInvoice.findAll({
+            attributes: [[sequelize.fn('DISTINCT', sequelize.col('invoice_type')), 'invoiceType']],
+            where: {
+                invoiceType: {
+                    [require('sequelize').Op.ne]: null
+                }
+            },
+            raw: true
+        });
         // Get paginated data with associated items and business partner
         const salesInvoices = await SalesInvoice.findAll({
+            where,
             include: [
                 {
                     model: SalesInvoiceItem
@@ -282,7 +297,7 @@ const getKifs = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' })
                 customerName: invoiceData.BusinessPartner?.name || null
             };
         });
-        return { data: transformedData, total };
+        return { data: transformedData, total, invoiceTypes: allTypes.map(t => t.invoiceType).filter(Boolean) };
     } catch (error) {
         throw new AppError('Failed to fetch KIF data', 500);
     }
