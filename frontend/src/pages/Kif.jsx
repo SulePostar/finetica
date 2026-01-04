@@ -2,7 +2,7 @@ import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { useKifList, kifKeys } from "@/queries/KifQueries";
 import { getKifColumns } from "@/components/tables/columns/kifColumns";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import IsError from "@/components/shared-ui/IsError";
 import { Spinner } from "@/components/ui/spinner";
 import UploadButton from "@/components/shared-ui/UploadButton";
