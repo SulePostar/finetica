@@ -57,7 +57,13 @@ export function getPartnersColumns(onAction) {
                     <ActionsDropdown
                         item={row.original}
                         actions={partnersActions}
-                        onAction={onAction}
+                        onAction={(action, item, event) => {
+                            if (event) {
+                                event.stopPropagation();
+                                event.preventDefault();
+                            }
+                            onAction(action, item);
+                        }}
                     />
                 )
             },

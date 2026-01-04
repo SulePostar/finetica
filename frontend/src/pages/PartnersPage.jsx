@@ -3,7 +3,7 @@ import PageTitle from "@/components/shared-ui/PageTitle";
 import DynamicTable from "@/components/table/DynamicTable";
 import { getPartnersColumns } from "@/components/tables/columns/PartnersColumns";
 import { Spinner } from "@/components/ui/spinner";
-import { usePartners } from "@/queries/partners";
+import { usePartners, useDeletePartner } from "@/queries/partners";
 import { useState } from "react";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 import { useNavigate } from "react-router-dom";
@@ -19,9 +19,31 @@ const Partners = () => {
         setPage(1);
     };
 
-    const handleAction = useAction('partners');
+    const deletePartner = useDeletePartner();
 
-    const handleRowClick = (row) => {
+    const handleAction = (action, item, event) => {
+        event?.stopPropagation();
+        switch (action) {
+            case "view":
+                navigate(`/partners/${item.id}`);
+                break;
+            case "edit":
+                navigate(`/partners/${item.id}/edit`);
+                break;
+            case "delete":
+                if (confirm(`Are you sure you want to delete ${item.shortName}?`)) {
+                    deletePartner.mutate(item.id);
+                }
+                break;
+            default:
+                console.warn(`Unknown action: ${action}`);
+        }
+    };
+
+    const handleRowClick = (row, event) => {
+        if (event?.target.closest(".actions-dropdown")) {
+            return;
+        }
         navigate(`/partners/${row.id}`);
     };
 
@@ -73,7 +95,7 @@ const Partners = () => {
                 page={page}
                 perPage={perPage}
                 onPageChange={setPage}
-                onRowClick={handleRowClick}
+                onRowClick={(row, event) => handleRowClick(row, event)}
             />
         </div>
     );
