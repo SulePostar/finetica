@@ -34,12 +34,7 @@ export function getRolesStatusesColumns(type = "roles", onDelete, nameKey) {
             meta: { isComponent: true },
             cell: ({ row }) => {
                 const item = row.original;
-                const PROTECTED_IDS = {
-                    roles: [1, 2],
-                    statuses: [1, 2, 3],
-                };
-                const isProtected = PROTECTED_IDS[type]?.includes(Number(item.id));
-
+                const isProtected = item.isProtected;
                 const label = item[nameKey] ?? "this item";
 
                 return (
