@@ -151,6 +151,18 @@ const Users = () => {
         [handleUserAction, currentUserId]
     );
 
+    if(isPending){
+      return (
+        <>
+          <div className="px-4 md:px-6 lg:px-8"></div>
+          <PageTitle text="Users" />
+          <div className="flex items-center justify-center h-40">
+            <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
+          </div>
+        </>
+      );
+    }
+
     if (isError) {
         return (
             <IsError
