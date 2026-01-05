@@ -5,13 +5,11 @@
   "dependencies": {
     "@coreui/icons": "^3.0.1",
     "@radix-ui/react-avatar": "^1.1.11",
-    "@react-pdf-viewer/core": "^3.12.0",
     "@tanstack/react-query": "^4.36.1",
     "@tanstack/react-query-devtools": "^4.36.1",
     "lucide-react": "^0.542.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-pdf": "^10.2.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "husky": "^9.1.7"
