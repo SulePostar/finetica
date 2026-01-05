@@ -1,19 +1,8 @@
 import { Navigate, Outlet } from 'react-router';
 import { useAuth } from '../context/AuthContext';
-import { useEffect } from 'react';
 
 const ProtectedRoute = ({ allowedRoles = [] }) => {
     const { user, isAuthenticated, loading } = useAuth();
-
-    useEffect(() => {
-      // Show restricted message when user tries to access admin-only routes
-      if (!loading && isAuthenticated && allowedRoles.length > 0 && !allowedRoles.includes(user?.roleName)) {
-        toast.error("Access Restricted", {
-          description: "You do not have permission to access this page.",
-        });
-      }
-    }, [loading, isAuthenticated, allowedRoles, user?.roleName, location.pathname]);
-
     if (loading) {
         return (
             <div className="flex flex-col justify-center items-center min-h-screen bg-background">
