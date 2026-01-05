@@ -1,8 +1,6 @@
-
 import { Navigate, Outlet } from 'react-router';
 import { useAuth } from '../context/AuthContext';
 import { useEffect } from 'react';
-import { toast } from 'sonner';
 
 const ProtectedRoute = ({ allowedRoles = [] }) => {
     const { user, isAuthenticated, loading } = useAuth();
