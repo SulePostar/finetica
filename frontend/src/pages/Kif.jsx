@@ -2,7 +2,7 @@ import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { useKifList, kifKeys } from "@/queries/KifQueries";
 import { getKifColumns } from "@/components/tables/columns/kifColumns";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import IsError from "@/components/shared-ui/IsError";
 import { Spinner } from "@/components/ui/spinner";
 import UploadButton from "@/components/shared-ui/UploadButton";
@@ -43,6 +43,14 @@ const Kif = () => {
         setTimeRange(newValue);
         setPage(1);
     };
+
+    const invoiceTypeOptions = useMemo(() => {
+        return (data?.invoiceTypes || []).map((type) => ({
+            label: type,
+            value: type,
+        }));
+    }, [data?.invoiceTypes]);
+
     if (isPending) {
         return (
             <>
@@ -103,19 +111,19 @@ const Kif = () => {
                 }
                 toolbar={{
                     filters: (
-                        <Select value={invoiceType} onValueChange={(value) => {
+                        <Select value={invoiceType} disabled={isPending} onValueChange={(value) => {
                             setInvoiceType(value);
                             setPage(1);
                         }}
                         >
                             <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="All types" />
+                                <SelectValue placeholder={isPending ? "Loading types..." : "All types"} />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">All types</SelectItem>
-                                {(data?.invoiceTypes || []).map((type) => (
-                                    <SelectItem key={type} value={type}>
-                                        {type}
+                                {invoiceTypeOptions.map((option) => (
+                                    <SelectItem key={option.value} value={option.value}>
+                                        {option.label}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
