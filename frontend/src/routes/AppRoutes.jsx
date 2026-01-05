@@ -36,10 +36,7 @@ export default function AppRoutes() {
                     <Route path="/contracts" element={<Contracts />} />
                     <Route path="/partners" element={<Partner />} />
                     <Route path="/partners/:id" element={<PartnerDetails />} />
-
-                    <Route path="/users" element={<Users />} />
                     <Route path="/profile/:userId" element={<ProfilePage />} />
-                    <Route path="/roles-statuses" element={<RoleAndStatusManagement />} />
                     <Route path="/invalid-pdfs" element={<InvalidPdfs />} />
                     <Route path="/help" element={<HelpPage />} />
                     <Route path="/kuf/:id" element={<DocumentDetails />} />
@@ -47,6 +44,14 @@ export default function AppRoutes() {
                     <Route path="/bank-statements/:id" element={<DocumentDetails />} />
                     <Route path="/contracts/:id" element={<DocumentDetails />} />
                 </Route>
+
+              {/* Admin-only routes */}
+              <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+                <Route element={<DefaultLayout />}>
+                  <Route path="/users" element={<Users />} />
+                  <Route path="/roles-statuses" element={<RoleAndStatusManagement />} />
+                </Route>
+              </Route>
                 <Route path="*" element={<NotFound />} />
             </Route>
         </Routes>
