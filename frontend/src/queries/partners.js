@@ -25,10 +25,14 @@ export const usePartnerById = (id) => {
 
 export const useDeletePartner = () => {
     const queryClient = useQueryClient();
+
     return useMutation({
         mutationFn: deletePartner,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["partners"], exact: false });
+            queryClient.invalidateQueries({ queryKey: partnersKeys.all });
+        },
+        onError: (error) => {
+            console.error("Failed to delete partner:", error);
         },
     });
-}
+};

@@ -1,7 +1,8 @@
 import apiClient from "./axios";
 
-export const deletePartner = (id) => {
-    return apiClient.delete(`/partners/${id}`);
+export const deletePartner = async (id) => {
+    const { data } = await apiClient.delete(`/partners/${id}`);
+    return data;
 };
 
 export const getAllPartners = async (filters) => {
