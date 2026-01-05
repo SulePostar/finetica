@@ -57,6 +57,7 @@ export const useDeleteRole = () => {
         mutationFn: deleteRole,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: roleKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: usersKeys.all })
         }
     })
 }
