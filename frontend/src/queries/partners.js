@@ -1,6 +1,6 @@
 import { getAllPartners, getPartnerById, deletePartner } from "@/api/partners";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-
+import { toast } from "sonner";
 export const partnersKeys = {
     all: ["partners"],
     lists: () => [...partnersKeys.all, "list"],
@@ -29,6 +29,12 @@ export const useDeletePartner = () => {
         mutationFn: deletePartner,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: partnersKeys.lists() });
+            toast.success("Partner successfully deleted");
+        },
+        onError: (error) => {
+            console.error("Delete error:", error);
+            const message = error?.response?.data?.message || "Failed to delete partner";
+            toast.error(message);
         },
     });
 };
