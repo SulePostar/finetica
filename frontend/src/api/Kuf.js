@@ -25,3 +25,18 @@ export const updateKuf = async ({ id, ...payload }) => {
 export const deleteKuf = async (id) => {
     await apiClient.delete(`${BASE_PATH}/${id}`);
 };
+
+/* -------------------- */
+/*     Invalid PDFs     */
+/* -------------------- */
+export const getKufInvalidPdfs = async (page = 1, limit = 10) => {
+    const { data } = await apiClient.get(`${BASE_PATH}/logs/invalid`, {
+        params: { page, limit },
+    });
+    return data;
+};
+
+export const getKufInvalidPdfById = async (id) => {
+    const { data } = await apiClient.get(`${BASE_PATH}/logs/${id}`);
+    return data;
+};
