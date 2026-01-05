@@ -1,4 +1,4 @@
-import React, {useEffect, useCallback, useMemo, useState } from "react";
+import React, {useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
@@ -28,7 +28,6 @@ import { getUsersColumns } from "@/components/tables/columns/UsersColumns";
 import useTableSearch from "@/hooks/use-table-search";
 import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
 import { toast } from "sonner";
-import {notify} from "@/lib/notifications";
 import { useAuth } from "@/context/AuthContext";
 const perPage = 10;
 
@@ -77,18 +76,6 @@ const Users = () => {
         ));
     }, [rolesResponse]);
 
-    useEffect(() => {
-      if (isError && error?.response?.status === 403) {
-        notify.error("Access Restricted", {
-          description: "You do not have permission to access this page.",
-        });
-        navigate('/dashboard');
-      }
-    }, [isError, error, navigate]);
-
-    const handleUserClick = (user) => {
-        navigate(`/profile/${user.id}`);
-    };
     const statusOptions = useMemo(() => {
         return (statusesResponse?.data ?? []).map((status) => (
             <SelectItem key={status.id} value={status.id.toString()}>
