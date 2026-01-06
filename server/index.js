@@ -13,6 +13,7 @@ const mailRoute = require("./routes/mailRoute");
 const userStatusRouter = require('./routes/userStatus');
 const userRoleRouter = require('./routes/userRoles');
 const { processEmailQueue } = require('./services/emailQueueService');
+const invalidPdfsRoute = require('./routes/invalidPdfs');
 
 const cookieParser = require('cookie-parser')
 const contractRouter = require('./routes/contract');
@@ -57,6 +58,7 @@ app.use('/api/partners', businessPartnerRouter);
 app.use('/drive', googleDriveRouter);
 app.use('/api/user-statuses', userStatusRouter);
 app.use('/api/user-roles', userRoleRouter);
+app.use('/api/invalid-pdfs', invalidPdfsRoute);
 app.use(errorHandler);
 
 connectToDatabase();
