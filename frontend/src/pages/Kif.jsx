@@ -83,6 +83,7 @@ const Kif = () => {
                                 <UploadButton
                                     onUploadSuccess={handleFileUpload}
                                     buttonText="Upload Kif"
+                                    disabled={isUploading}
                                     className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
                                 />
                                 <TimeFilter

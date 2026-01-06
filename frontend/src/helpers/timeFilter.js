@@ -63,3 +63,15 @@ export const TIME_FILTER_OPTIONS = [
   { label: 'Last 30 Days', value: 'last 30 days' },
   { label: 'Last 60 Days', value: 'last 60 days' },
 ];
+
+export const formatDateToYMD = (date) =>
+  date.toISOString().slice(0, 10); // "YYYY-MM-DD"
+
+export const serializeCustomRange = (range) => {
+  if (!range?.from || !range?.to) return null;
+
+  return {
+    from: formatDateToYMD(range.from),
+    to: formatDateToYMD(range.to),
+  };
+};

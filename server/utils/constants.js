@@ -3,6 +3,10 @@ const USER_STATUS = Object.freeze({
   APPROVED: 2,
   REJECTED: 3,
 });
+const USER_ROLE = Object.freeze({
+  ADMIN: 1,
+  USER: 2
+})
 
 const SOURCES = {
   kif: {
@@ -24,5 +28,6 @@ const SOURCES = {
 };
 module.exports = {
   USER_STATUS,
+  USER_ROLE,
   SOURCES
 };
