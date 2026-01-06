@@ -12,7 +12,7 @@ const DocumentDetails = () => {
     const location = useLocation();
 
     const documentType = location.pathname.split('/')[1]; // Gets 'kuf', 'kif', 'bank-statements', or 'contracts'
-
+    const isApproveMode = location.pathname.includes("/approve");
 
     const {
         data,
@@ -41,9 +41,34 @@ const DocumentDetails = () => {
     return (
         <div className="container mx-auto p-6">
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
-                <div className="order-1 lg:order-1  min-w-0">
+                <div className="order-1 lg:order-1 min-w-0">
                     <DocumentFields document={data} type={documentType} />
+
+                    {isApproveMode && (
+                        <div className="mt-6 flex gap-3">
+                            <button
+                                type="button"
+                                className="px-4 py-2 rounded-md bg-[var(--spurple)] text-white hover:bg-[var(--spurple)]/90 transition"
+                                onClick={() => {
+                                    console.log("APPROVE CLICKED", documentType, id);
+                                }}
+                            >
+                                Approve
+                            </button>
+
+                            <button
+                                type="button"
+                                className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                                onClick={() => {
+                                    console.log("EDIT CLICKED", documentType, id);
+                                }}
+                            >
+                                Edit
+                            </button>
+                        </div>
+                    )}
                 </div>
+
 
                 <div className="order-2 lg:order-2  min-w-0">
                     <PdfViewer pdfUrl={data.pdfUrl} />
