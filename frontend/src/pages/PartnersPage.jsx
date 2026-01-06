@@ -19,8 +19,6 @@ import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 import { useAction } from "@/hooks/use-action";
 import useTableSearch from "@/hooks/use-table-search";
 
-const perPage = 10;
-
 const Partners = () => {
     const navigate = useNavigate();
     const [page, setPage] = useState(1);
