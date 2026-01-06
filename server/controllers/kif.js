@@ -6,6 +6,7 @@ const {
     processKif,
     approveKif,
     getKifItemsById,
+    getKifInvoiceTypes: getKifInvoiceTypesService,
     updateKifItem: updateKifItemService,
 } = require('../services/kif');
 
@@ -88,6 +89,15 @@ const approveKifInvoice = async (req, res, next) => {
     }
 };
 
+const getKifInvoiceTypes = async (req, res, next) => {
+    try {
+        const result = await getKifInvoiceTypesService();
+        res.json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
 // Update a single KIF item
 const updateKifItem = async (req, res, next) => {
     try {
@@ -107,5 +117,6 @@ module.exports = {
     processKifInvoice,
     approveKifInvoice,
     getKifItems,
+    getKifInvoiceTypes,
     updateKifItem,
 };

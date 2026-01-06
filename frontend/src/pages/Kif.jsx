@@ -1,6 +1,6 @@
 import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
-import { useKifList, kifKeys } from "@/queries/KifQueries";
+import { useKifList, kifKeys, useKifInvoiceTypes } from "@/queries/KifQueries";
 import { getKifColumns } from "@/components/tables/columns/kifColumns";
 import { useMemo, useState } from "react";
 import IsError from "@/components/shared-ui/IsError";
@@ -22,6 +22,8 @@ const Kif = () => {
         perPage,
         invoiceType: invoiceType === "all" ? null : invoiceType,
     });
+
+    const { data: invoiceTypesData, isPending: isInvoiceTypesPending } = useKifInvoiceTypes();
 
     const handleAction = useAction("kif");
 
@@ -45,11 +47,11 @@ const Kif = () => {
     };
 
     const invoiceTypeOptions = useMemo(() => {
-        return (data?.invoiceTypes || []).map((type) => ({
+        return (invoiceTypesData?.invoiceTypes || []).map((type) => ({
             label: type,
             value: type,
         }));
-    }, [data?.invoiceTypes]);
+    }, [invoiceTypesData?.invoiceTypes]);
 
     if (isPending) {
         return (
@@ -111,21 +113,21 @@ const Kif = () => {
                 }
                 toolbar={{
                     filters: (
-                        <Select value={invoiceType} disabled={isPending} onValueChange={(value) => {
+                        <Select value={invoiceType} onValueChange={(value) => {
                             setInvoiceType(value);
                             setPage(1);
                         }}
                         >
                             <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder={isPending ? "Loading types..." : "All types"} />
+                                <SelectValue placeholder={isInvoiceTypesPending ? "Loading types..." : "All types"} />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">All types</SelectItem>
-                                {invoiceTypeOptions.map((option) => (
+                                {!isInvoiceTypesPending && invoiceTypeOptions.map((option) => (
                                     <SelectItem key={option.value} value={option.value}>
                                         {option.label}
-                                    </SelectItem>
-                                ))}
+                                    </SelectItem>))
+                                }
                             </SelectContent>
                         </Select>
                     ),
