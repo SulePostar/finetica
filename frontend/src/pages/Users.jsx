@@ -1,6 +1,17 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, {useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
+
+import useTableSearch from "@/hooks/use-table-search";
+import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
+
+import { useUsers, useUpdateUser } from "@/queries/userQueries";
+import { useRoles, useStatuses } from "@/queries/rolesAndStatuses";
+
 import DynamicTable from "@/components/table/DynamicTable";
+import { getUsersColumns } from "@/components/tables/columns/UsersColumns";
+
 import PageTitle from "@/components/shared-ui/PageTitle";
 import IsError from "@/components/shared-ui/IsError";
 import { Input } from "@/components/ui/input";
@@ -22,30 +33,25 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog";
 
-import { useUsers, useUpdateUser } from "@/queries/userQueries";
-import { useRoles, useStatuses } from "@/queries/rolesAndStatuses";
-import { getUsersColumns } from "@/components/tables/columns/UsersColumns";
-import useTableSearch from "@/hooks/use-table-search";
-import { capitalizeFirst } from "@/helpers/capitalizeFirstLetter";
-import { toast } from "sonner";
-import { useAuth } from "@/context/AuthContext";
-const perPage = 10;
-
 const Users = () => {
     const navigate = useNavigate();
-    const [page, setPage] = useState(1);
     const { user: currentUser, logout } = useAuth();
-    const currentUserId = currentUser?.id;
+
+    const [page, setPage] = useState(1);
+    const [perPage, setPerPage] = useState(10);
     const [selectedRole, setSelectedRole] = useState("all");
     const [selectedStatus, setSelectedStatus] = useState("all");
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const { search, debouncedSearch, setSearch, clearSearch } = useTableSearch({
         delay: 400,
         setPage,
     });
 
-    const [selectedUser, setSelectedUser] = useState(null);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const { data: rolesResponse } = useRoles();
+    const { data: statusesResponse } = useStatuses();
+    const { mutate: updateUser, isPending: isUpdating } = useUpdateUser();
 
     const {
         data: response,
@@ -55,18 +61,21 @@ const Users = () => {
         refetch,
     } = useUsers({
         page,
-        perPage: perPage,
+        perPage,
         roleId: selectedRole === "all" ? null : selectedRole,
         statusId: selectedStatus === "all" ? null : selectedStatus,
         search: debouncedSearch,
     });
 
-    const { data: rolesResponse } = useRoles();
-    const { data: statusesResponse } = useStatuses();
-    const { mutate: updateUser, isPending: isUpdating } = useUpdateUser();
+    const currentUserId = currentUser?.id;
+    const currentUserRole = currentUser?.roleName?.toLowerCase();
+    const isAdmin = currentUserRole === 'admin';
 
-    const usersData = response?.data ?? [];
-    const totalUsers = response?.total ?? 0;
+    const rolesData = rolesResponse?.data || [];
+    const statusesData = statusesResponse?.data || [];
+    const usersData = response?.data || [];
+    const totalUsers = response?.total || 0;
+
 
     const roleOptions = useMemo(() => {
         return (rolesResponse?.data ?? []).map((role) => (
@@ -84,59 +93,86 @@ const Users = () => {
         ));
     }, [statusesResponse]);
 
-    const handleUserAction = useCallback((actionKey, user) => {
-        if (actionKey == "toggleStatus") {
+    const handleNavigate = (user) => {
+        navigate(`/profile/${user.id}`);
+    };
+
+    const handleUserClick = (action, user) => {
+        if (action === "view") {
+            handleNavigate(user);
+            return;
+        }
+
+        const statusMap = {
+            Approve: { id: 2 },
+            Reject: { id: 3 },
+        };
+
+        if (statusMap[action]) {
+            updateUser({
+                userId: user.id,
+                payload: {
+                    statusId: statusMap[action].id
+                },
+            }, {
+                onSuccess: () => toast.success(`User ${action}ed successfully`),
+                onError: () => toast.error(`Failed to ${action} user`)
+            });
+            return;
+        }
+
+        if (action === "toggleStatus") {
             setSelectedUser(user);
             setIsDialogOpen(true);
         }
-    }, []);
+    };
 
-    const handleRowClick = useCallback(
-        (user) => navigate(`/profile/${user.id}`),
-        [navigate]
-    );
     const handleConfirmDelete = () => {
         if (!selectedUser) return;
 
-        const isDeleting = selectedUser.isEnabled;
-        const isDeletingSelf = selectedUser.id === currentUserId;
+        const isDeactivating = selectedUser.isEnabled;
+        const isSelf = selectedUser.id === currentUserId;
 
         updateUser(
-            { id: selectedUser.id, isEnabled: !selectedUser.isEnabled },
+            {
+                userId: selectedUser.id,
+                payload: { isEnabled: !selectedUser.isEnabled }
+            },
             {
                 onSuccess: () => {
-                    if (isDeletingSelf && isDeleting) {
-                        toast.success("Your account has been deactivated. Logging out.");
+                    if (isSelf && isDeactivating) { // Matches your variables
+                        toast.success("Account deactivated. Logging out...");
                         setTimeout(() => {
                             logout();
                             navigate("/login");
                         }, 1500);
                     } else {
-                        toast.success(
-                            isDeleting
-                                ? "User deactivated successfully"
-                                : "User restored successfully"
-                        );
+                        toast.success(isDeactivating ? "User deactivated" : "User restored");
                         setIsDialogOpen(false);
                         setSelectedUser(null);
-                        refetch();
                     }
                 },
-                onError: () => {
-                    toast.error(
-                        isDeleting
-                            ? "Failed to deactivate user"
-                            : "Failed to restore user"
-                    );
-                },
+                onError: () => toast.error("Operation failed"),
             }
         );
     };
 
     const columns = useMemo(
-        () => getUsersColumns(handleUserAction, currentUserId),
-        [handleUserAction, currentUserId]
+        () => getUsersColumns(handleUserClick, currentUserId, isAdmin),
+        [currentUserId, isAdmin]
     );
+
+    if(isPending){
+      return (
+        <>
+          <div className="px-4 md:px-6 lg:px-8"></div>
+          <PageTitle text="Users" />
+          <div className="flex items-center justify-center h-40">
+            <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
+          </div>
+        </>
+      );
+    }
 
     if (isError) {
         return (
@@ -221,7 +257,7 @@ const Users = () => {
                 page={page}
                 perPage={perPage}
                 onPageChange={setPage}
-                onRowClick={handleRowClick}
+                onRowClick={handleNavigate}
             />
 
             {isPending && (
@@ -238,10 +274,8 @@ const Users = () => {
                         </DialogTitle>
                         <DialogDescription>
                             Are you sure you want to {selectedUser?.isEnabled ? "deactivate" : "activate"}{" "}
-                            <span className="font-medium">
-                                {selectedUser?.fullName}
-                            </span>
-                            ?<br />
+                            <span className="font-medium">{selectedUser?.fullName}</span>?
+                            <br />
                             {selectedUser?.id === currentUserId && selectedUser?.isEnabled ? (
                                 <span className="text-destructive font-medium">
                                     You will be logged out immediately after deactivating your account.
@@ -255,10 +289,7 @@ const Users = () => {
                     </DialogHeader>
 
                     <DialogFooter className="gap-2">
-                        <Button
-                            variant="outline"
-                            onClick={() => setIsDialogOpen(false)}
-                        >
+                        <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
                             Cancel
                         </Button>
                         <Button
@@ -274,5 +305,4 @@ const Users = () => {
         </div>
     );
 };
-
 export default Users;
