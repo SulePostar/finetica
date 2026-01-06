@@ -1,24 +1,42 @@
+import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import IsError from "@/components/shared-ui/IsError";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import DynamicTable from "@/components/table/DynamicTable";
 import { getPartnersColumns } from "@/components/tables/columns/PartnersColumns";
 import { Spinner } from "@/components/ui/spinner";
+
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
 import { usePartners, useDeletePartner } from "@/queries/partners";
-import { useRef, useState } from "react";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
-import { useNavigate } from "react-router-dom";
+import useTableSearch from "@/hooks/use-table-search";
+
 import { notify } from "@/lib/notifications";
 import ConfirmDeleteDialog from "@/components/shared-ui/modals/ConfirmDeleteModal";
+
+const perPage = 10;
 
 const Partners = () => {
     const navigate = useNavigate();
     const [page, setPage] = useState(1);
-    const perPage = 10;
-
     const [timeRange, setTimeRange] = useState("all");
-    const { data, isPending, error, isError, refetch } = usePartners({ page, perPage });
 
-    const { mutate: deletePartner, isPending: isDeletingPartner } = useDeletePartner();
+    const { search, debouncedSearch, setSearch, clearSearch } = useTableSearch({
+        delay: 400,
+        setPage,
+    });
+
+    const { data, isPending, error, isError, refetch } = usePartners({
+        page,
+        perPage,
+        ...(debouncedSearch.trim() ? { search: debouncedSearch.trim() } : {}),
+    });
+
+    const { mutate: deletePartner, isPending: isDeletingPartner } =
+        useDeletePartner();
 
     const deleteTriggerRef = useRef(null);
     const [partnerToDelete, setPartnerToDelete] = useState(null);
@@ -31,7 +49,6 @@ const Partners = () => {
     const openDeleteModal = (item) => {
         setPartnerToDelete(item);
 
-        // ConfirmDeleteDialog requires a trigger element; we use a hidden button and click it programmatically.
         requestAnimationFrame(() => {
             deleteTriggerRef.current?.click();
         });
@@ -61,20 +78,29 @@ const Partners = () => {
         navigate(`/partners/${row.id}`);
     };
 
-    if (isPending) {
+    const searchBar = (
+        <Input
+            placeholder="Search by email or short name"
+            className="w-full md:flex-1 min-w-[200px]"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+        />
+    );
+
+    if (isPending && page === 1 && !debouncedSearch) {
         return (
-            <>
+            <div className="pt-20">
                 <PageTitle text="Partners" />
                 <div className="flex items-center justify-center h-40">
-                    <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
+                    <Spinner className="w-10 h-10 text-[var(--spurple)]" />
                 </div>
-            </>
+            </div>
         );
     }
 
     if (isError) {
         return (
-            <>
+            <div className="pt-20">
                 <PageTitle text="Partners" />
                 <IsError
                     error={error}
@@ -82,7 +108,7 @@ const Partners = () => {
                     title="Failed to load Partners"
                     showDetails={true}
                 />
-            </>
+            </div>
         );
     }
 
@@ -135,6 +161,20 @@ const Partners = () => {
                         </div>
                     </div>
                 }
+                toolbar={{
+                    search: searchBar,
+                    button: (
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setTimeRange("all");
+                                clearSearch();
+                            }}
+                        >
+                            Clear filters
+                        </Button>
+                    ),
+                }}
                 columns={getPartnersColumns(handleAction)}
                 data={data?.data ?? []}
                 total={data?.total || 0}
@@ -143,6 +183,12 @@ const Partners = () => {
                 onPageChange={setPage}
                 onRowClick={(row, event) => handleRowClick(row, event)}
             />
+
+            {isPending && (
+                <div className="pointer-events-none fixed inset-0 flex items-center justify-center bg-white/40">
+                    <Spinner className="w-12 h-12 text-[var(--spurple)]" />
+                </div>
+            )}
         </div>
     );
 };
