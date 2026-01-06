@@ -1,6 +1,14 @@
 import { FileText, CreditCard, FileCheck, FileSignature } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PageTitle from "@/components/shared-ui/PageTitle";
+import DefaultLayout from "@/layout/DefaultLayout";
+import DynamicTable from "@/components/table/DynamicTable";
+import { getInvalidPdfsColumns } from "@/components/tables/columns/InvalidPdfsColumns";
+import { useAction } from "@/hooks/use-action";
+import { useState } from "react";
+import { useInvalidPdfs } from "@/hooks/use-invalid-pdfs";
+import IsError from "@/components/shared-ui/IsError";
+import { Spinner } from "@/components/ui/spinner";
 
 const InvalidPdfs = () => {
     const tabs = [
@@ -10,13 +18,46 @@ const InvalidPdfs = () => {
         { id: "contracts", label: "Contracts", icon: FileSignature },
     ];
 
+    const handleAction = useAction('invalid-pdfs');
+    const [activeTab, setActiveTab] = useState("bank");
+    const [page, setPage] = useState(1);
+    const perPage = 10;
+    const { data, isPending, isError, error, refetch } = useInvalidPdfs(activeTab, page, perPage);
+
+    if (isPending) {
+        return (
+            <>
+                <PageTitle text="Invalid PDFs" />
+                <div className="flex items-center justify-center h-40">
+                    <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
+                </div>
+            </>
+        );
+    }
+
+    if (isError) {
+        return (
+            <div>
+                <IsError
+                    error={error}
+                    onRetry={() => refetch()}
+                    title="Failed to load Invalid PDFs"
+                    showDetails={true}
+                />
+            </div>
+        );
+    }
+
+    const rows = data?.data ?? [];
+    const total = data?.total ?? 0;
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-background p-4">
             <div className="w-full">
                 <div className="min-h-[85vh] mt-4 mb-4 bg-secondary dark:bg-secondary text-foreground p-4 sm:p-6 md:p-6 xl:p-8 transition-colors rounded-lg">
                     <PageTitle text="Invalid PDFs" compact className="text-spurple" />
 
-                    <Tabs defaultValue="bank" className="w-full">
+                    <Tabs value={activeTab ?? "bank"} onValueChange={(v) => { setActiveTab(v); setPage(1); }} className="w-full">
                         <TabsList
                             className="
                                 flex flex-col gap-2
@@ -61,23 +102,21 @@ const InvalidPdfs = () => {
                                 );
                             })}
                         </TabsList>
-                        {tabs.map((tab) => (
-                            <TabsContent key={tab.id} value={tab.id} className="mt-0">
-                                <div className="
-                                    bg-card dark:bg-light-gray 
-                                    border border-border 
-                                    rounded-xl 
-                                    p-4 sm:p-6 md:p-6 xl:p-8 
-                                    min-h-[500px] sm:min-h-[600px] xl:min-h-[700px] 
-                                    flex items-center justify-center 
-                                    transition-colors
-                                ">
-                                    <p className="text-muted-foreground dark:text-foreground text-center text-sm sm:text-base xl:text-lg">
-                                        There are no {tab.label.toLowerCase()} records to display
-                                    </p>
+                        <TabsContent value={activeTab} className="mt-0">
+                            <div className="w-full h-full flex-1 flex">
+                                <div className="w-full h-full">
+                                    <DynamicTable
+                                        columns={getInvalidPdfsColumns(handleAction)}
+                                        data={rows}
+                                        total={total}
+                                        page={page}
+                                        perPage={perPage}
+                                        onPageChange={setPage}
+                                        className="w-full h-full"
+                                    />
                                 </div>
-                            </TabsContent>
-                        ))}
+                            </div>
+                        </TabsContent>
                     </Tabs>
                 </div>
             </div>
