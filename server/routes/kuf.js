@@ -5,6 +5,7 @@ const {
     getInvoice,
     approveInvoice,
     getKufItems,
+    getKufInvoiceTypes
 } = require('../controllers/kuf');
 const { getInvalidKufs, getKufLog } = require('../controllers/kufProcessingLog');
 const { updateKufItem } = require('../controllers/kuf');
@@ -15,6 +16,7 @@ const isAuthenticated = require('../middleware/isAuthenticated');
 router.get('/logs/invalid', isAuthenticated, getInvalidKufs);
 router.get('/logs/:id', isAuthenticated, getKufLog);
 router.get('/', getInvoiceData);
+router.get('/kufTypes', getKufInvoiceTypes);
 router.get('/:id',
     //  isAuthenticated,
     getInvoice);
