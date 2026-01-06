@@ -5,6 +5,7 @@ const {
   KufProcessingLog,
   sequelize
 } = require('../models');
+const { Op } = require('sequelize');
 const { processDocument } = require('./aiService');
 const KUF_PROMPT = require('../prompts/Kuf');
 const purchaseInvoiceSchema = require('../schemas/kufSchema');
@@ -23,7 +24,7 @@ const SORT_FIELD_MAP = {
   vatAmount: 'vat_amount'
 };
 
-const listInvoices = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
+const listInvoices = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc', invoiceType }) => {
   try {
     const limit = Math.max(1, Number(perPage) || 10);
     const offset = Math.max(0, ((Number(page) || 1) - 1) * limit);
@@ -33,7 +34,14 @@ const listInvoices = async ({ page = 1, perPage = 10, sortField, sortOrder = 'as
       order = [[SORT_FIELD_MAP[sortField], (sortOrder || 'asc').toUpperCase()]];
     }
 
+    const where = {};
+    if (invoiceType) {
+      where.invoiceType = invoiceType;
+    }
+    const count = await PurchaseInvoice.count({ where });
+
     const rows = await PurchaseInvoice.findAll({
+      where,
       offset,
       limit,
       order,
@@ -48,8 +56,6 @@ const listInvoices = async ({ page = 1, perPage = 10, sortField, sortOrder = 'as
         }
       ],
     });
-
-    const count = await PurchaseInvoice.count();
 
     const data = rows.map(row => row.get({ plain: true }));
     return { data, total: count };
@@ -321,7 +327,7 @@ const getKufInvoiceTypes = async () => {
         [sequelize.fn('DISTINCT', sequelize.col('invoice_type')), 'invoiceType']
       ],
       where: {
-        invoiceType: { [sequelize.Op.ne]: null }
+        invoiceType: { [Op.ne]: null }
       },
       raw: true
     });
