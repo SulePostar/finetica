@@ -31,7 +31,7 @@ const Kuf = () => {
     page,
     perPage,
     timeRange,
-    type: invoiceType === "all" ? null : invoiceType
+    invoiceType: invoiceType === "all" ? null : invoiceType
   });
 
   const { data: invoiceTypesData, isPending: isLoadingTypes } = useKufInvoiceTypes();
