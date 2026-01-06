@@ -1,6 +1,9 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
-import { useDocumentFetcher } from "@/hooks/use-document";
+import {
+    useBankTransactionById,
+    useBankTransactionUpdate,
+} from "@/queries/BankTransactionsQueries";
 import { PdfViewer } from "@/components/shared-ui/PdfViewer";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { Spinner } from "@/components/ui/spinner";
@@ -14,17 +17,37 @@ const DocumentDetails = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const documentType = location.pathname.split("/")[1]; // 'kuf', 'kif', 'bank-statements', 'contracts'
+    const documentType = location.pathname.split("/")[1];
     const isApproveMode = location.pathname.includes("/approve");
 
-    const { data, isPending, isError, error, refetch } = useDocumentFetcher(documentType, id);
+    const [isEditing, setIsEditing] = useState(false);
+    const [formData, setFormData] = useState(null);
+
+    // never allow edit outside approve mode
+    useEffect(() => {
+        if (!isApproveMode) setIsEditing(false);
+    }, [isApproveMode]);
+
+    const {
+        data,
+        isPending,
+        isError,
+        error,
+        refetch,
+    } = useBankTransactionById(id);
+
+    const updateMutation = useBankTransactionUpdate(id);
+
+    useEffect(() => {
+        if (data) setFormData(data);
+    }, [data]);
 
     if (isPending) {
         return (
             <>
                 <PageTitle text="Document Details" />
                 <div className="flex items-center justify-center h-40">
-                    <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
+                    <Spinner className="w-10 h-10 text-[var(--spurple)]" />
                 </div>
             </>
         );
@@ -34,48 +57,103 @@ const DocumentDetails = () => {
         return (
             <IsError
                 error={error}
-                onRetry={() => refetch()}
+                onRetry={refetch}
                 title="Failed to load document details"
-                showDetails={true}
+                showDetails
             />
         );
     }
 
+    const ALLOWED_KEYS = [
+        "date",
+        "amount",
+        "accountNumber",
+        "description",
+        "direction",
+        "fileName",
+        "invoiceId",
+        "partnerId",
+        "categoryId",
+    ];
+
+    const buildDirtyPayload = (original, edited) => {
+        const out = {};
+        for (const key of ALLOWED_KEYS) {
+            const a = original?.[key];
+            const b = edited?.[key];
+
+            if (JSON.stringify(a) !== JSON.stringify(b) && b !== undefined) {
+                out[key] = b;
+            }
+        }
+        return out;
+    };
+
+    const handleSave = async () => {
+        const payload = buildDirtyPayload(data, formData);
+        await updateMutation.mutateAsync(payload);
+        setIsEditing(false);
+    };
+
+    const handleCancel = () => {
+        setFormData(data);
+        setIsEditing(false);
+    };
+
     return (
         <div className="container mx-auto p-6">
-            {/* Top-left back button */}
+            {/* Back button */}
             <div className="mb-4">
                 <Button
                     variant="outline"
                     size="sm"
                     className="flex text-[var(--spurple)] items-center gap-2"
-                    onClick={() => navigate(location.state?.backUrl || `/${documentType}`)}
+                    onClick={() =>
+                        navigate(location.state?.backUrl || `/${documentType}`)
+                    }
                 >
                     <ArrowLeft className="h-4 w-4" />
                     Back to {documentType.replace(/-/g, " ")}
                 </Button>
             </div>
 
-            {/* Main layout */}
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
-                {/* Left: fields + actions */}
+                {/* Left */}
                 <div className="min-w-0 flex flex-col">
                     <DocumentFields
-                        document={data}
+                        document={isEditing ? formData : data}
                         type={documentType}
+                        editable={isEditing}
+                        onChange={setFormData}
                         actions={
-                            isApproveMode ? (
+                            isEditing ? (
                                 <div className="flex gap-3">
                                     <Button
-                                        className="flex-1 bg-emerald-600 hover:bg-emerald-600/90 text-white"
-                                        onClick={() => console.log("APPROVE", documentType, id)}
+                                        className="flex-1 bg-[var(--spurple)] text-white"
+                                        disabled={updateMutation.isPending}
+                                        onClick={handleSave}
                                     >
-                                        Approve
+                                        {updateMutation.isPending ? "Saving..." : "Save"}
                                     </Button>
+
                                     <Button
                                         variant="outline"
-                                        className="flex-1 text-[var(--spurple)] border-[var(--spurple)] hover:bg-[var(--spurple)]/10"
-                                        onClick={() => console.log("EDIT", documentType, id)}
+                                        className="flex-1 text-[var(--spurple)] border-[var(--spurple)]"
+                                        onClick={handleCancel}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </div>
+                            ) : isApproveMode ? (
+                                <div className="flex gap-3">
+                                    <Button className="flex-1 bg-emerald-600 text-white">
+                                        Approve
+                                    </Button>
+
+                                    <Button
+                                        variant="outline"
+                                        className="flex-1 text-[var(--spurple)] border-[var(--spurple)]"
+                                        onClick={() => setIsEditing(true)}
                                     >
                                         Edit
                                     </Button>
@@ -91,15 +169,16 @@ const DocumentDetails = () => {
                                     state: { backUrl: location.pathname },
                                 })
                             }
-                            className="mt-4 w-full bg-[var(--spurple)] text-md"
+                            className="mt-4 w-full bg-[var(--spurple)] text-white"
                         >
                             View Item Details
                         </Button>
                     )}
                 </div>
 
+                {/* Right */}
                 <div className="min-w-0 min-h-[calc(100vh-64px)]">
-                    <PdfViewer pdfUrl={data.pdfUrl} />
+                    <PdfViewer pdfUrl={data?.pdfUrl} />
                 </div>
             </div>
         </div>

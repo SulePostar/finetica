@@ -44,6 +44,7 @@ export default function AppRoutes() {
           <Route path="/kuf/:id" element={<DocumentDetails />} />
           <Route path="/kif/:id" element={<DocumentDetails />} />
           <Route path="/bank-statements/:id" element={<DocumentDetails />} />
+          <Route path="/bank-statements/:id/edit" element={<DocumentDetails />} />
           <Route path="/bank-statements/:id/approve" element={<DocumentDetails />} />
           <Route path="/contracts/:id" element={<DocumentDetails />} />
 
