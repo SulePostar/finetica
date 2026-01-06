@@ -314,6 +314,24 @@ async function updateKufItem(itemId, updateData) {
   return item;
 }
 
+const getKufInvoiceTypes = async () => {
+  try {
+    const types = await PurchaseInvoice.findAll({
+      attributes: [
+        [sequelize.fn('DISTINCT', sequelize.col('invoice_type')), 'invoiceType']
+      ],
+      where: {
+        invoiceType: { [sequelize.Op.ne]: null }
+      },
+      raw: true
+    });
+    return types.map(t => t.invoiceType);
+  }
+  catch (error) {
+    throw new AppError('Failed to fetch KUF invoice types', 500);
+  }
+}
+
 module.exports = {
   listInvoices,
   findById,
@@ -325,4 +343,5 @@ module.exports = {
   updateInvoice,
   getKufItemsById,
   updateKufItem,
+  getKufInvoiceTypes,
 };
