@@ -60,7 +60,29 @@ const DocumentDetails = () => {
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6">
                 {/* Left: fields + actions */}
                 <div className="min-w-0 flex flex-col">
-                    <DocumentFields document={data} type={documentType} />
+                    <DocumentFields
+                        document={data}
+                        type={documentType}
+                        actions={
+                            isApproveMode ? (
+                                <div className="flex gap-3">
+                                    <Button
+                                        className="flex-1 bg-emerald-600 hover:bg-emerald-600/90 text-white"
+                                        onClick={() => console.log("APPROVE", documentType, id)}
+                                    >
+                                        Approve
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        className="flex-1 text-[var(--spurple)] border-[var(--spurple)] hover:bg-[var(--spurple)]/10"
+                                        onClick={() => console.log("EDIT", documentType, id)}
+                                    >
+                                        Edit
+                                    </Button>
+                                </div>
+                            ) : null
+                        }
+                    />
 
                     {documentType !== "contracts" && (
                         <Button
@@ -74,21 +96,8 @@ const DocumentDetails = () => {
                             View Item Details
                         </Button>
                     )}
-
-                    {isApproveMode && (
-                        <div className="mt-6 flex gap-3">
-                            <Button className="flex-1 bg-emerald-600 text-white">Approve</Button>
-                            <Button
-                                variant="outline"
-                                className="flex-1 text-[var(--spurple)] border-[var(--spurple)]"
-                            >
-                                Edit
-                            </Button>
-                        </div>
-                    )}
                 </div>
 
-                {/* Right: PDF */}
                 <div className="min-w-0 min-h-[calc(100vh-64px)]">
                     <PdfViewer pdfUrl={data.pdfUrl} />
                 </div>

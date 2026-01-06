@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { formatDateTime } from '@/helpers/formatDate';
 
-export const DocumentFields = ({ document, excludeFields = ['pdfUrl', 'items', 'id'], type }) => {
+export const DocumentFields = ({ document, excludeFields = ['pdfUrl', 'items', 'id'], type, actions }) => {
     const formatValue = (key, value) => {
         if (value === null || value === undefined || value === '') {
             return '—';
@@ -45,7 +45,7 @@ export const DocumentFields = ({ document, excludeFields = ['pdfUrl', 'items', '
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="text-lg font-semibold text-spurple">{pageTitle}</CardTitle>
+                <CardTitle className="text-xl font-semibold text-spurple">{pageTitle}</CardTitle>
                 <CardDescription>All fields from the document</CardDescription>
             </CardHeader>
             <CardContent className="p-0">
@@ -57,7 +57,7 @@ export const DocumentFields = ({ document, excludeFields = ['pdfUrl', 'items', '
                             <div key={key} className="px-6 py-4 hover:bg-muted overflow-hidden">
                                 <div className="flex flex-col sm:flex-row sm:justify-between gap-1">
                                     <span className="text-sm font-medium text-muted-foreground capitalize">
-                                        {key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim()}
+                                        {key.replace(/_/g, " ").replace(/([A-Z])/g, " $1").trim()}
                                     </span>
                                     <span className="text-sm text-primary sm:text-right break-all">
                                         {formatValue(key, value)}
@@ -67,7 +67,14 @@ export const DocumentFields = ({ document, excludeFields = ['pdfUrl', 'items', '
                         );
                     })}
                 </div>
+
+                {actions && (
+                    <div className="px-6 py-4 border-t">
+                        {actions}
+                    </div>
+                )}
             </CardContent>
+
         </Card>
     );
 };
