@@ -5,7 +5,6 @@ import RolesStatusesTable from "@/components/tables/RolesStatusesTable";
 import { Spinner } from "@/components/ui/spinner";
 import { notify } from "@/lib/notifications";
 import IsError from '@/components/shared-ui/IsError.jsx';
-import React from 'react';
 
 
 export default function RoleAndStatusManagement() {
@@ -59,7 +58,7 @@ export default function RoleAndStatusManagement() {
     const { data: rolesData, isPending: rolesPending, isError: isRolesError, error: rolesError, refetch: rolesRefetch  } = useRoles();
     const { data: statusData, isPending: statusPending, isError: isStatusError, error: statusError, refetch: statusRefetch } = useStatuses();
 
-    if (statusPending || rolesPending) {
+  if (statusPending || rolesPending) {
         return (
             <>
                 <div className="px-4 md:px-6 lg:px-8"></div>

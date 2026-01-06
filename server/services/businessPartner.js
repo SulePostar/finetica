@@ -1,6 +1,6 @@
-const { is } = require('zod/v4/locales');
 const { BusinessPartner } = require('../models');
 const AppError = require('../utils/errorHandler');
+const { Op } = require('sequelize');
 
 /**
  * Creates a new business partner.
@@ -21,16 +21,27 @@ const createBusinessPartner = async (partnerData) => {
 };
 
 /**
- * Get all business partners with pagination support.
- * @param {object} query - Query object containing page and perPage.
- * @returns {Promise<{data: Array, total: number}>} - Object with paginated data and total count.
+ * Get all business partners with pagination and search support.
+ * @param {object} query - Query object containing page, perPage, and search.
  */
-const getAllBusinessPartners = async ({ page = 1, perPage = 10 } = {}) => {
+const getAllBusinessPartners = async ({ page = 1, perPage = 10, search = '' } = {}) => {
   try {
     const limit = Math.max(1, Number(perPage) || 10);
     const offset = Math.max(0, (Number(page) || 1) - 1) * limit;
 
+    const searchTerm = search?.trim();
+
+    const where = {};
+
+    if (searchTerm) {
+      where[Op.or] = [
+        { email: { [Op.iLike]: `%${searchTerm}%` } },
+        { shortName: { [Op.iLike]: `%${searchTerm}%` } },
+      ];
+    }
+
     const { rows, count } = await BusinessPartner.findAndCountAll({
+      where,
       offset,
       limit,
       order: [['id', 'ASC']],
