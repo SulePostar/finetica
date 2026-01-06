@@ -23,24 +23,38 @@ const createBusinessPartner = async (partnerData) => {
 /**
  * Get all business partners with pagination support.
  * @param {object} query - Query object containing page and perPage.
+ * @param {string} query.type - "supplier" | "customer" | "all"
  * @returns {Promise<{data: Array, total: number}>} - Object with paginated data and total count.
  */
-const getAllBusinessPartners = async ({ page = 1, perPage = 10 } = {}) => {
+const getAllBusinessPartners = async ({ page = 1, perPage = 10, type = 'all', } = {}) => {
   try {
     const limit = Math.max(1, Number(perPage) || 10);
     const offset = Math.max(0, (Number(page) || 1) - 1) * limit;
 
+    const whereClause = {};
+
+    // Apply type filter only if not "all"
+    if (type && type !== 'all') {
+      whereClause.type = type;
+    }
+
     const { rows, count } = await BusinessPartner.findAndCountAll({
+      where: whereClause,
       offset,
       limit,
       order: [['id', 'ASC']],
+      distinct: true,
     });
 
-    const data = rows.map((row) => row.get({ plain: true }));
-
-    return { data, total: count };
+    return {
+      data: rows.map((row) => row.get({ plain: true })),
+      total: count,
+    };
   } catch (error) {
-    throw new AppError(`Failed to get business partners: ${error.message}`, 500);
+    throw new AppError(
+      `Failed to get business partners: ${error.message}`,
+      500
+    );
   }
 };
 
