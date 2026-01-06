@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
-import { useKufInvoices, kufKeys } from "@/queries/Kuf";
+import { useKufInvoices, kufKeys, useKufInvoiceTypes } from "@/queries/Kuf";
 import { getKufColumns } from "@/components/tables/columns/kufColumns";
 
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
@@ -33,6 +33,8 @@ const Kuf = () => {
     timeRange,
     type: invoiceType === "all" ? null : invoiceType
   });
+
+  const { data: invoiceTypesData, isPending: isLoadingTypes } = useKufInvoiceTypes();
 
   const { mutateAsync: uploadFile, isPending: isUploading } = useBucketFileUpload({
     bucketName: "kuf",
@@ -104,8 +106,17 @@ const Kuf = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All invoices</SelectItem>
-                <SelectItem value="approved">Approved</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
+                {isLoadingTypes ? (
+                  <SelectItem value="loading" disabled>
+                    Loading types...
+                  </SelectItem>
+                ) : (
+                  invoiceTypesData?.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           ),
