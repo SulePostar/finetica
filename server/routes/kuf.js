@@ -16,7 +16,7 @@ const isAuthenticated = require('../middleware/isAuthenticated');
 router.get('/logs/invalid', isAuthenticated, getInvalidKufs);
 router.get('/logs/:id', isAuthenticated, getKufLog);
 router.get('/', getInvoiceData);
-router.get('/kufTypes', getKufInvoiceTypes);
+router.get('/invoice-types', getKufInvoiceTypes);
 router.get('/:id',
     //  isAuthenticated,
     getInvoice);
