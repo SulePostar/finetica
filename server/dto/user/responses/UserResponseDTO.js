@@ -8,9 +8,9 @@ class UserResponseDTO {
     this.profileImage = user.profileImage;
     this.isEnabled = user.isEnabled;
     this.roleId = user.roleId;
-    this.roleName = user.role?.get('role');
+    this.roleName = user.role ? user.role.role : null;
     this.statusId = user.statusId;
-    this.statusName = user.status?.get('status');
+    this.statusName = user.status ? user.status.status : null;
     this.isEmailVerified = user.isEmailVerified;
     this.createdAt = user.createdAt;
     this.updatedAt = user.updatedAt;
