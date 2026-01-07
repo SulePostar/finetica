@@ -1,5 +1,5 @@
 import * as React from "react";
-import {useAuth} from '@/context/AuthContext.jsx';
+import { useAuth } from '@/context/AuthContext.jsx';
 import {
     LayoutDashboard,
     CreditCard,
@@ -11,6 +11,7 @@ import {
     Tag,
     Briefcase,
     Shield,
+    Bot
 } from "lucide-react";
 
 import { SidebarNav } from "@/components/sidebar/SidebarNav";
@@ -55,6 +56,7 @@ const SIDEBAR_NAVIGATION = [
     {
         label: "Support",
         items: [
+            { title: "Finetica AI", url: "/chatbot", icon: Bot },
             { title: "Help", url: "/help", icon: HelpCircle },
             { title: "Log Out", url: "/logout", icon: LogOut },
         ],
@@ -69,25 +71,26 @@ const SIDEBAR_NAVIGATION = [
 export function AppSidebar(props) {
 
     const { user, loading } = useAuth();
+    const isAdmin = user?.roleName === 'admin';
+
+    const filteredNavigation = React.useMemo(() => {
+        return SIDEBAR_NAVIGATION.filter(group => {
+            if (group.label === "Administration" && !isAdmin) {
+                return false;
+            }
+            return true;
+        });
+    }, [isAdmin]);
 
     if (loading) {
         return <Sidebar {...props} className="bg-spurple" />;
     }
 
-  const isAdmin = user?.roleName === 'admin';
 
-  const filteredNavigation = React.useMemo(() => {
-    return SIDEBAR_NAVIGATION.filter(group => {
-      if (group.label === "Administration" && !isAdmin) {
-        return false;
-      }
-      return true;
-    });
-  }, [isAdmin]);
 
-  if (!user) {
-    return null;
-  }
+    if (!user) {
+        return null;
+    }
 
     const profilePath = `/profile/${user.id}`;
 
