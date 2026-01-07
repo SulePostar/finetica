@@ -19,6 +19,7 @@ import NotFound from '@/pages/NotFound';
 import DefaultLayout from '@/layout/DefaultLayout';
 import PartnerDetails from '@/pages/PartnerDetails';
 import HelpPage from '@/pages/HelpPage';
+import ChatBot from '@/pages/ChatBot';
 
 export default function AppRoutes() {
     return (
@@ -42,6 +43,7 @@ export default function AppRoutes() {
                     <Route path="/roles-statuses" element={<RoleAndStatusManagement />} />
                     <Route path="/invalid-pdfs" element={<InvalidPdfs />} />
                     <Route path="/help" element={<HelpPage />} />
+                    <Route path="/chatbot" element={<ChatBot />} />
                     <Route path="/kuf/:id" element={<DocumentDetails />} />
                     <Route path="/kif/:id" element={<DocumentDetails />} />
                     <Route path="/bank-statements/:id" element={<DocumentDetails />} />

@@ -17,6 +17,7 @@
   "dependencies": {
     "@google/genai": "^1.14.0",
     "@supabase/supabase-js": "^2.53.0",
+    "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
