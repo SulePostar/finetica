@@ -11,6 +11,7 @@ import IsError from "@/components/shared-ui/IsError";
 import { DocumentFields } from "@/components/document-details/DocumentFields";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { sanitizePayload } from "@/helpers/sanitizePayload";
 
 const DocumentDetails = () => {
     const { id } = useParams();
@@ -64,34 +65,8 @@ const DocumentDetails = () => {
         );
     }
 
-    const ALLOWED_KEYS = [
-        "date",
-        "amount",
-        "accountNumber",
-        "description",
-        "direction",
-        "fileName",
-        "invoiceId",
-        "partnerId",
-        "categoryId",
-    ];
-
-    const buildDirtyPayload = (original, edited) => {
-        const out = {};
-        for (const key of ALLOWED_KEYS) {
-            const a = original?.[key];
-            const b = edited?.[key];
-
-            if (JSON.stringify(a) !== JSON.stringify(b) && b !== undefined) {
-                out[key] = b;
-            }
-        }
-        return out;
-    };
-
     const handleSave = async () => {
-        const payload = buildDirtyPayload(data, formData);
-        await updateMutation.mutateAsync(payload);
+        await updateMutation.mutateAsync(sanitizePayload(formData));
         setIsEditing(false);
     };
 
