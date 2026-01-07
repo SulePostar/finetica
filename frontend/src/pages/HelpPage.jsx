@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import PageTitle from '@/components/shared-ui/PageTitle';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -6,9 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import AddFaqModal from "@/components/shared-ui/modals/AddFaqModal";
-import { Plus } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import {
+    Plus,
     Search,
     Mail,
     Phone,
