@@ -5,6 +5,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import AddFaqModal from "@/components/shared-ui/modals/AddFaqModal";
+import { Plus } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 import {
     Search,
     Mail,
@@ -21,6 +24,10 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 const HelpPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [expandedFaq, setExpandedFaq] = useState(null);
+    const [addFaqOpen, setAddFaqOpen] = useState(false);
+
+    const { user } = useAuth();
+    const isAdmin = user?.roleName?.toLowerCase() === "admin";
 
     const faqCategories = [
         {
@@ -154,7 +161,20 @@ const HelpPage = () => {
 
     return (
         <div className="container mx-auto py-8 px-4 max-w-7xl">
-            <PageTitle text="Help Center" className="mb-6" />
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <PageTitle text="Help Center" className="mb-0" />
+                {isAdmin && (
+                    <Button
+                        size="sm"
+                        onClick={() => setAddFaqOpen(true)}
+                        className="bg-spurple text-white hover:bg-spurple/90 flex items-center gap-2"
+                    >
+                        <Plus className="w-4 h-4" />
+                        Add FAQ
+                    </Button>
+                )}
+            </div>
+
 
             {/* Search Bar */}
             <Card className="mb-8 shadow-lg">
@@ -325,6 +345,11 @@ const HelpPage = () => {
                     </Card>
                 </TabsContent>
             </Tabs>
+
+            <AddFaqModal
+                open={addFaqOpen}
+                onOpenChange={setAddFaqOpen}
+            />
         </div>
     );
 };
