@@ -109,45 +109,43 @@ export default function Contracts() {
   const total = data?.total ?? 0;
 
   return (
-    <DefaultLayout>
-      <div className="pt-20">
-        <DynamicTable
-          header={
-            <div className="flex items-center justify-between gap-4">
-              <PageTitle
-                text="Contracts"
-                subtitle="Overview of all Contracts files"
-                compact
-              />
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3">
-                  {isUploading && (
-                    <span className="text-sm text-muted-foreground animate-pulse">
-                      Uploading & processing...
-                    </span>
-                  )}
-                  <UploadButton
-                    onUploadSuccess={handleFileUpload}
-                    buttonText="Upload Contract"
-                    disabled={isUploading}
-                    className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-                  />
-                  <TimeFilter
-                    value={timeRange}
-                    onChange={handleTimeChange}
-                  />
-                </div>
+    <div className="pt-20">
+      <DynamicTable
+        header={
+          <div className="flex items-center justify-between gap-4">
+            <PageTitle
+              text="Contracts"
+              subtitle="Overview of all Contracts files"
+              compact
+            />
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
+                {isUploading && (
+                  <span className="text-sm text-muted-foreground animate-pulse">
+                    Uploading & processing...
+                  </span>
+                )}
+                <UploadButton
+                  onUploadSuccess={handleFileUpload}
+                  buttonText="Upload Contract"
+                  disabled={isUploading}
+                  className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+                />
+                <TimeFilter
+                  value={timeRange}
+                  onChange={handleTimeChange}
+                />
               </div>
             </div>
-          }
-          columns={getContractsColumns(handleAction)}
-          data={rows}
-          total={total}
-          page={page}
-          perPage={perPage}
-          onPageChange={setPage}
-        />
-      </div>
-    </DefaultLayout>
+          </div>
+        }
+        columns={getContractsColumns(handleAction)}
+        data={rows}
+        total={total}
+        page={page}
+        perPage={perPage}
+        onPageChange={setPage}
+      />
+    </div>
   );
 }
