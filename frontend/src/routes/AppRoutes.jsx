@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, Routes, Route } from 'react-router-dom'
 import ProfilePage from '@/pages/ProfilePage';
 import Login from '@/pages/Login';
+import Logout from '@/pages/Logout';
 import Dashboard from '@/pages/DashboardPage';
 
 const BankTransactions = React.lazy(() => import('../pages/BankTransactions'));
@@ -19,6 +20,7 @@ import NotFound from '@/pages/NotFound';
 import DefaultLayout from '@/layout/DefaultLayout';
 import PartnerDetails from '@/pages/PartnerDetails';
 import HelpPage from '@/pages/HelpPage';
+import DocumentItemsPage from '@/pages/DocumentItemsPage';
 
 export default function AppRoutes() {
     return (
@@ -36,17 +38,24 @@ export default function AppRoutes() {
                     <Route path="/contracts" element={<Contracts />} />
                     <Route path="/partners" element={<Partner />} />
                     <Route path="/partners/:id" element={<PartnerDetails />} />
-
-                    <Route path="/users" element={<Users />} />
                     <Route path="/profile/:userId" element={<ProfilePage />} />
-                    <Route path="/roles-statuses" element={<RoleAndStatusManagement />} />
                     <Route path="/invalid-pdfs" element={<InvalidPdfs />} />
                     <Route path="/help" element={<HelpPage />} />
                     <Route path="/kuf/:id" element={<DocumentDetails />} />
                     <Route path="/kif/:id" element={<DocumentDetails />} />
                     <Route path="/bank-statements/:id" element={<DocumentDetails />} />
                     <Route path="/contracts/:id" element={<DocumentDetails />} />
+
+                    <Route path="/:documentType/:id/items" element={<DocumentItemsPage />} />
                 </Route>
+
+              {/* Admin-only routes */}
+              <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+                <Route element={<DefaultLayout />}>
+                  <Route path="/users" element={<Users />} />
+                  <Route path="/roles-statuses" element={<RoleAndStatusManagement />} />
+                </Route>
+              </Route>
                 <Route path="*" element={<NotFound />} />
             </Route>
         </Routes>

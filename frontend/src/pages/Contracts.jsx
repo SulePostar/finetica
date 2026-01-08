@@ -120,7 +120,6 @@ export default function Contracts() {
             />
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-3">
-                {/* Keep the loading state indicator from HEAD */}
                 {isUploading && (
                   <span className="text-sm text-muted-foreground animate-pulse">
                     Uploading & processing...
