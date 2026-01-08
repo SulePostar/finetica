@@ -15,7 +15,8 @@ export const getUserById = async (id) => {
 };
 
 export const updateUser = async ({ id, ...payload }) => {
-    const { data } = await apiClient.put(`/users/${id}`, payload);
+    const dataToUpdate = payload.payload || payload;
+    const { data } = await apiClient.put(`/users/${id}`, dataToUpdate);
     return data;
 };
 
