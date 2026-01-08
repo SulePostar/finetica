@@ -60,16 +60,18 @@ const approveTransaction = async (req, res) => {
 
 const updatedDocument = async (req, res) => {
     const { id: transactionId } = req.params;
-    const updatedData = req.body;
 
     try {
-        const result = await editBankTransaction(transactionId, updatedData);
+        const result = await editBankTransaction(transactionId, req.body);
         res.json(result);
     } catch (error) {
-        console.error("Update Bank Transaction Error:", error);
-        res.status(500).json({ error: 'Failed to update bank transaction' });
+        res.status(error?.status || 500).json({
+            error: error?.message || "Failed to update bank transaction",
+            details: error?.errors || null,
+        });
     }
-}
+};
+
 
 const updateBankTransactionItem = async (req, res, next) => {
     try {
@@ -79,7 +81,6 @@ const updateBankTransactionItem = async (req, res, next) => {
         const result = await editBankTransactionItem(itemId, updatedData);
         res.json(result);
     } catch (error) {
-        console.error("Update Bank Transaction Item Error:", error);
         res.status(500).json({ error: 'Failed to update bank transaction item' });
     }
 };

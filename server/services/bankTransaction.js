@@ -285,8 +285,7 @@ const editBankTransaction = async (id, updatedData) => {
             ]
         });
     } catch (error) {
-        console.error("Update Error:", error);
-        throw new AppError('Failed to update bank transaction', 500);
+        throw new AppError("Failed to update bank transaction");
     }
 };
 
