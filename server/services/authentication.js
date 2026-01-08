@@ -1,8 +1,11 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
-const { User, Role, UserStatus, RefreshToken } = require('../models');
+const {
+  // User, 
+  Role, UserStatus, RefreshToken } = require('../models');
 const { sendTemplatedEmail } = require('./mailService');
+const User = require('../mongoModels/User');
 
 const AppError = require('../utils/errorHandler');
 const { USER_STATUS } = require('../utils/constants');
@@ -12,9 +15,13 @@ class AuthService {
   async register(registerData) {
     const { email, password, profileImage, ...rest } = registerData;
 
-    const existingUser = await User.findOne({
-      where: { email },
-    });
+    // MongoDB/Mongoose query
+    const existingUser = await User.findOne({ email });
+
+    // Original Sequelize query for reference:
+    // const existingUser = await User.findOne({
+    //   where: { email },
+    // });
 
     if (existingUser) {
       throw new AppError('User with this email already exists', 409);
@@ -46,18 +53,21 @@ class AuthService {
       // Don't fail registration if email fails
     }
 
+    // Use toSafeJSON to get id instead of _id (MongoDB)
+    const userSafe = user.toSafeJSON ? user.toSafeJSON() : { id: user._id.toString(), ...user.toObject() };
+
     return {
       success: true,
       message: 'Registration successful. Your account is pending admin approval.',
       data: {
         user: {
-          id: user.id,
+          id: userSafe.id,
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
           profileImage: user.profileImage,
           roleId: user.roleId,
-          roleName: user.role?.role || null,
+          // roleName: user.role?.role || null, // MongoDB doesn't have role relation
           statusId: user.statusId,
         },
       },

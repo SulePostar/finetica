@@ -19,6 +19,7 @@ const contractRouter = require('./routes/contract');
 const businessPartnerRouter = require('./routes/businessPartner');
 const googleDriveAutoSync = require('./tasks/googleDriveAutoSync');
 const googleDriveRouter = require('./routes/googleDrive');
+const { connectMongo } = require('./config/mongo');
 
 const PORT = process.env.PORT;
 const SECRET = process.env.SESSION_SECRET;
@@ -59,15 +60,41 @@ app.use('/api/user-statuses', userStatusRouter);
 app.use('/api/user-roles', userRoleRouter);
 app.use(errorHandler);
 
-connectToDatabase();
+
+// Connect to PostgreSQL database
+// connectToDatabase(); 
 
 // Start Google Drive auto sync service
-googleDriveAutoSync.start();
+// googleDriveAutoSync.start();
 
-app.listen(PORT, () => {
-  console.log(`🟢 Server is running at port: ${PORT}`);
+// app.listen(PORT, () => {
+//   console.log(`🟢 Server is running at port: ${PORT}`);
 
-  setInterval(() => {
-    processEmailQueue().catch(err => console.error('Error in email queue processor:', err));
-  }, 1000 * 60);
-});
+//   setInterval(() => {
+//     processEmailQueue().catch(err => console.error('Error in email queue processor:', err));
+//   }, 1000 * 60);
+// });
+
+// Connect to MongoDB and start server
+(async () => {
+  try {
+    // Connect to MongoDB
+    await connectMongo();
+
+    // Start Google Drive auto sync service
+    googleDriveAutoSync.start();
+
+    // Start server
+    app.listen(PORT, () => {
+      console.log(`🟢 Server is running at port: ${PORT}`);
+
+      // Start email queue processor
+      setInterval(() => {
+        processEmailQueue().catch(err => console.error('Error in email queue processor:', err));
+      }, 1000 * 60);
+    });
+  } catch (err) {
+    console.error("❌ Startup failed:", err);
+    process.exit(1);
+  }
+})();

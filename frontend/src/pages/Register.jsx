@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { registerUser } from "@/api/auth";
 import {
     Contact,
     Lock,
@@ -38,11 +39,39 @@ const Register = () => {
     const password = watch("password");
 
     const [profileImage, setProfileImage] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    const onSubmit = (data) => {
-        console.log("Form submitted:", data);
-        console.log("Profile image:", profileImage);
-        navigate("/dashboard");
+    const onSubmit = async (data) => {
+        setLoading(true);
+        setError("");
+
+        try {
+            const registrationData = {
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                password: data.password,
+            };
+
+            // TODO: Upload profile image if provided
+            // if (profileImage) {
+            //     // Upload logic here
+            //     // registrationData.profileImage = imageUrl;
+            // }
+
+            const result = await registerUser(registrationData);
+
+            if (result.success) {
+                navigate("/login");
+            } else {
+                setError(result.message || "Registration failed");
+            }
+        } catch (err) {
+            setError(err.response?.data?.message || "An error occurred during registration");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -293,14 +322,23 @@ const Register = () => {
                                 )}
                             </div>
 
+                            {/* Error message */}
+                            {error && (
+                                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
+                                    {error}
+                                </div>
+                            )}
+
                             {/* Submit */}
                             <button
                                 type="submit"
+                                disabled={loading}
                                 className="w-full py-4 rounded-xl bg-brand text-white font-semibold
                            shadow-md hover:shadow-lg transition-all
-                           focus:outline-none focus:ring-2 focus:ring-offset-2"
+                           focus:outline-none focus:ring-2 focus:ring-offset-2
+                           disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                Create Account
+                                {loading ? "Creating Account..." : "Create Account"}
                             </button>
 
                             {/* Login link */}

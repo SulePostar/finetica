@@ -8,7 +8,6 @@ const validate = (schema) => (req, res, next) => {
   const { error, value } = schema.validate(req.body, options);
   if (error) {
     const errorMessage = error.details.map((detail) => detail.message).join(', ');
-
     throw new AppError(`Validation error: ${errorMessage}`, 400);
   }
 
