@@ -51,7 +51,7 @@ const bottomRowData = [
 
 const Dashboard = () => {
     return (
-        <div className="pt-20 px-4 md:px-8 pb-10">
+        <div className="pt-20">
             <PageTitle text="Dashboard" compact />
 
             <div className="grid grid-cols-1 md:grid-cols-6 gap-6 mt-6">
