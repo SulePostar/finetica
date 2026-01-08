@@ -1,5 +1,5 @@
 import * as React from "react";
-import {useAuth} from '@/context/AuthContext.jsx';
+import { useAuth } from '@/context/AuthContext.jsx';
 import {
     LayoutDashboard,
     CreditCard,
@@ -56,7 +56,7 @@ const SIDEBAR_NAVIGATION = [
         label: "Support",
         items: [
             { title: "Help", url: "/help", icon: HelpCircle },
-            { title: "Log Out", url: "/logout", icon: LogOut },
+            { title: "Log Out", variant: "logout", icon: LogOut },
         ],
     },
     {
@@ -68,26 +68,26 @@ const SIDEBAR_NAVIGATION = [
 
 export function AppSidebar(props) {
 
-    const { user, loading } = useAuth();
+    const { user, loading, logout } = useAuth();
 
     if (loading) {
         return <Sidebar {...props} className="bg-spurple" />;
     }
 
-  const isAdmin = user?.roleName === 'admin';
+    const isAdmin = user?.roleName === 'admin';
 
-  const filteredNavigation = React.useMemo(() => {
-    return SIDEBAR_NAVIGATION.filter(group => {
-      if (group.label === "Administration" && !isAdmin) {
-        return false;
-      }
-      return true;
-    });
-  }, [isAdmin]);
+    const filteredNavigation = React.useMemo(() => {
+        return SIDEBAR_NAVIGATION.filter(group => {
+            if (group.label === "Administration" && !isAdmin) {
+                return false;
+            }
+            return true;
+        });
+    }, [isAdmin]);
 
-  if (!user) {
-    return null;
-  }
+    if (!user) {
+        return null;
+    }
 
     const profilePath = `/profile/${user.id}`;
 
@@ -123,7 +123,7 @@ export function AppSidebar(props) {
                 <SidebarContent
                     className="pt-4 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
                 >
-                    <SidebarNav groups={filteredNavigation} />
+                    <SidebarNav groups={filteredNavigation} onLogout={logout} />
                 </SidebarContent>
                 <SidebarFooter>
                     <div className="flex items-center justify-between px-3 py-4 group-data-[collapsible=icon]:hidden pointer-events-auto">

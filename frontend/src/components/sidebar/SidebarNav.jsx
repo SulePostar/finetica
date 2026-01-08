@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils";
 import AppearanceCard from "@/components/sidebar/AppearanceCard";
 import CollapsedThemeIcon from "../theme/CollapsedThemeIcon";
 
-export function SidebarNav({ groups }) {
+export function SidebarNav({ groups, onLogout }) {
     const location = useLocation();
     const currentPath = location.pathname;
 
@@ -61,6 +61,7 @@ export function SidebarNav({ groups }) {
                         <SidebarMenu className="space-y-2">
                             {group.items?.map((item) => {
                                 const isActive = currentPath === item.url;
+                                const isLogout = item.title === "Log Out";
 
                                 if (group.collapsible) {
                                     return (
@@ -74,18 +75,13 @@ export function SidebarNav({ groups }) {
                                                             "text-slate-600 dark:text-white/80",
                                                             "hover:bg-indigo-50 hover:text-indigo-700",
                                                             "dark:hover:bg-[#6C69FF]/20 dark:hover:text-white",
-
-                                                            isActive && [
-                                                                "text-indigo-600 dark:text-indigo-200",
-                                                            ]
+                                                            isActive && ["text-indigo-600 dark:text-indigo-200"]
                                                         )}
                                                     >
                                                         <item.icon className="size-6" />
-
                                                         <span className="group-data-[collapsible=icon]:hidden">
                                                             {item.title}
                                                         </span>
-
                                                         <ChevronRight className="ml-auto size-5 transition-transform duration-200 group-data-[state=open]:rotate-90 group-data-[collapsible=icon]:hidden" />
                                                     </SidebarMenuButton>
                                                 </CollapsibleTrigger>
@@ -121,7 +117,6 @@ export function SidebarNav({ groups }) {
                                                 "flex items-center gap-2 py-1.5 px-2",
                                                 "text-slate-600 dark:text-white/80",
                                                 "hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-[#6C69FF]/20 dark:hover:text-white",
-
                                                 isActive && [
                                                     "bg-[#6C69FF]/15",
                                                     "border-l-4 border-[#6C69FF]",
@@ -130,18 +125,33 @@ export function SidebarNav({ groups }) {
                                                 ]
                                             )}
                                         >
-                                            <Link to={item.url} className="flex items-center gap-4 w-full">
-                                                <item.icon
-                                                    className={cn(
-                                                        "size-5 transition-transform duration-300",
-                                                        isActive &&
-                                                        "scale-110 dark:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
-                                                    )}
-                                                />
-                                                <span className="group-data-[collapsible=icon]:hidden">
-                                                    {item.title}
-                                                </span>
-                                            </Link>
+                                            {isLogout ? (
+                                                <div
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        if (onLogout) onLogout();
+                                                    }}
+                                                    className="flex items-center gap-4 w-full cursor-pointer"
+                                                >
+                                                    <item.icon className="size-5" />
+                                                    <span className="group-data-[collapsible=icon]:hidden">
+                                                        {item.title}
+                                                    </span>
+                                                </div>
+                                            ) : (
+                                                <Link to={item.url} className="flex items-center gap-4 w-full">
+                                                    <item.icon
+                                                        className={cn(
+                                                            "size-5 transition-transform duration-300",
+                                                            isActive &&
+                                                            "scale-110 dark:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
+                                                        )}
+                                                    />
+                                                    <span className="group-data-[collapsible=icon]:hidden">
+                                                        {item.title}
+                                                    </span>
+                                                </Link>
+                                            )}
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 );
