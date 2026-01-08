@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }) => {
     };
     const logout = () => {
         localStorage.removeItem("authToken");
+        localStorage.removeItem("jwt_token");
         setUser(null);
         setIsAuthenticated(false);
     };
