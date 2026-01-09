@@ -34,7 +34,7 @@ const Kuf = () => {
     invoiceType: invoiceType === "all" ? null : invoiceType
   });
 
-  const { data: invoiceTypesData, isPending: isLoadingTypes } = useKufInvoiceTypes();
+  const { data: invoiceTypesData, isPending: isLoadingTypes, isError: isTypesError } = useKufInvoiceTypes();
 
   const { mutateAsync: uploadFile, isPending: isUploading } = useBucketFileUpload({
     bucketName: "kuf",
@@ -109,6 +109,10 @@ const Kuf = () => {
                 {isLoadingTypes ? (
                   <SelectItem value="loading" disabled>
                     Loading types...
+                  </SelectItem>
+                ) : isTypesError ? (
+                  <SelectItem value="error" disabled>
+                    Error loading types
                   </SelectItem>
                 ) : (
                   invoiceTypesData?.map((type) => (
