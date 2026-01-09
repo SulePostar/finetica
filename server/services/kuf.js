@@ -36,7 +36,12 @@ const listInvoices = async ({ page = 1, perPage = 10, sortField, sortOrder = 'as
 
     const where = {};
     if (invoiceType) {
-      where.invoiceType = invoiceType;
+      where[Op.and] = [
+        sequelize.where(
+          sequelize.fn('LOWER', sequelize.col('invoice_type')),
+          invoiceType.toLowerCase()
+        )
+      ]
     }
     const count = await PurchaseInvoice.count({ where });
 
@@ -324,7 +329,7 @@ const getKufInvoiceTypes = async () => {
   try {
     const types = await PurchaseInvoice.findAll({
       attributes: [
-        [sequelize.fn('DISTINCT', sequelize.col('invoice_type')), 'invoiceType']
+        [sequelize.fn('DISTINCT', sequelize.fn('LOWER', sequelize.col('invoice_type'))), 'invoiceType']
       ],
       where: {
         invoiceType: { [Op.ne]: null }
