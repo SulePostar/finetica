@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import IsError from "@/components/shared-ui/IsError";
 import PageTitle from "@/components/shared-ui/PageTitle";
@@ -13,10 +13,11 @@ import {
 import { getPartnersColumns } from "@/components/tables/columns/PartnersColumns";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { usePartners, useDeletePartner } from "@/queries/partners";
 import { Input } from "@/components/ui/input";
-import { usePartners } from "@/queries/partners";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 import { useAction } from "@/hooks/use-action";
+import ConfirmDeleteDialog from "@/components/shared-ui/modals/ConfirmDeleteModal";
 import useTableSearch from "@/hooks/use-table-search";
 
 const Partners = () => {
@@ -25,6 +26,9 @@ const Partners = () => {
     const perPage = 10;
     const [partnerType, setPartnerType] = useState("all");
     const [timeRange, setTimeRange] = useState("all");
+    const [deleteDialog, setDeleteDialog] = useState({ open: false, partnerId: null, partnerName: '' });
+    const deleteTriggerRef = useRef(null);
+    const { mutate: deletePartner, isPending: isDeleting } = useDeletePartner();
 
     const { search, debouncedSearch, setSearch, clearSearch } = useTableSearch({
         delay: 400,
@@ -44,9 +48,32 @@ const Partners = () => {
     };
 
     const handleAction = useAction('partners');
+    const handleTableAction = useCallback((action, data) => {
+        switch (action) {
+            case 'delete':
+                setDeleteDialog({
+                    open: true,
+                    partnerId: data?.id,
+                    partnerName: data?.shortName || data?.name || 'this partner'
+                });
+                if (deleteTriggerRef.current) {
+                    deleteTriggerRef.current.click();
+                }
+                break;
+            case 'view':
+                navigate(`/partners/${data.id}`);
+                break;
+            case 'edit':
+                break;
+            default:
+                handleAction(action, data);
+        }
+    }, [navigate, handleAction]);
 
-    const handleRowClick = (row) => {
-        navigate(`/partners/${row.id}`);
+    const handleConfirmDelete = () => {
+        if (deleteDialog.partnerId) {
+            deletePartner(deleteDialog.partnerId);
+        }
     };
 
     const searchBar = (
@@ -130,21 +157,22 @@ const Partners = () => {
                         </Button>
                     ),
                 }}
-                columns={getPartnersColumns(handleAction)}
+                columns={getPartnersColumns(handleTableAction)}
                 data={data?.data ?? []}
                 total={data?.total ?? 0}
                 page={page}
                 perPage={perPage}
                 onPageChange={setPage}
-                onRowClick={handleRowClick}
             />
-            {
-                isPending && (
-                    <div className="pointer-events-none fixed inset-0 flex items-center justify-center bg-white/40">
-                        <Spinner className="w-12 h-12 text-[var(--spurple)]" />
-                    </div>
-                )
-            }
+            <div className="hidden" aria-hidden="true">
+                <ConfirmDeleteDialog
+                    trigger={<button ref={deleteTriggerRef} type="button">Trigger</button>}
+                    title="Confirm Deletion"
+                    description={`Are you sure you want to delete partner "${deleteDialog.partnerName}"? This action cannot be undone.`}
+                    onConfirm={handleConfirmDelete}
+                    disabled={isDeleting}
+                />
+            </div>
         </div>
     );
 };
