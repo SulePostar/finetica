@@ -13,7 +13,7 @@ router.get('/',
     isAuthenticated,
     hasRole(['admin']),
     getAllUserRoles);
-router.get('/:id', isAuthenticated, getUserRoleById);
+router.get('/:id', isAuthenticated, hasRole(['admin']), getUserRoleById);
 router.post('/',
     isAuthenticated,
     hasRole(['admin']),

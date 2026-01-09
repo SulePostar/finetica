@@ -1,10 +1,8 @@
-
 import { Navigate, Outlet } from 'react-router';
 import { useAuth } from '../context/AuthContext';
 
 const ProtectedRoute = ({ allowedRoles = [] }) => {
     const { user, isAuthenticated, loading } = useAuth();
-
     if (loading) {
         return (
             <div className="flex flex-col justify-center items-center min-h-screen bg-background">
@@ -23,7 +21,7 @@ const ProtectedRoute = ({ allowedRoles = [] }) => {
     }
 
     if (allowedRoles.length > 0 && !allowedRoles.includes(user?.roleName)) {
-        return <Navigate to="/" replace />;
+        return <Navigate to="/dashboard" replace />;
     }
 
     return <Outlet />;
