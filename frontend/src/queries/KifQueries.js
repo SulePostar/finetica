@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getKifById, getKifs, getKifInvalidPdfById, getKifInvalidPdfs } from "@/api/Kif";
+import { getKifById, getKifs, getKifInvalidPdfById, getKifInvalidPdfs, getKifInvoiceTypes } from "@/api/Kif";
 
 export const kifKeys = {
     all: ["kif"],
@@ -7,6 +7,7 @@ export const kifKeys = {
     list: (filters) => [...kifKeys.lists(), { filters }],
     details: () => [...kifKeys.all, "detail"],
     detail: (id) => [...kifKeys.details(), id],
+    invoiceTypes: () => [...kifKeys.all, "invoice-types"],
 };
 
 export const useKifList = (filters = {}) => {
@@ -21,6 +22,14 @@ export const useKifById = (id) => {
         queryKey: kifKeys.detail(id),
         queryFn: () => getKifById(id),
         enabled: !!id,
+    });
+};
+
+export const useKifInvoiceTypes = () => {
+    return useQuery({
+        queryKey: kifKeys.invoiceTypes(),
+        queryFn: getKifInvoiceTypes,
+        staleTime: 5 * 60 * 1000,
     });
 };
 

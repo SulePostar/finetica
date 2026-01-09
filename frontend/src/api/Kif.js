@@ -12,6 +12,11 @@ export const getKifById = async (id) => {
     return data;
 };
 
+export const getKifInvoiceTypes = async () => {
+    const { data } = await apiClient.get("/kif/invoice-types");
+    return data;
+}
+
 /* -------------------- */
 /*     Invalid PDFs     */
 /* -------------------- */
