@@ -38,7 +38,7 @@ const Kuf = () => {
 
   const { mutateAsync: uploadFile, isPending: isUploading } = useBucketFileUpload({
     bucketName: "kuf",
-    invalidateKeys: [kufKeys.all],
+    invalidateKeys: [kufKeys.all, kufKeys.invoiceTypes()],
     successMessage: "KUF uploaded",
     successDescription: "KUF file has been processed successfully.",
   });
