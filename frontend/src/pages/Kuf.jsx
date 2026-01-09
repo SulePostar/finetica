@@ -27,7 +27,7 @@ const Kuf = () => {
   const [invoiceType, setInvoiceType] = useState("all");
 
   const handleAction = useAction("kuf");
-  const { data, isPending, isError, error, refetch } = useKufInvoices({
+  const { data, isPending, isFetching, isError, error, refetch } = useKufInvoices({
     page,
     perPage,
     timeRange,
@@ -145,7 +145,7 @@ const Kuf = () => {
         onPageChange={setPage}
       />
       {
-        isPending && (
+        isFetching && !isPending && (
           <div className="pointer-events-none fixed inset-0 flex items-center justify-center bg-white/40">
             <Spinner className="w-12 h-12 text-[var(--spurple)]" />
           </div>
