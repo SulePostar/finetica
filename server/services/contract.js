@@ -1,4 +1,5 @@
 const { Contract, BusinessPartner, ContractProcessingLog, sequelize } = require('../models');
+const { Op } = require('sequelize');
 const AppError = require('../utils/errorHandler');
 const { processDocument } = require('./aiService');
 const contractSchema = require('../schemas/contract');
@@ -28,7 +29,14 @@ const SORT_FIELD_MAP = {
   updatedAt: 'updatedAt',
 };
 
-const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
+const listContracts = async ({
+                               page = 1,
+                               perPage = 10,
+                               sortField,
+                               sortOrder = 'asc',
+                               startDate,
+                               endDate
+                             }) => {
   const limit = Math.max(1, Number(perPage) || 10);
   const offset = Math.max(0, ((Number(page) || 1) - 1) * limit);
 
@@ -39,7 +47,25 @@ const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'a
     ];
   }
 
+  const where = {};
+  if (startDate || endDate) {
+    where.createdAt = {};
+
+    if (startDate) {
+      const start = new Date(startDate);
+      start.setHours(0, 0, 0, 0);
+      where.createdAt[Op.gte] = start;
+    }
+
+    if (endDate) {
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999);
+      where.createdAt[Op.lte] = end;
+    }
+  }
+
   const { rows, count } = await Contract.findAndCountAll({
+    where,
     offset,
     limit,
     order,
@@ -116,9 +142,9 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
     const { isValidContract, ...contractData } = await extractData(buffer, mimeType);
 
     if (isValidContract === false) {
-      await unprocessedFileLog.update({ 
+      await unprocessedFileLog.update({
         isValid: false,
-        isProcessed: true,                    
+        isProcessed: true,
         processedAt: new Date(),
         message: 'File is not a valid Contract',
       });
