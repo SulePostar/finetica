@@ -28,7 +28,7 @@ export const useDeletePartner = () => {
     return useMutation({
         mutationFn: deletePartner,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: partnersKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: partnersKeys.all });
             toast.success("Partner successfully deleted");
         },
         onError: (error) => {

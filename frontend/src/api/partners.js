@@ -11,4 +11,5 @@ export const getPartnerById = async (id) => {
 }
 export const deletePartner = async (id) => {
     await apiClient.delete(`/partners/${id}`);
+    return data;
 };

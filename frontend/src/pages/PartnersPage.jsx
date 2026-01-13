@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import IsError from "@/components/shared-ui/IsError";
 import PageTitle from "@/components/shared-ui/PageTitle";
@@ -27,7 +27,6 @@ const Partners = () => {
     const [partnerType, setPartnerType] = useState("all");
     const [timeRange, setTimeRange] = useState("all");
     const [deleteDialog, setDeleteDialog] = useState({ open: false, partnerId: null, partnerName: '' });
-    const deleteTriggerRef = useRef(null);
     const { mutate: deletePartner, isPending: isDeleting } = useDeletePartner();
 
     const { search, debouncedSearch, setSearch, clearSearch } = useTableSearch({
@@ -56,9 +55,6 @@ const Partners = () => {
                     partnerId: data?.id,
                     partnerName: data?.shortName || data?.name || 'this partner'
                 });
-                if (deleteTriggerRef.current) {
-                    deleteTriggerRef.current.click();
-                }
                 break;
             case 'view':
                 navigate(`/partners/${data.id}`);
@@ -72,7 +68,15 @@ const Partners = () => {
 
     const handleConfirmDelete = () => {
         if (deleteDialog.partnerId) {
-            deletePartner(deleteDialog.partnerId);
+            deletePartner(deleteDialog.partnerId, {
+                onSuccess: () => {
+                    setDeleteDialog({
+                        open: false,
+                        partnerId: null,
+                        partnerName: ''
+                    });
+                }
+            });
         }
     };
 
@@ -164,15 +168,16 @@ const Partners = () => {
                 perPage={perPage}
                 onPageChange={setPage}
             />
-            <div className="hidden" aria-hidden="true">
-                <ConfirmDeleteDialog
-                    trigger={<button ref={deleteTriggerRef} type="button">Trigger</button>}
-                    title="Confirm Deletion"
-                    description={`Are you sure you want to delete partner "${deleteDialog.partnerName}"? This action cannot be undone.`}
-                    onConfirm={handleConfirmDelete}
-                    disabled={isDeleting}
-                />
-            </div>
+            <ConfirmDeleteDialog
+                open={deleteDialog.open}
+                onOpenChange={(open) =>
+                    setDeleteDialog(prev => ({ ...prev, open }))
+                }
+                title="Confirm Deletion"
+                description={`Are you sure you want to delete partner "${deleteDialog.partnerName}"? This action cannot be undone.`}
+                onConfirm={handleConfirmDelete}
+                disabled={isDeleting}
+            />
         </div>
     );
 };
