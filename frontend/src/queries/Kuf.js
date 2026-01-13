@@ -1,4 +1,4 @@
-import { getAllKufs, getKufById, getKufInvalidPdfs, getKufInvalidPdfById } from "@/api/Kuf";
+import { getAllKufs, getKufById, getKufInvalidPdfs, getKufInvalidPdfById, getKufInvoiceTypes } from "@/api/Kuf";
 import { useQuery, } from "@tanstack/react-query";
 
 export const kufKeys = {
@@ -7,6 +7,7 @@ export const kufKeys = {
     list: (filters) => [...kufKeys.lists(), { filters }],
     details: () => [...kufKeys.all, "detail"],
     detail: (id) => [...kufKeys.details(), id],
+    invoiceTypes: () => [...kufKeys.all, "invoice-types"],
 };
 
 export const useKufInvoices = (filters = {}) => {
@@ -22,6 +23,13 @@ export const useKufById = (id) => {
         queryKey: kufKeys.detail(id),
         queryFn: () => getKufById(id),
         enabled: !!id,
+    });
+}
+
+export const useKufInvoiceTypes = () => {
+    return useQuery({
+        queryKey: kufKeys.invoiceTypes(),
+        queryFn: () => getKufInvoiceTypes(),
     });
 }
 
