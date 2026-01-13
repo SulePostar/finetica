@@ -23,7 +23,7 @@ const Kif = () => {
         invoiceType: invoiceType === "all" ? null : invoiceType,
     });
 
-    const { data: invoiceTypesData, isPending: isInvoiceTypesPending } = useKifInvoiceTypes();
+    const { data: invoiceTypesData, isPending: isInvoiceTypesPending, isError: isInvoiceTypesError } = useKifInvoiceTypes();
 
     const handleAction = useAction("kif");
 
@@ -119,7 +119,7 @@ const Kif = () => {
                         }}
                         >
                             <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder={isInvoiceTypesPending ? "Loading types..." : "All types"} />
+                                <SelectValue placeholder={isInvoiceTypesPending ? "Loading types..." : isInvoiceTypesError ? "Failed to load types" : "All types"} />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">All types</SelectItem>

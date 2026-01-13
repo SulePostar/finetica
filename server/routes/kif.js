@@ -19,7 +19,7 @@ const {
 const { getInvalidKifs, getKifLog } = require('../controllers/kifProcessingLog');
 const { updateKifItem } = require('../controllers/kif');
 
-router.get('/invoice-types', getKifInvoiceTypes);
+router.get('/invoice-types', isAuthenticated, getKifInvoiceTypes);
 router.get('/logs/invalid', isAuthenticated, getInvalidKifs);
 router.get('/logs/:id', isAuthenticated, getKifLog);
 
