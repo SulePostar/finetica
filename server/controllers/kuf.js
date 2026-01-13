@@ -6,18 +6,20 @@ const {
   updateInvoice,
   processUnprocessedFiles,
   getKufItemsById,
-  updateKufItem: updateKufItemService
+  updateKufItem: updateKufItemService,
+  getKufInvoiceTypes: getKufInvoiceTypesService
 } = require('../services/kuf');
 
 // Rename to match contract naming
 const getInvoiceData = async (req, res, next) => {
   try {
-    const { page = 1, perPage = 10, sortField, sortOrder = 'asc' } = req.query;
+    const { page = 1, perPage = 10, sortField, sortOrder = 'asc', invoiceType } = req.query;
     const result = await listInvoices({
       page: Number(page) || 1,
       perPage: Number(perPage) || 10,
       sortField,
       sortOrder,
+      invoiceType
     });
     res.json(result);
   } catch (err) {
@@ -96,6 +98,15 @@ const updateKufItem = async (req, res, next) => {
   }
 };
 
+const getKufInvoiceTypes = async (req, res, next) => {
+  try {
+    const types = await getKufInvoiceTypesService();
+    res.json(types);
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getInvoiceData,
   getInvoice,
@@ -105,4 +116,5 @@ module.exports = {
   update,
   getKufItems,
   updateKufItem,
+  getKufInvoiceTypes
 };
