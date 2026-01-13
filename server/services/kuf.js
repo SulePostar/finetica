@@ -6,6 +6,7 @@ const {
   sequelize,
   User
 } = require('../models');
+const { Op } = require('sequelize');
 const { processDocument } = require('./aiService');
 const KUF_PROMPT = require('../prompts/Kuf');
 const purchaseInvoiceSchema = require('../schemas/kufSchema');
@@ -24,7 +25,7 @@ const SORT_FIELD_MAP = {
   vatAmount: 'vat_amount'
 };
 
-const listInvoices = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
+const listInvoices = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc', invoiceType }) => {
   try {
     const limit = Math.max(1, Number(perPage) || 10);
     const offset = Math.max(0, ((Number(page) || 1) - 1) * limit);
@@ -34,7 +35,19 @@ const listInvoices = async ({ page = 1, perPage = 10, sortField, sortOrder = 'as
       order = [[SORT_FIELD_MAP[sortField], (sortOrder || 'asc').toUpperCase()]];
     }
 
+    const where = {};
+    if (invoiceType) {
+      where[Op.and] = [
+        sequelize.where(
+          sequelize.fn('LOWER', sequelize.col('invoice_type')),
+          invoiceType.toLowerCase()
+        )
+      ]
+    }
+    const count = await PurchaseInvoice.count({ where });
+
     const rows = await PurchaseInvoice.findAll({
+      where,
       offset,
       limit,
       order,
@@ -49,8 +62,6 @@ const listInvoices = async ({ page = 1, perPage = 10, sortField, sortOrder = 'as
         }
       ],
     });
-
-    const count = await PurchaseInvoice.count();
 
     const data = rows.map(row => row.get({ plain: true }));
     return { data, total: count };
@@ -319,6 +330,24 @@ async function updateKufItem(itemId, updateData) {
   return item;
 }
 
+const getKufInvoiceTypes = async () => {
+  try {
+    const types = await PurchaseInvoice.findAll({
+      attributes: [
+        [sequelize.fn('DISTINCT', sequelize.fn('LOWER', sequelize.col('invoice_type'))), 'invoiceType']
+      ],
+      where: {
+        invoiceType: { [Op.ne]: null }
+      },
+      raw: true
+    });
+    return types.map(t => t.invoiceType);
+  }
+  catch (error) {
+    throw new AppError('Failed to fetch KUF invoice types', 500);
+  }
+}
+
 module.exports = {
   listInvoices,
   findById,
@@ -330,4 +359,5 @@ module.exports = {
   updateInvoice,
   getKufItemsById,
   updateKufItem,
+  getKufInvoiceTypes,
 };

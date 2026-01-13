@@ -12,6 +12,11 @@ export const getKufById = async (id) => {
     return data;
 };
 
+export const getKufInvoiceTypes = async () => {
+    const { data } = await apiClient.get(`${BASE_PATH}/invoice-types`);
+    return data;
+}
+
 export const createKuf = async (payload) => {
     const { data } = await apiClient.post(BASE_PATH, payload);
     return data;
