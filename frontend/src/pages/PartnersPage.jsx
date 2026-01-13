@@ -171,38 +171,47 @@ const Partners = () => {
                     </div>
                 }
                 toolbar={{
-                    search: searchBar,
-                    filters: (
-                        <Select
-                            value={partnerType}
-                            onValueChange={(value) => {
-                                setPartnerType(value);
-                                setPage(1);
-                            }}
-                        >
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="All partners" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All partners</SelectItem>
-                                <SelectItem value="supplier">Suppliers</SelectItem>
-                                <SelectItem value="customer">Customers</SelectItem>
-                            </SelectContent>
-                        </Select>
+                    search: (
+                        <div className="flex w-full items-center gap-4">
+                            <Input
+                                placeholder="Search by email or short name"
+                                className="flex-1"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+                            <Select
+                                value={partnerType}
+                                onValueChange={(value) => {
+                                    setPartnerType(value);
+                                    setPage(1);
+                                }}
+                            >
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="All partners" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All partners</SelectItem>
+                                    <SelectItem value="supplier">Suppliers</SelectItem>
+                                    <SelectItem value="customer">Customers</SelectItem>
+                                </SelectContent>
+                            </Select>
+
+                            <Button
+                                variant="outline"
+                                className="whitespace-nowrap"
+                                onClick={() => {
+                                    setPartnerType("all");
+                                    setTimeRange("all");
+                                    clearSearch();
+                                    setPage(1);
+                                }}
+                            >
+                                Clear filters
+                            </Button>
+                        </div>
                     ),
-                    button: (
-                        <Button
-                            variant="outline"
-                            onClick={() => {
-                                setPartnerType("all");
-                                setTimeRange("all");
-                                clearSearch();
-                                setPage(1);
-                            }}
-                        >
-                            Clear filters
-                        </Button>
-                    ),
+                    filters: null,
+                    button: null,
                 }}
                 columns={getPartnersColumns(handleAction)}
                 data={data?.data ?? []}
