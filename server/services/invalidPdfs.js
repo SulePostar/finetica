@@ -4,22 +4,21 @@ const {
     KufProcessingLog,
     KifProcessingLog
 } = require('../models');
+const AppError = require('../utils/errorHandler');
 
 class InvalidPdfsService {
     async getInvalidCounts() {
-        const [bankCount, contractCount, kufCount, kifCount] = await Promise.all([
-            BankTransactionProcessingLog.count({ where: { isValid: false } }),
-            ContractProcessingLog.count({ where: { isValid: false } }),
-            KufProcessingLog.count({ where: { isValid: false } }),
-            KifProcessingLog.count({ where: { isValid: false } })
-        ]);
+        try {
+            const [bankCount, contractCount, kufCount, kifCount] = await Promise.all([
+                BankTransactionProcessingLog.count({ where: { isValid: false } }),
+                ContractProcessingLog.count({ where: { isValid: false } }),
+                KufProcessingLog.count({ where: { isValid: false } }),
+                KifProcessingLog.count({ where: { isValid: false } })
+            ]);
 
-        const total = bankCount + contractCount + kufCount + kifCount;
+            const total = bankCount + contractCount + kufCount + kifCount;
 
-        return {
-            statusCode: 200,
-            message: 'Invalid PDF counts fetched successfully',
-            data: {
+            return {
                 total,
                 breakdown: {
                     bankTransactions: bankCount,
@@ -27,8 +26,12 @@ class InvalidPdfsService {
                     kuf: kufCount,
                     kif: kifCount
                 }
-            }
-        };
+            };
+        }
+        catch (error) {
+            console.error('Invalid PDFs service error:', error);
+            throw new AppError('Failed to fetch invalid PDF counts', 500);
+        }
     }
 }
 
