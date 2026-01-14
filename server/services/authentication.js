@@ -2,7 +2,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const { User, Role, UserStatus, RefreshToken } = require('../models');
-const { sendTemplatedEmail } = require('./mailService');
+const { sendTemplatedEmail } = require('./sendGridService');
+const { TEMPLATE_IDS } = require('../utils/constants');
 
 const AppError = require('../utils/errorHandler');
 const { USER_STATUS } = require('../utils/constants');
@@ -168,8 +169,8 @@ class AuthService {
 
     // Send password reset email
     try {
-      await sendTemplatedEmail('reset_password_email', user.email, {
-        resetLink: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`
+      await sendTemplatedEmail(user.email, TEMPLATE_IDS.RESET_PASSWORD, {
+        resetLink: `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${resetToken}`
       });
     } catch (emailError) {
       console.error('Failed to send password reset email:', emailError);
