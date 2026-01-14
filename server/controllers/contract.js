@@ -7,13 +7,24 @@ const {
 
 const getContractData = async (req, res, next) => {
   try {
-    const { page = 1, perPage = 10, sortField, sortOrder = 'asc' } = req.query;
+    const {
+      page = 1,
+      perPage = 10,
+      sortField,
+      sortOrder = 'asc',
+      startDate,
+      endDate
+    } = req.query;
+
     const { data, total } = await listContracts({
       page: Number(page) || 1,
       perPage: Number(perPage) || 10,
       sortField,
       sortOrder,
+      startDate,
+      endDate,
     });
+
     res.json({ data, total });
   } catch (err) {
     next(err);

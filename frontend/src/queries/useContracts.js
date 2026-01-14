@@ -12,7 +12,7 @@ export const contractKeys = {
 export const useContracts = (filters = {}) => {
     return useQuery({
         queryKey: contractKeys.list(filters),
-        queryFn: () => getContracts(),
+        queryFn: () => getContracts(filters),
     });
 };
 
