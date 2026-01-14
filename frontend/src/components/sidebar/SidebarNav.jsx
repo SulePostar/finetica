@@ -16,6 +16,17 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 
 import AppearanceCard from "@/components/sidebar/AppearanceCard";
@@ -109,36 +120,65 @@ export function SidebarNav({ groups, onLogout }) {
 
                                 return (
                                     <SidebarMenuItem key={item.title}>
-                                        <SidebarMenuButton
-                                            asChild
-                                            className={cn(
-                                                "relative overflow-hidden transition-all duration-300 ease-out rounded-md border border-transparent",
-                                                "w-full md:w-[220px]",
-                                                "flex items-center gap-2 py-1.5 px-2",
-                                                "text-slate-600 dark:text-white/80",
-                                                "hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-[#6C69FF]/20 dark:hover:text-white",
-                                                isActive && [
-                                                    "bg-[#6C69FF]/15",
-                                                    "border-l-4 border-[#6C69FF]",
-                                                    "text-[#6C69FF]",
-                                                    "font-semibold",
-                                                ]
-                                            )}
-                                        >
-                                            {isLogout ? (
-                                                <div
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        if (onLogout) onLogout();
-                                                    }}
-                                                    className="flex items-center gap-4 w-full cursor-pointer"
-                                                >
-                                                    <item.icon className="size-5" />
-                                                    <span className="group-data-[collapsible=icon]:hidden">
-                                                        {item.title}
-                                                    </span>
-                                                </div>
-                                            ) : (
+                                        {isLogout ? (
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <SidebarMenuButton
+                                                        className={cn(
+                                                            "relative overflow-hidden transition-all duration-300 ease-out rounded-md border border-transparent",
+                                                            "w-full md:w-[220px]",
+                                                            "flex items-center gap-2 py-1.5 px-2",
+                                                            "text-slate-600 dark:text-white/80",
+                                                            "hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                                                        )}
+                                                    >
+                                                        <div className="flex items-center gap-4 w-full cursor-pointer">
+                                                            <item.icon className="size-5" />
+                                                            <span className="group-data-[collapsible=icon]:hidden">
+                                                                {item.title}
+                                                            </span>
+                                                        </div>
+                                                    </SidebarMenuButton>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent className="bg-white dark:bg-[#1a1a2e] border-slate-200 dark:border-white/10">
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle className="text-slate-900 dark:text-white">
+                                                            Are you sure you want to log out?
+                                                        </AlertDialogTitle>
+                                                        <AlertDialogDescription className="text-slate-500 dark:text-white/60">
+                                                            This will end your current session and you will need to log in again to access the dashboard.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel className="border-slate-200 dark:border-white/10 dark:text-white dark:hover:bg-white/5">
+                                                            Cancel
+                                                        </AlertDialogCancel>
+                                                        <AlertDialogAction
+                                                            onClick={() => onLogout?.()}
+                                                            className="bg-[#6C69FF] hover:bg-[#5b58e6] text-white"
+                                                        >
+                                                            Log Out
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
+                                        ) : (
+                                            <SidebarMenuButton
+                                                asChild
+                                                className={cn(
+                                                    "relative overflow-hidden transition-all duration-300 ease-out rounded-md border border-transparent",
+                                                    "w-full md:w-[220px]",
+                                                    "flex items-center gap-2 py-1.5 px-2",
+                                                    "text-slate-600 dark:text-white/80",
+                                                    "hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-[#6C69FF]/20 dark:hover:text-white",
+                                                    isActive && [
+                                                        "bg-[#6C69FF]/15",
+                                                        "border-l-4 border-[#6C69FF]",
+                                                        "text-[#6C69FF]",
+                                                        "font-semibold",
+                                                    ]
+                                                )}
+                                            >
                                                 <Link to={item.url} className="flex items-center gap-4 w-full">
                                                     <item.icon
                                                         className={cn(
@@ -151,8 +191,8 @@ export function SidebarNav({ groups, onLogout }) {
                                                         {item.title}
                                                     </span>
                                                 </Link>
-                                            )}
-                                        </SidebarMenuButton>
+                                            </SidebarMenuButton>
+                                        )}
                                     </SidebarMenuItem>
                                 );
                             })}
