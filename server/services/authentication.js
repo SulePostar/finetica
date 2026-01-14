@@ -10,6 +10,14 @@ const { USER_STATUS } = require('../utils/constants');
 const REFRESH_TOKEN_EXPIRES_IN_MS = process.env.REFRESH_TOKEN_EXPIRES_IN_DAYS * 24 * 60 * 60 * 1000;
 
 class AuthService {
+
+  formatDate(date, locale = 'en-GB') {
+    return new Date(date).toLocaleString(locale, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
+  }
+
   async register(registerData) {
     const { email, password, profileImage, ...rest } = registerData;
 
@@ -37,14 +45,32 @@ class AuthService {
 
     const user = await User.create(userData);
 
-    // Send welcome email
-    try {
-      await sendTemplatedEmail('welcome_email', user.email, {
-        userName: user.firstName
-      });
-    } catch (emailError) {
-      console.error('Failed to send welcome email:', emailError);
-      // Don't fail registration if email fails
+    // Send welcome email 
+    const results = await Promise.allSettled([
+      sendTemplatedEmail(
+        process.env.SENDGRID_FROM_EMAIL,
+        TEMPLATE_IDS.USER_APPROVAL,
+        {
+          newUserName: `${user.firstName} ${user.lastName}`,
+          newUserEmail: user.email,
+          createdAt: this.formatDate(user.created_at),
+          adminDashboardLink: `${process.env.FRONTEND_URL ?? 'http://localhost:5173'}/users`,
+        }
+      ),
+      sendTemplatedEmail(
+        user.email,
+        TEMPLATE_IDS.WELCOME_EMAIL,
+        {
+          userName: user.firstName,
+        }
+      ),
+    ]);
+    const [adminResult, userResult] = results;
+    if (adminResult.status === 'rejected') {
+      console.error('Failed to send User Approval Email to Admin:', adminResult.reason);
+    }
+    if (userResult.status === 'rejected') {
+      console.error('Failed to send User Welcome Email:', userResult.reason);
     }
 
     return {
