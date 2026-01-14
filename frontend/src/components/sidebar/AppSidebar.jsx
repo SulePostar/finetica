@@ -89,7 +89,7 @@ export function AppSidebar(props) {
         return null;
     }
 
-    const profilePath = `/profile/${user.id}`;
+    const profilePath = `/profile/me`;
 
     const currentUser = {
         name: `${user.firstName} ${user.lastName}`,
