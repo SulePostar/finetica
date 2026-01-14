@@ -1,18 +1,38 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { formatDateTime } from '@/helpers/formatDate';
+import { formatCurrency } from '@/helpers/formatCurrency';
+import { formatTimePeriod } from '@/helpers/formatTimePeriod';
 
-export const DocumentFields = ({ document, excludeFields = ['pdfUrl', 'items', 'id'], type }) => {
+export const DocumentFields = ({ document, excludeFields = ['pdfUrl', 'items', 'id', 'User'], type }) => {
     const formatValue = (key, value) => {
         if (value === null || value === undefined || value === '') {
             return '—';
         }
-        if (key.toLowerCase().includes('date') || key.toLowerCase().includes('at')) {
+        if (key === 'approvedBy' && document.User) {
+            return `${document.User.firstName} ${document.User.lastName}`;
+        }
+
+        if (key.toLowerCase().includes('period')) {
+            return formatTimePeriod(value);
+        }
+
+        if (key.toLowerCase().includes('date') || key.toLowerCase().endsWith('at')) {
             const date = new Date(value);
             if (!isNaN(date.getTime())) {
                 return formatDateTime(value);
             }
             return String(value);
+        }
+        const isNumeric = !isNaN(parseFloat(value)) && isFinite(value);
+
+        if (isNumeric) {
+            const lowerKey = key.toLowerCase();
+            if (lowerKey.includes('number') || lowerKey.includes('id') || lowerKey.includes('code')) {
+                return String(value);
+            }
+
+            return formatCurrency(value);
         }
         if (Array.isArray(value)) {
             return `${value.length} item(s)`;
@@ -59,7 +79,7 @@ export const DocumentFields = ({ document, excludeFields = ['pdfUrl', 'items', '
                                     <span className="text-sm font-medium text-muted-foreground capitalize">
                                         {key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim()}
                                     </span>
-                                    <span className="text-sm text-primary sm:text-right break-all">
+                                    <span className="text-sm text-primary sm:text-right break-words whitespace-pre-wrap max-w-full sm:max-w-[70%]">
                                         {formatValue(key, value)}
                                     </span>
                                 </div>
