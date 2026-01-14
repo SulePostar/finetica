@@ -26,8 +26,14 @@ const SOURCES = {
     supabaseBucket: 'contracts'
   }
 };
+const TEMPLATE_IDS = {
+  RESET_PASSWORD: process.env.SENDGRID_RESET_PASSWORD_TEMPLATE_ID,
+  WELCOME_EMAIL: process.env.SENDGRID_WELCOME_TEMPLATE_ID,
+  USER_APPROVAL: process.env.SENDGRID_USER_APPROVAL_TEMPLATE_ID
+};
 module.exports = {
   USER_STATUS,
   USER_ROLE,
-  SOURCES
+  SOURCES,
+  TEMPLATE_IDS
 };
