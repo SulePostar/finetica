@@ -79,20 +79,20 @@ export default function Contracts() {
 
   if (isPending) {
     return (
-      <DefaultLayout>
+      <>
         <div className="pt-20">
           <PageTitle text="Contracts" />
           <div className="flex items-center justify-center h-40">
             <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
           </div>
         </div>
-      </DefaultLayout>
+      </>
     );
   }
 
   if (isError) {
     return (
-      <DefaultLayout>
+      <>
         <div className="pt-20">
           <IsError
             error={error}
@@ -101,7 +101,7 @@ export default function Contracts() {
             showDetails={true}
           />
         </div>
-      </DefaultLayout>
+      </>
     );
   }
 
