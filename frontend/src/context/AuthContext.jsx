@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { loginUser } from "../api/auth";
 import { getMe } from "../api/users";
 
@@ -8,6 +9,8 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
+
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         const validateToken = async () => {
@@ -30,6 +33,7 @@ export const AuthProvider = ({ children }) => {
                     localStorage.removeItem("authToken");
                     setUser(null);
                     setIsAuthenticated(false);
+                    console.error("Token validation failed:", error);
                 }
             }
             setLoading(false);
@@ -75,9 +79,12 @@ export const AuthProvider = ({ children }) => {
             return { success: false, error: message };
         }
     };
+
     const logout = () => {
         localStorage.removeItem("authToken");
-        localStorage.removeItem("jwt_token");
+
+        queryClient.clear();
+
         setUser(null);
         setIsAuthenticated(false);
     };
