@@ -1,5 +1,7 @@
 import StatWidget from "@/components/dashboard/StatWidget";
 import PageTitle from "@/components/shared-ui/PageTitle";
+import { TimeFilter } from "@/components/shared-ui/TimeFilter";
+import { Separator } from "@/components/ui/separator";
 import {
     FileText,
     FileWarning,
@@ -52,7 +54,17 @@ const bottomRowData = [
 const Dashboard = () => {
     return (
         <div className="pt-20">
-            <PageTitle text="Dashboard" compact />
+            <div className="mb-6 flex flex-col gap-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <PageTitle text="Dashboard" compact />
+                    <div className="flex w-full sm:w-auto sm:justify-end">
+                        <div className="w-full sm:w-auto">
+                            <TimeFilter />
+                        </div>
+                    </div>
+                </div>
+                <div className="h-px w-full bg-border/40" />
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-6 gap-6 mt-6">
 
@@ -86,7 +98,7 @@ const Dashboard = () => {
                 ))}
 
             </div>
-        </div>
+        </div >
     );
 };
 
