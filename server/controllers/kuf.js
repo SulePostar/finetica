@@ -111,7 +111,7 @@ const getKufInvoiceTypes = async (req, res, next) => {
 const getNetTotalSum = async (req, res, next) => {
   try {
     const sum = await getNetTotalSumService();
-    res.json({ sum: sum });
+    res.json({ sum });
   } catch (err) {
     next(err);
   }
