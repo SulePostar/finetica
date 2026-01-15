@@ -63,4 +63,5 @@ module.exports = {
   getContract,
   approveContract,
   create,
+  getActiveCount
 };
