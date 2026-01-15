@@ -89,6 +89,15 @@ const createContract = async (contractData) => {
   return created;
 }
 
+const getActiveContractsCount = async () => {
+  const count = await Contract.count({
+    where: {
+      isActive: true,
+    },
+  });
+  return count;
+}
+
 const extractData = async (fileBuffer, mimeType) => {
   const businessPartners = await BusinessPartner.findAll({
     attributes: ['id', 'name'],
