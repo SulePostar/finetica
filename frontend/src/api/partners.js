@@ -1,5 +1,10 @@
 import apiClient from "./axios";
 
+export const deletePartner = async (id) => {
+    const { data } = await apiClient.delete(`/partners/${id}`);
+    return data;
+};
+
 export const getAllPartners = async (filters) => {
     const { data } = await apiClient.get("/partners", { params: filters });
     return data;

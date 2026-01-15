@@ -9,10 +9,9 @@ import { Button } from "@/components/ui/button";
 import { MoreVertical } from "lucide-react";
 
 export default function ActionsDropdown({ item, actions, onAction }) {
-  const handleAction = (actionKey) => {
-    console.log(`Action: ${actionKey}`, item);
+  const handleAction = (actionKey, event) => {
     if (onAction) {
-      onAction(actionKey, item);
+      onAction(actionKey, item, event);
     }
   };
 
@@ -24,15 +23,13 @@ export default function ActionsDropdown({ item, actions, onAction }) {
           <MoreVertical className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent align="end">
         {actions.map((action, index) => (
           <div key={action.key || index}>
             {action.separator && <DropdownMenuSeparator />}
             <DropdownMenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                handleAction(action.key);
-              }}
+              onClick={(e) => handleAction(action.key, e)}
               className={action.className}
               disabled={action.disabled}
             >
