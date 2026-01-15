@@ -14,6 +14,7 @@ const {
     updateBusinessPartnerSchema,
 } = require('../schemas/businessPartnerSchema');
 const isAuthenticated = require('../middleware/isAuthenticated');
+const hasRole = require('../middleware/hasRole');
 
 // Get all business partners
 router.get('/', getAllPartners);
@@ -28,6 +29,7 @@ router.put('/:id', validate(updateBusinessPartnerSchema), updateBusinessPartner)
 
 router.delete('/:id',
     isAuthenticated,
+    hasRole(['admin']),
     deleteBusinessPartner);
 
 module.exports = router;
