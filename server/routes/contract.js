@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getContractData, approveContract, getContract } = require('../controllers/contract');
+const { getContractData, approveContract, getContract, getActiveCount } = require('../controllers/contract');
 const isAuthenticated = require('../middleware/isAuthenticated');
 const validate = require('../middleware/validation');
 const approveContractSchema = require('../schemas/approveContract');
@@ -8,7 +8,7 @@ const approveContractSchema = require('../schemas/approveContract');
 const { getInvalidContracts, getContractLog } = require('../controllers/contractProcessingLog');
 
 router.get('/', getContractData);
-
+router.get('/count/active', isAuthenticated, getActiveCount);
 router.get('/logs/invalid', isAuthenticated, getInvalidContracts);
 router.get('/logs/:id', isAuthenticated, getContractLog);
 

@@ -3,6 +3,7 @@ const {
   approveContractById,
   findById,
   createContract,
+  getActiveContractsCount
 } = require('../services/contract');
 
 const getContractData = async (req, res, next) => {
@@ -48,9 +49,19 @@ const create = async (req, res, next) => {
   }
 };
 
+const getActiveCount = async (req, res, next) => {
+  try {
+    const count = await getActiveContractsCount();
+    res.json({count});
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getContractData,
   getContract,
   approveContract,
   create,
+  getActiveCount
 };
