@@ -117,24 +117,20 @@ class SupabaseService {
   /**
    * Upload profile image to Supabase storage
    * @param {Buffer|Object} fileBuffer - Image file buffer or multer file object
-   * @param {string} firstName - User's first name (optional if fileBuffer is multer file object)
-   * @param {string} lastName - User's last name (optional if fileBuffer is multer file object)
    * @param {string} fileExtension - File extension (optional if fileBuffer is multer file object)
    * @param {string} mimeType - File MIME type (optional if fileBuffer is multer file object)
    * @returns {Promise<Object>} Upload result
    */
-  async uploadProfileImage(fileBuffer, firstName, lastName, fileExtension, mimeType) {
+  async uploadProfileImage(fileBuffer, fileExtension, mimeType) {
     try {
-      const sanitizedFirstName = this.sanitizeFileName(firstName).toLowerCase();
-      const sanitizedLastName = this.sanitizeFileName(lastName).toLowerCase();
-      const username = `${sanitizedFirstName}_${sanitizedLastName}`;
+      const uniqueId = crypto.randomUUID();
       let ext;
       if (fileBuffer && fileBuffer.originalname) {
         ext = fileBuffer.originalname.split('.').pop();
       } else {
         ext = fileExtension;
       }
-      const finalName = `${username}.${ext}`;
+      const finalName = `${uniqueId}.${ext}`;
       return await this.uploadFile(fileBuffer, finalName, 'user-images', mimeType, true);
     } catch (error) {
       console.error('Profile image upload error:', error);

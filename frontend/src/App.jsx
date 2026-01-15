@@ -1,6 +1,7 @@
 import AppRoutes from "./routes/AppRoutes"
 import { ThemeProvider } from "./components/theme/ThemeProvider"
 import { AuthProvider } from "./context/AuthContext"
+import { Toaster } from "sonner";
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
       <AuthProvider>
         <AppRoutes />
       </AuthProvider>
+      <Toaster position="top-right" richColors />
     </ThemeProvider>
   )
 }
