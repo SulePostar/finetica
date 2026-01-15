@@ -18,7 +18,7 @@ router.get('/logs/invalid', isAuthenticated, getInvalidKufs);
 router.get('/logs/:id', isAuthenticated, getKufLog);
 router.get('/', getInvoiceData);
 router.get('/invoice-types', getKufInvoiceTypes);
-router.get('/sum/net-total', isAuthenticated, getNetTotalSum);
+router.get('/net-total',isAuthenticated, getNetTotalSum);
 router.get('/:id',
     //  isAuthenticated,
     getInvoice);
