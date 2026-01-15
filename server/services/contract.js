@@ -172,4 +172,5 @@ module.exports = {
   createContract,
   extractData,
   processUnprocessedFiles,
+  getActiveContractsCount
 };
