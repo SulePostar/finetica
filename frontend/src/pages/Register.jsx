@@ -43,14 +43,16 @@ const Register = () => {
 
     const [profileImage, setProfileImage] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [errorString, setErrorString] = useState("");
 
     const onSubmit = async (data) => {
         setLoading(true);
+        setErrorString("");
         try {
             let profileImageUrl = null;
 
             if (profileImage) {
-                const uploadResult = await uploadProfileImage(profileImage, data.firstName, data.lastName);
+                const uploadResult = await uploadProfileImage(profileImage);
                 if (uploadResult.success && uploadResult.url) {
                     profileImageUrl = uploadResult.url;
                 } else {
@@ -82,7 +84,7 @@ const Register = () => {
         } catch (err) {
             console.error('Registration failed', err);
             const message = err?.response?.data?.message || err.message || 'Registration failed';
-            notify.error(message);
+            setErrorString(message);
         } finally {
             setLoading(false);
         }
@@ -154,6 +156,12 @@ const Register = () => {
                                 Fill in the form below to create an account.
                             </p>
                         </div>
+
+                        {errorString && (
+                            <div className="mb-6 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+                                {errorString}
+                            </div>
+                        )}
 
                         {/* Upload profile photo */}
                         <Dialog>
