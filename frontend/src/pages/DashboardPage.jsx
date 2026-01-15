@@ -7,8 +7,7 @@ import {
     Brain,
     Activity
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { getInvalidPdfsCount } from "@/api/invalidPdf";
+import { useInvalidPdfsCount } from "@/queries/InvalidPdfs/count";
 const bottomRowData = [
     {
         title: "AI Accuracy",
@@ -27,10 +26,8 @@ const bottomRowData = [
 ];
 
 const Dashboard = () => {
-    const { data: invalidPdfData, isLoading } = useQuery({
-        queryKey: ["invalidPdfsCount"],
-        queryFn: getInvalidPdfsCount,
-    });
+    const { data: invalidPdfCount, isLoading } = useInvalidPdfsCount();
+
     const topRowData = [
         {
             title: "Active Contracts",
@@ -41,7 +38,7 @@ const Dashboard = () => {
         },
         {
             title: "Invalid PDFs",
-            value: isLoading ? "..." : invalidPdfData?.total ?? "0",
+            value: isLoading ? "..." : invalidPdfCount,
             //delta: "4.2",
             positive: false,
             icon: <FileWarning className="text-destructive w-6 h-6" />,
