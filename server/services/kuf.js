@@ -348,6 +348,20 @@ const getKufInvoiceTypes = async () => {
   }
 }
 
+const getNetTotalSum = async () => {
+  try {
+    const result = await PurchaseInvoice.findOne({
+      attributes: [
+        [sequelize.fn('SUM', sequelize.col('net_total')), 'totalSum']
+      ],
+      raw: true
+    });
+    return parseFloat(result.totalSum) || 0;
+  } catch (error) {
+    throw new AppError('Failed to calculate net total sum', 500);
+  }
+};
+
 module.exports = {
   listInvoices,
   findById,
@@ -360,4 +374,5 @@ module.exports = {
   getKufItemsById,
   updateKufItem,
   getKufInvoiceTypes,
+  getNetTotalSum
 };
