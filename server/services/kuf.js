@@ -348,6 +348,15 @@ const getKufInvoiceTypes = async () => {
   }
 }
 
+const getNetTotalSum = async () => {
+  try {
+    const sum = await PurchaseInvoice.sum('netTotal');
+    return sum || 0;
+  } catch (error) {
+    throw new AppError('Failed to calculate net total sum', 500);
+  }
+};
+
 module.exports = {
   listInvoices,
   findById,
@@ -360,4 +369,5 @@ module.exports = {
   getKufItemsById,
   updateKufItem,
   getKufInvoiceTypes,
+  getNetTotalSum
 };
