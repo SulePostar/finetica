@@ -52,7 +52,7 @@ const create = async (req, res, next) => {
 const getActiveCount = async (req, res, next) => {
   try {
     const count = await getActiveContractsCount();
-    res.json(count);
+    res.json({count});
   } catch (err) {
     next(err);
   }
