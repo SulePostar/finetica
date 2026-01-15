@@ -7,31 +7,8 @@ import {
     Brain,
     Activity
 } from "lucide-react";
-
-const topRowData = [
-    {
-        title: "Active Contracts",
-        value: "156",
-        delta: "12.5",
-        positive: true,
-        icon: <FileText className="text-brand w-6 h-6" />,
-    },
-    {
-        title: "Invalid PDFs",
-        value: "23",
-        delta: "4.2",
-        positive: false,
-        icon: <FileWarning className="text-destructive w-6 h-6" />,
-    },
-    {
-        title: "Bank Transactions",
-        value: "1,240",
-        delta: "8.1",
-        positive: true,
-        icon: <CreditCard className="text-spurple w-6 h-6" />,
-    },
-];
-
+import { useQuery } from "@tanstack/react-query";
+import { getInvalidPdfsCount } from "@/api/invalidPdf";
 const bottomRowData = [
     {
         title: "AI Accuracy",
@@ -50,6 +27,33 @@ const bottomRowData = [
 ];
 
 const Dashboard = () => {
+    const { data: invalidPdfData, isLoading } = useQuery({
+        queryKey: ["invalidPdfsCount"],
+        queryFn: getInvalidPdfsCount,
+    });
+    const topRowData = [
+        {
+            title: "Active Contracts",
+            value: "156",
+            delta: "12.5",
+            positive: true,
+            icon: <FileText className="text-brand w-6 h-6" />,
+        },
+        {
+            title: "Invalid PDFs",
+            value: isLoading ? "..." : invalidPdfData?.total ?? "0",
+            //delta: "4.2",
+            positive: false,
+            icon: <FileWarning className="text-destructive w-6 h-6" />,
+        },
+        {
+            title: "Bank Transactions",
+            value: "1,240",
+            delta: "8.1",
+            positive: true,
+            icon: <CreditCard className="text-spurple w-6 h-6" />,
+        },
+    ];
     return (
         <div className="pt-20">
             <PageTitle text="Dashboard" compact />
