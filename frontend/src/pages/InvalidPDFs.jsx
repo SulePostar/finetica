@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import DefaultLayout from "@/layout/DefaultLayout";
 import DynamicTable from "@/components/table/DynamicTable";
-import { getInvalidPdfsColumns } from "@/components/tables/columns/InvalidPdfsColumns";
+import { getInvalidPdfsColumns } from "@/components/tables/columns/invalidPdfsColumns";
 import { useAction } from "@/hooks/use-action";
 import { useState } from "react";
 import { useInvalidPdfs } from "@/hooks/use-invalid-pdfs";
