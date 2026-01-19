@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { getBankTransactions, getBankTransactionById } from "../api/BankTransactions";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getBankTransactions, getBankTransactionById, updateBankTransaction } from "../api/BankTransactions";
 
 export const bankTransactionKeys = {
   all: ["bank-transactions"],
@@ -46,3 +46,20 @@ export const useBankTransactionInvalidPdfById = (id) => {
     enabled: !!id,
   });
 }
+
+export const useBankTransactionUpdate = (id) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload) => updateBankTransaction(id, payload),
+
+    onSuccess: (updated) => {
+      queryClient.invalidateQueries({
+        queryKey: bankTransactionKeys.lists(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: bankTransactionKeys.detail(id),
+      });
+    },
+  });
+};

@@ -101,62 +101,64 @@ const bankTransactionCreateSchema = Joi.object({
 // Update Schema
 const bankTransactionUpdateSchema = Joi.object({
     date: Joi.date().iso().optional().messages({
-        'date.base': 'Date must be a valid date',
-        'date.format': 'Date must be in ISO format',
+        "date.base": "Date must be a valid date",
+        "date.format": "Date must be in ISO format",
     }),
 
     amount: Joi.number().optional().messages({
-        'number.base': 'Amount must be a number',
+        "number.base": "Amount must be a number",
     }),
 
     direction: Joi.string().trim().optional().messages({
-        'string.base': 'Direction must be a string',
+        "string.base": "Direction must be a string",
     }),
 
-    account_number: Joi.string().trim().optional().messages({
-        'string.base': 'Account number must be a string',
+    accountNumber: Joi.string().trim().optional().messages({
+        "string.base": "Account number must be a string",
     }),
 
     description: Joi.string().trim().optional().messages({
-        'string.base': 'Description must be a string',
+        "string.base": "Description must be a string",
     }),
 
-    invoice_id: Joi.string().trim().optional().messages({
-        'string.base': 'Invoice ID must be a string',
+    invoiceId: Joi.string().trim().optional().messages({
+        "string.base": "Invoice ID must be a string",
     }),
 
-    partner_id: Joi.number().integer().optional().messages({
-        'number.base': 'Partner ID must be a number',
-        'number.integer': 'Partner ID must be an integer',
+    partnerId: Joi.number().integer().optional().messages({
+        "number.base": "Partner ID must be a number",
+        "number.integer": "Partner ID must be an integer",
     }),
 
-    category_id: Joi.number().integer().optional().messages({
-        'number.base': 'Category ID must be a number',
-        'number.integer': 'Category ID must be an integer',
+    categoryId: Joi.number().integer().optional().messages({
+        "number.base": "Category ID must be a number",
+        "number.integer": "Category ID must be an integer",
     }),
 
-    is_valid: Joi.boolean().optional().messages({
-        'boolean.base': 'Is valid must be a boolean',
+    isValid: Joi.boolean().optional().messages({
+        "boolean.base": "Is valid must be a boolean",
     }),
 
-    approved_at: Joi.date().iso().optional().messages({
-        'date.base': 'Approved date must be a valid date',
-        'date.format': 'Approved date must be in ISO format',
+    approvedAt: Joi.date().iso().optional().messages({
+        "date.base": "Approved date must be a valid date",
+        "date.format": "Approved date must be in ISO format",
     }),
 
-    approved_by: Joi.number().integer().optional().messages({
-        'number.base': 'Approved by must be a number',
-        'number.integer': 'Approved by must be an integer',
+    approvedBy: Joi.number().integer().optional().messages({
+        "number.base": "Approved by must be a number",
+        "number.integer": "Approved by must be an integer",
     }),
 
     items: Joi.array().items(BankTransactionItemSchema).min(1).optional().messages({
-        'array.base': 'Items must be an array',
-        'array.min': 'At least one item is required',
+        "array.base": "Items must be an array",
+        "array.min": "At least one item is required",
     }),
+})
+    .min(1)
+    .messages({
+        "object.min": "At least one field must be provided for update",
+    });
 
-}).min(1).messages({
-    'object.min': 'At least one field must be provided for update',
-});
 
 // Query Schema
 const bankTransactionQuerySchema = Joi.object({
