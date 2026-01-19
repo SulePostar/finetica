@@ -76,7 +76,7 @@ const FieldRow = ({ fieldKey, value, editable, onUpdate }) => {
 
 export const DocumentFields = ({
     document,
-    excludeFields = ["pdfUrl", "items", "id"],
+    excludeFields = ["pdfUrl", "items", "id", "direction"],
     type,
     actions,
     editable = false,
