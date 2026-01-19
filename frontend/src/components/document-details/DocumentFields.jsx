@@ -11,6 +11,7 @@ import {
 } from "@/helpers/documentFields";
 import { formatCurrency } from '@/helpers/formatCurrency';
 import { formatTimePeriod } from '@/helpers/formatTimePeriod';
+import { formatDateTime } from '@/helpers/formatDate';
 
 const FieldEditor = ({ fieldKey, value, onUpdate }) => {
     const kind = inferFieldKind(fieldKey, value);
@@ -85,96 +86,95 @@ export const DocumentFields = ({
     onChange,
 }) => {
     if (!document) return null;
-    export const DocumentFields = ({ document, excludeFields = ['pdfUrl', 'items', 'id', 'User'], type }) => {
-        const formatValue = (key, value) => {
-            if (value === null || value === undefined || value === '') {
-                return '—';
-            }
-            if (key === 'approvedBy' && document.User) {
-                return `${document.User.firstName} ${document.User.lastName}`;
-            }
+    const formatValue = (key, value) => {
+        if (value === null || value === undefined || value === '') {
+            return '—';
+        }
+        if (key === 'approvedBy' && document.User) {
+            return `${document.User.firstName} ${document.User.lastName}`;
+        }
 
-            if (key.toLowerCase().includes('period')) {
-                return formatTimePeriod(value);
-            }
+        if (key.toLowerCase().includes('period')) {
+            return formatTimePeriod(value);
+        }
 
-            if (key.toLowerCase().includes('date') || key.toLowerCase().endsWith('at')) {
-                const date = new Date(value);
-                if (!isNaN(date.getTime())) {
-                    return formatDateTime(value);
-                }
-                return String(value);
-            }
-            const isNumeric = !isNaN(parseFloat(value)) && isFinite(value);
-
-            if (isNumeric) {
-                const lowerKey = key.toLowerCase();
-                if (lowerKey.includes('number') || lowerKey.includes('id') || lowerKey.includes('code')) {
-                    return String(value);
-                }
-
-                return formatCurrency(value);
-            }
-            if (Array.isArray(value)) {
-                return `${value.length} item(s)`;
-            }
-            if (typeof value === 'object') {
-                if (typeof value.name === 'string') {
-                    return value.name;
-                }
-
-                if (typeof value.label === 'string') {
-                    return value.label;
-                }
-
-                return JSON.stringify(value);
+        if (key.toLowerCase().includes('date') || key.toLowerCase().endsWith('at')) {
+            const date = new Date(value);
+            if (!isNaN(date.getTime())) {
+                return formatDateTime(value);
             }
             return String(value);
-        };
-        const formatTitle = (str) => {
-            if (!str) return 'Document';
-            const formattedText = str
-                .split('-')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
+        }
+        const isNumeric = !isNaN(parseFloat(value)) && isFinite(value);
 
-            return `${formattedText} Information`;
-        };
+        if (isNumeric) {
+            const lowerKey = key.toLowerCase();
+            if (lowerKey.includes('number') || lowerKey.includes('id') || lowerKey.includes('code')) {
+                return String(value);
+            }
 
-        const pageTitle = formatTitle(type);
+            return formatCurrency(value);
+        }
+        if (Array.isArray(value)) {
+            return `${value.length} item(s)`;
+        }
+        if (typeof value === 'object') {
+            if (typeof value.name === 'string') {
+                return value.name;
+            }
 
-        const updateField = (key, nextValue) => {
-            onChange?.({ ...document, [key]: nextValue });
-        };
+            if (typeof value.label === 'string') {
+                return value.label;
+            }
 
-        return (
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-xl font-semibold text-spurple">{pageTitle}</CardTitle>
-                    <CardDescription>
-                        {editable ? "Editing enabled" : "All fields from the document"}
-                    </CardDescription>
-                </CardHeader>
-
-                <CardContent className="p-0">
-                    <div className="divide-y">
-                        {Object.entries(document).map(([key, value]) => {
-                            if (excludeFields.includes(key)) return null;
-
-                            return (
-                                <FieldRow
-                                    key={key}
-                                    fieldKey={key}
-                                    value={formatValue(key, value)}
-                                    editable={editable}
-                                    onUpdate={updateField}
-                                />
-                            );
-                        })}
-                    </div>
-
-                    {actions && <div className="px-6 py-4 border-t">{actions}</div>}
-                </CardContent>
-            </Card>
-        );
+            return JSON.stringify(value);
+        }
+        return String(value);
     };
+    const formatTitle = (str) => {
+        if (!str) return 'Document';
+        const formattedText = str
+            .split('-')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+
+        return `${formattedText} Information`;
+    };
+
+    const pageTitle = formatTitle(type);
+
+    const updateField = (key, nextValue) => {
+        onChange?.({ ...document, [key]: nextValue });
+    };
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle className="text-xl font-semibold text-spurple">{pageTitle}</CardTitle>
+                <CardDescription>
+                    {editable ? "Editing enabled" : "All fields from the document"}
+                </CardDescription>
+            </CardHeader>
+
+            <CardContent className="p-0">
+                <div className="divide-y">
+                    {Object.entries(document).map(([key, value]) => {
+                        if (excludeFields.includes(key)) return null;
+
+                        return (
+                            <FieldRow
+                                key={key}
+                                fieldKey={key}
+                                value={formatValue(key, value)}
+                                editable={editable}
+                                onUpdate={updateField}
+                            />
+                        );
+                    })}
+                </div>
+
+                {actions && <div className="px-6 py-4 border-t">{actions}</div>}
+            </CardContent>
+        </Card>
+    );
+};
