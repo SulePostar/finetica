@@ -151,10 +151,9 @@ const DocumentDetails = () => {
                     )}
                 </div>
 
-                {/* Right */}
-                <div className="min-w-0 min-h-[calc(100vh-64px)]">
-                    <PdfViewer pdfUrl={data?.pdfUrl} />
-                </div>
+                {/* <div className="order-2 lg:order-2  min-w-0">
+                    <PdfViewer pdfUrl={data.pdfUrl} />
+                </div> */}
             </div>
         </div>
     );

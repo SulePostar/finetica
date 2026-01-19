@@ -13,6 +13,7 @@ const mailRoute = require("./routes/mailRoute");
 const userStatusRouter = require('./routes/userStatus');
 const userRoleRouter = require('./routes/userRoles');
 const { processEmailQueue } = require('./services/emailQueueService');
+const invalidPdfsRoute = require('./routes/invalidPdfs');
 
 const cookieParser = require('cookie-parser')
 const contractRouter = require('./routes/contract');
@@ -57,17 +58,27 @@ app.use('/api/partners', businessPartnerRouter);
 app.use('/drive', googleDriveRouter);
 app.use('/api/user-statuses', userStatusRouter);
 app.use('/api/user-roles', userRoleRouter);
+app.use('/api/invalid-pdfs', invalidPdfsRoute);
 app.use(errorHandler);
 
-connectToDatabase();
-
 // Start Google Drive auto sync service
-googleDriveAutoSync.start();
+// googleDriveAutoSync.start();
 
-app.listen(PORT, () => {
-  console.log(`🟢 Server is running at port: ${PORT}`);
+// IIFE (Immediately Invoked Function Expression)
+(async () => {
+  try {
+    await connectToDatabase();
 
-  setInterval(() => {
-    processEmailQueue().catch(err => console.error('Error in email queue processor:', err));
-  }, 1000 * 60);
-});
+    app.listen(PORT, () => {
+      console.log(`🟢 Server is running at port: ${PORT}`);
+
+      setInterval(() => {
+        processEmailQueue().catch(err => console.error('Error in email queue processor:', err));
+      }, 1000 * 60);
+    });
+
+  } catch (error) {
+    console.error('Failed to connect to the database:', error);
+    process.exit(1);
+  }
+})();
