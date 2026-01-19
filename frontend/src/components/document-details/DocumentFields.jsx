@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import {
     humanLabel,
@@ -9,13 +9,8 @@ import {
     parseNumberInput,
     tryParseJson,
 } from "@/helpers/documentFields";
-import { formatCurrency } from '@/helpers/formatCurrency';
-import { formatTimePeriod } from '@/helpers/formatTimePeriod';
-import { formatDateTime } from '@/helpers/formatDate';
 
-const FieldEditor = ({ fieldKey, value, onUpdate }) => {
-    const kind = inferFieldKind(fieldKey, value);
-
+const FieldEditor = ({ fieldKey, value, onUpdate, kind }) => {
     if (kind === "json") {
         return (
             <textarea
@@ -57,7 +52,12 @@ const FieldEditor = ({ fieldKey, value, onUpdate }) => {
     );
 };
 
-const FieldRow = ({ fieldKey, value, editable, onUpdate }) => {
+const FieldRow = ({ fieldKey, originalValue, displayValue, editable, onUpdate }) => {
+    const kind = useMemo(
+        () => inferFieldKind(fieldKey, originalValue),
+        [fieldKey, originalValue]
+    );
+
     return (
         <div className="px-6 py-4 hover:bg-muted overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
@@ -67,9 +67,14 @@ const FieldRow = ({ fieldKey, value, editable, onUpdate }) => {
 
                 <span className="text-sm text-primary sm:text-right break-all">
                     {editable ? (
-                        <FieldEditor fieldKey={fieldKey} value={value} onUpdate={onUpdate} />
+                        <FieldEditor
+                            fieldKey={fieldKey}
+                            value={originalValue}
+                            kind={kind}
+                            onUpdate={onUpdate}
+                        />
                     ) : (
-                        formatValue(fieldKey, value)
+                        displayValue
                     )}
                 </span>
             </div>
@@ -86,60 +91,6 @@ export const DocumentFields = ({
     onChange,
 }) => {
     if (!document) return null;
-    const formatValue = (key, value) => {
-        if (value === null || value === undefined || value === '') {
-            return '—';
-        }
-        if (key === 'approvedBy' && document.User) {
-            return `${document.User.firstName} ${document.User.lastName}`;
-        }
-
-        if (key.toLowerCase().includes('period')) {
-            return formatTimePeriod(value);
-        }
-
-        if (key.toLowerCase().includes('date') || key.toLowerCase().endsWith('at')) {
-            const date = new Date(value);
-            if (!isNaN(date.getTime())) {
-                return formatDateTime(value);
-            }
-            return String(value);
-        }
-        const isNumeric = !isNaN(parseFloat(value)) && isFinite(value);
-
-        if (isNumeric) {
-            const lowerKey = key.toLowerCase();
-            if (lowerKey.includes('number') || lowerKey.includes('id') || lowerKey.includes('code')) {
-                return String(value);
-            }
-
-            return formatCurrency(value);
-        }
-        if (Array.isArray(value)) {
-            return `${value.length} item(s)`;
-        }
-        if (typeof value === 'object') {
-            if (typeof value.name === 'string') {
-                return value.name;
-            }
-
-            if (typeof value.label === 'string') {
-                return value.label;
-            }
-
-            return JSON.stringify(value);
-        }
-        return String(value);
-    };
-    const formatTitle = (str) => {
-        if (!str) return 'Document';
-        const formattedText = str
-            .split('-')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
-
-        return `${formattedText} Information`;
-    };
 
     const pageTitle = formatTitle(type);
 
@@ -165,7 +116,8 @@ export const DocumentFields = ({
                             <FieldRow
                                 key={key}
                                 fieldKey={key}
-                                value={formatValue(key, value)}
+                                originalValue={value}
+                                displayValue={formatValue(key, value)}
                                 editable={editable}
                                 onUpdate={updateField}
                             />

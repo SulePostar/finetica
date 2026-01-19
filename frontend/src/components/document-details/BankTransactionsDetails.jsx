@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
+
 import {
     useBankTransactionById,
     useBankTransactionUpdate,
 } from "@/queries/BankTransactionsQueries";
-import { PdfViewer } from "@/components/shared-ui/PdfViewer";
+
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { Spinner } from "@/components/ui/spinner";
 import IsError from "@/components/shared-ui/IsError";
@@ -13,21 +14,23 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { sanitizePayload } from "@/helpers/sanitizePayload";
 
-const DocumentDetails = () => {
+const BankTransactionDocumentDetails = () => {
     const { id } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
 
-    const documentType = location.pathname.split("/")[1];
-    const isApproveMode = location.pathname.includes("/approve");
+    const documentType = useMemo(
+        () => location.pathname.split("/")[1],
+        [location.pathname]
+    );
+
+    const isApproveMode = useMemo(
+        () => location.pathname.includes("/approve"),
+        [location.pathname]
+    );
 
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState(null);
-
-    // never allow edit outside approve mode
-    useEffect(() => {
-        if (!isApproveMode) setIsEditing(false);
-    }, [isApproveMode]);
 
     const {
         data,
@@ -40,8 +43,16 @@ const DocumentDetails = () => {
     const updateMutation = useBankTransactionUpdate(id);
 
     useEffect(() => {
-        if (data) setFormData(data);
-    }, [data]);
+        if (data && !isEditing) {
+            setFormData(data);
+        }
+    }, [data, isEditing]);
+
+    useEffect(() => {
+        if (!isApproveMode) {
+            setIsEditing(false);
+        }
+    }, [isApproveMode]);
 
     if (isPending) {
         return (
@@ -66,7 +77,9 @@ const DocumentDetails = () => {
     }
 
     const handleSave = async () => {
-        await updateMutation.mutateAsync(sanitizePayload(formData));
+        await updateMutation.mutateAsync(
+            sanitizePayload(formData)
+        );
         setIsEditing(false);
     };
 
@@ -150,13 +163,9 @@ const DocumentDetails = () => {
                         </Button>
                     )}
                 </div>
-
-                {/* <div className="order-2 lg:order-2  min-w-0">
-                    <PdfViewer pdfUrl={data.pdfUrl} />
-                </div> */}
             </div>
         </div>
     );
 };
 
-export default DocumentDetails;
+export default BankTransactionDocumentDetails;
