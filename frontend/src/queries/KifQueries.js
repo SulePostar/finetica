@@ -4,16 +4,22 @@ import { getKifById, getKifs, getKifInvalidPdfById, getKifInvalidPdfs, getKifInv
 export const kifKeys = {
     all: ["kif"],
     lists: () => [...kifKeys.all, "list"],
-    list: (filters) => [...kifKeys.lists(), { filters }],
+    list: ({ page = 1, perPage = 10, invoiceType = null, timeRange = null }) => [
+        ...kifKeys.lists(),
+        page,
+        perPage,
+        invoiceType ?? "all",
+        timeRange && typeof timeRange === 'object' ? JSON.stringify(timeRange) : (timeRange ?? "all"),
+    ],
     details: () => [...kifKeys.all, "detail"],
     detail: (id) => [...kifKeys.details(), id],
     invoiceTypes: () => [...kifKeys.all, "invoice-types"],
 };
 
-export const useKifList = (filters = {}) => {
+export const useKifList = ({ page = 1, perPage = 10, invoiceType = null, timeRange = null } = {}) => {
     return useQuery({
-        queryKey: kifKeys.list(filters),
-        queryFn: () => getKifs(filters),
+        queryKey: kifKeys.list({ page, perPage, invoiceType, timeRange }),
+        queryFn: () => getKifs({ page, perPage, invoiceType, timeRange }),
     });
 };
 

@@ -14,12 +14,33 @@ const getKifData = async (req, res, next) => {
     try {
         const { page, perPage, sortField, sortOrder, invoiceType } = req.query;
 
+        // Get timeRange safely from query
+        let parsedTimeRange = 'all';
+        const rawTimeRange = req.query.timeRange;
+
+        console.log('Raw query.timeRange:', rawTimeRange); // for debugging
+
+        if (rawTimeRange) {
+            // If frontend sends a JSON string for custom range
+            if (typeof rawTimeRange === 'string' && rawTimeRange.startsWith('{') && rawTimeRange.endsWith('}')) {
+                try {
+                    parsedTimeRange = JSON.parse(rawTimeRange);
+                } catch (err) {
+                    parsedTimeRange = 'all'; // fallback if JSON is invalid
+                }
+            } else {
+                // Otherwise, quick filter like 'last_7_days', 'last_30_days', etc.
+                parsedTimeRange = rawTimeRange;
+            }
+        }
+
         const result = await getKifs({
-            page: parseInt(page),
-            perPage: parseInt(perPage),
+            page: parseInt(page) || 1,
+            perPage: parseInt(perPage) || 10,
             sortField,
             sortOrder,
             invoiceType,
+            timeRange: parsedTimeRange, // pass to service
         });
 
         res.json(result);
@@ -38,6 +59,7 @@ const getKif = async (req, res, next) => {
         next(error);
     }
 };
+
 
 const getKifItems = async (req, res, next) => {
     try {

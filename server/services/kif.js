@@ -5,6 +5,7 @@ const KIF_PROMPT = require('../prompts/Kif.js');
 const salesInvoiceSchema = require('../schemas/kifSchema');
 const AppError = require('../utils/errorHandler');
 const supabaseService = require('../utils/supabase/supabaseService');
+const { Op } = require('sequelize');
 const MODEL_NAME = 'gemini-2.5-flash-lite';
 const KIF_BUCKET_NAME = 'kif';
 const extractKifData = async (fileBuffer, mimeType) => {
@@ -248,50 +249,104 @@ const approveKif = async (documentId, updatedData = {}, userId) => {
         throw new AppError('Failed to approve KIF sales invoice', 500);
     }
 };
-const getKifs = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc', invoiceType }) => {
+
+const getKifs = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc', invoiceType, timeRange = 'all' }) => {
     try {
         const offset = (page - 1) * perPage;
         const limit = parseInt(perPage);
+
+        const sortMapping = {
+            createdAt: 'created_at',
+            invoiceDate: 'invoice_date',
+            dueDate: 'due_date',
+            totalAmount: 'total_amount',
+            invoiceNumber: 'invoice_number',
+            invoiceType: 'invoice_type'
+        };
+
         let orderOptions = [];
         if (sortField) {
-            orderOptions = [[sortField, sortOrder.toUpperCase()]];
+            const dbField = sortMapping[sortField] || sortField;
+            orderOptions = [[dbField, sortOrder.toUpperCase()]];
         } else {
-            orderOptions = [['id', 'ASC']];
+            orderOptions = [['created_at', 'DESC']];
         }
-        // Get total count
+
         const where = {};
-        if (invoiceType) {
-            where.invoiceType = invoiceType;
+        if (invoiceType && invoiceType !== 'all') where.invoiceType = invoiceType;
+
+        if (timeRange && timeRange !== 'all') {
+            let filterStart = null;
+            let filterEnd = null;
+
+            if (typeof timeRange === 'string') {
+                const now = new Date();
+                const normalizedRange = timeRange.replace(/ /g, '_');
+
+                switch (normalizedRange) {
+                    case 'last_7_days':
+                        filterStart = new Date(now);
+                        filterStart.setDate(now.getDate() - 7);
+                        break;
+                    case 'last_30_days':
+                        filterStart = new Date(now);
+                        filterStart.setDate(now.getDate() - 30);
+                        break;
+                    case 'last_60_days':
+                        filterStart = new Date(now);
+                        filterStart.setDate(now.getDate() - 60);
+                        break;
+                }
+            }
+
+            else if (typeof timeRange === 'object') {
+                const start = timeRange.start || timeRange.from;
+                const end = timeRange.end || timeRange.to;
+
+                if (start) {
+                    filterStart = new Date(start);
+                    filterEnd = end ? new Date(end) : new Date(start);
+                    filterEnd.setHours(23, 59, 59, 999);
+                }
+            }
+
+            if (filterStart) {
+                if (filterEnd) {
+                    where.invoice_date = { [Op.between]: [filterStart, filterEnd] };
+                } else {
+                    where.invoice_date = { [Op.gte]: filterStart };
+                }
+            }
         }
-        const total = await SalesInvoice.count({ where });
-        // Get paginated data with associated items and business partner
-        const salesInvoices = await SalesInvoice.findAll({
+
+        const { count, rows } = await SalesInvoice.findAndCountAll({
             where,
             include: [
-                {
-                    model: SalesInvoiceItem
-                },
-                {
-                    model: BusinessPartner,
-                    attributes: ['id', 'name', 'vatNumber']
-                }
+                { model: SalesInvoiceItem },
+                { model: BusinessPartner, attributes: ['id', 'name', 'vatNumber'] }
             ],
             order: orderOptions,
             limit,
-            offset
+            offset,
+            distinct: true
         });
-        const transformedData = salesInvoices.map(invoice => {
-            const invoiceData = invoice.toJSON();
+
+        const transformedData = rows.map(invoice => {
+            const json = invoice.toJSON();
             return {
-                ...invoiceData,
-                customerName: invoiceData.BusinessPartner?.name || null
+                ...json,
+                customerName: json.BusinessPartner?.name || null
             };
         });
-        return { data: transformedData, total };
+
+        return { data: transformedData, total: count };
+
     } catch (error) {
+        console.error("Service Error:", error);
         throw new AppError('Failed to fetch KIF data', 500);
     }
 };
+
 const getKifById = async (id) => {
     try {
         const salesInvoice = await SalesInvoice.findByPk(id, {
