@@ -1,8 +1,5 @@
-"use client"
-
-import * as React from "react"
+import { useState, useMemo } from "react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
-
 import {
     Card,
     CardContent,
@@ -23,17 +20,12 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 
-const dummyData = [
-    { date: "2025-08-01", count: 0 },
-    { date: "2025-08-02", count: 2 },
-    { date: "2025-08-03", count: 1 },
-    { date: "2025-08-04", count: 4 },
-    { date: "2025-08-05", count: 3 },
-    { date: "2025-08-06", count: 0 },
-    { date: "2025-08-07", count: 2 },
-    { date: "2025-08-08", count: 2 },
-    { date: "2025-08-09", count: 3 },
-]
+import { useKufDailyStats } from "@/queries/Kuf"
+import {
+    getRangeDates,
+    fillMissingDays,
+    mapKufDailyStats,
+} from "@/helpers/chartHelpers"
 
 const chartConfig = {
     count: {
@@ -43,26 +35,25 @@ const chartConfig = {
 }
 
 export default function KufDailyAreaChart() {
-    const [range, setRange] = React.useState("7d")
+    const [range, setRange] = useState("7d")
 
-    const referenceDate = React.useMemo(() => {
-        const last = dummyData[dummyData.length - 1]?.date
-        return last ? new Date(last + "T00:00:00") : new Date()
-    }, [])
+    const toDate = useMemo(
+        () => new Date("2025-08-13T00:00:00"),
+        []
+    )
 
-    const filteredData = React.useMemo(() => {
-        let days = 7
-        if (range === "30d") days = 30
-        if (range === "90d") days = 90
+    const { from, to } = useMemo(
+        () => getRangeDates(range, toDate),
+        [range, toDate]
+    )
 
-        const start = new Date(referenceDate)
-        start.setDate(start.getDate() - days)
+    const { data, isLoading, isError } = useKufDailyStats({ from, to })
 
-        return dummyData.filter((item) => {
-            const d = new Date(item.date + "T00:00:00")
-            return d >= start
-        })
-    }, [range, referenceDate])
+    const chartData = useMemo(() => {
+        const rows = data?.data ?? []
+        const mapped = mapKufDailyStats(rows)
+        return fillMissingDays(mapped, from, to)
+    }, [data, from, to])
 
     return (
         <Card className="pt-0">
@@ -75,84 +66,86 @@ export default function KufDailyAreaChart() {
                 <Select value={range} onValueChange={setRange}>
                     <SelectTrigger
                         className="hidden w-[160px] rounded-lg sm:ml-auto sm:flex"
-                        aria-label="Select a value"
+                        aria-label="Select range"
                     >
                         <SelectValue placeholder="Last 7 days" />
                     </SelectTrigger>
 
                     <SelectContent className="rounded-xl">
-                        <SelectItem value="90d" className="rounded-lg">
-                            Last 3 months
-                        </SelectItem>
-                        <SelectItem value="30d" className="rounded-lg">
-                            Last 30 days
-                        </SelectItem>
-                        <SelectItem value="7d" className="rounded-lg">
-                            Last 7 days
-                        </SelectItem>
+                        <SelectItem value="90d">Last 3 months</SelectItem>
+                        <SelectItem value="30d">Last 30 days</SelectItem>
+                        <SelectItem value="7d">Last 7 days</SelectItem>
                     </SelectContent>
                 </Select>
             </CardHeader>
 
             <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-                <ChartContainer
-                    config={chartConfig}
-                    className="aspect-auto h-[250px] w-full"
-                >
-                    <AreaChart data={filteredData}>
-                        <defs>
-                            <linearGradient id="fillCount" x1="0" y1="0" x2="0" y2="1">
-                                <stop
-                                    offset="5%"
-                                    stopColor="var(--color-count)"
-                                    stopOpacity={0.8}
-                                />
-                                <stop
-                                    offset="95%"
-                                    stopColor="var(--color-count)"
-                                    stopOpacity={0.1}
-                                />
-                            </linearGradient>
-                        </defs>
+                {isLoading && (
+                    <div className="h-[250px] flex items-center justify-center text-muted-foreground">
+                        Loading chart...
+                    </div>
+                )}
 
-                        <CartesianGrid vertical={false} />
+                {isError && (
+                    <div className="h-[250px] flex items-center justify-center text-destructive">
+                        Failed to load chart data
+                    </div>
+                )}
 
-                        <XAxis
-                            dataKey="date"
-                            tickLine={false}
-                            axisLine={false}
-                            tickMargin={8}
-                            minTickGap={32}
-                            tickFormatter={(value) => {
-                                const d = new Date(value + "T00:00:00")
-                                return d.toLocaleDateString("en-GB", { month: "short", day: "numeric" })
-                            }}
-                        />
+                {!isLoading && !isError && (
+                    <ChartContainer
+                        config={chartConfig}
+                        className="aspect-auto h-[250px] w-full"
+                    >
+                        <AreaChart data={chartData}>
+                            <defs>
+                                <linearGradient id="fillCount" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="var(--color-count)" stopOpacity={0.8} />
+                                    <stop offset="95%" stopColor="var(--color-count)" stopOpacity={0.1} />
+                                </linearGradient>
+                            </defs>
 
-                        <ChartTooltip
-                            cursor={false}
-                            content={
-                                <ChartTooltipContent
-                                    indicator="dot"
-                                    labelFormatter={(value) => {
-                                        return new Date(value + "T00:00:00").toLocaleDateString("en-GB", {
-                                            month: "short",
-                                            day: "numeric",
-                                            year: "numeric",
-                                        })
-                                    }}
-                                />
-                            }
-                        />
+                            <CartesianGrid vertical={false} />
 
-                        <Area
-                            dataKey="count"
-                            type="natural"
-                            fill="url(#fillCount)"
-                            stroke="var(--color-count)"
-                        />
-                    </AreaChart>
-                </ChartContainer>
+                            <XAxis
+                                dataKey="date"
+                                tickLine={false}
+                                axisLine={false}
+                                tickMargin={8}
+                                minTickGap={32}
+                                tickFormatter={(value) =>
+                                    new Date(value + "T00:00:00").toLocaleDateString("en-GB", {
+                                        month: "short",
+                                        day: "numeric",
+                                    })
+                                }
+                            />
+
+                            <ChartTooltip
+                                cursor={false}
+                                content={
+                                    <ChartTooltipContent
+                                        indicator="dot"
+                                        labelFormatter={(value) =>
+                                            new Date(value + "T00:00:00").toLocaleDateString("en-GB", {
+                                                month: "short",
+                                                day: "numeric",
+                                                year: "numeric",
+                                            })
+                                        }
+                                    />
+                                }
+                            />
+
+                            <Area
+                                dataKey="count"
+                                type="monotone"
+                                fill="url(#fillCount)"
+                                stroke="var(--color-count)"
+                            />
+                        </AreaChart>
+                    </ChartContainer>
+                )}
             </CardContent>
         </Card>
     )
