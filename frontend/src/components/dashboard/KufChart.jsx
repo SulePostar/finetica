@@ -33,8 +33,6 @@ const dummyData = [
     { date: "2025-08-07", count: 2 },
     { date: "2025-08-08", count: 2 },
     { date: "2025-08-09", count: 3 },
-    { date: "2025-08-10", count: 4 },
-    { date: "2025-08-11", count: 2 },
 ]
 
 const chartConfig = {
