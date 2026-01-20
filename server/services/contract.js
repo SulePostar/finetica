@@ -1,5 +1,4 @@
 const { Contract, BusinessPartner, ContractProcessingLog, sequelize } = require('../models');
-const { Op } = require('sequelize');
 const AppError = require('../utils/errorHandler');
 const { processDocument } = require('./aiService');
 const contractSchema = require('../schemas/contract');
