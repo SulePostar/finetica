@@ -3,29 +3,14 @@ import { getTimeFilterWhereClause } from '@/helpers/timeFilter.js';
 
 const BASE_PATH = "/contracts";
 
-export const getContracts = async (filters = {}) => {
-    const { page = 1, perPage = 10, timeRange } = filters;
-
+export const getContracts = async (page, perPage, timeRange) => {
     const params = {
         page,
-        limit: perPage,
+        perPage,
+        timeRange: typeof timeRange === 'object' ? JSON.stringify(timeRange) : timeRange,
     };
-
-    if (timeRange && timeRange !== 'all') {
-        if (typeof timeRange === 'object' && timeRange?.from && timeRange?.to) {
-            params.startDate = timeRange.from;
-            params.endDate = timeRange.to;
-        } else {
-            const whereClause = getTimeFilterWhereClause(timeRange, 'created_at');
-            if (whereClause.created_at) {
-                params.startDate = whereClause.created_at.$gte?.toISOString().split('T')[0];
-                params.endDate = whereClause.created_at.$lte?.toISOString().split('T')[0];
-            }
-        }
-    }
-
-  const { data } = await apiClient.get(`${BASE_PATH}/`, { params });
-  return data;
+    const { data } = await apiClient.get(`${BASE_PATH}`, { params });
+    return data;
 };
 
 export const getContractById = async (id) => {
