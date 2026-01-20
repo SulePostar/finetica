@@ -136,6 +136,7 @@ const Kif = () => {
                     button: (
                         <Button variant="outline" onClick={() => {
                             setInvoiceType("all");
+                            setTimeRange("all");
                             setPage(1);
                         }}
                         >

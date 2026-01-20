@@ -12,25 +12,19 @@ const {
 
 const getKifData = async (req, res, next) => {
     try {
-        const { page, perPage, sortField, sortOrder, invoiceType } = req.query;
-
-        // Get timeRange safely from query
+        const { page, perPage, sortField, sortOrder, invoiceType, timeRange } = req.query;
         let parsedTimeRange = 'all';
-        const rawTimeRange = req.query.timeRange;
 
-        console.log('Raw query.timeRange:', rawTimeRange); // for debugging
-
-        if (rawTimeRange) {
-            // If frontend sends a JSON string for custom range
-            if (typeof rawTimeRange === 'string' && rawTimeRange.startsWith('{') && rawTimeRange.endsWith('}')) {
+        if (timeRange) {
+            if (timeRange.includes('{')) {
                 try {
-                    parsedTimeRange = JSON.parse(rawTimeRange);
+                    parsedTimeRange = JSON.parse(timeRange);
                 } catch (err) {
-                    parsedTimeRange = 'all'; // fallback if JSON is invalid
+                    console.warn('Invalid JSON in timeRange:', timeRange);
+                    parsedTimeRange = 'all';
                 }
             } else {
-                // Otherwise, quick filter like 'last_7_days', 'last_30_days', etc.
-                parsedTimeRange = rawTimeRange;
+                parsedTimeRange = timeRange;
             }
         }
 
@@ -40,7 +34,7 @@ const getKifData = async (req, res, next) => {
             sortField,
             sortOrder,
             invoiceType,
-            timeRange: parsedTimeRange, // pass to service
+            timeRange: parsedTimeRange,
         });
 
         res.json(result);
