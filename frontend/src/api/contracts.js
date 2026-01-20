@@ -12,7 +12,7 @@ export const getContractById = async (id) => {
     return data;
 };
 
-export const getactiveContractsCount = async () => {
+export const getActiveContractsCount = async () => {
     const { data } = await apiClient.get(`${BASE_PATH}/count/active`);
     return data;
 }
