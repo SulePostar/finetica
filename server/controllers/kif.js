@@ -17,7 +17,8 @@ const getKifData = async (req, res, next) => {
         let parsedTimeRange = 'all';
 
         if (timeRange) {
-            if (timeRange.includes('{')) {
+            // Try to parse as JSON if it looks like JSON (starts with '{')
+            if (typeof timeRange === 'string' && timeRange.trim().startsWith('{')) {
                 try {
                     parsedTimeRange = JSON.parse(timeRange);
                 } catch (err) {

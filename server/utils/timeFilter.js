@@ -40,9 +40,10 @@ const getTimeFilterWhereClause = (timeRange, dateField = 'created_at') => {
             return {};
         }
 
-        // Parse start date - ensure it's treated as local date, not UTC
+        // Parse start date - use UTC to avoid timezone issues
+        // Frontend sends 'YYYY-MM-DD' format, parse as UTC midnight
         const startStr = typeof start === 'string' ? start : start.toISOString().split('T')[0];
-        startDate = new Date(startStr + 'T00:00:00');
+        startDate = new Date(startStr + 'T00:00:00Z'); // Z = UTC
         if (isNaN(startDate.getTime())) {
             return {};
         }
@@ -50,14 +51,14 @@ const getTimeFilterWhereClause = (timeRange, dateField = 'created_at') => {
         // Parse end date - if not provided, use start date
         if (end && end !== '') {
             const endStr = typeof end === 'string' ? end : end.toISOString().split('T')[0];
-            endDate = new Date(endStr + 'T23:59:59.999');
+            endDate = new Date(endStr + 'T23:59:59.999Z'); // Z = UTC
             if (isNaN(endDate.getTime())) {
                 return {};
             }
         } else {
             // If no end date, use start date as end date
             endDate = new Date(startDate);
-            endDate.setHours(23, 59, 59, 999);
+            endDate.setUTCHours(23, 59, 59, 999);
         }
     }
 

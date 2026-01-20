@@ -9,7 +9,7 @@ export const kifKeys = {
         page,
         perPage,
         invoiceType ?? "all",
-        timeRange && typeof timeRange === 'object' ? JSON.stringify(timeRange) : (timeRange ?? "all"),
+        timeRange === null ? "all" : (typeof timeRange === 'object' ? JSON.stringify(timeRange) : timeRange),
     ],
     details: () => [...kifKeys.all, "detail"],
     detail: (id) => [...kifKeys.details(), id],
