@@ -1,5 +1,6 @@
-import { getAllPartners, getPartnerById } from "@/api/partners";
-import { useQuery } from "@tanstack/react-query";
+import { getAllPartners, getPartnerById, deletePartner } from "@/api/partners";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 
 export const partnersKeys = {
     all: ["partners"],
@@ -21,4 +22,18 @@ export const usePartnerById = (id) => {
         queryFn: () => getPartnerById(id),
         enabled: !!id,
     });
-}   
+}
+
+export const useDeletePartner = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: deletePartner,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: partnersKeys.all });
+        },
+        onError: (error) => {
+            console.error("Failed to delete partner:", error);
+        },
+    });
+};
