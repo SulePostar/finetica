@@ -10,6 +10,10 @@ import {
     ImagePlus,
 } from "lucide-react";
 
+import { registerUser } from "@/api/auth";
+import { uploadProfileImage } from "@/api/uploadedFiles";
+import { notify } from "@/lib/notifications";
+
 import {
     Dialog,
     DialogTrigger,
@@ -38,11 +42,50 @@ const Register = () => {
     const password = watch("password");
 
     const [profileImage, setProfileImage] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [errorString, setErrorString] = useState("");
 
-    const onSubmit = (data) => {
-        console.log("Form submitted:", data);
-        console.log("Profile image:", profileImage);
-        navigate("/dashboard");
+    const onSubmit = async (data) => {
+        setLoading(true);
+        setErrorString("");
+        try {
+            let profileImageUrl = null;
+
+            if (profileImage) {
+                const uploadResult = await uploadProfileImage(profileImage);
+                if (uploadResult.success && uploadResult.url) {
+                    profileImageUrl = uploadResult.url;
+                } else {
+                    notify.warning('Profile image upload failed, registration will continue.');
+                }
+            }
+
+            const payload = {
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                password: data.password,
+            };
+
+            if (profileImageUrl) {
+                payload.profileImage = profileImageUrl;
+            }
+
+            const res = await registerUser(payload);
+
+            if (res && res.success) {
+                notify.success(res.message || 'Registration successful. Redirecting to login...');
+                setTimeout(() => navigate('/login'), 1200);
+            } else {
+                notify.error(res.message || 'Registration failed.');
+            }
+        } catch (err) {
+            console.error('Registration failed', err);
+            const message = err?.response?.data?.message || err.message || 'Registration failed';
+            setErrorString(message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -111,6 +154,12 @@ const Register = () => {
                                 Fill in the form below to create an account.
                             </p>
                         </div>
+
+                        {errorString && (
+                            <div className="mb-6 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+                                {errorString}
+                            </div>
+                        )}
 
                         {/* Upload profile photo */}
                         <Dialog>
@@ -296,11 +345,12 @@ const Register = () => {
                             {/* Submit */}
                             <button
                                 type="submit"
-                                className="w-full py-4 rounded-xl bg-brand text-white font-semibold
+                                disabled={loading}
+                                className={`w-full py-4 rounded-xl bg-brand text-white font-semibold
                            shadow-md hover:shadow-lg transition-all
-                           focus:outline-none focus:ring-2 focus:ring-offset-2"
+                           focus:outline-none focus:ring-2 focus:ring-offset-2 ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
                             >
-                                Create Account
+                                {loading ? 'Creating...' : 'Create Account'}
                             </button>
 
                             {/* Login link */}
