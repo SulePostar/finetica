@@ -106,6 +106,17 @@ VAT AMOUNT
 - If no explicit VAT amount is found, try to calculate it from gross total minus net total if both are present and consistent with line items. If you can derive it reliably, use that value; otherwise, set to null.
 - DO NOT type in 0 if VAT is not present; use NULL instead.
 
+CURRENCY
+- Look for currency symbols or codes near the total amounts (Net, Gross, VAT).
+- Normalize currencies into 3-letter ISO codes:
+  • KM / BAM / KM. / km -> BAM
+  • € / EUR / Euro -> EUR
+  • $ / USD / Dollar -> USD
+  • Din / RSD / Dinar -> RSD
+- If a symbol like 'KM' is found, convert it strictly to the ISO code 'BAM'.
+- If multiple currencies appear (e.g. converted amounts), prefer the currency of the final "Total to Pay".
+- If no currency is explicitly found, set to null.
+
 TOTALS & VAT
 - Use printed totals if present; do not compute missing totals unless clearly derivable from explicit VAT rates and amounts in the document.
 - "deductibleVat" and "nonDeductibleVat" should ONLY be set if the invoice explicitly distinguishes them; otherwise leave null.

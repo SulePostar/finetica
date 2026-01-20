@@ -144,6 +144,7 @@ const createBankTransactionFromAI = async (extractedData, options = {}) => {
                 fileName: file_name,
                 createdAt: new Date(),
                 updatedAt: new Date(),
+                currency: bankTransactionData.currency,
             },
             { transaction: tx }
         );
