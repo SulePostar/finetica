@@ -10,6 +10,6 @@ export const loginUser = async (credentials) => {
  * @param {Object} payload - { firstName, lastName, email, password, profileImage? }
  */
 export const registerUser = async (payload) => {
-    const response = await apiClient.post('/auth/register', payload);
-    return response.data;
+    const { data } = await apiClient.post('/auth/register', payload);
+    return data;
 };

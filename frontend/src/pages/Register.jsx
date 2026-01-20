@@ -56,8 +56,6 @@ const Register = () => {
                 if (uploadResult.success && uploadResult.url) {
                     profileImageUrl = uploadResult.url;
                 } else {
-                    // Non-fatal: let registration proceed without image
-                    console.warn('Profile image upload failed:', uploadResult.error);
                     notify.warning('Profile image upload failed, registration will continue.');
                 }
             }
