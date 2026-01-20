@@ -9,15 +9,35 @@ import {
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import {
-    TIME_FILTER_OPTIONS as BASE_TIME_FILTER_OPTIONS,
-    serializeCustomRange
-} from "@/helpers/timeFilter";
+
+
+const BASE_TIME_FILTER_OPTIONS = [
+    { label: 'All', value: 'all' },
+    { label: 'Last 7 Days', value: 'last 7 days' },
+    { label: 'Last 30 Days', value: 'last 30 days' },
+    { label: 'Last 60 Days', value: 'last 60 days' },
+];
 
 const TIME_FILTER_OPTIONS = [
-    ...BASE_TIME_FILTER_OPTIONS,            // 'All', 'Last 7 Days', ...
+    ...BASE_TIME_FILTER_OPTIONS,
     { label: "Custom range", value: "custom" },
 ];
+
+const formatDateToYMD = (date) => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
+const serializeCustomRange = (range) => {
+    if (!range?.from || !range?.to) return null;
+    return {
+        from: formatDateToYMD(range.from),
+        to: formatDateToYMD(range.to),
+    };
+};
 
 /**
  * TimeFilter component
