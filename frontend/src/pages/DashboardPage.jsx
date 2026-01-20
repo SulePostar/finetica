@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import StatWidget from "@/components/dashboard/StatWidget";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import {
@@ -8,6 +9,7 @@ import {
     Activity
 } from "lucide-react";
 import { useInvalidPdfsCount } from "@/queries/InvalidPdfs/count";
+
 const bottomRowData = [
     {
         title: "AI Accuracy",
@@ -26,9 +28,9 @@ const bottomRowData = [
 ];
 
 const Dashboard = () => {
-    const { data: invalidPdfCount, isLoading } = useInvalidPdfsCount();
+    const { data: invalidPdfCount, isLoading, isError } = useInvalidPdfsCount();
 
-    const topRowData = [
+    const topRowData = useMemo(() => [
         {
             title: "Active Contracts",
             value: "156",
@@ -38,7 +40,7 @@ const Dashboard = () => {
         },
         {
             title: "Invalid PDFs",
-            value: isLoading ? "..." : invalidPdfCount,
+            value: isLoading ? "—" : isError ? "Error" : String(invalidPdfCount ?? 0),
             //delta: "4.2",
             positive: false,
             icon: <FileWarning className="text-destructive w-6 h-6" />,
@@ -50,7 +52,7 @@ const Dashboard = () => {
             positive: true,
             icon: <CreditCard className="text-spurple w-6 h-6" />,
         },
-    ];
+    ], [isLoading, isError, invalidPdfCount]);
     return (
         <div className="pt-20">
             <PageTitle text="Dashboard" compact />
