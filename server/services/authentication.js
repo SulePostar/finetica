@@ -4,19 +4,13 @@ const crypto = require('crypto');
 const { User, Role, UserStatus, RefreshToken } = require('../models');
 const { sendTemplatedEmail } = require('./sendGridService');
 const { TEMPLATE_IDS } = require('../utils/constants');
+const { formatDate } = require('../utils/dateUtils');
 
 const AppError = require('../utils/errorHandler');
 const { USER_STATUS } = require('../utils/constants');
 const REFRESH_TOKEN_EXPIRES_IN_MS = process.env.REFRESH_TOKEN_EXPIRES_IN_DAYS * 24 * 60 * 60 * 1000;
 
 class AuthService {
-
-  formatDate(date, locale = 'en-GB') {
-    return new Date(date).toLocaleString(locale, {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    });
-  }
 
   async register(registerData) {
     const { email, password, profileImage, ...rest } = registerData;
@@ -53,7 +47,7 @@ class AuthService {
         {
           newUserName: `${user.firstName} ${user.lastName}`,
           newUserEmail: user.email,
-          createdAt: this.formatDate(user.created_at),
+          createdAt: formatDate(user.created_at),
           adminDashboardLink: `${process.env.FRONTEND_URL ?? 'http://localhost:5173'}/users`,
         }
       ),
