@@ -6,6 +6,8 @@ const salesInvoiceSchema = require('../schemas/kifSchema');
 const AppError = require('../utils/errorHandler');
 const supabaseService = require('../utils/supabase/supabaseService');
 const { getTimeFilterWhereClause } = require('../utils/timeFilter');
+const logger = require('../utils/logger');
+
 const MODEL_NAME = 'gemini-2.5-flash-lite';
 const KIF_BUCKET_NAME = 'kif';
 const extractKifData = async (fileBuffer, mimeType) => {
@@ -296,7 +298,7 @@ const getKifs = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc', i
         return { data, total: count };
 
     } catch (error) {
-        console.error("Service Error:", error);
+        logger.error(`Service Error in getKifs: ${error.message}`, { stack: error.stack });
         throw new AppError('Failed to fetch KIF data', 500);
     }
 };

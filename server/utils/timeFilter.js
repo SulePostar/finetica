@@ -17,6 +17,8 @@ const getTimeFilterWhereClause = (timeRange, dateField = 'created_at') => {
     if (typeof timeRange === 'string') {
         const normalized = timeRange.replace(/ /g, '_').toLowerCase();
 
+        endDate = new Date(now);
+        endDate.setHours(23, 59, 59, 999);
         switch (normalized) {
             case 'last_7_days':
                 startDate = new Date(now);

@@ -9,6 +9,7 @@ const {
     getKifInvoiceTypes: getKifInvoiceTypesService,
     updateKifItem: updateKifItemService,
 } = require('../services/kif');
+const logger = require('../utils/logger');
 
 const getKifData = async (req, res, next) => {
     try {
@@ -20,7 +21,7 @@ const getKifData = async (req, res, next) => {
                 try {
                     parsedTimeRange = JSON.parse(timeRange);
                 } catch (err) {
-                    console.warn('Invalid JSON in timeRange:', timeRange);
+                    logger.warn(`Invalid JSON in timeRange: ${timeRange} - Error: ${err.message}`);
                     parsedTimeRange = 'all';
                 }
             } else {
