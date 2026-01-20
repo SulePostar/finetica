@@ -6,7 +6,8 @@ const {
     approveInvoice,
     getKufItems,
     getKufInvoiceTypes,
-    getNetTotalSum
+    getNetTotalSum,
+    getKufDailyCounts
 } = require('../controllers/kuf');
 const { getInvalidKufs, getKufLog } = require('../controllers/kufProcessingLog');
 const { updateKufItem } = require('../controllers/kuf');
@@ -18,7 +19,8 @@ router.get('/logs/invalid', isAuthenticated, getInvalidKufs);
 router.get('/logs/:id', isAuthenticated, getKufLog);
 router.get('/', getInvoiceData);
 router.get('/invoice-types', getKufInvoiceTypes);
-router.get('/net-total',isAuthenticated, getNetTotalSum);
+router.get('/net-total', isAuthenticated, getNetTotalSum);
+router.get('/stats/daily', isAuthenticated, getKufDailyCounts);
 router.get('/:id',
     //  isAuthenticated,
     getInvoice);
