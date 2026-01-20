@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+
 import {
     Card,
     CardContent,
@@ -7,11 +8,13 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+
 import {
     ChartContainer,
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart"
+
 import {
     Select,
     SelectContent,
@@ -20,47 +23,50 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 
-import { useKufDailyStats } from "@/queries/Kuf"
-import {
-    getRangeDates,
-    fillMissingDays,
-    mapKufDailyStats,
-} from "@/helpers/chartHelpers"
+import { getRangeDates, fillMissingDays } from "@/helpers/chartHelpers"
 
-const chartConfig = {
-    count: {
-        label: "KUF documents",
-        color: "var(--chart-1)",
-    },
+function buildDefaultConfig(label) {
+    return {
+        count: {
+            label,
+            color: "var(--chart-1)",
+        },
+    }
 }
 
-export default function KufDailyAreaChart() {
+export default function DailyDocsChart({
+    title,
+    description,
+    seriesLabel = "Documents",
+    toDateISO,
+    useDailyStatsHook,
+    mapApiRows,
+}) {
     const [range, setRange] = useState("7d")
 
-    const toDate = useMemo(
-        () => new Date("2025-08-13T00:00:00"),
-        []
-    )
+    const toDate = useMemo(() => new Date(`${toDateISO}T00:00:00`), [toDateISO])
 
     const { from, to } = useMemo(
         () => getRangeDates(range, toDate),
         [range, toDate]
     )
 
-    const { data, isLoading, isError } = useKufDailyStats({ from, to })
+    const { data, isLoading, isError } = useDailyStatsHook({ from, to })
 
     const chartData = useMemo(() => {
         const rows = data?.data ?? []
-        const mapped = mapKufDailyStats(rows)
+        const mapped = mapApiRows(rows)
         return fillMissingDays(mapped, from, to)
-    }, [data, from, to])
+    }, [data, from, to, mapApiRows])
+
+    const chartConfig = useMemo(() => buildDefaultConfig(seriesLabel), [seriesLabel])
 
     return (
         <Card className="pt-0">
             <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
                 <div className="grid flex-1 gap-1">
-                    <CardTitle>KUF – Daily documents</CardTitle>
-                    <CardDescription>Number of KUF invoices per day</CardDescription>
+                    <CardTitle>{title}</CardTitle>
+                    <CardDescription>{description}</CardDescription>
                 </div>
 
                 <Select value={range} onValueChange={setRange}>
@@ -93,10 +99,7 @@ export default function KufDailyAreaChart() {
                 )}
 
                 {!isLoading && !isError && (
-                    <ChartContainer
-                        config={chartConfig}
-                        className="aspect-auto h-[250px] w-full"
-                    >
+                    <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
                         <AreaChart data={chartData}>
                             <defs>
                                 <linearGradient id="fillCount" x1="0" y1="0" x2="0" y2="1">

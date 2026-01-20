@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import StatWidget from "@/components/dashboard/StatWidget";
-import KufDailyAreaChart from "@/components/dashboard/KufChart";
+import KufDailyAreaChart from "@/components/dashboard/charts/KufChart";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import {
     FileText,
@@ -79,7 +79,7 @@ const Dashboard = () => {
                     <KufDailyAreaChart />
                 </div>
 
-                {/* RIGHT: drugi placeholder (ili drugi chart kasnije) */}
+                {/* RIGHT: KIF Chart */}
                 <div className="md:col-span-3 h-80 bg-muted/20 border border-dashed border-border rounded-2xl flex items-center justify-center relative">
                     <div className="w-full max-w-xs">
                         <StatWidget
