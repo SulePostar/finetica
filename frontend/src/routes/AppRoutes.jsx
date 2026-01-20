@@ -52,7 +52,6 @@ export default function AppRoutes() {
           <Route path="/contracts/:id" element={<DocumentDetails />} />
           <Route path="/chatbot" element={<ChatBot />} />
           <Route path="/knowledge-base" element={<KnowledgeBase />} />
-
           <Route path="/:documentType/:id/items" element={<DocumentItemsPage />} />
         </Route>
 
