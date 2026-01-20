@@ -2,6 +2,7 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import { Toaster } from "@/components/ui/sooner";
 import { Outlet } from "react-router-dom";
+import ChatWidget from "@/components/chat/ChatWidget";
 
 const DefaultLayout = () => {
     return (
@@ -25,6 +26,7 @@ const DefaultLayout = () => {
                 </SidebarInset>
             </SidebarProvider>
             <Toaster />
+            <ChatWidget />
         </div>
     );
 };
