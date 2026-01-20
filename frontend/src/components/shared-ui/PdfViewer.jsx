@@ -44,7 +44,7 @@ export const PdfViewer = ({ pdfUrl }) => {
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="text-lg font-semibold text-spurple">Document Preview</CardTitle>
+                <CardTitle className="text-xl font-semibold text-spurple">Document Preview</CardTitle>
                 <CardDescription>Original digital copy of the document</CardDescription>
             </CardHeader>
             <CardContent className="p-0">

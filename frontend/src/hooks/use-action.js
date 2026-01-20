@@ -8,5 +8,9 @@ export function useAction(docType) {
             const path = `/${docType}/${item.id}`;
             navigate(path);;
         }
+
+        if (key === "approve") {
+            navigate(`/${docType}/${item.id}/approve`);
+        }
     }
 }

@@ -1,6 +1,5 @@
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
-import { Toaster } from "@/components/ui/sooner";
 import { Outlet } from "react-router-dom";
 
 const DefaultLayout = () => {
@@ -24,7 +23,6 @@ const DefaultLayout = () => {
                     </div>
                 </SidebarInset>
             </SidebarProvider>
-            <Toaster />
         </div>
     );
 };

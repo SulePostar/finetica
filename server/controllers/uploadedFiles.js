@@ -8,8 +8,7 @@ class UploadedFilesController {
    */
   async uploadProfileImage(req, res, next) {
     try {
-      const { firstName, lastName } = req.body;
-      const result = await uploadedFilesService.uploadProfileImage(req.file, firstName, lastName);
+      const result = await uploadedFilesService.uploadProfileImage(req.file);
       res.status(200).json(result);
     } catch (error) {
       next(error);
