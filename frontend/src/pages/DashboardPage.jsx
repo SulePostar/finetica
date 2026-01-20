@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import StatWidget from "@/components/dashboard/StatWidget";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import {
@@ -7,30 +8,7 @@ import {
     Brain,
     Activity
 } from "lucide-react";
-
-const topRowData = [
-    {
-        title: "Active Contracts",
-        value: "156",
-        delta: "12.5",
-        positive: true,
-        icon: <FileText className="text-brand w-6 h-6" />,
-    },
-    {
-        title: "Invalid PDFs",
-        value: "23",
-        delta: "4.2",
-        positive: false,
-        icon: <FileWarning className="text-destructive w-6 h-6" />,
-    },
-    {
-        title: "Bank Transactions",
-        value: "1,240",
-        delta: "8.1",
-        positive: true,
-        icon: <CreditCard className="text-spurple w-6 h-6" />,
-    },
-];
+import { useInvalidPdfsCount } from "@/queries/InvalidPdfs/count";
 
 const bottomRowData = [
     {
@@ -50,6 +28,31 @@ const bottomRowData = [
 ];
 
 const Dashboard = () => {
+    const { data: invalidPdfCount, isLoading, isError } = useInvalidPdfsCount();
+
+    const topRowData = useMemo(() => [
+        {
+            title: "Active Contracts",
+            value: "156",
+            delta: "12.5",
+            positive: true,
+            icon: <FileText className="text-brand w-6 h-6" />,
+        },
+        {
+            title: "Invalid PDFs",
+            value: isLoading ? "—" : isError ? "Error" : String(invalidPdfCount ?? 0),
+            //delta: "4.2",
+            positive: false,
+            icon: <FileWarning className="text-destructive w-6 h-6" />,
+        },
+        {
+            title: "Bank Transactions",
+            value: "1,240",
+            delta: "8.1",
+            positive: true,
+            icon: <CreditCard className="text-spurple w-6 h-6" />,
+        },
+    ], [isLoading, isError, invalidPdfCount]);
     return (
         <div className="pt-20">
             <PageTitle text="Dashboard" compact />

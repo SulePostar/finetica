@@ -6,7 +6,8 @@ const {
     getTransactionById,
     createBankTransaction,
     approveTransaction,
-    updateBankTransactionItem
+    updateBankTransactionItem,
+    updatedDocument,
 } = require('../controllers/bankTransaction');
 const { getInvalidBankTransactions, getBankTransactionLog } = require('../controllers/bankTransactionProcessingLog');
 const isAuthenticated = require('../middleware/isAuthenticated');
@@ -18,6 +19,7 @@ router.get('/logs/:id', isAuthenticated, getBankTransactionLog);
 
 router.get('/', getBankTransactions);
 router.get('/:id', getTransactionById);
+router.put('/:id', isAuthenticated, validate(bankTransactionUpdateSchema), updatedDocument);
 router.get('/:id/items', getBankTransactionItemsById);
 router.put('/items/:itemId', updateBankTransactionItem);
 router.post('/',
