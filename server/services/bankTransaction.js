@@ -260,36 +260,28 @@ const approveBankTransactionById = async (id, userId, updatedData = {}) => {
 
 const editBankTransaction = async (id, updatedData) => {
     try {
-        const document = await BankTransaction.findByPk(id);
+        const document = await BankTransaction.findByPk(id, {
+            include: [{ model: TransactionCategory }, { model: BusinessPartner }],
+        });
 
         if (!document) {
-            throw new AppError('Bank transaction not found', 404);
+            throw new AppError("Bank transaction not found", 404);
         }
 
-        // Exclude unrelated fields
         const { items, ...updateData } = updatedData;
 
-        const dataToUpdate = {
-            ...updateData,
-            approvedAt: null,
-            approvedBy: null,
-        };
+        await document.update(updateData);
 
-        // Update transaction
-        await document.update(dataToUpdate);
-
-        // Return updated transaction with associations
-        return await BankTransaction.findByPk(id, {
-            include: [
-                { model: TransactionCategory },
-                { model: BusinessPartner }
-            ]
+        await document.reload({
+            include: [{ model: TransactionCategory }, { model: BusinessPartner }],
         });
+
+        return document;
     } catch (error) {
-        console.error("Update Error:", error);
-        throw new AppError('Failed to update bank transaction', 500);
+        throw new AppError("Failed to update bank transaction");
     }
 };
+
 
 const processBankTransaction = async (fileBuffer, mimeType, filename, model = "gemini-2.5-flash-lite") => {
     try {

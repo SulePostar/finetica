@@ -1,13 +1,11 @@
 import { formatMoney } from "@/helpers/numberFormats";
+import { formatDateTime } from "@/helpers/formatDate";
 
 export const getBankTransactionItemsColumns = () => [
     {
         header: "Date",
         accessorKey: "date",
-        cell: ({ row }) =>
-            row.original.date
-                ? new Date(row.original.date).toLocaleDateString()
-                : "—",
+        cell: ({ row }) => formatDateTime(row.original.date),
     },
     {
         header: "Description",
