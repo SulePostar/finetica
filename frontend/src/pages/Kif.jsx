@@ -21,6 +21,7 @@ const Kif = () => {
         page,
         perPage,
         invoiceType: invoiceType === "all" ? null : invoiceType,
+        timeRange: timeRange === "all" ? null : timeRange,
     });
 
     const { data: invoiceTypesData, isPending: isInvoiceTypesPending, isError: isInvoiceTypesError } = useKifInvoiceTypes();
@@ -42,7 +43,8 @@ const Kif = () => {
     };
 
     const handleTimeChange = (newValue) => {
-        setTimeRange(newValue);
+        const val = newValue || "all";
+        setTimeRange(val);
         setPage(1);
     };
 
@@ -134,6 +136,7 @@ const Kif = () => {
                     button: (
                         <Button variant="outline" onClick={() => {
                             setInvoiceType("all");
+                            setTimeRange("all");
                             setPage(1);
                         }}
                         >
