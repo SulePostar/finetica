@@ -12,6 +12,7 @@ const Partner = React.lazy(() => import('../pages/PartnersPage'));
 const Kif = React.lazy(() => import('../pages/Kif'));
 const Users = React.lazy(() => import('../pages/Users'));
 const InvalidPdfs = React.lazy(() => import('../pages/InvalidPDFs'))
+const BankTransactionsDetails = React.lazy(() => import('../components/document-details/BankTransactionsDetails'));
 import Register from '@/pages/Register';
 import RoleAndStatusManagement from '@/pages/RoleAndStatusManagement';
 import ProtectedRoute from './ProtectedRoute';
@@ -46,6 +47,8 @@ export default function AppRoutes() {
           <Route path="/kuf/:id" element={<DocumentDetails />} />
           <Route path="/kif/:id" element={<DocumentDetails />} />
           <Route path="/bank-statements/:id" element={<DocumentDetails />} />
+          <Route path="/bank-statements/:id/edit" element={<BankTransactionsDetails />} />
+          <Route path="/bank-statements/:id/approve" element={<BankTransactionsDetails />} />
           <Route path="/contracts/:id" element={<DocumentDetails />} />
           <Route path="/chatbot" element={<ChatBot />} />
           <Route path="/knowledge-base" element={<KnowledgeBase />} />
