@@ -21,6 +21,7 @@ const businessPartnerRouter = require('./routes/businessPartner');
 const googleDriveAutoSync = require('./tasks/googleDriveAutoSync');
 const googleDriveRouter = require('./routes/googleDrive');
 const chatRoutes = require("./routes/chat");
+const knowledgeBaseRoutes = require('./routes/knowledgeBase')
 
 const PORT = process.env.PORT;
 const SECRET = process.env.SESSION_SECRET;
@@ -60,6 +61,7 @@ app.use('/drive', googleDriveRouter);
 app.use('/api/user-statuses', userStatusRouter);
 app.use('/api/user-roles', userRoleRouter);
 app.use("/api/chat", chatRoutes);
+app.use('/api/knowledge-base', knowledgeBaseRoutes)
 app.use('/api/invalid-pdfs', invalidPdfsRoute);
 app.use(errorHandler);
 

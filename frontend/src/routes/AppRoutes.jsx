@@ -22,6 +22,7 @@ import PartnerDetails from '@/pages/PartnerDetails';
 import HelpPage from '@/pages/HelpPage';
 import DocumentItemsPage from '@/pages/DocumentItemsPage';
 import ChatBot from '@/pages/ChatBot';
+import KnowledgeBase from '@/pages/KnowledgeBase';
 
 export default function AppRoutes() {
   return (
@@ -47,6 +48,7 @@ export default function AppRoutes() {
           <Route path="/bank-statements/:id" element={<DocumentDetails />} />
           <Route path="/contracts/:id" element={<DocumentDetails />} />
           <Route path="/chatbot" element={<ChatBot />} />
+          <Route path="/knowledge-base" element={<KnowledgeBase />} />
 
           <Route path="/:documentType/:id/items" element={<DocumentItemsPage />} />
         </Route>
