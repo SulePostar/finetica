@@ -20,6 +20,7 @@ const purchaseInvoiceSchema = {
         nonDeductibleVat: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
         vatExemptRegion: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
         filename: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
+        currency: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
         items: {
             type: Type.ARRAY,
             items: {
@@ -48,7 +49,8 @@ const purchaseInvoiceSchema = {
         'netTotal',
         'vatAmount',
         'items',
-        'filename'
+        'filename',
+        'currency'
     ]
 };
 
