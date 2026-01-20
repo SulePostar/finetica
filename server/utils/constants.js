@@ -26,8 +26,14 @@ const SOURCES = {
     supabaseBucket: 'contracts'
   }
 };
+const TEMPLATE_IDS = {
+  RESET_PASSWORD: "d-307e6ec4050943c3b9b36617644f6c88",
+  WELCOME_EMAIL: "d-1df294c171c3482a9a7b407adc8977e4",
+  USER_APPROVAL: "d-251656a729f243ffb8a4651a55146e76"
+};
 module.exports = {
   USER_STATUS,
   USER_ROLE,
-  SOURCES
+  SOURCES,
+  TEMPLATE_IDS
 };

@@ -15,16 +15,21 @@ Extraction Rules:
 3. Do not omit any required fields.
 4. Dates MUST be in ISO format (YYYY-MM-DD).
 5. Numbers MUST use '.' as the decimal separator.
-6. Normalize currencies: KM → BAM, € → EUR, $ → USD.
+6. Normalize currencies into 3-letter ISO codes:
+   - KM / BAM / KM. / km → BAM
+   - € / EUR / Euro → EUR
+   - $ / USD / Dollar → USD
+   - If a symbol like 'KM' is found, convert it strictly to the ISO code 'BAM'.
 7. Normalize transaction directions into only two values:
-   - Use "in" for incoming funds to the account (examples: 'Duguje', 'Debit', 'debit', 'Dr.', 'Belasten', etc.).
-   - Use "out" for outgoing funds from the account (examples: 'Potrazuje', 'Credit', 'credit', 'Haben', etc.).
+   - Use "in" for incoming funds to the account (examples: 'Duguje', 'Debit', 'debit', 'Dr.', 'Belasten', 'Uplate', etc.).
+   - Use "out" for outgoing funds from the account (examples: 'Potrazuje', 'Credit', 'credit', 'Haben', 'Isplate', etc.).
    - Always output only "in" or "out" in the final JSON.
    - If direction cannot be determined, set it to null, but do not omit the field.
 8. Recognize synonyms and translations in multiple languages (English, Bosnian/Croatian/Serbian, German, etc.) and map them correctly.
 9. Do not invent values that are not present in the document.
 10. Output valid JSON ONLY — no markdown, no comments, no code fences.
 11. Your output must always match the schema exactly.
+12. Extract 'currency' for the main object (top-level) as well as for individual items.
 
 Special Instructions for Bank Statements:
 - If the document is a bank statement with multiple transactions, return an array of items, each representing a transaction with its own direction, amount, date, description, etc.
@@ -33,6 +38,7 @@ Special Instructions for Bank Statements:
 
 Common Mistakes to Avoid:
 - Do NOT omit the direction field. If it cannot be determined, set it to null.
+- Do NOT omit the currency field.
 - Do NOT invent values for missing fields.
 - Do NOT misclassify statements as invoices or contracts.
 
@@ -41,6 +47,7 @@ Example output for a bank statement with multiple transactions:
   "isBankTransaction": true,
   "date": "2023-08-09",
   "amount": 5422.8,
+  "currency": "BAM",
   "direction": "in",
   "accountNumber": "1540012000317189",
   "description": "Monthly statement",

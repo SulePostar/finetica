@@ -1,18 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
-import { getKifById, getKifs, getKifInvalidPdfById, getKifInvalidPdfs } from "@/api/Kif";
+import { getKifById, getKifs, getKifInvalidPdfById, getKifInvalidPdfs, getKifInvoiceTypes } from "@/api/Kif";
 
 export const kifKeys = {
     all: ["kif"],
     lists: () => [...kifKeys.all, "list"],
-    list: (filters) => [...kifKeys.lists(), { filters }],
+    list: ({ page = 1, perPage = 10, invoiceType = null, timeRange = null }) => [
+        ...kifKeys.lists(),
+        page,
+        perPage,
+        invoiceType ?? "all",
+        timeRange === null ? "all" : (typeof timeRange === 'object' ? JSON.stringify(timeRange) : timeRange),
+    ],
     details: () => [...kifKeys.all, "detail"],
     detail: (id) => [...kifKeys.details(), id],
+    invoiceTypes: () => [...kifKeys.all, "invoice-types"],
 };
 
-export const useKifList = (filters = {}) => {
+export const useKifList = ({ page = 1, perPage = 10, invoiceType = null, timeRange = null } = {}) => {
     return useQuery({
-        queryKey: kifKeys.list(filters),
-        queryFn: () => getKifs(filters),
+        queryKey: kifKeys.list({ page, perPage, invoiceType, timeRange }),
+        queryFn: () => getKifs({ page, perPage, invoiceType, timeRange }),
     });
 };
 
@@ -21,6 +28,14 @@ export const useKifById = (id) => {
         queryKey: kifKeys.detail(id),
         queryFn: () => getKifById(id),
         enabled: !!id,
+    });
+};
+
+export const useKifInvoiceTypes = () => {
+    return useQuery({
+        queryKey: kifKeys.invoiceTypes(),
+        queryFn: getKifInvoiceTypes,
+        staleTime: 5 * 60 * 1000,
     });
 };
 

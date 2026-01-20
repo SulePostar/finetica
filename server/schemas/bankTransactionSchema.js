@@ -15,6 +15,7 @@ const bankTransactionSchema = {
         is_valid: { type: Type.BOOLEAN },
         approvedAt: { anyOf: [{ type: Type.DATE }, { type: Type.STRING }, { type: Type.NULL }] },
         approvedBy: { anyOf: [{ type: Type.NUMBER }, { type: Type.NULL }] },
+        currency: { anyOf: [{ type: Type.STRING }, { type: Type.NULL }] },
         items: {
             type: Type.ARRAY,
             items: {
@@ -50,7 +51,8 @@ const bankTransactionSchema = {
         'is_valid',
         'approvedAt',
         'approvedBy',
-        'items'
+        'items',
+        'currency'
     ]
 };
 

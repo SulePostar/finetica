@@ -1,8 +1,7 @@
 import React from 'react';
-import { Navigate, Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import ProfilePage from '@/pages/ProfilePage';
 import Login from '@/pages/Login';
-import Logout from '@/pages/Logout';
 import Dashboard from '@/pages/DashboardPage';
 
 const BankTransactions = React.lazy(() => import('../pages/BankTransactions'));
@@ -12,6 +11,7 @@ const Partner = React.lazy(() => import('../pages/PartnersPage'));
 const Kif = React.lazy(() => import('../pages/Kif'));
 const Users = React.lazy(() => import('../pages/Users'));
 const InvalidPdfs = React.lazy(() => import('../pages/InvalidPDFs'))
+const BankTransactionsDetails = React.lazy(() => import('../components/document-details/BankTransactionsDetails'));
 import Register from '@/pages/Register';
 import RoleAndStatusManagement from '@/pages/RoleAndStatusManagement';
 import ProtectedRoute from './ProtectedRoute';
@@ -44,17 +44,22 @@ export default function AppRoutes() {
           <Route path="/kuf/:id" element={<DocumentDetails />} />
           <Route path="/kif/:id" element={<DocumentDetails />} />
           <Route path="/bank-statements/:id" element={<DocumentDetails />} />
+          <Route path="/bank-statements/:id/edit" element={<BankTransactionsDetails />} />
+          <Route path="/bank-statements/:id/approve" element={<BankTransactionsDetails />} />
           <Route path="/contracts/:id" element={<DocumentDetails />} />
-          <Route path="/:documentType/:id/items" element={<DocumentItemsPage />} />
 
-          <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+          <Route path="/:documentType/:id/items" element={<DocumentItemsPage />} />
+        </Route>
+
+        {/* Admin-only routes */}
+        <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+          <Route element={<DefaultLayout />}>
             <Route path="/users" element={<Users />} />
             <Route path="/roles-statuses" element={<RoleAndStatusManagement />} />
           </Route>
-
-          <Route path="*" element={<NotFound />} />
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );
-} 
+}   

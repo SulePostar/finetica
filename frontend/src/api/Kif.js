@@ -1,9 +1,13 @@
 import apiClient from './axios';
 
-export const getKifs = async (filters) => {
-    const { data } = await apiClient.get("/kif", {
-        params: filters
-    });
+export const getKifs = async ({ page, perPage, invoiceType, timeRange }) => {
+    const params = {
+        page,
+        perPage,
+        invoiceType,
+        timeRange: typeof timeRange === "object" ? JSON.stringify(timeRange) : timeRange,
+    };
+    const { data } = await apiClient.get("/kif", { params });
     return data;
 };
 
@@ -11,6 +15,11 @@ export const getKifById = async (id) => {
     const { data } = await apiClient.get(`/kif/${id}`);
     return data;
 };
+
+export const getKifInvoiceTypes = async () => {
+    const { data } = await apiClient.get("/kif/invoice-types");
+    return data;
+}
 
 /* -------------------- */
 /*     Invalid PDFs     */

@@ -6,18 +6,37 @@ const {
     processKif,
     approveKif,
     getKifItemsById,
+    getKifInvoiceTypes: getKifInvoiceTypesService,
     updateKifItem: updateKifItemService,
 } = require('../services/kif');
+const logger = require('../utils/logger');
 
 const getKifData = async (req, res, next) => {
     try {
-        const { page, perPage, sortField, sortOrder } = req.query;
+        const { page, perPage, sortField, sortOrder, invoiceType, timeRange } = req.query;
+        let parsedTimeRange = 'all';
+
+        if (timeRange) {
+            // Try to parse as JSON if it looks like JSON (starts with '{')
+            if (typeof timeRange === 'string' && timeRange.trim().startsWith('{')) {
+                try {
+                    parsedTimeRange = JSON.parse(timeRange);
+                } catch (err) {
+                    logger.warn(`Invalid JSON in timeRange: ${timeRange} - Error: ${err.message}`);
+                    parsedTimeRange = 'all';
+                }
+            } else {
+                parsedTimeRange = timeRange;
+            }
+        }
 
         const result = await getKifs({
-            page: parseInt(page),
-            perPage: parseInt(perPage),
+            page: parseInt(page) || 1,
+            perPage: parseInt(perPage) || 10,
             sortField,
             sortOrder,
+            invoiceType,
+            timeRange: parsedTimeRange,
         });
 
         res.json(result);
@@ -36,6 +55,7 @@ const getKif = async (req, res, next) => {
         next(error);
     }
 };
+
 
 const getKifItems = async (req, res, next) => {
     try {
@@ -87,6 +107,15 @@ const approveKifInvoice = async (req, res, next) => {
     }
 };
 
+const getKifInvoiceTypes = async (req, res, next) => {
+    try {
+        const result = await getKifInvoiceTypesService();
+        res.json(result);
+    } catch (error) {
+        next(error);
+    }
+};
+
 // Update a single KIF item
 const updateKifItem = async (req, res, next) => {
     try {
@@ -106,5 +135,6 @@ module.exports = {
     processKifInvoice,
     approveKifInvoice,
     getKifItems,
+    getKifInvoiceTypes,
     updateKifItem,
 };

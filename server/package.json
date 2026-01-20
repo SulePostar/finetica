@@ -16,6 +16,7 @@
   "description": "",
   "dependencies": {
     "@google/genai": "^1.14.0",
+    "@sendgrid/mail": "^8.1.6",
     "@supabase/supabase-js": "^2.53.0",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -31,6 +32,7 @@
     "mkdirp": "^3.0.1",
     "multer": "^2.0.2",
     "mutter": "^1.0.1",
+    "node-cache": "^5.1.2",
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.5",
     "pg": "^8.16.3",
