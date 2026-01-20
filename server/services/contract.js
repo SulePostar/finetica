@@ -5,6 +5,7 @@ const { processDocument } = require('./aiService');
 const contractSchema = require('../schemas/contract');
 const contractsPrompt = require('../prompts/contract');
 const supabaseService = require('../utils/supabase/supabaseService');
+const { getTimeFilterWhereClause } = require('../utils/timeFilter');
 
 const MODEL_NAME = 'gemini-2.5-flash-lite';
 const BUCKET_NAME = 'contracts';
@@ -34,8 +35,7 @@ const listContracts = async ({
                                perPage = 10,
                                sortField,
                                sortOrder = 'asc',
-                               startDate,
-                               endDate
+                               timeRange = 'all',
                              }) => {
   const limit = Math.max(1, Number(perPage) || 10);
   const offset = Math.max(0, ((Number(page) || 1) - 1) * limit);
@@ -47,22 +47,9 @@ const listContracts = async ({
     ];
   }
 
-  const where = {};
-  if (startDate || endDate) {
-    where.createdAt = {};
-
-    if (startDate) {
-      const start = new Date(startDate);
-      start.setHours(0, 0, 0, 0);
-      where.createdAt[Op.gte] = start;
-    }
-
-    if (endDate) {
-      const end = new Date(endDate);
-      end.setHours(23, 59, 59, 999);
-      where.createdAt[Op.lte] = end;
-    }
-  }
+  const where = {
+    ...getTimeFilterWhereClause(timeRange, 'createdAt')
+  };
 
   const { rows, count } = await Contract.findAndCountAll({
     where,
@@ -151,9 +138,9 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
     const { isValidContract, ...contractData } = await extractData(buffer, mimeType);
 
     if (isValidContract === false) {
-      await unprocessedFileLog.update({ 
+      await unprocessedFileLog.update({
         isValid: false,
-        isProcessed: true,                    
+        isProcessed: true,
         processedAt: new Date(),
         message: 'File is not a valid Contract',
       });
