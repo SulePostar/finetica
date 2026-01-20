@@ -115,6 +115,15 @@ const createContract = async (contractData) => {
   return created;
 }
 
+const getActiveContractsCount = async () => {
+  const count = await Contract.count({
+    where: {
+      isActive: true,
+    },
+  });
+  return count;
+}
+
 const extractData = async (fileBuffer, mimeType) => {
   const businessPartners = await BusinessPartner.findAll({
     attributes: ['id', 'name'],
@@ -142,9 +151,9 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
     const { isValidContract, ...contractData } = await extractData(buffer, mimeType);
 
     if (isValidContract === false) {
-      await unprocessedFileLog.update({
+      await unprocessedFileLog.update({ 
         isValid: false,
-        isProcessed: true,
+        isProcessed: true,                    
         processedAt: new Date(),
         message: 'File is not a valid Contract',
       });
@@ -189,4 +198,5 @@ module.exports = {
   createContract,
   extractData,
   processUnprocessedFiles,
+  getActiveContractsCount
 };
