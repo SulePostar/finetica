@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getContracts, getContractById, getContractInvalidPdfById, getContractsInvalidPdfs, getactiveContractsCount } from "../api/contracts";
+import { getContracts, getContractById, getContractInvalidPdfById, getContractsInvalidPdfs, getActiveContractsCount } from "../api/contracts";
 
 export const contractKeys = {
     all: ["contracts"],
@@ -27,15 +27,11 @@ export const useContractById = (id) => {
 export const useActiveContractsCount = () => {
     return useQuery({
         queryKey: [...contractKeys.all, "active", "count"],
-        queryFn: () => getactiveContractsCount(),
+        queryFn: () => getActiveContractsCount(),
         select: (data) => {
             if (!data) return undefined;
             return data?.count ?? 0;
         },
-        staleTime: 30 * 1000,
-        cacheTime: 5 * 60 * 1000,
-        retry: 2,
-        refetchOnWindowFocus: false,
     });
 }
 
