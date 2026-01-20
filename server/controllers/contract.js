@@ -13,17 +13,30 @@ const getContractData = async (req, res, next) => {
       perPage = 10,
       sortField,
       sortOrder = 'asc',
-      startDate,
-      endDate
+      timeRange
     } = req.query;
+
+    let parsedTimeRange = 'all';
+
+    if (timeRange) {
+      if (typeof timeRange === 'string' && timeRange.trim().startsWith('{')) {
+        try {
+          parsedTimeRange = JSON.parse(timeRange);
+        } catch (err) {
+          console.warn(`Invalid JSON in timeRange: ${timeRange} - Error: ${err.message}`);
+          parsedTimeRange = 'all';
+        }
+      } else {
+        parsedTimeRange = timeRange;
+      }
+    }
 
     const { data, total } = await listContracts({
       page: Number(page) || 1,
       perPage: Number(perPage) || 10,
       sortField,
       sortOrder,
-      startDate,
-      endDate,
+      timeRange: parsedTimeRange,
     });
     res.json({ data, total });
   } catch (err) {
