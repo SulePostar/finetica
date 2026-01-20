@@ -6,31 +6,30 @@ const { Op } = require('sequelize');
  * @param {string} dateField - DB column name (e.g. 'invoice_date')
  */
 const getTimeFilterWhereClause = (timeRange, dateField = 'created_at') => {
-    if (!timeRange || timeRange === 'all') {
+    if (timeRange === null || timeRange === 'all') {
+        console.log('No time filter applied.');
         return {};
     }
 
+    console.log('Generating time filter for:', timeRange);
+
     let startDate = null;
     let endDate = null;
-    const now = new Date();
 
     if (typeof timeRange === 'string') {
         const normalized = timeRange.replace(/ /g, '_').toLowerCase();
 
-        endDate = new Date(now);
-        endDate.setHours(23, 59, 59, 999);
+        endDate = new Date();
+        // endDate.setHours(23, 59, 59, 999);
         switch (normalized) {
             case 'last_7_days':
-                startDate = new Date(now);
-                startDate.setDate(now.getDate() - 7);
+                startDate = endDate.setDate(new Date().getDate() - 7);
                 break;
             case 'last_30_days':
-                startDate = new Date(now);
-                startDate.setDate(now.getDate() - 30);
+                startDate = endDate.setDate(new Date().getDate() - 30);
                 break;
             case 'last_60_days':
-                startDate = new Date(now);
-                startDate.setDate(now.getDate() - 60);
+                startDate = endDate.setDate(new Date().getDate() - 60);
                 break;
         }
     }
@@ -46,11 +45,10 @@ const getTimeFilterWhereClause = (timeRange, dateField = 'created_at') => {
         }
     }
 
-    if (startDate && endDate) {
-        return { [dateField]: { [Op.between]: [startDate, endDate] } };
-    } else if (startDate) {
-        return { [dateField]: { [Op.gte]: startDate } };
-    }
+    console.log('Time Filter - startDate:', startDate, 'endDate:', endDate);
+
+    return { [dateField]: { [Op.between]: [startDate, endDate] } };
+
 
     return {};
 };
