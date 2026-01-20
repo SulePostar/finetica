@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { loginUser } from "../api/auth";
+import { loginUser, logoutUser } from "../api/auth";
 import { getMe } from "../api/users";
 
 const AuthContext = createContext(null);
@@ -80,13 +80,17 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const logout = () => {
-        localStorage.removeItem("authToken");
-
-        queryClient.clear();
-
-        setUser(null);
-        setIsAuthenticated(false);
+    const logout = async () => {
+        try {
+            await logoutUser();
+        } catch (error) {
+            console.error("Backend logout failed:", error);
+        } finally {
+            localStorage.removeItem("authToken");
+            queryClient.clear();
+            setUser(null);
+            setIsAuthenticated(false);
+        }
     };
 
     return (
