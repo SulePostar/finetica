@@ -1,80 +1,49 @@
 import React, { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import DefaultLayout from "@/layout/DefaultLayout";
 import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import UploadButton from "@/components/shared-ui/UploadButton";
 import IsError from "@/components/shared-ui/IsError";
 import { Spinner } from '@/components/ui/spinner.jsx';
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
+import { Button } from "@/components/ui/button";
 
 import { useContracts, contractKeys } from "../queries/useContracts";
 import { getContractsColumns } from "@/components/tables/columns/ContractsColumns";
 import { useAction } from "@/hooks/use-action";
-import { uploadFileToBucket } from "@/api/uploadedFiles";
-import { notify } from "@/lib/notifications";
-import { useQueryToast } from "@/hooks/use-query-toast";
+import { useBucketFileUpload } from "@/queries/uploadedFiles";
 
 export default function Contracts() {
   const [page, setPage] = useState(1);
-  const perPage = 10;
   const [timeRange, setTimeRange] = useState("all");
+  const perPage = 10;
 
   const handleAction = useAction('contracts');
-  const queryClient = useQueryClient();
 
   const { data, isPending, isError, error, refetch } = useContracts({
     page,
     perPage,
-    timeRange
+    timeRange: timeRange === "all" ? null : timeRange,
   });
 
   const {
     mutateAsync: uploadFile,
     isPending: isUploading,
-  } = useMutation({
-    mutationFn: ({ file, description }) =>
-      uploadFileToBucket({
-        file,
-        bucketName: "contracts",
-        description,
-      }),
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: contractKeys.all });
-      notify.success("Contract uploaded", {
-        description: "The contract file has been processed successfully.",
-      });
-    },
-
-    onError: (err) => {
-      notify.error("Upload failed", {
-        description:
-          err?.response?.data?.message ||
-          err?.message ||
-          "Something went wrong during upload.",
-      });
-    },
+  } = useBucketFileUpload({
+    bucketName: "contracts",
+    invalidateKeys: [contractKeys.all],
+    successMessage: "Contract uploaded",
+    successDescription: "Contract file has been processed successfully.",
   });
 
   const handleFileUpload = async (file) => {
     await uploadFile({ file, description: "Contract Document" });
   };
 
-  useQueryToast({
-    isPending,
-    isError,
-    data,
-    error,
-    successMessage: "Contracts loaded",
-    successDescription: "All contracts have been fetched successfully.",
-    errorMessage: "Failed to load contracts",
-  });
-
   const handleTimeChange = (newValue) => {
-    setTimeRange(newValue);
-    setPage(1); // Merged: ensures we reset to first page on filter change
+    const val = newValue || "all";
+    setTimeRange(val);
+    setPage(1);
   };
 
   if (isPending) {
@@ -105,43 +74,54 @@ export default function Contracts() {
     );
   }
 
-  const rows = data?.data ?? [];
-  const total = data?.total ?? 0;
-
   return (
     <div className="pt-20">
       <DynamicTable
         header={
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center justify-between w-full">
             <PageTitle
               text="Contracts"
               subtitle="Overview of all Contracts files"
               compact
             />
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3">
-                {isUploading && (
-                  <span className="text-sm text-muted-foreground animate-pulse">
+              {isUploading && (
+                <div className="flex items-center gap-3">
+                  <Spinner className="w-4 h-4 text-[var(--spurple)]" />
+                  <span className="text-sm text-muted-foreground">
                     Uploading & processing...
                   </span>
-                )}
-                <UploadButton
-                  onUploadSuccess={handleFileUpload}
-                  buttonText="Upload Contract"
-                  disabled={isUploading}
-                  className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
-                />
-                <TimeFilter
-                  value={timeRange}
-                  onChange={handleTimeChange}
-                />
-              </div>
+                </div>
+              )}
+
+              <UploadButton
+                onUploadSuccess={handleFileUpload}
+                buttonText="Upload Contract"
+                disabled={isUploading}
+                className="bg-[var(--spurple)] hover:bg-[var(--spurple)]/90 text-white"
+              />
+
+              <TimeFilter
+                value={timeRange}
+                onChange={handleTimeChange}
+              />
             </div>
           </div>
         }
+        toolbar={{
+          button: (
+            <Button variant="outline" onClick={() => {
+              setTimeRange("all");
+              setPage(1);
+            }}
+            >
+              Clear filters
+            </Button>
+          ),
+        }}
         columns={getContractsColumns(handleAction)}
-        data={rows}
-        total={total}
+        data={data?.data ?? []}
+        total={data?.total || 0}
         page={page}
         perPage={perPage}
         onPageChange={setPage}
