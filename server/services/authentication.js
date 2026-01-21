@@ -316,13 +316,32 @@ class AuthService {
   }
 
   async logout(token) {
-    if (!token) return;
+    if (!token) {
+      throw new AppError('Refresh token is required', 400);
+    }
 
-    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    try {
+      const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
 
-    await RefreshToken.destroy({
-      where: { tokenHash }
-    });
+      const deletedCount = await RefreshToken.destroy({
+        where: { tokenHash }
+      });
+
+      if (deletedCount === 0) {
+        throw new AppError('Invalid or already expired token', 404);
+      }
+
+      return {
+        success: true,
+        message: 'Logout successful'
+      };
+
+    } catch (error) {
+      if (error instanceof AppError) throw error;
+
+      console.error('Logout Error:', error);
+      throw new AppError('An error occurred during logout', 500);
+    }
   }
 }
 

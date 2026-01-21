@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { loginUser, logoutUser } from "../api/auth";
 import { getMe } from "../api/users";
+import { toast } from "sonner";
 
 const AuthContext = createContext(null);
 
@@ -82,9 +83,11 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
-            await logoutUser();
+            const response = await logoutUser();
+            toast.success(response.message || "Logged out successfully");
         } catch (error) {
-            console.error("Backend logout failed:", error);
+            const errorMessage = error.response?.data?.message || "Backend logout failed";
+            toast.error(errorMessage);
         } finally {
             localStorage.removeItem("authToken");
             queryClient.clear();

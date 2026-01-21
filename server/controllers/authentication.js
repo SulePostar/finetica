@@ -36,17 +36,16 @@ const logout = async (req, res, next) => {
   try {
     const refreshToken = req.cookies.refreshToken;
 
-    await authService.logout(refreshToken);
+    const result = await authService.logout(refreshToken);
 
     res.clearCookie('refreshToken', {
-      path: '/api/auth',
       httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      path: '/api/auth',
+      sameSite: 'strict'
     });
 
-    return res.status(200).json({
-      success: true,
-      message: 'Logout successful.',
-    });
+    return res.status(200).json(result);
   } catch (error) {
     next(error);
   }
