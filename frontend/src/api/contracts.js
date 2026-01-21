@@ -1,5 +1,4 @@
 import apiClient from './axios';
-import { getTimeFilterWhereClause } from '@/helpers/timeFilter.js';
 
 const BASE_PATH = "/contracts";
 
