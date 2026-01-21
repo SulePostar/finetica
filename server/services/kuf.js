@@ -92,12 +92,12 @@ const findById = async (id) => {
 
     if (!invoice) throw new AppError('Purchase invoice not found', 404);
     const invoiceData = invoice.toJSON();
-    // const pdfUrl = await supabaseService.getSignedUrl(BUCKET_NAME, invoice.filename);
+    const pdfUrl = await supabaseService.getSignedUrl(BUCKET_NAME, invoice.filename);
     // Normalize items array
     return {
       ...invoiceData,
       items: invoiceData.PurchaseInvoiceItems || [],
-      // pdfUrl
+      pdfUrl
     };
   } catch (error) {
     if (error instanceof AppError) throw error;
