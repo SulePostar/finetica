@@ -1,7 +1,6 @@
 const express = require('express');
 const { login, register, refreshToken, logout, requestPasswordReset, resetPassword } = require('../controllers/authentication');
-const authorizeAdmin = require('../middleware/authMiddleware');
-const jwt = require('jsonwebtoken');
+const { verifyToken } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -15,7 +14,7 @@ router.post('/register', validate(registerUserSchema), register);
 
 router.post('/refresh', refreshToken);
 
-router.post('/logout', logout);
+router.post('/logout', verifyToken, logout);
 
 // Password reset routes
 router.post('/forgot-password', requestPasswordReset);

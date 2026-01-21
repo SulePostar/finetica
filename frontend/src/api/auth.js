@@ -14,7 +14,10 @@ export const registerUser = async (payload) => {
     return data;
 };
 
+/**
+ * Logout the current user
+ */
 export const logoutUser = async () => {
-    const response = await apiClient.post('/auth/logout');
-    return response.data;
-}
+    const { data } = await apiClient.post('/auth/logout');
+    return data;
+};
