@@ -5,7 +5,7 @@ class FaqService {
     async getAllFaqs() {
         return await FaqItem.findAll({
             where: {
-                isActive: true // Filter for active items only
+                isActive: true
             },
             attributes: ['id', 'categoryKey', 'question', 'answer', 'displayOrder'],
             order: [
