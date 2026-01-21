@@ -1,6 +1,8 @@
 const { Model, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
+    class ExchangeRate extends Model { }
+
     ExchangeRate.init(
         {
             id: {
