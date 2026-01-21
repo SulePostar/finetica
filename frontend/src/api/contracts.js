@@ -2,7 +2,7 @@ import apiClient from './axios';
 
 const BASE_PATH = "/contracts";
 
-export const getContracts = async (page, perPage, timeRange) => {
+export const getContracts = async ({page, perPage, timeRange}) => {
     const params = {
         page,
         perPage,
