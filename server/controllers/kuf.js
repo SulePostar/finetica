@@ -7,7 +7,8 @@ const {
   processUnprocessedFiles,
   getKufItemsById,
   updateKufItem: updateKufItemService,
-  getKufInvoiceTypes: getKufInvoiceTypesService
+  getKufInvoiceTypes: getKufInvoiceTypesService,
+  getNetTotalSum: getNetTotalSumService
 } = require('../services/kuf');
 
 // Rename to match contract naming
@@ -107,6 +108,15 @@ const getKufInvoiceTypes = async (req, res, next) => {
   }
 }
 
+const getNetTotalSum = async (req, res, next) => {
+  try {
+    const sum = await getNetTotalSumService();
+    res.json({ sum });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getInvoiceData,
   getInvoice,
@@ -116,5 +126,6 @@ module.exports = {
   update,
   getKufItems,
   updateKufItem,
-  getKufInvoiceTypes
+  getKufInvoiceTypes,
+  getNetTotalSum
 };

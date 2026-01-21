@@ -28,3 +28,8 @@ export const getBankStatementInvalidPdfById = async (id) => {
   const { data } = await apiClient.get(`${BASE_PATH}/logs/${id}`);
   return data;
 };
+
+export const updateBankTransaction = async (id, payload) => {
+  const res = await apiClient.put(`${BASE_PATH}/${id}`, payload);
+  return res.data;
+};
