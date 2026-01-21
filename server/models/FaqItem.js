@@ -13,7 +13,7 @@ module.exports = (sequelize) => {
             categoryKey: {
                 type: DataTypes.STRING,
                 allowNull: false,
-                field: 'category_key', // Maps JS 'categoryKey' to DB 'category_key'
+                field: 'category_key',
                 comment: 'Links to frontend config keys like "getting-started"'
             },
             question: {
@@ -21,7 +21,7 @@ module.exports = (sequelize) => {
                 allowNull: false,
             },
             answer: {
-                type: DataTypes.TEXT, // Using TEXT for longer content
+                type: DataTypes.TEXT,
                 allowNull: false,
             },
             displayOrder: {
@@ -39,7 +39,7 @@ module.exports = (sequelize) => {
         {
             sequelize,
             modelName: 'FaqItem',
-            tableName: 'faq_items', // Explicit snake_case table name
+            tableName: 'faq_items',
             timestamps: true,
             createdAt: 'created_at',
             updatedAt: 'updated_at',

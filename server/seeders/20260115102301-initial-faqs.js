@@ -3,7 +3,7 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.bulkInsert('faq_items', [
-      // --- Getting Started ---
+
       {
         category_key: 'getting-started',
         question: 'How do I log in to the system?',
@@ -32,7 +32,6 @@ module.exports = {
         updated_at: new Date()
       },
 
-      // --- Managing Documents ---
       {
         category_key: 'managing-documents',
         question: 'How do I upload documents?',
@@ -70,7 +69,6 @@ module.exports = {
         updated_at: new Date()
       },
 
-      // --- Bank Transactions ---
       {
         category_key: 'bank-transactions',
         question: 'How do I upload bank statements?',
@@ -99,7 +97,6 @@ module.exports = {
         updated_at: new Date()
       },
 
-      // --- Partners ---
       {
         category_key: 'partners',
         question: 'How do I add a new partner?',
