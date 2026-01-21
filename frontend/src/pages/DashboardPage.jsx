@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import StatWidget from "@/components/dashboard/StatWidget";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
-import { Separator } from "@/components/ui/separator";
+import { useState } from "react";
 import {
     FileText,
     FileWarning,
@@ -31,8 +31,18 @@ const bottomRowData = [
 ];
 
 const Dashboard = () => {
-    const { data: invalidPdfCount, isLoadingPdf, isErrorPdf } = useInvalidPdfsCount();
-    const { data: activeContractsCount, isLoading: isLoadingContracts, isError: isErrorContracts } = useActiveContractsCount();
+    const [timeRange, setTimeRange] = useState("all");
+    const handleTimeChange = (newValue) => {
+        const val = newValue || "all";
+        setTimeRange(val);
+    };
+
+    const { data: invalidPdfCount, isLoadingPdf, isErrorPdf } = useInvalidPdfsCount({
+        timeRange: timeRange === "all" ? null : timeRange,
+    });
+    const { data: activeContractsCount, isLoading: isLoadingContracts, isError: isErrorContracts } = useActiveContractsCount({
+        timeRange: timeRange === "all" ? null : timeRange,
+    });
 
     const topRowData = useMemo(() => [
         {
@@ -64,7 +74,10 @@ const Dashboard = () => {
                     <PageTitle text="Dashboard" compact />
                     <div className="flex w-full sm:w-auto sm:justify-end">
                         <div className="w-full sm:w-auto">
-                            <TimeFilter />
+                            <TimeFilter
+                                value={timeRange}
+                                onChange={handleTimeChange}
+                            />
                         </div>
                     </div>
                 </div>
@@ -72,7 +85,6 @@ const Dashboard = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-6 gap-6 mt-6">
-
                 {topRowData.map((data, index) => (
                     <div key={index} className="md:col-span-2">
                         <StatWidget
@@ -101,7 +113,6 @@ const Dashboard = () => {
                         </div>
                     </div>
                 ))}
-
             </div>
         </div >
     );
