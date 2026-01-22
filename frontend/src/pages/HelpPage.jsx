@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
-import apiClient from "@/api/axios"; // <--- FIXED: Use your configured client
+import { useFaqList, useDeleteFaq } from "@/queries/faqQueries";
 import { useAuth } from "@/context/AuthContext";
 
 // --- UI Components ---
@@ -10,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import AddFaqModal from "@/components/shared-ui/modals/AddFaqModal";
+import ConfirmDeleteModal from "@/components/shared-ui/modals/ConfirmDeleteModal";
 import FaqCategoryCard from "@/components/help/FaqCategoryCard";
 import { CATEGORY_CONFIG } from "@/helpers/faqConfig";
 import {
@@ -30,22 +30,12 @@ const HelpPage = () => {
     const { user } = useAuth();
     const isAdmin = user?.roleName?.toLowerCase() === "admin";
 
-    // 1. Fetch Data (Fixed to use apiClient)
-    const { data: rawFaqs = [], isLoading } = useQuery({
-        queryKey: ['faqs'],
-        queryFn: async () => {
-            // Note: If your apiClient baseURL is '/api', use '/faqs'. 
-            // If it is just localhost:3000, use '/api/faqs'.
-            const res = await apiClient.get('/faqs');
-            return res.data;
-        }
-    });
+    const { data: rawFaqs = [], isLoading } = useFaqList();
+    const deleteFaqMutation = useDeleteFaq();
 
-    // 2. Transform & Filter Data
     const filteredCategories = useMemo(() => {
         if (!rawFaqs.length) return [];
 
-        // Group questions by categoryKey
         const grouped = rawFaqs.reduce((acc, item) => {
             const key = item.categoryKey;
             if (!acc[key]) acc[key] = [];
@@ -76,6 +66,10 @@ const HelpPage = () => {
         email: 'support@finetica.com',
         phone: '+123 456 7890',
         hours: 'Monday - Friday, 9:00 AM - 5:00 PM',
+    };
+
+    const handleDeleteFaq = (faqId) => {
+        deleteFaqMutation.mutate(faqId);
     };
 
     return (
@@ -150,6 +144,9 @@ const HelpPage = () => {
                             questions={category.questions}
                             expandedFaqId={expandedFaq}
                             onToggle={setExpandedFaq}
+                            isAdmin={isAdmin}
+                            onDelete={handleDeleteFaq}
+                            ConfirmDeleteModal={ConfirmDeleteModal}
                         />
                     ))}
                 </TabsContent>

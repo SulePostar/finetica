@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { getFaqs } from "@/api/faqs";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getFaqs, deleteFaq, createFaq } from "@/api/faqs";
 
 export const faqKeys = {
     all: ["faq"],
@@ -14,3 +14,24 @@ export const useFaqList = () => {
         keepPreviousData: true,
     });
 };
+
+export const useCreateFaq = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: createFaq,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: faqKeys.lists() });
+        },
+
+    })
+};
+
+export const useDeleteFaq = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: deleteFaq,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: faqKeys.lists() });
+        }
+    })
+};  

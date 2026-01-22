@@ -1,5 +1,11 @@
 import * as React from "react";
-
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import {
     Dialog,
     DialogContent,
@@ -9,11 +15,33 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
+import { useCreateFaq } from "@/queries/faqQueries";
+import { CATEGORY_CONFIG } from "@/helpers/faqConfig";
+import { notify } from "@/lib/notifications";
 export default function AddFaqModal({ open, onOpenChange }) {
     const [question, setQuestion] = React.useState("");
     const [answer, setAnswer] = React.useState("");
     const [category, setCategory] = React.useState("");
+
+    const createFaqMutation = useCreateFaq();
+
+    const handleSubmit = () => {
+        createFaqMutation.mutate({
+            question: question.trim(),
+            answer: answer.trim(),
+            categoryKey: category.trim() || null,
+        },
+            {
+                onSuccess: () => {
+                    closeDialog();
+                    notify.success("FAQ created successfully");
+                },
+                onError: (error) => {
+                    const serverMessage = error.response?.data?.message || "An error occurredd while creating the FAQ";
+                    notify.error(serverMessage);
+                }
+            });
+    };
 
     const resetState = () => {
         setQuestion("");
@@ -60,11 +88,23 @@ export default function AddFaqModal({ open, onOpenChange }) {
 
                     <div className="space-y-2">
                         <div className="text-sm font-medium">Category (optional)</div>
-                        <Input
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                            placeholder="e.g. Accounts, Payments..."
-                        />
+                        <Select value={category} onValueChange={setCategory}>
+                            <SelectTrigger className="w-full" >
+                                <SelectValue placeholder="Select a category..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {Object.entries(CATEGORY_CONFIG)
+                                    .sort(([, a], [, b]) => a.order - b.order)
+                                    .map(([key, config]) => (
+                                        <SelectItem key={key} value={key}>
+                                            <div className="flex items-center gap-2">
+                                                {config.icon}
+                                                {config.title}
+                                            </div>
+                                        </SelectItem>
+                                    ))}
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
 
@@ -73,13 +113,14 @@ export default function AddFaqModal({ open, onOpenChange }) {
                         Cancel
                     </Button>
                     <Button
-                        onClick={closeDialog}
-                        disabled={!question.trim() || !answer.trim()}
+                        onClick={handleSubmit}
+                        disabled={!question.trim() || !answer.trim() || createFaqMutation.isPending}
                     >
-                        Save
+                        {createFaqMutation.isPending ? "Saving..." : "Save"}
+
                     </Button>
                 </DialogFooter>
             </DialogContent>
-        </Dialog>
+        </Dialog >
     );
 }

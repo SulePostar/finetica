@@ -60,7 +60,7 @@ app.use('/drive', googleDriveRouter);
 app.use('/api/user-statuses', userStatusRouter);
 app.use('/api/user-roles', userRoleRouter);
 app.use('/api/invalid-pdfs', invalidPdfsRoute);
-app.use('/api/faqs', faqRouter);
+app.use('/api/help', faqRouter);
 app.use(errorHandler);
 
 // Start Google Drive auto sync service
