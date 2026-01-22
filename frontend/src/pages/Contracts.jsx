@@ -12,6 +12,8 @@ import { useContracts, contractKeys } from "../queries/useContracts";
 import { getContractsColumns } from "@/components/tables/columns/ContractsColumns";
 import { useAction } from "@/hooks/use-action";
 import { useBucketFileUpload } from "@/queries/uploadedFiles";
+import { uploadFileToBucket } from "@/api/uploadedFiles";
+import { notify } from "@/lib/notifications";
 
 export default function Contracts() {
   const [page, setPage] = useState(1);
@@ -39,6 +41,7 @@ export default function Contracts() {
   const handleFileUpload = async (file) => {
     await uploadFile({ file, description: "Contract Document" });
   };
+
 
   const handleTimeChange = (newValue) => {
     const val = newValue || "all";
