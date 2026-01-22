@@ -11,8 +11,8 @@ export const CATEGORY_CONFIG = {
         icon: <FileText className="w-5 h-5" />,
         order: 2
     },
-    'bank-transactions': {
-        title: 'Bank Transactions',
+    'business-docs': {
+        title: 'Business Documents',
         icon: <CreditCard className="w-5 h-5" />,
         order: 3
     },
@@ -25,5 +25,10 @@ export const CATEGORY_CONFIG = {
         title: 'User Management',
         icon: <Users className="w-5 h-5" />,
         order: 5
-    }
+    },
+    'other': {
+        title: 'Other',
+        icon: <HelpCircle className="w-5 h-5" />,
+        order: 99
+    },
 };
