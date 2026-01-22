@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import StatWidget from "@/components/dashboard/StatWidget";
 import PageTitle from "@/components/shared-ui/PageTitle";
+import { TimeFilter } from "@/components/shared-ui/TimeFilter";
+import { useState } from "react";
 import {
     FileText,
     FileWarning,
@@ -9,6 +11,7 @@ import {
     Activity
 } from "lucide-react";
 import { useInvalidPdfsCount } from "@/queries/InvalidPdfs/count";
+import { useActiveContractsCount } from "@/queries/useContracts";
 
 const bottomRowData = [
     {
@@ -28,19 +31,30 @@ const bottomRowData = [
 ];
 
 const Dashboard = () => {
-    const { data: invalidPdfCount, isLoading, isError } = useInvalidPdfsCount();
+    const [timeRange, setTimeRange] = useState("all");
+    const handleTimeChange = (newValue) => {
+        const val = newValue || "all";
+        setTimeRange(val);
+    };
+
+    const { data: invalidPdfCount, isLoadingPdf, isErrorPdf } = useInvalidPdfsCount({
+        timeRange: timeRange === "all" ? null : timeRange,
+    });
+    const { data: activeContractsCount, isLoading: isLoadingContracts, isError: isErrorContracts } = useActiveContractsCount({
+        timeRange: timeRange === "all" ? null : timeRange,
+    });
 
     const topRowData = useMemo(() => [
         {
             title: "Active Contracts",
-            value: "156",
-            delta: "12.5",
+            value: isLoadingContracts ? "—" : isErrorContracts ? "Error" : String(activeContractsCount ?? 0),
+            //delta: "12.5",
             positive: true,
             icon: <FileText className="text-brand w-6 h-6" />,
         },
         {
             title: "Invalid PDFs",
-            value: isLoading ? "—" : isError ? "Error" : String(invalidPdfCount ?? 0),
+            value: isLoadingPdf ? "—" : isErrorPdf ? "Error" : String(invalidPdfCount ?? 0),
             //delta: "4.2",
             positive: false,
             icon: <FileWarning className="text-destructive w-6 h-6" />,
@@ -52,13 +66,25 @@ const Dashboard = () => {
             positive: true,
             icon: <CreditCard className="text-spurple w-6 h-6" />,
         },
-    ], [isLoading, isError, invalidPdfCount]);
+    ], [isLoadingPdf, isErrorPdf, invalidPdfCount, isLoadingContracts, isErrorContracts, activeContractsCount]);
     return (
         <div className="pt-20">
-            <PageTitle text="Dashboard" compact />
+            <div className="mb-6 flex flex-col gap-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <PageTitle text="Dashboard" compact />
+                    <div className="flex w-full sm:w-auto sm:justify-end">
+                        <div className="w-full sm:w-auto">
+                            <TimeFilter
+                                value={timeRange}
+                                onChange={handleTimeChange}
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div className="h-px w-full bg-border/40" />
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-6 gap-6 mt-6">
-
                 {topRowData.map((data, index) => (
                     <div key={index} className="md:col-span-2">
                         <StatWidget
@@ -87,9 +113,8 @@ const Dashboard = () => {
                         </div>
                     </div>
                 ))}
-
             </div>
-        </div>
+        </div >
     );
 };
 

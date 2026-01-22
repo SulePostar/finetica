@@ -79,6 +79,9 @@ module.exports = (sequelize) => {
         allowNull: true,
         field: 'file_name',
       },
+      currency: {
+        type: DataTypes.STRING(3),
+      },
     },
     {
       sequelize,
