@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import DefaultLayout from "@/layout/DefaultLayout";
 import DynamicTable from "@/components/table/DynamicTable";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import UploadButton from "@/components/shared-ui/UploadButton";
@@ -14,7 +13,6 @@ import { getContractsColumns } from "@/components/tables/columns/ContractsColumn
 import { useAction } from "@/hooks/use-action";
 import { uploadFileToBucket } from "@/api/uploadedFiles";
 import { notify } from "@/lib/notifications";
-import { useQueryToast } from "@/hooks/use-query-toast";
 
 export default function Contracts() {
   const [page, setPage] = useState(1);
@@ -62,15 +60,6 @@ export default function Contracts() {
     await uploadFile({ file, description: "Contract Document" });
   };
 
-  useQueryToast({
-    isPending,
-    isError,
-    data,
-    error,
-    successMessage: "Contracts loaded",
-    successDescription: "All contracts have been fetched successfully.",
-    errorMessage: "Failed to load contracts",
-  });
 
   const handleTimeChange = (newValue) => {
     setTimeRange(newValue);
