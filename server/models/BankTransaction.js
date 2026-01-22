@@ -21,9 +21,20 @@ module.exports = (sequelize) => {
         allowNull: false,
         defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
-      amount: {
+      totalAmount: {
         type: DataTypes.DECIMAL(18, 2),
         allowNull: false,
+        field: 'total_amount',
+      },
+      totalBaseAmount: {
+        type: DataTypes.DECIMAL(18, 2),
+        allowNull: true,
+        field: 'total_base_amount',
+      },
+      totalVatAmount: {
+        type: DataTypes.DECIMAL(18, 2),
+        allowNull: true,
+        field: 'total_vat_amount',
       },
       direction: {
         type: DataTypes.ENUM('in', 'out'),
