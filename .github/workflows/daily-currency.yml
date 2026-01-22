@@ -1,0 +1,31 @@
+name: Daily Currency Update
+
+on:
+  schedule:
+    - cron: '0 16 * * 1-5' # 17:00 Pon-Pet
+  workflow_dispatch:
+
+jobs:
+  update-rates:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install server dependencies
+        run: npm ci #da li treba npm install ili npm ci (clean install - prati package-lock)?
+        working-directory: ./server
+
+      - name: Run update script
+        run: node scripts/update-currency.js
+        working-directory: ./server
+        env:
+          DATABASE_URL: ${{ secrets.DB_URL_STAGING }}

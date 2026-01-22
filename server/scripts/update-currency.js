@@ -1,0 +1,1 @@
+console.log("Starting currency update script...");
