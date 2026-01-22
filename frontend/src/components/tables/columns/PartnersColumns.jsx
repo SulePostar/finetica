@@ -13,9 +13,12 @@ export function getPartnersColumns(onAction, isAdmin) {
 
     // 3. Only add 'Delete' if the user is an admin
     if (isAdmin) {
-        partnersActions.push({ key: "delete", label: "Delete" });
+        partnersActions.push({
+            key: "delete",
+            label: "Deactivate",
+            className: "text-destructive focus:text-destructive focus:bg-destructive/10"
+        });
     }
-
     return [
         {
             accessorKey: "shortName",

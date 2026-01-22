@@ -10,7 +10,7 @@ export const getPartnerById = async (id) => {
     return data;
 }
 
-export const deletePartner = async (id) => {
+export const deactivatePartner = async (id) => {
     const { data } = await apiClient.delete(`/partners/${id}`);
     return data;
 };

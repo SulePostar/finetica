@@ -1,4 +1,4 @@
-import { getAllPartners, getPartnerById, deletePartner } from "@/api/partners";
+import { getAllPartners, getPartnerById, deactivatePartner } from "@/api/partners";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 
@@ -28,12 +28,12 @@ export const useDeletePartner = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: deletePartner,
+        mutationFn: (id) => deactivatePartner(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: partnersKeys.all });
         },
         onError: (error) => {
-            console.error("Failed to delete partner:", error);
+            console.error("Failed to deactivate partner:", error);
         },
     });
 };

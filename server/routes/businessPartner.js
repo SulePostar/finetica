@@ -30,6 +30,7 @@ router.put('/:id', validate(updateBusinessPartnerSchema), updateBusinessPartner)
 router.delete('/:id',
     isAuthenticated,
     hasRole(['admin']),
-    deleteBusinessPartner);
+    deleteBusinessPartner
+);
 
 module.exports = router;
