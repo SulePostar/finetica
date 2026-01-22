@@ -42,3 +42,7 @@ export function mapKufDailyStats(apiRows) {
         count: Number(r.count) || 0,
     }));
 }
+
+function todayISO() {
+    return new Date().toISOString().slice(0, 10)
+}
