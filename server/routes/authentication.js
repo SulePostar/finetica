@@ -1,6 +1,6 @@
 const express = require('express');
 const { login, register, refreshToken, logout, requestPasswordReset, resetPassword } = require('../controllers/authentication');
-const { verifyToken } = require('../middleware/authMiddleware');
+const isAuthenticated = require('../middleware/isAuthenticated');
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ router.post('/register', validate(registerUserSchema), register);
 
 router.post('/refresh', refreshToken);
 
-router.post('/logout', verifyToken, logout);
+router.post('/logout', isAuthenticated, logout);
 
 // Password reset routes
 router.post('/forgot-password', requestPasswordReset);
