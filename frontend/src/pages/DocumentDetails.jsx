@@ -49,9 +49,9 @@ const DocumentDetails = () => {
                     {documentType !== "contracts" && (<Button onClick={() => navigate(`/${documentType}/${id}/items`, { state: { backUrl: location.pathname } })} className="mt-4 w-full bg-[var(--spurple)] text-md">View Item Details</Button>)}
                 </div>
 
-                {/* <div className="order-2 lg:order-2  min-w-0">
+                <div className="order-2 lg:order-2  min-w-0">
                     <PdfViewer pdfUrl={data.pdfUrl} />
-                </div> */}
+                </div>
             </div>
         </div>
     );
