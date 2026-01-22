@@ -6,4 +6,4 @@ router.get('/', faqController.getFaqs);
 router.post('/', faqController.createFaq);
 router.delete('/:id', faqController.deleteFaq);
 
-module.exports = router;
+module.exports = router; 
