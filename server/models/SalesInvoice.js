@@ -56,9 +56,20 @@ module.exports = (sequelize) => {
         type: DataTypes.STRING,
         field: 'delivery_period',
       },
+      totalBaseAmount: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'total_base_amount',
+        defaultValue: 0,
+      },
+      totalVatAmount: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'total_vat_amount',
+        defaultValue: 0,
+      },
       totalAmount: {
         type: DataTypes.DECIMAL(18, 2),
         field: 'total_amount',
+        defaultValue: 0,
       },
       vatCategory: {
         type: DataTypes.STRING,
@@ -96,3 +107,4 @@ module.exports = (sequelize) => {
 
   return SalesInvoice;
 };
+
