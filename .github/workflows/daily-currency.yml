@@ -21,11 +21,12 @@ jobs:
           cache-dependency-path: server/package-lock.json
 
       - name: Install server dependencies
-        run: npm ci #da li treba npm install ili npm ci (clean install - prati package-lock)?
+        run: npm install
         working-directory: ./server
 
       - name: Run update script
         run: node scripts/update-currency.js
         working-directory: ./server
         env:
-          DATABASE_URL: ${{ secrets.DB_URL_STAGING }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NODE_ENV: 'staging'
