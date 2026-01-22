@@ -394,6 +394,17 @@ async function updateKifItem(itemId, updateData) {
     return item;
 }
 
+const getKifsTotalSum = async () => {
+    try {
+        const totalSum = await SalesInvoice.sum('totalAmount');
+
+        return totalSum || 0;
+    } catch (error) {
+        console.error("Service Error:", error);
+        throw new AppError('Failed to calculate KIF sum', 500);
+    }
+};
+
 module.exports = {
     getKifs,
     getKifById,
@@ -407,4 +418,5 @@ module.exports = {
     processUnprocessedKifFiles,
     getKifInvoiceTypes,
     updateKifItem,
+    getKifsTotalSum,
 };
