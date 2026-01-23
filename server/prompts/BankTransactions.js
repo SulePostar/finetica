@@ -29,7 +29,7 @@ Extraction Rules:
 
 Special Instructions for Arrays (Bank Statements):
 - If the document is a statement with multiple transactions, return an array of items under the "items" key.
-- Each item must follow the schema (totalAmount, direction, date, etc.).
+- Each item must use amount (not totalAmount), direction, date...
 
 Example output for a bank statement with multiple items:
 {
