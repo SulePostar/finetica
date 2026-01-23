@@ -4,15 +4,20 @@ import { getContracts, getContractById, getContractInvalidPdfById, getContractsI
 export const contractKeys = {
     all: ["contracts"],
     lists: () => [...contractKeys.all, "list"],
-    list: (filters) => [...contractKeys.lists(), { filters }],
+    list: ({ page = 1, perPage = 10, timeRange = null }) => [
+      ...contractKeys.lists(),
+      page,
+      perPage,
+      timeRange === null ? "all" : (typeof timeRange === 'object' ? JSON.stringify(timeRange) : timeRange),
+    ],
     details: () => [...contractKeys.all, "detail"],
     detail: (id) => [...contractKeys.details(), id],
 };
 
-export const useContracts = (filters = {}) => {
+export const useContracts = ({ page = 1, perPage = 10, timeRange = null } = {}) => {
     return useQuery({
-        queryKey: contractKeys.list(filters),
-        queryFn: () => getContracts(),
+      queryKey: contractKeys.list({ page, perPage, timeRange }),
+      queryFn: () => getContracts({ page, perPage, timeRange }),
     });
 };
 
