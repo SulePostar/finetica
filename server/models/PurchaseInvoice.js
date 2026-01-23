@@ -65,19 +65,22 @@ module.exports = (sequelize) => {
       },
       totalBaseAmount: {
         type: DataTypes.DECIMAL(18, 2),
-        field: 'net_total',
+        field: 'total_base_amount',
+        defaultValue: 0,
       },
       totalAmount: {
         type: DataTypes.DECIMAL(18, 2),
-        field: 'lump_sum',
+        field: 'total_amount',
+        defaultValue: 0,
       },
       totalVatAmount: {
         type: DataTypes.DECIMAL(18, 2),
-        field: 'vat_amount',
+        field: 'total_vat_amount',
+        defaultValue: 0,
       },
       convertedTotalAmount: {
         type: DataTypes.DECIMAL(18, 2),
-        field: 'total_amount',
+        field: 'converted_total_amount',
         defaultValue: 0,
       },
       deductibleVat: {

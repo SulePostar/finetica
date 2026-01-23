@@ -73,7 +73,7 @@ module.exports = (sequelize) => {
       },
       convertedTotalAmount: {
         type: DataTypes.DECIMAL(18, 2),
-        field: 'total_amount',
+        field: 'converted_total_amount',
         defaultValue: 0,
       },
       vatCategory: {
