@@ -21,20 +21,20 @@ module.exports = (sequelize) => {
         allowNull: false,
         defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
       },
-      totalAmount: {
-        type: DataTypes.DECIMAL(18, 2),
-        allowNull: false,
-        field: 'total_amount',
-      },
       totalBaseAmount: {
         type: DataTypes.DECIMAL(18, 2),
-        allowNull: true,
         field: 'total_base_amount',
+        defaultValue: 0,
+      },
+      totalAmount: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'total_amount',
+        defaultValue: 0,
       },
       totalVatAmount: {
         type: DataTypes.DECIMAL(18, 2),
-        allowNull: true,
         field: 'total_vat_amount',
+        defaultValue: 0,
       },
       convertedTotalAmount: {
         type: DataTypes.DECIMAL(18, 2),
