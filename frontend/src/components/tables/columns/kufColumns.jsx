@@ -38,10 +38,24 @@ export function getKufColumns(onAction) {
             cell: ({ row }) => formatDateTime(row.original.dueDate),
         },
         {
+            accessorKey: "totalBaseAmount",
+            header: "Base Amount",
+            cell: ({ row }) => {
+                return `${formatValue(row.original.totalBaseAmount)}`;
+            },
+        },
+        {
+            accessorKey: "totalVatAmount",
+            header: "VAT Amount",
+            cell: ({ row }) => {
+                return `${formatValue(row.original.totalVatAmount)}`;
+            },
+        },
+        {
             accessorKey: "totalAmount",
             header: "Total Amount",
             cell: ({ row }) => {
-                return formatValue(row.original.netTotal);
+                return formatValue(row.original.totalAmount);
             },
         },
         {
