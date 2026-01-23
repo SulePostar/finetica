@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import StatWidget from "@/components/dashboard/StatWidget";
 import KufDailyAreaChart from "@/components/dashboard/charts/KufChart";
+import KifDailyAreaChart from "@/components/dashboard/charts/KifChart";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 import { useState } from "react";
@@ -104,19 +105,9 @@ const Dashboard = () => {
                 </div>
 
                 {/* RIGHT: KIF Chart */}
-                <div className="md:col-span-3 h-80 bg-muted/20 border border-dashed border-border rounded-2xl flex items-center justify-center relative">
-                    <div className="w-full max-w-xs">
-                        <StatWidget
-                            title="AI Accuracy"
-                            value="94.8%"
-                            delta="1.2"
-                            positive={true}
-                            icon={<Brain className="text-chart-4 w-6 h-6" />}
-                        />
-                    </div>
+                <div className="md:col-span-3 h-80">
+                    <KifDailyAreaChart />
                 </div>
-
-
             </div>
         </div >
     );

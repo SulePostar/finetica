@@ -43,6 +43,13 @@ export function mapKufDailyStats(apiRows) {
     }));
 }
 
-function todayISO() {
+export function mapKifDailyStats(apiRows) {
+    return (apiRows || []).map((r) => ({
+        date: r.day,
+        count: Number(r.count) || 0,
+    }));
+}
+
+export function todayISO() {
     return new Date().toISOString().slice(0, 10)
 }

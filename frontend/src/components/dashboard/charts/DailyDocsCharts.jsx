@@ -44,7 +44,10 @@ export default function DailyDocsChart({
 }) {
     const [range, setRange] = useState("7d")
 
-    const toDate = useMemo(() => new Date(`${toDateISO}T00:00:00`), [toDateISO])
+    const toDate = useMemo(() => {
+        const [year, month, day] = toDateISO.split('-').map(Number);
+        return new Date(Date.UTC(year, month - 1, day));
+    }, [toDateISO])
 
     const { from, to } = useMemo(
         () => getRangeDates(range, toDate),
