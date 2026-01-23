@@ -36,6 +36,11 @@ module.exports = (sequelize) => {
         allowNull: true,
         field: 'total_vat_amount',
       },
+      convertedTotalAmount: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'total_amount',
+        defaultValue: 0,
+      },
       direction: {
         type: DataTypes.ENUM('in', 'out'),
         allowNull: true, // Now nullable, only required on items

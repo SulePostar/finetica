@@ -63,17 +63,22 @@ module.exports = (sequelize) => {
         defaultValue: null,
         field: 'received_date',
       },
-      netTotal: {
+      totalBaseAmount: {
         type: DataTypes.DECIMAL(18, 2),
         field: 'net_total',
       },
-      lumpSum: {
+      totalAmount: {
         type: DataTypes.DECIMAL(18, 2),
         field: 'lump_sum',
       },
-      vatAmount: {
+      totalVatAmount: {
         type: DataTypes.DECIMAL(18, 2),
         field: 'vat_amount',
+      },
+      convertedTotalAmount: {
+        type: DataTypes.DECIMAL(18, 2),
+        field: 'total_amount',
+        defaultValue: 0,
       },
       deductibleVat: {
         type: DataTypes.DECIMAL(18, 2),
