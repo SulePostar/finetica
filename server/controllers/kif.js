@@ -8,6 +8,7 @@ const {
     getKifItemsById,
     getKifInvoiceTypes: getKifInvoiceTypesService,
     updateKifItem: updateKifItemService,
+    getKifCountGroupedByDay,
 } = require('../services/kif');
 const logger = require('../utils/logger');
 
@@ -128,6 +129,16 @@ const updateKifItem = async (req, res, next) => {
     }
 };
 
+const getKifDailyCounts = async (req, res, next) => {
+    try {
+        const { from, to } = req.query;
+        const data = await getKifCountGroupedByDay({ from, to });
+        return res.json({ data });
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     getKifData,
     getKif,
@@ -137,4 +148,5 @@ module.exports = {
     getKifItems,
     getKifInvoiceTypes,
     updateKifItem,
+    getKifDailyCounts,
 };
