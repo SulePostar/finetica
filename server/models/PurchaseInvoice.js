@@ -103,6 +103,9 @@ module.exports = (sequelize) => {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
+      currency: {
+        type: DataTypes.STRING(3),
+      },
     },
     {
       sequelize,

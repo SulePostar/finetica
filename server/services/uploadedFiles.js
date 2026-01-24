@@ -181,15 +181,13 @@ class UploadedFilesService {
   /**
    * Handle complete profile image upload process
    * @param {Object} file - Multer file object
-   * @param {string} firstName - User's first name
-   * @param {string} lastName - User's last name
    * @returns {Promise<Object>} Upload result with formatted response
    */
-  async uploadProfileImage(file, firstName, lastName) {
-    if (!firstName || !lastName) {
-      throw new AppError('First name and last name are required for profile image upload', 400);
+  async uploadProfileImage(file) {
+    if (!file) {
+      throw new AppError('No file provided', 400);
     }
-    const uploadResult = await supabaseService.uploadProfileImage(file, firstName, lastName);
+    const uploadResult = await supabaseService.uploadProfileImage(file);
     if (!uploadResult.success) {
       throw new Error(`Profile image upload failed: ${uploadResult.error}`);
     }

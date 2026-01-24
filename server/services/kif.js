@@ -5,6 +5,9 @@ const KIF_PROMPT = require('../prompts/Kif.js');
 const salesInvoiceSchema = require('../schemas/kifSchema');
 const AppError = require('../utils/errorHandler');
 const supabaseService = require('../utils/supabase/supabaseService');
+const { getTimeFilterWhereClause } = require('../utils/timeFilter');
+const logger = require('../utils/logger');
+
 const MODEL_NAME = 'gemini-2.5-flash-lite';
 const KIF_BUCKET_NAME = 'kif';
 const extractKifData = async (fileBuffer, mimeType) => {
@@ -248,50 +251,58 @@ const approveKif = async (documentId, updatedData = {}, userId) => {
         throw new AppError('Failed to approve KIF sales invoice', 500);
     }
 };
-const getKifs = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc', invoiceType }) => {
+
+const SORT_MAPPING = {
+    createdAt: 'created_at',
+    invoiceDate: 'invoice_date',
+    dueDate: 'due_date',
+    totalAmount: 'total_amount',
+    invoiceNumber: 'invoice_number',
+    invoiceType: 'invoice_type'
+};
+
+const getKifs = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc', invoiceType, timeRange = 'all' }) => {
     try {
         const offset = (page - 1) * perPage;
         const limit = parseInt(perPage);
-        let orderOptions = [];
-        if (sortField) {
-            orderOptions = [[sortField, sortOrder.toUpperCase()]];
-        } else {
-            orderOptions = [['id', 'ASC']];
-        }
-        // Get total count
-        const where = {};
-        if (invoiceType) {
-            where.invoiceType = invoiceType;
-        }
-        const total = await SalesInvoice.count({ where });
-        // Get paginated data with associated items and business partner
-        const salesInvoices = await SalesInvoice.findAll({
+
+        const dbSortField = SORT_MAPPING[sortField] || 'created_at';
+        const order = [[dbSortField, sortOrder.toUpperCase()]];
+
+        const where = {
+            ...(invoiceType && invoiceType !== 'all' && { invoiceType }),
+            ...getTimeFilterWhereClause(timeRange, 'invoice_date')
+        };
+
+        const { count, rows } = await SalesInvoice.findAndCountAll({
             where,
             include: [
-                {
-                    model: SalesInvoiceItem
-                },
                 {
                     model: BusinessPartner,
                     attributes: ['id', 'name', 'vatNumber']
                 }
             ],
-            order: orderOptions,
+            order,
             limit,
-            offset
+            offset,
+            distinct: true
         });
-        const transformedData = salesInvoices.map(invoice => {
-            const invoiceData = invoice.toJSON();
+        const data = rows.map(invoice => {
+            const json = invoice.toJSON();
             return {
-                ...invoiceData,
-                customerName: invoiceData.BusinessPartner?.name || null
+                ...json,
+                customerName: json.BusinessPartner?.name || null
             };
         });
-        return { data: transformedData, total };
+
+        return { data, total: count };
+
     } catch (error) {
+        logger.error(`Service Error in getKifs: ${error.message}`, { stack: error.stack });
         throw new AppError('Failed to fetch KIF data', 500);
     }
 };
+
 const getKifById = async (id) => {
     try {
         const salesInvoice = await SalesInvoice.findByPk(id, {

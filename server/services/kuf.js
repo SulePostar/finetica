@@ -92,12 +92,12 @@ const findById = async (id) => {
 
     if (!invoice) throw new AppError('Purchase invoice not found', 404);
     const invoiceData = invoice.toJSON();
-    // const pdfUrl = await supabaseService.getSignedUrl(BUCKET_NAME, invoice.filename);
+    const pdfUrl = await supabaseService.getSignedUrl(BUCKET_NAME, invoice.filename);
     // Normalize items array
     return {
       ...invoiceData,
       items: invoiceData.PurchaseInvoiceItems || [],
-      // pdfUrl
+      pdfUrl
     };
   } catch (error) {
     if (error instanceof AppError) throw error;
@@ -348,6 +348,15 @@ const getKufInvoiceTypes = async () => {
   }
 }
 
+const getNetTotalSum = async () => {
+  try {
+    const sum = await PurchaseInvoice.sum('netTotal');
+    return sum || 0;
+  } catch (error) {
+    throw new AppError('Failed to calculate net total sum', 500);
+  }
+};
+
 module.exports = {
   listInvoices,
   findById,
@@ -360,4 +369,5 @@ module.exports = {
   getKufItemsById,
   updateKufItem,
   getKufInvoiceTypes,
+  getNetTotalSum
 };

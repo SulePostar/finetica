@@ -4,6 +4,7 @@ const { processDocument } = require('./aiService');
 const contractSchema = require('../schemas/contract');
 const contractsPrompt = require('../prompts/contract');
 const supabaseService = require('../utils/supabase/supabaseService');
+const { getTimeFilterWhereClause } = require('../utils/timeFilter');
 
 const MODEL_NAME = 'gemini-2.5-flash-lite';
 const BUCKET_NAME = 'contracts';
@@ -28,7 +29,13 @@ const SORT_FIELD_MAP = {
   updatedAt: 'updatedAt',
 };
 
-const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'asc' }) => {
+const listContracts = async ({
+                               page = 1,
+                               perPage = 10,
+                               sortField,
+                               sortOrder = 'asc',
+                               timeRange = 'all',
+                             }) => {
   const limit = Math.max(1, Number(perPage) || 10);
   const offset = Math.max(0, ((Number(page) || 1) - 1) * limit);
 
@@ -39,7 +46,12 @@ const listContracts = async ({ page = 1, perPage = 10, sortField, sortOrder = 'a
     ];
   }
 
+  const where = {
+    ...getTimeFilterWhereClause(timeRange, 'createdAt')
+  };
+
   const { rows, count } = await Contract.findAndCountAll({
+    where,
     offset,
     limit,
     order,
@@ -89,6 +101,15 @@ const createContract = async (contractData) => {
   return created;
 }
 
+const getActiveContractsCount = async () => {
+  const count = await Contract.count({
+    where: {
+      isActive: true,
+    },
+  });
+  return count;
+}
+
 const extractData = async (fileBuffer, mimeType) => {
   const businessPartners = await BusinessPartner.findAll({
     attributes: ['id', 'name'],
@@ -116,9 +137,9 @@ const processSingleUnprocessedFile = async (unprocessedFileLog) => {
     const { isValidContract, ...contractData } = await extractData(buffer, mimeType);
 
     if (isValidContract === false) {
-      await unprocessedFileLog.update({ 
+      await unprocessedFileLog.update({
         isValid: false,
-        isProcessed: true,                    
+        isProcessed: true,
         processedAt: new Date(),
         message: 'File is not a valid Contract',
       });
@@ -163,4 +184,5 @@ module.exports = {
   createContract,
   extractData,
   processUnprocessedFiles,
+  getActiveContractsCount
 };

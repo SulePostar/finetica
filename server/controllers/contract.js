@@ -3,16 +3,40 @@ const {
   approveContractById,
   findById,
   createContract,
+  getActiveContractsCount
 } = require('../services/contract');
 
 const getContractData = async (req, res, next) => {
   try {
-    const { page = 1, perPage = 10, sortField, sortOrder = 'asc' } = req.query;
+    const {
+      page = 1,
+      perPage = 10,
+      sortField,
+      sortOrder = 'asc',
+      timeRange
+    } = req.query;
+
+    let parsedTimeRange = 'all';
+
+    if (timeRange) {
+      if (typeof timeRange === 'string' && timeRange.trim().startsWith('{')) {
+        try {
+          parsedTimeRange = JSON.parse(timeRange);
+        } catch (err) {
+          console.warn(`Invalid JSON in timeRange: ${timeRange} - Error: ${err.message}`);
+          parsedTimeRange = 'all';
+        }
+      } else {
+        parsedTimeRange = timeRange;
+      }
+    }
+
     const { data, total } = await listContracts({
       page: Number(page) || 1,
       perPage: Number(perPage) || 10,
       sortField,
       sortOrder,
+      timeRange: parsedTimeRange,
     });
     res.json({ data, total });
   } catch (err) {
@@ -48,9 +72,19 @@ const create = async (req, res, next) => {
   }
 };
 
+const getActiveCount = async (req, res, next) => {
+  try {
+    const count = await getActiveContractsCount();
+    res.json({count});
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getContractData,
   getContract,
   approveContract,
   create,
+  getActiveCount
 };

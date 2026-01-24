@@ -17,3 +17,19 @@ export const resetPassword = async ({ token, newPassword }) => {
     });
     return response.data;
 }
+/**
+ * Register a new user
+ * @param {Object} payload - { firstName, lastName, email, password, profileImage? }
+ */
+export const registerUser = async (payload) => {
+    const { data } = await apiClient.post('/auth/register', payload);
+    return data;
+};
+
+/**
+ * Logout the current user
+ */
+export const logoutUser = async () => {
+    const { data } = await apiClient.post('/auth/logout');
+    return data;
+};

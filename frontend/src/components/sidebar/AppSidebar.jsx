@@ -1,5 +1,5 @@
 import * as React from "react";
-import {useAuth} from '@/context/AuthContext.jsx';
+import { useAuth } from '@/context/AuthContext.jsx';
 import {
     LayoutDashboard,
     CreditCard,
@@ -56,7 +56,7 @@ const SIDEBAR_NAVIGATION = [
         label: "Support",
         items: [
             { title: "Help", url: "/help", icon: HelpCircle },
-            { title: "Log Out", url: "/logout", icon: LogOut },
+            { title: "Log Out", variant: "logout", icon: LogOut },
         ],
     },
     {
@@ -65,29 +65,27 @@ const SIDEBAR_NAVIGATION = [
     }
 ];
 
-
 export function AppSidebar(props) {
+    const { user, loading, logout } = useAuth();
 
-    const { user, loading } = useAuth();
+    const isAdmin = user?.roleName === 'admin';
+
+    const filteredNavigation = React.useMemo(() => {
+        return SIDEBAR_NAVIGATION.filter(group => {
+            if (group.label === "Administration" && !isAdmin) {
+                return false;
+            }
+            return true;
+        });
+    }, [isAdmin]);
 
     if (loading) {
         return <Sidebar {...props} className="bg-spurple" />;
     }
 
-  const isAdmin = user?.roleName === 'admin';
-
-  const filteredNavigation = React.useMemo(() => {
-    return SIDEBAR_NAVIGATION.filter(group => {
-      if (group.label === "Administration" && !isAdmin) {
-        return false;
-      }
-      return true;
-    });
-  }, [isAdmin]);
-
-  if (!user) {
-    return null;
-  }
+    if (!user) {
+        return null;
+    }
 
     const profilePath = `/profile/me`;
 
@@ -102,13 +100,7 @@ export function AppSidebar(props) {
         <Sidebar
             collapsible="icon"
             variant="sidebar"
-            className="
-                fixed top-0 left-0 z-50 w-[var(--sidebar-width)]
-                transition-all duration-300 ease-in-out 
-                bg-spurple
-                border-r border-white/10 
-                backdrop-blur-xl
-                flex flex-col"
+            className="fixed top-0 left-0 z-50 w-[var(--sidebar-width)] transition-all duration-300 ease-in-out bg-spurple border-r border-white/10 backdrop-blur-xl flex flex-col"
             {...props}
         >
             <SidebarRail />
@@ -120,11 +112,10 @@ export function AppSidebar(props) {
                     <SidebarLogo />
                 </SidebarHeader>
 
-                <SidebarContent
-                    className="pt-4 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent"
-                >
-                    <SidebarNav groups={filteredNavigation} />
+                <SidebarContent className="pt-4 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
+                    <SidebarNav groups={filteredNavigation} onLogout={logout} />
                 </SidebarContent>
+
                 <SidebarFooter>
                     <div className="flex items-center justify-between px-3 py-4 group-data-[collapsible=icon]:hidden pointer-events-auto">
                         <Link to={profilePath} className="block w-full cursor-pointer">

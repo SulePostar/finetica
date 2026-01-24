@@ -4,12 +4,14 @@ const crypto = require('crypto');
 const { User, Role, UserStatus, RefreshToken } = require('../models');
 const { sendTemplatedEmail } = require('./sendGridService');
 const { TEMPLATE_IDS } = require('../utils/constants');
+const { formatDate } = require('../utils/dateUtils');
 
 const AppError = require('../utils/errorHandler');
 const { USER_STATUS } = require('../utils/constants');
 const REFRESH_TOKEN_EXPIRES_IN_MS = process.env.REFRESH_TOKEN_EXPIRES_IN_DAYS * 24 * 60 * 60 * 1000;
 
 class AuthService {
+
   async register(registerData) {
     const { email, password, profileImage, ...rest } = registerData;
 
@@ -37,14 +39,32 @@ class AuthService {
 
     const user = await User.create(userData);
 
-    // Send welcome email
-    try {
-      await sendTemplatedEmail('welcome_email', user.email, {
-        userName: user.firstName
-      });
-    } catch (emailError) {
-      console.error('Failed to send welcome email:', emailError);
-      // Don't fail registration if email fails
+    // Send welcome email 
+    const results = await Promise.allSettled([
+      sendTemplatedEmail(
+        process.env.SENDGRID_FROM_EMAIL,
+        TEMPLATE_IDS.USER_APPROVAL,
+        {
+          newUserName: `${user.firstName} ${user.lastName}`,
+          newUserEmail: user.email,
+          createdAt: formatDate(user.created_at),
+          adminDashboardLink: `${process.env.FRONTEND_URL ?? 'http://localhost:5173'}/users`,
+        }
+      ),
+      sendTemplatedEmail(
+        user.email,
+        TEMPLATE_IDS.WELCOME_EMAIL,
+        {
+          userName: user.firstName,
+        }
+      ),
+    ]);
+    const [adminResult, userResult] = results;
+    if (adminResult.status === 'rejected') {
+      console.error('Failed to send User Approval Email to Admin:', adminResult.reason);
+    }
+    if (userResult.status === 'rejected') {
+      console.error('Failed to send User Welcome Email:', userResult.reason);
     }
 
     return {
@@ -293,6 +313,35 @@ class AuthService {
       success: true,
       data: { token: newAccessToken, refreshToken: newRefreshToken },
     };
+  }
+
+  async logout(token) {
+    if (!token) {
+      throw new AppError('Refresh token is required', 400);
+    }
+
+    try {
+      const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
+      const deletedCount = await RefreshToken.destroy({
+        where: { tokenHash }
+      });
+
+      if (deletedCount === 0) {
+        throw new AppError('Invalid or already expired token', 404);
+      }
+
+      return {
+        success: true,
+        message: 'Logout successful'
+      };
+
+    } catch (error) {
+      if (error instanceof AppError) throw error;
+
+      console.error('Logout Error:', error);
+      throw new AppError('An error occurred during logout', 500);
+    }
   }
 }
 
