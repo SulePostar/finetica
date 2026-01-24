@@ -30,11 +30,28 @@ export function getBankTransactionsColumns(onAction) {
             cell: ({ row }) => row.original.description || "—",
         },
         {
-            accessorKey: "amount",
-            header: "Amount",
+            accessorKey: "totalBaseAmount",
+            header: "Base Amount",
             cell: ({ row }) => {
-                const amount = row.original.amount;
-                return amount ? `${parseFloat(amount).toFixed(2)}` : "—";
+                return <span>{row.original.totalBaseAmount || "—"}</span>;
+            },
+        },
+        {
+            accessorKey: "totalVatAmount",
+            header: "VAT amount",
+            cell: ({ row }) => {
+                return <span>{row.original.totalVatAmount || "—"}</span>;
+            },
+        },
+        {
+            accessorKey: "totalAmount",
+            header: "Total Amount",
+            cell: ({ row }) => {
+                return (
+                    <span>
+                        {row.original.totalAmount || "—"}
+                    </span>
+                );
             },
         },
         {

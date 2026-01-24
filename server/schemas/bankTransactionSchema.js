@@ -43,10 +43,10 @@ const bankTransactionSchema = {
     required: [
         'isBankTransaction',
         'date',
-        'totalAmount',        // Promijenjeno iz 'amount'
-        'totalBaseAmount',    // Novo
-        'totalVatAmount',     // Novo
-        'convertedTotalAmount', // Novo
+        'totalAmount',
+        'totalBaseAmount',
+        'totalVatAmount',
+        'convertedTotalAmount',
         'direction',
         'accountNumber',
         'description',
