@@ -35,13 +35,25 @@ export function getKifColumns(onAction) { // Changed from onDelete to onAction
             accessorKey: "dueDate",
             header: "Due Date",
             cell: ({ row }) => formatDateTime(row.original.dueDate),
+        }, {
+            accessorKey: "totalBaseAmount",
+            header: "Base Amount",
+            cell: ({ row }) => {
+                return `${formatValue(row.original.totalBaseAmount)}`;
+            },
+        },
+        {
+            accessorKey: "totalVatAmount",
+            header: "VAT Amount",
+            cell: ({ row }) => {
+                return `${formatValue(row.original.totalVatAmount)}`;
+            },
         },
         {
             accessorKey: "totalAmount",
             header: "Total Amount",
             cell: ({ row }) => {
-                const value = row.original.totalAmount;
-                return value != null ? `${parseFloat(value).toFixed(2)}` : "—";
+                return formatValue(row.original.totalAmount);
             },
         },
         {
