@@ -12,6 +12,9 @@ import {
 
 import { resetPassword } from '../api/auth';
 import { notify } from '@/lib/notifications';
+import { useAuth } from '../context/AuthContext';
+
+
 
 const ResetPasswordForm = () => {
     const [searchParams] = useSearchParams();
@@ -21,6 +24,7 @@ const ResetPasswordForm = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [status, setStatus] = useState('idle');
     const [apiError, setApiError] = useState('');
+    const { logout } = useAuth();
 
     const {
         register,
@@ -71,6 +75,7 @@ const ResetPasswordForm = () => {
             });
 
             if (result.success) {
+                logout();
                 setStatus('success');
                 notify?.onSuccess?.('Password reset successfully!');
                 setTimeout(() => navigate('/login'), 3000);
