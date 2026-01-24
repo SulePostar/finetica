@@ -16,12 +16,23 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 
 import AppearanceCard from "@/components/sidebar/AppearanceCard";
 import CollapsedThemeIcon from "../theme/CollapsedThemeIcon";
 
-export function SidebarNav({ groups }) {
+export function SidebarNav({ groups, onLogout }) {
     const location = useLocation();
     const currentPath = location.pathname;
 
@@ -61,6 +72,7 @@ export function SidebarNav({ groups }) {
                         <SidebarMenu className="space-y-2">
                             {group.items?.map((item) => {
                                 const isActive = currentPath === item.url;
+                                const isLogout = item.title === "Log Out";
 
                                 if (group.collapsible) {
                                     return (
@@ -74,18 +86,13 @@ export function SidebarNav({ groups }) {
                                                             "text-slate-600 dark:text-white/80",
                                                             "hover:bg-indigo-50 hover:text-indigo-700",
                                                             "dark:hover:bg-[#6C69FF]/20 dark:hover:text-white",
-
-                                                            isActive && [
-                                                                "text-indigo-600 dark:text-indigo-200",
-                                                            ]
+                                                            isActive && ["text-indigo-600 dark:text-indigo-200"]
                                                         )}
                                                     >
                                                         <item.icon className="size-6" />
-
                                                         <span className="group-data-[collapsible=icon]:hidden">
                                                             {item.title}
                                                         </span>
-
                                                         <ChevronRight className="ml-auto size-5 transition-transform duration-200 group-data-[state=open]:rotate-90 group-data-[collapsible=icon]:hidden" />
                                                     </SidebarMenuButton>
                                                 </CollapsibleTrigger>
@@ -113,36 +120,79 @@ export function SidebarNav({ groups }) {
 
                                 return (
                                     <SidebarMenuItem key={item.title}>
-                                        <SidebarMenuButton
-                                            asChild
-                                            className={cn(
-                                                "relative overflow-hidden transition-all duration-300 ease-out rounded-md border border-transparent",
-                                                "w-full md:w-[220px]",
-                                                "flex items-center gap-2 py-1.5 px-2",
-                                                "text-slate-600 dark:text-white/80",
-                                                "hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-[#6C69FF]/20 dark:hover:text-white",
-
-                                                isActive && [
-                                                    "bg-[#6C69FF]/15",
-                                                    "border-l-4 border-[#6C69FF]",
-                                                    "text-[#6C69FF]",
-                                                    "font-semibold",
-                                                ]
-                                            )}
-                                        >
-                                            <Link to={item.url} className="flex items-center gap-4 w-full">
-                                                <item.icon
-                                                    className={cn(
-                                                        "size-5 transition-transform duration-300",
-                                                        isActive &&
-                                                        "scale-110 dark:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
-                                                    )}
-                                                />
-                                                <span className="group-data-[collapsible=icon]:hidden">
-                                                    {item.title}
-                                                </span>
-                                            </Link>
-                                        </SidebarMenuButton>
+                                        {isLogout ? (
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <SidebarMenuButton
+                                                        className={cn(
+                                                            "relative overflow-hidden transition-all duration-300 ease-out rounded-md border border-transparent",
+                                                            "w-full md:w-[220px]",
+                                                            "flex items-center gap-2 py-1.5 px-2",
+                                                            "text-slate-600 dark:text-white/80",
+                                                            "hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                                                        )}
+                                                    >
+                                                        <div className="flex items-center gap-4 w-full cursor-pointer">
+                                                            <item.icon className="size-5" />
+                                                            <span className="group-data-[collapsible=icon]:hidden">
+                                                                {item.title}
+                                                            </span>
+                                                        </div>
+                                                    </SidebarMenuButton>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent className="bg-white dark:bg-[#1a1a2e] border-slate-200 dark:border-white/10">
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle className="text-slate-900 dark:text-white">
+                                                            Are you sure you want to log out?
+                                                        </AlertDialogTitle>
+                                                        <AlertDialogDescription className="text-slate-500 dark:text-white/60">
+                                                            This will end your current session and you will need to log in again to access the dashboard.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel className="border-slate-200 dark:border-white/10 dark:text-white dark:hover:bg-white/5">
+                                                            Cancel
+                                                        </AlertDialogCancel>
+                                                        <AlertDialogAction
+                                                            onClick={() => onLogout?.()}
+                                                            className="bg-[#6C69FF] hover:bg-[#5b58e6] text-white"
+                                                        >
+                                                            Log Out
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
+                                        ) : (
+                                            <SidebarMenuButton
+                                                asChild
+                                                className={cn(
+                                                    "relative overflow-hidden transition-all duration-300 ease-out rounded-md border border-transparent",
+                                                    "w-full md:w-[220px]",
+                                                    "flex items-center gap-2 py-1.5 px-2",
+                                                    "text-slate-600 dark:text-white/80",
+                                                    "hover:bg-indigo-50 hover:text-indigo-700 dark:hover:bg-[#6C69FF]/20 dark:hover:text-white",
+                                                    isActive && [
+                                                        "bg-[#6C69FF]/15",
+                                                        "border-l-4 border-[#6C69FF]",
+                                                        "text-[#6C69FF]",
+                                                        "font-semibold",
+                                                    ]
+                                                )}
+                                            >
+                                                <Link to={item.url} className="flex items-center gap-4 w-full">
+                                                    <item.icon
+                                                        className={cn(
+                                                            "size-5 transition-transform duration-300",
+                                                            isActive &&
+                                                            "scale-110 dark:drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
+                                                        )}
+                                                    />
+                                                    <span className="group-data-[collapsible=icon]:hidden">
+                                                        {item.title}
+                                                    </span>
+                                                </Link>
+                                            </SidebarMenuButton>
+                                        )}
                                     </SidebarMenuItem>
                                 );
                             })}
