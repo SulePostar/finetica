@@ -1,6 +1,9 @@
 const express = require('express');
 require('dotenv').config();
 
+const http = require('http');
+const { Server } = require('socket.io');
+
 const cors = require('cors');
 const session = require('express-session');
 const { connectToDatabase } = require('./config/db');
@@ -22,6 +25,8 @@ const businessPartnerRouter = require('./routes/businessPartner');
 const googleDriveAutoSync = require('./tasks/googleDriveAutoSync');
 const googleDriveRouter = require('./routes/googleDrive');
 const exchangeRateRoutes = require('./routes/exchangeRateRoutes');
+const createRealtime = require("./services/realtime");
+const socketAuth = require("./socket");
 
 const PORT = process.env.PORT;
 const SECRET = process.env.SESSION_SECRET;
@@ -65,6 +70,33 @@ app.use('/api/rates', exchangeRateRoutes);
 app.use('/api/faqs', faqRouter);
 app.use(errorHandler);
 
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: process.env.CLIENT_URL,
+    methods: ['GET', 'POST'],
+    credentials: true,
+  }
+});
+
+socketAuth(io);
+app.set("realtime", createRealtime(io));
+
+app.get("/debug/emit", (req, res) => {
+  const realtime = req.app.get("realtime");
+  const adminID = process.env.REALTIME_ADMIN_USER_ID;
+
+  console.log("✅ DEBUG EMIT to adminID:", adminID);
+
+  realtime.notifyUser(adminID, "notification:new-user", {
+    message: "DEBUG: hello admin",
+    timestamp: new Date().toISOString(),
+  });
+
+  res.json({ ok: true });
+});
+
 // Start Google Drive auto sync service
 // googleDriveAutoSync.start();
 
@@ -73,7 +105,7 @@ app.use(errorHandler);
   try {
     await connectToDatabase();
 
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`🟢 Server is running at port: ${PORT}`);
 
       setInterval(() => {
