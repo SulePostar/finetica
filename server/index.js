@@ -83,20 +83,6 @@ const io = new Server(server, {
 socketAuth(io);
 app.set("realtime", createRealtime(io));
 
-app.get("/debug/emit", (req, res) => {
-  const realtime = req.app.get("realtime");
-  const adminID = process.env.REALTIME_ADMIN_USER_ID;
-
-  console.log("✅ DEBUG EMIT to adminID:", adminID);
-
-  realtime.notifyUser(adminID, "notification:new-user", {
-    message: "DEBUG: hello admin",
-    timestamp: new Date().toISOString(),
-  });
-
-  res.json({ ok: true });
-});
-
 // Start Google Drive auto sync service
 // googleDriveAutoSync.start();
 
