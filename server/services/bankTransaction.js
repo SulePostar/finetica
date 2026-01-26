@@ -119,21 +119,21 @@ const createBankTransactionFromAI = async (extractedData, options = {}) => {
         const { items, isBankTransaction, filename: dataFilename, ...bankTransactionData } =
             extractedData.data || extractedData;
 
-        // Use filename from options first, then from extractedData
         const file_name = filename || dataFilename;
 
-        // If it's not a bank transaction, skip creating a record
         if (!isBankTransaction) {
             if (!externalTx) await tx.commit();
             return { isBankTransaction: false, message: 'Document is not a bank transaction' };
         }
 
-        // Create main bank transaction (direction is now optional)
         const document = await BankTransaction.create(
             {
                 date: bankTransactionData.date,
-                amount: parseFloat(bankTransactionData.amount),
-                // direction is not required on main transaction
+                totalAmount: parseFloat(bankTransactionData.totalAmount || 0),
+                totalBaseAmount: bankTransactionData.totalBaseAmount ? parseFloat(bankTransactionData.totalBaseAmount) : null,
+                totalVatAmount: bankTransactionData.totalVatAmount ? parseFloat(bankTransactionData.totalVatAmount) : null,
+                convertedTotalAmount: bankTransactionData.convertedTotalAmount ? parseFloat(bankTransactionData.convertedTotalAmount) : 0,
+                direction: bankTransactionData.direction || null,
                 accountNumber: bankTransactionData.accountNumber,
                 description: bankTransactionData.description,
                 invoiceId: bankTransactionData.invoiceId ? String(bankTransactionData.invoiceId) : null,
@@ -149,7 +149,6 @@ const createBankTransactionFromAI = async (extractedData, options = {}) => {
             { transaction: tx }
         );
 
-        // Create bank transaction items if any
         if (Array.isArray(items) && items.length) {
             await BankTransactionItem.bulkCreate(
                 items.map((item) => ({
