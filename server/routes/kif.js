@@ -8,6 +8,7 @@ const {
     createKifInvoice,
     processKifInvoice,
     approveKifInvoice,
+    getKifDailyCounts,
 } = require('../controllers/kif');
 const { upload } = require('../services/aiService');
 const isAuthenticated = require('../middleware/isAuthenticated');
@@ -22,6 +23,7 @@ const { updateKifItem } = require('../controllers/kif');
 router.get('/invoice-types', isAuthenticated, getKifInvoiceTypes);
 router.get('/logs/invalid', isAuthenticated, getInvalidKifs);
 router.get('/logs/:id', isAuthenticated, getKifLog);
+router.get('/stats/daily', isAuthenticated, getKifDailyCounts);
 
 router.get('/', getKifData);
 router.get('/:id', getKif);

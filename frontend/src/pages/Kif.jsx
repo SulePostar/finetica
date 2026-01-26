@@ -33,7 +33,7 @@ const Kif = () => {
         isPending: isUploading,
     } = useBucketFileUpload({
         bucketName: "kif",
-        invalidateKeys: [kifKeys.all],
+        invalidateKeys: [kifKeys.all, kifKeys.dailyStats()],
         successMessage: "Kif file uploaded",
         successDescription: "Kif file has been processed successfully.",
     });

@@ -21,6 +21,13 @@ export const getKifInvoiceTypes = async () => {
     return data;
 }
 
+export const getKifDailyStats = async ({ from, to } = {}) => {
+    const { data } = await apiClient.get("/kif/stats/daily", {
+        params: { from, to },
+    });
+    return data;
+};
+
 /* -------------------- */
 /*     Invalid PDFs     */
 /* -------------------- */

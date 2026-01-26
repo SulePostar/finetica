@@ -394,6 +394,38 @@ async function updateKifItem(itemId, updateData) {
     return item;
 }
 
+const getKifCountGroupedByDay = async ({ from, to }) => {
+    try {
+        const { Op } = require('sequelize');
+        const where = {};
+
+        if (from || to) {
+            where.invoice_date = {};
+            if (from) where.invoice_date[Op.gte] = new Date(from);
+            if (to) where.invoice_date[Op.lte] = new Date(to);
+        }
+
+        const rows = await SalesInvoice.findAll({
+            attributes: [
+                [sequelize.fn('date_trunc', 'day', sequelize.col('invoice_date')), 'day'],
+                [sequelize.fn('COUNT', sequelize.col('id')), 'count'],
+            ],
+            where,
+            group: [sequelize.fn('date_trunc', 'day', sequelize.col('invoice_date'))],
+            order: [[sequelize.fn('date_trunc', 'day', sequelize.col('invoice_date')), 'ASC']],
+            raw: true,
+        });
+
+        return rows.map(r => ({
+            day: new Date(r.day).toISOString().slice(0, 10),
+            count: Number(r.count),
+        }));
+    } catch (error) {
+        console.error('Error in getKifCountGroupedByDay:', error);
+        throw new AppError('Failed to group KIF invoices by day', 500);
+    }
+};
+
 module.exports = {
     getKifs,
     getKifById,
@@ -407,4 +439,5 @@ module.exports = {
     processUnprocessedKifFiles,
     getKifInvoiceTypes,
     updateKifItem,
+    getKifCountGroupedByDay,
 };

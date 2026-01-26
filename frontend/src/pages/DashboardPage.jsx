@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 import StatWidget from "@/components/dashboard/StatWidget";
+import KufDailyAreaChart from "@/components/dashboard/charts/KufChart";
+import KifDailyAreaChart from "@/components/dashboard/charts/KifChart";
 import PageTitle from "@/components/shared-ui/PageTitle";
 import { TimeFilter } from "@/components/shared-ui/TimeFilter";
 import { useState } from "react";
@@ -97,22 +99,15 @@ const Dashboard = () => {
                     </div>
                 ))}
 
-                {bottomRowData.map((data, index) => (
-                    <div
-                        key={index}
-                        className="md:col-span-3 h-80 bg-muted/20 border border-dashed border-border rounded-2xl flex items-center justify-center relative"
-                    >
-                        <div className="w-full max-w-xs">
-                            <StatWidget
-                                title={data.title}
-                                value={data.value}
-                                delta={data.delta}
-                                positive={data.positive}
-                                icon={data.icon}
-                            />
-                        </div>
-                    </div>
-                ))}
+                {/* LEFT: KUF Chart */}
+                <div className="md:col-span-3 h-80">
+                    <KufDailyAreaChart />
+                </div>
+
+                {/* RIGHT: KIF Chart */}
+                <div className="md:col-span-3 h-80">
+                    <KifDailyAreaChart />
+                </div>
             </div>
         </div >
     );

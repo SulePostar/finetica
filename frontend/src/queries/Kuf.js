@@ -1,4 +1,4 @@
-import { getAllKufs, getKufById, getKufInvalidPdfs, getKufInvalidPdfById, getKufInvoiceTypes } from "@/api/Kuf";
+import { getAllKufs, getKufById, getKufInvalidPdfs, getKufInvalidPdfById, getKufInvoiceTypes, getKufDailyStats } from "@/api/Kuf";
 import { useQuery, } from "@tanstack/react-query";
 
 export const kufKeys = {
@@ -8,6 +8,8 @@ export const kufKeys = {
     details: () => [...kufKeys.all, "detail"],
     detail: (id) => [...kufKeys.details(), id],
     invoiceTypes: () => [...kufKeys.all, "invoice-types"],
+    dailyStats: () => [...kufKeys.all, "stats", "daily"],
+    dailyStatsRange: (from, to) => [...kufKeys.dailyStats(), { from, to }],
 };
 
 export const useKufInvoices = (filters = {}) => {
@@ -32,6 +34,14 @@ export const useKufInvoiceTypes = () => {
         queryFn: () => getKufInvoiceTypes(),
     });
 }
+
+export const useKufDailyStats = ({ from, to } = {}) => {
+    return useQuery({
+        queryKey: kufKeys.dailyStatsRange(from, to),
+        queryFn: () => getKufDailyStats({ from, to }),
+        enabled: !!from && !!to,
+    });
+};
 
 /* -------------------- */
 /*     Invalid PDFs     */

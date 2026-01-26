@@ -31,6 +31,13 @@ export const deleteKuf = async (id) => {
     await apiClient.delete(`${BASE_PATH}/${id}`);
 };
 
+export const getKufDailyStats = async ({ from, to } = {}) => {
+    const { data } = await apiClient.get(`${BASE_PATH}/stats/daily`, {
+        params: { from, to },
+    });
+    return data;
+};
+
 /* -------------------- */
 /*     Invalid PDFs     */
 /* -------------------- */
