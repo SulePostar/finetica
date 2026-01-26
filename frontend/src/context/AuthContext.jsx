@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { loginUser } from "../api/auth";
+import { useQueryClient } from "@tanstack/react-query";
+import { loginUser, logoutUser } from "../api/auth";
 import { getMe } from "../api/users";
+import { toast } from "sonner";
 
 const AuthContext = createContext(null);
 
@@ -8,6 +10,8 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
+
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         const validateToken = async () => {
@@ -30,6 +34,7 @@ export const AuthProvider = ({ children }) => {
                     localStorage.removeItem("authToken");
                     setUser(null);
                     setIsAuthenticated(false);
+                    console.error("Token validation failed:", error);
                 }
             }
             setLoading(false);
@@ -75,10 +80,20 @@ export const AuthProvider = ({ children }) => {
             return { success: false, error: message };
         }
     };
-    const logout = () => {
-        localStorage.removeItem("authToken");
-        setUser(null);
-        setIsAuthenticated(false);
+
+    const logout = async () => {
+        try {
+            const response = await logoutUser();
+            toast.success(response.message || "Logged out successfully");
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || "Backend logout failed";
+            toast.error(errorMessage);
+        } finally {
+            localStorage.removeItem("authToken");
+            queryClient.clear();
+            setUser(null);
+            setIsAuthenticated(false);
+        }
     };
 
     return (

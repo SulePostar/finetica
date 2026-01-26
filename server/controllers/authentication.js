@@ -32,11 +32,23 @@ const refreshToken = async (req, res, next) => {
   }
 };
 
-const logout = async (req, res) => {
-  return res.status(200).json({
-    success: true,
-    message: 'Logout successful. Please remove the token from client storage.',
-  });
+const logout = async (req, res, next) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    const result = await authService.logout(refreshToken);
+
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      path: '/api/auth',
+      sameSite: 'strict'
+    });
+
+    return res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
 
 const requestPasswordReset = async (req, res, next) => {

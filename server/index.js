@@ -21,6 +21,7 @@ const contractRouter = require('./routes/contract');
 const businessPartnerRouter = require('./routes/businessPartner');
 const googleDriveAutoSync = require('./tasks/googleDriveAutoSync');
 const googleDriveRouter = require('./routes/googleDrive');
+const exchangeRateRoutes = require('./routes/exchangeRateRoutes');
 
 const PORT = process.env.PORT;
 const SECRET = process.env.SESSION_SECRET;
@@ -60,6 +61,7 @@ app.use('/drive', googleDriveRouter);
 app.use('/api/user-statuses', userStatusRouter);
 app.use('/api/user-roles', userRoleRouter);
 app.use('/api/invalid-pdfs', invalidPdfsRoute);
+app.use('/api/rates', exchangeRateRoutes);
 app.use('/api/faqs', faqRouter);
 app.use(errorHandler);
 

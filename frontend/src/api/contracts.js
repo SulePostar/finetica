@@ -2,8 +2,13 @@ import apiClient from './axios';
 
 const BASE_PATH = "/contracts";
 
-export const getContracts = async () => {
-    const { data } = await apiClient.get(`${BASE_PATH}/`);
+export const getContracts = async ({page, perPage, timeRange}) => {
+    const params = {
+        page,
+        perPage,
+        timeRange: typeof timeRange === 'object' ? JSON.stringify(timeRange) : timeRange,
+    };
+    const { data } = await apiClient.get(`${BASE_PATH}`, { params });
     return data;
 };
 
