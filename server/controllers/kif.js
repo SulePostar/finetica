@@ -8,6 +8,7 @@ const {
     getKifItemsById,
     getKifInvoiceTypes: getKifInvoiceTypesService,
     updateKifItem: updateKifItemService,
+    getKifsTotalSum,
 } = require('../services/kif');
 const logger = require('../utils/logger');
 
@@ -128,6 +129,18 @@ const updateKifItem = async (req, res, next) => {
     }
 };
 
+const getKifSum = async (req, res, next) => {
+    try {
+        const total = await getKifsTotalSum();
+
+        res.json({
+            totalAmount: total
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getKifData,
     getKif,
@@ -137,4 +150,5 @@ module.exports = {
     getKifItems,
     getKifInvoiceTypes,
     updateKifItem,
+    getKifSum,
 };
