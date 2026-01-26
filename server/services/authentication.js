@@ -210,7 +210,6 @@ class AuthService {
       }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log('Token decoded successfully, userId:', decoded.userId, 'type:', decoded.type);
 
       if (decoded.type !== 'password_reset') {
         throw new AppError('Invalid token type', 400);
@@ -224,7 +223,6 @@ class AuthService {
         throw new AppError('User not found', 404);
       }
 
-      console.log('User found:', user.id, 'has resetToken:', !!user.passwordResetToken, 'resetExpiresAt:', user.resetExpiresAt);
 
       if (!user.passwordResetToken || user.passwordResetToken !== token) {
         throw new AppError('Invalid or expired reset token', 400);
@@ -234,17 +232,17 @@ class AuthService {
         throw new AppError('Reset token has expired', 400);
       }
 
-      // Update password and clear reset token
+
       const passwordHash = await bcrypt.hash(new_password, 10);
-      console.log('Password hashed successfully, updating user...');
 
       await user.update({
         passwordHash,
         passwordResetToken: null,
         resetExpiresAt: null
       });
-
-      console.log('User updated successfully');
+      await RefreshToken.destroy({
+        where: { userId: user.id }
+      });
 
       return {
         success: true,
