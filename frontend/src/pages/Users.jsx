@@ -11,6 +11,7 @@ import { useRoles, useStatuses } from "@/queries/rolesAndStatuses";
 
 import DynamicTable from "@/components/table/DynamicTable";
 import { getUsersColumns } from "@/components/tables/columns/UsersColumns";
+import ApprovalModal from "@/components/shared-ui/modals/UserApprovalModal";
 
 import PageTitle from "@/components/shared-ui/PageTitle";
 import IsError from "@/components/shared-ui/IsError";
@@ -43,6 +44,11 @@ const Users = () => {
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [selectedUser, setSelectedUser] = useState(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+
+    const [isApprovalDialogOpen, setIsApprovalDialogOpen] = useState(false);
+    const [userToApprove, setUserToApprove] = useState(null);
+    const [selectedRoleForApproval, setSelectedRoleForApproval] = useState("");
 
     const { search, debouncedSearch, setSearch, clearSearch } = useTableSearch({
         delay: 400,
@@ -102,23 +108,25 @@ const Users = () => {
             handleNavigate(user);
             return;
         }
+        if (action === "Approve") {
+          setUserToApprove(user);
+          setSelectedRoleForApproval("");
+          setIsApprovalDialogOpen(true);
+          return;
+        }
 
-        const statusMap = {
-            Approve: { id: 2 },
-            Reject: { id: 3 },
-        };
-
-        if (statusMap[action]) {
-            updateUser({
-                userId: user.id,
-                payload: {
-                    statusId: statusMap[action].id
-                },
-            }, {
-                onSuccess: () => toast.success(`User ${action}ed successfully`),
-                onError: () => toast.error(`Failed to ${action} user`)
-            });
-            return;
+        // Handle reject action
+        if (action === "Reject") {
+          updateUser({
+            userId: user.id,
+            payload: {
+              statusId: 3
+            },
+          }, {
+            onSuccess: () => toast.success("User rejected successfully"),
+            onError: () => toast.error("Failed to reject user")
+          });
+          return;
         }
 
         if (action === "toggleStatus") {
@@ -127,99 +135,128 @@ const Users = () => {
         }
     };
 
+    const handleApprovalConfirm = () => {
+      if (!userToApprove || !selectedRoleForApproval) {
+        toast.error("Please select a role");
+        return;
+      }
+
+      updateUser({
+        userId: userToApprove.id,
+        payload: {
+          statusId: 2,
+          roleId: parseInt(selectedRoleForApproval)
+        },
+      }, {
+        onSuccess: () => {
+          toast.success("User approved successfully");
+          setIsApprovalDialogOpen(false);
+          setUserToApprove(null);
+          setSelectedRoleForApproval("");
+        },
+        onError: () => toast.error("Failed to approve user")
+      });
+    };
+
+    const handleApprovalClose = () => {
+      setIsApprovalDialogOpen(false);
+      setUserToApprove(null);
+      setSelectedRoleForApproval("");
+    };
+
     const handleConfirmDelete = () => {
         if (!selectedUser) return;
 
         const isDeactivating = selectedUser.isEnabled;
         const isSelf = selectedUser.id === currentUserId;
 
-        updateUser(
-            {
-                userId: selectedUser.id,
-                payload: { isEnabled: !selectedUser.isEnabled }
-            },
-            {
-                onSuccess: () => {
-                    if (isSelf && isDeactivating) { // Matches your variables
-                        toast.success("Account deactivated. Logging out...");
-                        setTimeout(() => {
-                            logout();
-                            navigate("/login");
-                        }, 1500);
-                    } else {
-                        toast.success(isDeactivating ? "User deactivated" : "User restored");
-                        setIsDialogOpen(false);
-                        setSelectedUser(null);
-                    }
-                },
-                onError: () => toast.error("Operation failed"),
-            }
-        );
-    };
-
-    const columns = useMemo(
-        () => getUsersColumns(handleUserClick, currentUserId, isAdmin),
-        [currentUserId, isAdmin]
+    updateUser(
+      {
+        userId: selectedUser.id,
+        payload: { isEnabled: !selectedUser.isEnabled }
+      },
+      {
+        onSuccess: () => {
+          if (isSelf && isDeactivating) {
+            toast.success("Account deactivated. Logging out...");
+            setTimeout(() => {
+              logout();
+              navigate("/login");
+            }, 1500);
+          } else {
+            toast.success(isDeactivating ? "User deactivated" : "User restored");
+            setIsDialogOpen(false);
+            setSelectedUser(null);
+          }
+        },
+        onError: () => toast.error("Operation failed"),
+      }
     );
+  };
 
-    if(isPending){
-      return (
-        <>
-          <div className="px-4 md:px-6 lg:px-8"></div>
-          <PageTitle text="Users" />
-          <div className="flex items-center justify-center h-40">
-            <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
-          </div>
-        </>
-      );
-    }
+  const columns = useMemo(
+    () => getUsersColumns(handleUserClick, currentUserId, isAdmin),
+    [currentUserId, isAdmin]
+  );
 
-    if (isError) {
-        return (
-            <IsError
-                error={error}
-                onRetry={refetch}
-                title="Failed to load Users"
-                showDetails
-            />
-        );
-    }
+  if(isPending){
     return (
-        <div className="pt-20">
-            <DynamicTable
-                header={
-                    <PageTitle
-                        text="Users"
-                        subtitle="Users management dashboard"
-                        compact
-                    />
-                }
-                toolbar={{
-                    search: (
-                        <Input
-                            placeholder="Search by name or email"
-                            className="w-full md:flex-1 min-w-[200px]"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
-                    ),
-                    filters: (
-                        <>
-                            <Select
-                                value={selectedStatus}
-                                onValueChange={(value) => {
-                                    setSelectedStatus(value);
-                                    setPage(1);
-                                }}
-                            >
-                                <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="All statuses" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">All statuses</SelectItem>
-                                    {statusOptions}
-                                </SelectContent>
-                            </Select>
+      <>
+        <div className="px-4 md:px-6 lg:px-8"></div>
+        <PageTitle text="Users" />
+        <div className="flex items-center justify-center h-40">
+          <Spinner className="w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-[var(--spurple)]" />
+        </div>
+      </>
+    );
+  }
+
+  if (isError) {
+    return (
+      <IsError
+        error={error}
+        onRetry={refetch}
+        title="Failed to load Users"
+        showDetails
+      />
+    );
+  }
+  return (
+    <div className="pt-20">
+      <DynamicTable
+        header={
+          <PageTitle
+            text="Users"
+            subtitle="Users management dashboard"
+            compact
+          />
+        }
+        toolbar={{
+          search: (
+            <Input
+              placeholder="Search by name or email"
+              className="w-full md:flex-1 min-w-[200px]"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          ),
+          filters: (
+            <>
+              <Select
+                value={selectedStatus}
+                onValueChange={(value) => {
+                  setSelectedStatus(value);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="All statuses" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All statuses</SelectItem>
+                  {statusOptions}
+                </SelectContent>
+              </Select>
 
                             <Select
                                 value={selectedRole}
@@ -266,6 +303,19 @@ const Users = () => {
                 </div>
             )}
 
+            {/* Approval Modal */}
+            <ApprovalModal
+                isOpen={isApprovalDialogOpen}
+                onClose={handleApprovalClose}
+                user={userToApprove}
+                roles={rolesData}
+                selectedRole={selectedRoleForApproval}
+                onRoleChange={setSelectedRoleForApproval}
+                onConfirm={handleApprovalConfirm}
+                isLoading={isUpdating}
+            />
+
+      {/* Deactivate/Activate Modal */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
