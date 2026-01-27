@@ -8,4 +8,9 @@ export const getAllPartners = async (filters) => {
 export const getPartnerById = async (id) => {
     const { data } = await apiClient.get(`/partners/${id}`);
     return data;
-}  
+}
+
+export const deactivatePartner = async (id) => {
+    const { data } = await apiClient.delete(`/partners/${id}`);
+    return data;
+};

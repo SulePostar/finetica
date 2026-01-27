@@ -20,7 +20,7 @@ export default function ConfirmDeleteDialog({
     description,
     trigger,
     onConfirm,
-    confirmText = "Delete",
+    confirmText = "Deactivate",
     cancelText = "Cancel",
 }) {
     return (

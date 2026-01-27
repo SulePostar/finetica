@@ -132,10 +132,29 @@ const updateBusinessPartnerById = async (id, updates) => {
   };
 };
 
+/**
+ * Deletes a business partner by ID.
+ * @param {Number} id - The business partner ID.
+ * @returns {Promise<Object|null>}
+ */
+const deleteBusinessPartnerById = async (id) => {
+  const deletedCount = await BusinessPartner.destroy({
+    where: { id },
+  });
+  if (deletedCount === 0) {
+    throw new AppError(`Business partner with ID ${id} not found`, 404);
+  }
+  return {
+    success: true,
+    message: 'Business partner deleted successfully',
+  };
+};
+
 module.exports = {
   getAllBusinessPartners,
   getBusinessPartnerById,
   createBusinessPartner,
   updateBusinessPartnerStatus,
   updateBusinessPartnerById,
+  deleteBusinessPartnerById,
 };
