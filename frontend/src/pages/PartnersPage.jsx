@@ -152,8 +152,8 @@ const Partners = () => {
 
                     deletePartner(partnerToDelete.id, {
                         onSuccess: () => {
-                            notify.success("Partner deleted", {
-                                description: `${partnerToDelete.shortName} has been removed.`,
+                            notify.success("Partner updated", {
+                                description: `${partnerToDelete.shortName} has been deactivated.`,
                             });
                         },
                         onError: (err) => {
