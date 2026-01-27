@@ -2,7 +2,7 @@ name: Daily Currency Update
 
 on:
   schedule:
-    - cron: '0 16 * * 1-5' # 17:00 Pon-Pet
+    - cron: '30 16 * * 1-5'
   workflow_dispatch:
 
 jobs:

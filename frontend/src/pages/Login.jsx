@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
 import { useAuth } from '../context/AuthContext';
@@ -180,12 +180,13 @@ const Login = () => {
 
               {/* Forgot */}
               <div className="flex justify-end">
-                <button
-                  type="button"
+                <Link
+                  to="/forgot-password"
                   className="text-sm font-medium text-brand hover:text-indigo-700 transition"
                 >
+
                   Forgot Password?
-                </button>
+                </Link>
               </div>
 
               {/* Submit */}

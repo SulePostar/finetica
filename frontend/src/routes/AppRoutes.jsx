@@ -1,8 +1,7 @@
 import React from 'react';
-import { Navigate, Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import ProfilePage from '@/pages/ProfilePage';
 import Login from '@/pages/Login';
-import Logout from '@/pages/Logout';
 import Dashboard from '@/pages/DashboardPage';
 
 const BankTransactions = React.lazy(() => import('../pages/BankTransactions'));
@@ -22,12 +21,16 @@ import DefaultLayout from '@/layout/DefaultLayout';
 import PartnerDetails from '@/pages/PartnerDetails';
 import HelpPage from '@/pages/HelpPage';
 import DocumentItemsPage from '@/pages/DocumentItemsPage';
+import ForgotPasswordForm from '@/pages/ForgotPasswordForm';
+import ResetPasswordForm from '@/pages/ResetPasswordForm';
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+      <Route path="/reset-password" element={<ResetPasswordForm />} />
 
       <Route element={<ProtectedRoute />}>
         <Route element={<DefaultLayout />}>
@@ -45,8 +48,6 @@ export default function AppRoutes() {
           <Route path="/kuf/:id" element={<DocumentDetails />} />
           <Route path="/kif/:id" element={<DocumentDetails />} />
           <Route path="/bank-statements/:id" element={<DocumentDetails />} />
-          <Route path="/bank-statements/:id/edit" element={<BankTransactionsDetails />} />
-          <Route path="/bank-statements/:id/approve" element={<BankTransactionsDetails />} />
           <Route path="/contracts/:id" element={<DocumentDetails />} />
 
           <Route path="/:documentType/:id/items" element={<DocumentItemsPage />} />
