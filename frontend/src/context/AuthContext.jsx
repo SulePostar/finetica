@@ -3,6 +3,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { loginUser, logoutUser } from "../api/auth";
 import { getMe } from "../api/users";
 import { toast } from "sonner";
+import { socket } from "@/lib/socket";
+import { useRealtimeNotifications } from "@/hooks/use-realtime-notifications";
 
 const AuthContext = createContext(null);
 
@@ -11,7 +13,25 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    const queryClient = useQueryClient();
+    const isAdmin = isAuthenticated && user?.roleName === "admin";
+    useRealtimeNotifications(isAdmin);
+
+    useEffect(() => {
+        if (loading) return;
+
+        if (!isAdmin) {
+            if (socket.connected) socket.disconnect();
+            return;
+        }
+
+        const token = localStorage.getItem("authToken");
+        if (!token) return;
+
+        socket.auth = { token };
+        socket.connect();
+
+        return () => socket.disconnect();
+    }, [isAdmin, loading]);
 
     useEffect(() => {
         const validateToken = async () => {

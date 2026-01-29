@@ -15,6 +15,23 @@ const login = async (req, res, next) => {
 const register = async (req, res, next) => {
   try {
     const result = await authService.register(req.body);
+
+    const realtime = req.app.get("realtime");
+    const adminID = process.env.REALTIME_ADMIN_USER_ID;
+
+    if (realtime && adminID) {
+      const newUser = result?.data?.user || result?.data || result?.user || null;
+
+      realtime.notifyUser(adminID, "notification:new-user", {
+        message: "New user registered: " + (newUser?.email || "Unknown email"),
+        user: {
+          id: newUser?._id || newUser?.id,
+          email: newUser?.email,
+        },
+        timestamp: new Date().toISOString(),
+      });
+    }
+
     res.json(result);
   } catch (error) {
     next(error);

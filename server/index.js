@@ -22,6 +22,7 @@ const businessPartnerRouter = require('./routes/businessPartner');
 const googleDriveAutoSync = require('./tasks/googleDriveAutoSync');
 const googleDriveRouter = require('./routes/googleDrive');
 const exchangeRateRoutes = require('./routes/exchangeRateRoutes');
+const { createRealtime, socketAuth, initSocket } = require("./socket");
 
 const PORT = process.env.PORT;
 const SECRET = process.env.SESSION_SECRET;
@@ -65,22 +66,40 @@ app.use('/api/rates', exchangeRateRoutes);
 app.use('/api/faqs', faqRouter);
 app.use(errorHandler);
 
+app.get("/debug/emit", (req, res) => {
+  const realtime = req.app.get("realtime");
+  const adminID = process.env.REALTIME_ADMIN_USER_ID;
+
+  console.log("✅ DEBUG EMIT to adminID:", adminID);
+
+  realtime.notifyUser(adminID, "notification:new-user", {
+    message: "DEBUG: hello admin",
+    timestamp: new Date().toISOString(),
+  });
+
+  res.json({ ok: true });
+});
+
 // Start Google Drive auto sync service
 // googleDriveAutoSync.start();
+
+const server = app.listen(PORT, () => {
+  console.log(`🟢 Server is running at port: ${PORT}`);
+});
 
 // IIFE (Immediately Invoked Function Expression)
 (async () => {
   try {
     await connectToDatabase();
 
-    app.listen(PORT, () => {
-      console.log(`🟢 Server is running at port: ${PORT}`);
+    const io = initSocket(server);
+    socketAuth(io);
+    app.set("realtime", createRealtime(io));
+    console.log('🟢 Socket.io initialized');
 
-      setInterval(() => {
-        processEmailQueue().catch(err => console.error('Error in email queue processor:', err));
-      }, 1000 * 60);
-    });
-
+    setInterval(() => {
+      processEmailQueue().catch(err => console.error('Error in email queue processor:', err));
+    }, 1000 * 60);
   } catch (error) {
     console.error('Failed to connect to the database:', error);
     process.exit(1);
