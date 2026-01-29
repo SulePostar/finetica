@@ -1,4 +1,21 @@
 const jwt = require('jsonwebtoken');
+const { Server } = require('socket.io');
+
+function initSocket(server) {
+  io = new Server(server, {
+    cors: { origin: "*" }
+  });
+
+  io.on("connection", (socket) => {
+    socket.join(`user:${socket.user.id}`);
+
+    socket.on("disconnect", () => {
+      console.log(`User ${socket.user.id} disconnected`);
+    });
+  });
+
+  return io;
+}
 
 function socketAuth(io) {
   io.use((socket, next) => {
@@ -17,10 +34,14 @@ function socketAuth(io) {
       next(new Error("INVALID_TOKEN"));
     }
   });
-
-  io.on("connection", (socket) => {
-    socket.join(`user:${socket.user.id}`);
-  });
 };
 
-module.exports = socketAuth;
+function createRealtime(io) {
+  return {
+    notifyUser(userId, event, payload) {
+      io.to(`user:${userId}`).emit(event, payload);
+    },
+  };
+}
+
+module.exports = { initSocket, socketAuth, createRealtime };
